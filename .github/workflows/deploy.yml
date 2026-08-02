@@ -10,6 +10,8 @@ on:
   workflow_dispatch:
 
 permissions:
+  contents: write
+  pull-requests: write
   pages: write
   id-token: write
 
@@ -18,7 +20,45 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  archive:
+    # On push-triggered runs the digest is already committed, so only the
+    # scheduled/manual runs need to archive new digests.
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Fetch today's digest
+        run: uv run python scripts/fetch_digest.py
+
+      - name: Commit new digests via PR
+        run: |
+          git config user.name "catnews bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "No new digests; nothing to commit."
+            exit 0
+          fi
+          git commit -m "digest: $(date +%Y-%m-%d)"
+          branch="digest-${GITHUB_RUN_NUMBER}"
+          git push origin "HEAD:refs/heads/${branch}"
+          pr_url=$(gh pr create --base main --head "${branch}" \
+            --title "digest: $(date +%Y-%m-%d)" \
+            --body "Automated digest commit. Merged by CI.")
+          echo "PR: ${pr_url}"
+          gh pr merge "${branch}" --squash --delete-branch
+
   deploy:
+    needs: archive
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
