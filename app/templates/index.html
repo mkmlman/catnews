@@ -4,7 +4,7 @@
 <section class="hero">
   <p class="edition-label">{{ digest.date.strftime("%B %d, %Y") }} · {{ editions }} edition{{ "s" if editions != 1 else "" }}</p>
   <h1 class="edition-title">news</h1>
-  <p class="edition-sub">{{ digest.stories | length }} stories — papers and threads worth your time.</p>
+  <p class="edition-sub">{{ digest.stories | length }} stories</p>
   <pre class="cat-logo">{{ cat }}</pre>
 </section>
 
@@ -16,27 +16,19 @@
     <button class="chip" data-source="arxiv">arXiv</button>
     <button class="chip" data-source="github">GitHub</button>
   </div>
-  <div class="filter-row">
-    <span class="filter-label">Signal</span>
-    <button class="chip is-active" data-signal="All">All</button>
-    <button class="chip" data-signal="Recommended">Recommended</button>
-    <button class="chip" data-signal="Must-Read">Must-Read</button>
-  </div>
 </div>
 
 <p class="no-matches" id="no-matches" hidden>No stories match the selected filters in today's edition.</p>
 
 <div class="stories" id="stories">
   {% for story in digest.stories %}
-  <article class="story" data-source="{{ story.source }}" data-signal="{{ story.signal }}">
+  <article class="story" data-source="{{ story.source }}">
     <div class="story-top">
       <span class="badge badge-{{ story.source }}">{{ story.source }}</span>
-      {% if story.signal != "All" %}<span class="badge badge-{{ story.signal | lower }}">{{ story.signal }}</span>{% endif %}
       {% if story.score is not none %}<span class="story-score">{{ story.score }}</span>{% endif %}
     </div>
     <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h3>
     <p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>
-    {% if story.why_read %}<p class="story-why">Why read: {{ story.why_read }}</p>{% endif %}
     {% if story.authors %}<p class="story-authors">By {{ story.authors | join(", ") }}</p>{% endif %}
     {% if story.summary %}
     <details class="story-more">
@@ -58,13 +50,11 @@
   const cards = Array.from(document.querySelectorAll(".story"));
   const noMatches = document.getElementById("no-matches");
   let source = "All";
-  let signal = "All";
 
   function applyFilters() {
     let visible = 0;
     for (const card of cards) {
-      const match = (source === "All" || card.dataset.source === source)
-        && (signal === "All" || card.dataset.signal === signal);
+      const match = source === "All" || card.dataset.source === source;
       card.hidden = !match;
       if (match) visible++;
     }
@@ -74,11 +64,9 @@
   document.getElementById("filters").addEventListener("click", (event) => {
     const chip = event.target.closest(".chip");
     if (!chip) return;
-    const group = chip.dataset.source ? "source" : "signal";
-    document.querySelectorAll(`.chip[data-${group}]`).forEach(c => c.classList.remove("is-active"));
+    document.querySelectorAll(".chip").forEach(c => c.classList.remove("is-active"));
     chip.classList.add("is-active");
-    if (group === "source") source = chip.dataset.source;
-    else signal = chip.dataset.signal;
+    source = chip.dataset.source;
     applyFilters();
   });
 </script>

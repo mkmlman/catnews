@@ -55,7 +55,7 @@ def render_rss(digest: Digest, base_url: str) -> str:
     fg.id(f"{base_url}/")
     fg.title(f"{APP_NAME} — {TAGLINE}")
     fg.link(href=base_url, rel="alternate")
-    fg.subtitle(f"The Daily Cat — {digest.date} edition. Papers and threads worth your time.")
+    fg.subtitle(f"catnews — {digest.date} edition. Curated daily.")
     fg.language("en")
 
     for story in digest.stories:

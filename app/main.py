@@ -11,7 +11,7 @@ from .models import Digest, SiteStats, Story
 from .render import render_markdown, render_page, render_rss
 from .store import load_all, load_digest, load_latest, site_stats
 
-app = FastAPI(title="catnews", description="The Daily Cat — papers and threads worth your time")
+app = FastAPI(title="catnews", description="catnews — curated daily.")
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
