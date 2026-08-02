@@ -59,14 +59,17 @@ uv run python -m http.server 8080 --directory site
 
 ### Automatic daily updates
 
-`.github/workflows/deploy.yml` runs every day at 07:00 UTC (and on `workflow_dispatch` and on every push to `main`):
+`.github/workflows/deploy.yml` runs on three triggers:
 
-1. `scripts/fetch_digest.py` pulls the day's stories into `data/`.
-2. `scripts/build_site.py` rebuilds the static site from `data/`.
-3. `actions/deploy-pages` publishes it to GitHub Pages.
+| Trigger | What happens |
+| --- | --- |
+| **Daily 07:00 UTC** (`schedule`) | `archive` job fetches today's digest, commits it to a `digest-*` branch, opens a PR, and auto-merges it into `main`; then `deploy` job builds + publishes |
+| **Push to `main`** | `deploy` job only — fetches, builds, publishes (the digest is already committed by the PR merge) |
+| **`workflow_dispatch`** | Full pipeline, same as the daily schedule |
 
-The fetched digest is used for the build but not committed to `main`, so the
-archive on the site reflects only the digests that are committed in the repo.
+Each run: `scripts/fetch_digest.py` pulls the day's stories into `data/`,
+`scripts/build_site.py` renders `site/`, and `actions/deploy-pages` publishes
+to GitHub Pages.
 
 The JSON "API" endpoints become static files, so links change accordingly, e.g.
 `/api/digest` → `/api/digest.json` and `/api/digest/{date}` → `/api/digest_{date}.json`.
@@ -113,3 +116,27 @@ uv run pytest
 | `CATNEWS_BASE_URL` | `http://localhost:8000` | Canonical URL used in RSS links |
 | `CATNEWS_DATA_DIR` | `./data` | Where digest JSON lives |
 | `CATNEWS_LIMIT_HN` / `_ARXIV` / `_GITHUB` | 25 / 15 / 15 | Per-source digest caps |
+
+## Repo ops (how GitHub is configured)
+
+Public repo, only the owner (`mkmlman`) has write access; everyone else can only
+clone, fork, and open PRs.
+
+**Branch ruleset — "protect main"** (Settings → Rules, or REST):
+- `main` requires changes to come through a PR; branch deletion and force-push are blocked.
+- Owner (admin role) bypasses everything; the GitHub Actions bot does **not** bypass —
+  PR merges are used instead so no token is needed.
+
+**Key gotchas learned:**
+- `GITHUB_TOKEN` cannot push to a PR-protected branch on a personal repo, and it
+  cannot be added to a ruleset bypass list. To archive digests automatically, the
+  workflow pushes to a `digest-*` branch and `gh pr merge --squash` it — a PR merge
+  satisfies the "changes via PR" rule, so no PAT is required.
+- The `gh` CLI in workflows needs `env: GH_TOKEN: ${{ github.token }}`.
+- "Allow GitHub Actions to create and approve pull requests" (Settings → Actions →
+  General → Workflow permissions) is **off by default** for personal repos and must
+  be enabled, or the bot's PR creation fails with
+  `GitHub Actions is not permitted to create or approve pull requests`.
+- The workflow commit step is gated with `if: github.event_name != 'push'` so the
+  PR merge's own push-triggered run doesn't re-commit (prevents infinite loops).
+- Wiki is disabled; Issues and forking remain enabled.
