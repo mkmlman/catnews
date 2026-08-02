@@ -21,8 +21,36 @@ A [](https:///)-style curated digest of stories from **Hacker News**, **arXiv**,
 ```sh
 uv sync                       # install deps
 uv run python scripts/fetch_digest.py   # build today's digest -> data/digest_YYYY-MM-DD.json
-uv run uvicorn app.main:app --reload    # serve on http://localhost:8000
+uv run uvicorn app.main:app --reload    # serve on http://localhost:8000 (dev server)
 ```
+
+## Static site (GitHub Pages)
+
+The site can be built as a fully static bundle and served for free from GitHub Pages at
+`https://mkmlman.github.io/catnews/` — no server needed.
+
+```sh
+uv run python scripts/build_site.py --base-path /catnews --base-url https://mkmlman.github.io/catnews
+```
+
+This renders `site/` with plain HTML pages, `feed.rss`, and static JSON/Markdown API files
+(`api/digest.json`, `api/stories.json`, `api/stories.md`, ...). Preview it locally:
+
+```sh
+uv run python -m http.server 8080 --directory site
+# then visit http://localhost:8080/catnews/
+```
+
+### Automatic daily updates
+
+`.github/workflows/deploy.yml` runs every day at 07:00 UTC (and on `workflow_dispatch`):
+
+1. `scripts/fetch_digest.py` pulls the day's stories and commits `data/digest_YYYY-MM-DD.json`.
+2. `scripts/build_site.py` rebuilds the static site.
+3. `actions/deploy-pages` publishes it to GitHub Pages.
+
+The JSON "API" endpoints become static files, so links change accordingly, e.g.
+`/api/digest` → `/api/digest.json` and `/api/digest/{date}` → `/api/digest_{date}.json`.
 
 ## Curation
 
