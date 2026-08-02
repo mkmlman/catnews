@@ -39,6 +39,8 @@ jobs:
         run: uv run python scripts/fetch_digest.py
 
       - name: Commit new digests via PR
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "catnews bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
