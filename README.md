@@ -59,11 +59,14 @@ uv run python -m http.server 8080 --directory site
 
 ### Automatic daily updates
 
-`.github/workflows/deploy.yml` runs every day at 07:00 UTC (and on `workflow_dispatch`):
+`.github/workflows/deploy.yml` runs every day at 07:00 UTC (and on `workflow_dispatch` and on every push to `main`):
 
-1. `scripts/fetch_digest.py` pulls the day's stories and commits `data/digest_YYYY-MM-DD.json`.
-2. `scripts/build_site.py` rebuilds the static site.
+1. `scripts/fetch_digest.py` pulls the day's stories into `data/`.
+2. `scripts/build_site.py` rebuilds the static site from `data/`.
 3. `actions/deploy-pages` publishes it to GitHub Pages.
+
+The fetched digest is used for the build but not committed to `main`, so the
+archive on the site reflects only the digests that are committed in the repo.
 
 The JSON "API" endpoints become static files, so links change accordingly, e.g.
 `/api/digest` → `/api/digest.json` and `/api/digest/{date}` → `/api/digest_{date}.json`.
