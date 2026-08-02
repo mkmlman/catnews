@@ -36,6 +36,7 @@ def build_site(
 
     # Static assets
     write(out_dir / "static" / "style.css", (STATIC_DIR / "style.css").read_bytes())
+    shutil.copytree(STATIC_DIR / "fonts", out_dir / "static" / "fonts", dirs_exist_ok=True)
 
     # Pages
     write(

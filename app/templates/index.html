@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}{{ app_name }} — {{ digest.date.strftime("%A, %B %d, %Y") }}{% endblock %}
 {% block content %}
-<section class="edition-header">
-  <h1 class="edition-date">{{ digest.date.strftime("%A, %B %d, %Y") }}</h1>
-  <p class="edition-count">{{ digest.stories | length }} Stories</p>
-  <h2 class="edition-title">The Daily Cat</h2>
+<section class="hero">
+  <p class="edition-label">{{ digest.date.strftime("%B %d, %Y") }} · {{ editions }} edition{{ "s" if editions != 1 else "" }}</p>
+  <h1 class="edition-title">news</h1>
+  <p class="edition-sub">{{ digest.stories | length }} stories — papers and threads worth your time.</p>
   <pre class="cat-logo">{{ cat }}</pre>
 </section>
 
@@ -26,21 +26,27 @@
 
 <p class="no-matches" id="no-matches" hidden>No stories match the selected filters in today's edition.</p>
 
-<div id="stories">
+<div class="stories" id="stories">
   {% for story in digest.stories %}
   <article class="story" data-source="{{ story.source }}" data-signal="{{ story.signal }}">
-    <p class="story-meta">
-      By {{ story.byline or story.author or "unknown" }}
-      {% if story.hn_url %}<a class="discuss" href="{{ story.hn_url }}" target="_blank" rel="noopener">· Discuss ›</a>{% endif %}
-    </p>
-    {% if story.why_read %}<p class="story-why"><strong>Why read:</strong> {{ story.why_read }}</p>{% endif %}
-    <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h3>
-    {% if story.authors %}<p class="story-authors">Authors: {{ story.authors | join(", ") }}</p>{% endif %}
-    {% if story.summary %}<p class="story-summary">{{ story.summary }}</p>{% endif %}
-    <div class="story-badges">
+    <div class="story-top">
       <span class="badge badge-{{ story.source }}">{{ story.source }}</span>
       {% if story.signal != "All" %}<span class="badge badge-{{ story.signal | lower }}">{{ story.signal }}</span>{% endif %}
-      {% if story.score is not none %}<span class="badge badge-neutral">★ {{ story.score }}</span>{% endif %}
+      {% if story.score is not none %}<span class="story-score">{{ story.score }}</span>{% endif %}
+    </div>
+    <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h3>
+    <p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>
+    {% if story.why_read %}<p class="story-why">Why read: {{ story.why_read }}</p>{% endif %}
+    {% if story.authors %}<p class="story-authors">By {{ story.authors | join(", ") }}</p>{% endif %}
+    {% if story.summary %}
+    <details class="story-more">
+      <summary>summary</summary>
+      <p class="story-summary">{{ story.summary }}</p>
+    </details>
+    {% endif %}
+    <div class="story-foot">
+      <a class="story-link" href="{{ story.url }}" target="_blank" rel="noopener">Read</a>
+      {% if story.hn_url %}<a class="discuss" href="{{ story.hn_url }}" target="_blank" rel="noopener">Discuss ›</a>{% endif %}
     </div>
   </article>
   {% endfor %}
@@ -49,7 +55,6 @@
 
 {% block scripts %}
 <script>
-  const storiesEl = document.getElementById("stories");
   const cards = Array.from(document.querySelectorAll(".story"));
   const noMatches = document.getElementById("no-matches");
   let source = "All";

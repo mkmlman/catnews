@@ -2,7 +2,7 @@
 {% block title %}Stats — {{ app_name }}{% endblock %}
 {% block content %}
 <section class="page-header">
-  <a class="back" href="{{ base_path }}/">← Back</a>
+  <a class="back" href="{{ base_path }}/">← All editions</a>
   <h1>Stats</h1>
 </section>
 <div class="stat-grid">
@@ -12,21 +12,25 @@
   <div class="stat-card"><span class="stat-value">{{ stats.last_edition or "—" }}</span><span class="stat-label">Last edition</span></div>
 </div>
 
-<h2>By source</h2>
-<table class="stat-table">
-  <tbody>
-    {% for source, count in stats.by_source.items() %}
-    <tr><td>{{ source }}</td><td>{{ count }}</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+<section class="stat-section">
+  <h2>By source</h2>
+  <table class="stat-table">
+    <tbody>
+      {% for source, count in stats.by_source.items() %}
+      <tr><td>{{ source }}</td><td>{{ count }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
 
-<h2>By signal</h2>
-<table class="stat-table">
-  <tbody>
-    {% for signal, count in stats.by_signal.items() %}
-    <tr><td>{{ signal }}</td><td>{{ count }}</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+<section class="stat-section">
+  <h2>By signal</h2>
+  <table class="stat-table">
+    <tbody>
+      {% for signal, count in stats.by_signal.items() %}
+      <tr><td>{{ signal }}</td><td>{{ count }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
 {% endblock %}
