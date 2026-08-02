@@ -1,6 +1,6 @@
 # catnews — The Daily Cat
 
-A [](https:///)-style curated digest of stories from **Hacker News**, **arXiv**, and **GitHub**, built with Python + FastAPI.
+A curated digest of stories from **Hacker News**, **arXiv**, and **GitHub**, built with Python + FastAPI.
 
 ```
  /\_/\
