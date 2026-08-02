@@ -24,6 +24,22 @@ uv run python scripts/fetch_digest.py   # build today's digest -> data/digest_YY
 uv run uvicorn app.main:app --reload    # serve on http://localhost:8000 (dev server)
 ```
 
+## How stories are selected
+
+Every digest is pulled fresh from three sources (`app/fetchers/`), each capped by
+`CATNEWS_LIMIT_*`, then round-robin interleaved so the edition mixes all three:
+
+| Source | Criteria | Requested | Kept |
+| --- | --- | --- | --- |
+| **Hacker News** | Anything currently on the HN front page (`tags=front_page` via Algolia) | 60 | 25 |
+| **arXiv** | Latest papers in `cs.AI cs.CL cs.LG cs.SE cs.DB cs.CR cs.DC cs.NE`, sorted by submit date, newest first | 40 | 15 |
+| **GitHub** | Repos created in the last 7 days, sorted by most stars (`search/repositories`) | 40 | 15 |
+
+- A source that fails (network error, rate limit) is skipped — the other sources still
+  produce the digest.
+- These are the *raw* pull rules; see **Curation** below to promote stories to
+  *Recommended* / *Must-Read* and add "Why read" notes on top of them.
+
 ## Static site (GitHub Pages)
 
 The site can be built as a fully static bundle and served for free from GitHub Pages at
