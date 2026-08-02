@@ -1,8 +1,11 @@
 name: Build and Deploy to GitHub Pages
 
 on:
+  push:
+    branches: [main]
   schedule:
-    # Run daily at 07:00 UTC so a fresh digest is published each morning.
+    # Daily at 07:00 UTC so a fresh digest is published each morning even
+    # when nothing has been pushed.
     - cron: "0 7 * * *"
   workflow_dispatch:
 
@@ -32,6 +35,7 @@ jobs:
         run: uv run python scripts/fetch_digest.py
 
       - name: Commit new digests to main
+        if: github.actor != 'github-actions[bot]'
         run: |
           git config user.name "catnews bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
