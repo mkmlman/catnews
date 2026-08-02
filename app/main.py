@@ -5,29 +5,19 @@ from datetime import date
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from feedgen.feed import FeedGenerator
 
-from .config import APP_NAME, BASE_URL, DATA_DIR, TAGLINE
+from .config import APP_NAME, BASE_PATH, BASE_URL, DATA_DIR, TAGLINE
 from .models import Digest, SiteStats, Story
+from .render import render_markdown, render_page, render_rss
 from .store import load_all, load_digest, load_latest, site_stats
 
 app = FastAPI(title="catnews", description="The Daily Cat — papers and threads worth your time")
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
-templates = Jinja2Templates(directory="app/templates")
-
-CAT = r"""  /\_/\
- (=^.^=)
- (")_(")"""
 
 
-def render(request: Request, name: str, **context) -> HTMLResponse:
-    return templates.TemplateResponse(
-        request=request,
-        name=name,
-        context={"app_name": APP_NAME, "tagline": TAGLINE, "base_url": BASE_URL, "cat": CAT, **context},
-    )
+def page(request: Request, name: str, **context) -> HTMLResponse:
+    return HTMLResponse(render_page(name, base_path=BASE_PATH, base_url=BASE_URL, **context))
 
 
 def latest_or_404() -> Digest:
@@ -40,7 +30,7 @@ def latest_or_404() -> Digest:
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request) -> HTMLResponse:
     digest = latest_or_404()
-    return render(
+    return page(
         request,
         "index.html",
         digest=digest,
@@ -54,12 +44,12 @@ def archive(request: Request) -> HTMLResponse:
     digests = load_all(DATA_DIR)
     if not digests:
         raise HTTPException(status_code=404, detail="No digests published yet.")
-    return render(request, "archive.html", digests=digests)
+    return page(request, "archive.html", digests=digests)
 
 
 @app.get("/stats/", response_class=HTMLResponse)
 def stats(request: Request) -> HTMLResponse:
-    return render(request, "stats.html", stats=site_stats(DATA_DIR))
+    return page(request, "stats.html", stats=site_stats(DATA_DIR))
 
 
 # --- JSON API --------------------------------------------------------------
@@ -101,54 +91,12 @@ def api_stats() -> SiteStats:
 
 @app.get("/api/stories.md", response_class=PlainTextResponse)
 def api_stories_markdown() -> str:
-    digest = latest_or_404()
-    blocks = [
-        f"# {APP_NAME} — {digest.date}",
-        "",
-        f"*{TAGLINE}*",
-        "",
-    ]
-    for i, story in enumerate(digest.stories, 1):
-        blocks.append(f"### {i}. {story.title}")
-        blocks.append("")
-        blocks.append(f"- **Source:** {story.source} · **By:** {story.byline or story.author or 'unknown'}")
-        if story.signal != "All":
-            blocks.append(f"- **Signal:** {story.signal}")
-        if story.why_read:
-            blocks.append(f"- **Why read:** {story.why_read}")
-        blocks.append(f"- **Link:** {story.url}")
-        blocks.append("")
-    return "\n".join(blocks)
+    return render_markdown(latest_or_404())
 
 
 @app.get("/feed.rss")
 def rss() -> Response:
-    digest = latest_or_404()
-    fg = FeedGenerator()
-    fg.id(f"{BASE_URL}/")
-    fg.title(f"{APP_NAME} — {TAGLINE}")
-    fg.link(href=BASE_URL, rel="alternate")
-    fg.subtitle(f"The Daily Cat — {digest.date} edition. Papers and threads worth your time.")
-    fg.language("en")
-
-    for story in digest.stories:
-        entry = fg.add_entry()
-        entry.id(story.url)
-        entry.title(story.title)
-        entry.link(href=story.url)
-        entry.author({"name": story.byline or story.author or "unknown"})
-        if story.published:
-            entry.published(story.published)
-        parts = []
-        if story.why_read:
-            parts.append(f"<p><strong>Why read:</strong> {story.why_read}</p>")
-        if story.summary:
-            parts.append(f"<p>{story.summary}</p>")
-        if story.hn_url:
-            parts.append(f'<p>Discuss on <a href="{story.hn_url}">Hacker News</a></p>')
-        entry.content("".join(parts), type="html")
-
-    xml = fg.rss_str(pretty=True)
+    xml = render_rss(latest_or_404(), f"{BASE_URL}/")
     return Response(content=xml, media_type="application/rss+xml; charset=utf-8")
 
 

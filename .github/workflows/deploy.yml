@@ -1,0 +1,55 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  schedule:
+    # Run daily at 07:00 UTC so a fresh digest is published each morning.
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Fetch today's digest
+        run: uv run python scripts/fetch_digest.py
+
+      - name: Commit new digests to main
+        run: |
+          git config user.name "catnews bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if ! git diff --cached --quiet; then
+            git commit -m "digest: $(date +%Y-%m-%d)"
+            git push
+          else
+            echo "No new digests; nothing to commit."
+          fi
+
+      - name: Build static site
+        run: uv run python scripts/build_site.py --base-path /catnews --base-url https://mkmlman.github.io/catnews
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

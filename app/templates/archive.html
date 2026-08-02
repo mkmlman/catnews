@@ -2,14 +2,14 @@
 {% block title %}Archive — {{ app_name }}{% endblock %}
 {% block content %}
 <section class="page-header">
-  <a class="back" href="/">← Back</a>
+  <a class="back" href="{{ base_path }}/">← Back</a>
   <h1>Archive</h1>
   <p class="muted">{{ digests | length }} editions published</p>
 </section>
 <ul class="archive-list">
   {% for digest in digests | reverse %}
   <li>
-    <a href="/api/digest/{{ digest.date.isoformat() }}">{{ digest.date.strftime("%B %d, %Y") }}</a>
+    <a href="{{ base_path }}/api/digest_{{ digest.date.isoformat() }}.json">{{ digest.date.strftime("%B %d, %Y") }}</a>
     <span class="muted">{{ digest.stories | length }} stories</span>
   </li>
   {% endfor %}
