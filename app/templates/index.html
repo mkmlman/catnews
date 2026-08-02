@@ -23,14 +23,14 @@
   <article class="story" data-source="{{ story.source }}">
     <div class="story-top">
       <span class="badge badge-{{ story.source }}">{{ story.source }}</span>
-      {% if story.score is not none %}<span class="story-score">{{ story.score }}</span>{% endif %}
+      {% if story.score is not none %}<span class="story-score">{% if story.source == "github" %}★{% else %}▲{% endif %} {{ story.score }}</span>{% endif %}
     </div>
     <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h3>
     <p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>
     {% if story.authors %}<p class="story-authors">By {{ story.authors | join(", ") }}</p>{% endif %}
     {% if story.summary %}
     <details class="story-more">
-      <summary>summary</summary>
+      <summary>more</summary>
       <p class="story-summary">{{ story.summary }}</p>
     </details>
     {% endif %}
