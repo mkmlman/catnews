@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{ app_name }} — {{ digest.date.strftime("%A, %B %d, %Y") }}{% endblock %}
+{% block content %}
+<section class="edition-header">
+  <h1 class="edition-date">{{ digest.date.strftime("%A, %B %d, %Y") }}</h1>
+  <p class="edition-count">{{ digest.stories | length }} Stories</p>
+  <h2 class="edition-title">The Daily Cat</h2>
+  <pre class="cat-logo">{{ cat }}</pre>
+</section>
+
+<div class="filters" id="filters">
+  <div class="filter-row">
+    <span class="filter-label">Source</span>
+    <button class="chip is-active" data-source="All">All</button>
+    <button class="chip" data-source="hn">HN</button>
+    <button class="chip" data-source="arxiv">arXiv</button>
+    <button class="chip" data-source="github">GitHub</button>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">Signal</span>
+    <button class="chip is-active" data-signal="All">All</button>
+    <button class="chip" data-signal="Recommended">Recommended</button>
+    <button class="chip" data-signal="Must-Read">Must-Read</button>
+  </div>
+</div>
+
+<p class="no-matches" id="no-matches" hidden>No stories match the selected filters in today's edition.</p>
+
+<div id="stories">
+  {% for story in digest.stories %}
+  <article class="story" data-source="{{ story.source }}" data-signal="{{ story.signal }}">
+    <p class="story-meta">
+      By {{ story.byline or story.author or "unknown" }}
+      {% if story.hn_url %}<a class="discuss" href="{{ story.hn_url }}" target="_blank" rel="noopener">· Discuss ›</a>{% endif %}
+    </p>
+    {% if story.why_read %}<p class="story-why"><strong>Why read:</strong> {{ story.why_read }}</p>{% endif %}
+    <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h3>
+    {% if story.authors %}<p class="story-authors">Authors: {{ story.authors | join(", ") }}</p>{% endif %}
+    {% if story.summary %}<p class="story-summary">{{ story.summary }}</p>{% endif %}
+    <div class="story-badges">
+      <span class="badge badge-{{ story.source }}">{{ story.source }}</span>
+      {% if story.signal != "All" %}<span class="badge badge-{{ story.signal | lower }}">{{ story.signal }}</span>{% endif %}
+      {% if story.score is not none %}<span class="badge badge-neutral">★ {{ story.score }}</span>{% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const storiesEl = document.getElementById("stories");
+  const cards = Array.from(document.querySelectorAll(".story"));
+  const noMatches = document.getElementById("no-matches");
+  let source = "All";
+  let signal = "All";
+
+  function applyFilters() {
+    let visible = 0;
+    for (const card of cards) {
+      const match = (source === "All" || card.dataset.source === source)
+        && (signal === "All" || card.dataset.signal === signal);
+      card.hidden = !match;
+      if (match) visible++;
+    }
+    noMatches.hidden = visible !== 0;
+  }
+
+  document.getElementById("filters").addEventListener("click", (event) => {
+    const chip = event.target.closest(".chip");
+    if (!chip) return;
+    const group = chip.dataset.source ? "source" : "signal";
+    document.querySelectorAll(`.chip[data-${group}]`).forEach(c => c.classList.remove("is-active"));
+    chip.classList.add("is-active");
+    if (group === "source") source = chip.dataset.source;
+    else signal = chip.dataset.signal;
+    applyFilters();
+  });
+</script>
+{% endblock %}
