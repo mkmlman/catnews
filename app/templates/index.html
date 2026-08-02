@@ -3,9 +3,7 @@
 {% block content %}
 <section class="hero">
   <p class="edition-label">{{ digest.date.strftime("%B %d, %Y") }} · {{ editions }} edition{{ "s" if editions != 1 else "" }}</p>
-  <h1 class="edition-title">news</h1>
   <p class="edition-sub">{{ digest.stories | length }} stories</p>
-  <pre class="cat-logo">{{ cat }}</pre>
 </section>
 
 <div class="filters" id="filters">
