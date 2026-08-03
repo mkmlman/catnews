@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 
-from ..config import REQUEST_TIMEOUT, USER_AGENT
+from ..config import REQUEST_TIMEOUT, USER_AGENT, today_utc
 from ..models import Story
 
 GITHUB_SEARCH_URL = "https://api.github.com/search/repositories"
@@ -12,7 +12,7 @@ MAX_DESC_CHARS = 900
 
 async def fetch_github(client) -> list[Story]:
     """Fetch popular repos created in the last week via the GitHub search API."""
-    since = (date.today() - timedelta(days=7)).isoformat()
+    since = (today_utc() - timedelta(days=7)).isoformat()
     params = {
         "q": f"created:>{since}",
         "sort": "stars",
@@ -20,7 +20,9 @@ async def fetch_github(client) -> list[Story]:
         "per_page": 40,
     }
     headers = {"Accept": "application/vnd.github+json", "User-Agent": USER_AGENT}
-    response = await client.get(GITHUB_SEARCH_URL, params=params, headers=headers, timeout=REQUEST_TIMEOUT)
+    response = await client.get(
+        GITHUB_SEARCH_URL, params=params, headers=headers, timeout=REQUEST_TIMEOUT
+    )
     response.raise_for_status()
     items = response.json().get("items", [])
     return [parse_item(item) for item in items if item.get("full_name")]
@@ -46,6 +48,6 @@ def parse_created_at(value: str | None):
     if not value:
         return None
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return datetime.fromisoformat(value)
     except ValueError:
         return None

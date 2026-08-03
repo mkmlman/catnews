@@ -2,13 +2,16 @@ from __future__ import annotations
 
 from datetime import date
 
-from datetime import date
-
 from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse, Response
+from fastapi.responses import (
+    HTMLResponse,
+    PlainTextResponse,
+    RedirectResponse,
+    Response,
+)
 from fastapi.staticfiles import StaticFiles
 
-from .config import BASE_PATH, BASE_URL, DATA_DIR, SOURCES
+from .config import BASE_PATH, BASE_URL, DATA_DIR, SOURCES, today_utc
 from .models import Digest, SourceSnapshot, Story
 from .render import render_markdown, render_page, render_rss
 from .store import (
@@ -25,14 +28,16 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
 def page(request: Request, name: str, **context) -> HTMLResponse:
-    return HTMLResponse(render_page(name, base_path=BASE_PATH, base_url=BASE_URL, **context))
+    return HTMLResponse(
+        render_page(name, base_path=BASE_PATH, base_url=BASE_URL, **context)
+    )
 
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request) -> HTMLResponse:
     digest = combined_digest(DATA_DIR)
     if digest is None:
-        digest = Digest(date=date.today(), stories=[])
+        digest = Digest(date=today_utc(), stories=[])
     editions = len(load_all_snapshots(DATA_DIR))
     return page(request, "index.html", digest=digest, editions=editions)
 
@@ -49,7 +54,9 @@ def archive_snapshot(request: Request, source: str, day: date) -> HTMLResponse:
         raise HTTPException(status_code=404, detail=f"Unknown source {source!r}.")
     snap = load_snapshot(source, day, DATA_DIR)
     if snap is None:
-        raise HTTPException(status_code=404, detail=f"No snapshot for {source} on {day}.")
+        raise HTTPException(
+            status_code=404, detail=f"No snapshot for {source} on {day}."
+        )
     return page(
         request,
         "snapshot.html",
@@ -83,7 +90,9 @@ def api_source(source: str) -> SourceSnapshot:
 def api_source_day(source: str, day: date) -> SourceSnapshot:
     snap = load_snapshot(source, day, DATA_DIR)
     if snap is None:
-        raise HTTPException(status_code=404, detail=f"No snapshot for {source} on {day}.")
+        raise HTTPException(
+            status_code=404, detail=f"No snapshot for {source} on {day}."
+        )
     return snap
 
 
@@ -91,13 +100,18 @@ def api_source_day(source: str, day: date) -> SourceSnapshot:
 def api_digest() -> SourceSnapshot | dict:
     digest = combined_digest(DATA_DIR)
     if digest is None:
-        raise HTTPException(status_code=404, detail="No snapshots published yet. Run `catnews-fetch` first.")
+        raise HTTPException(
+            status_code=404,
+            detail="No snapshots published yet. Run `catnews-fetch` first.",
+        )
     return digest.model_dump(mode="json")
 
 
 @app.get("/api/stories")
 def api_stories(
-    source: str | None = Query(default=None, pattern="^(hn|arxiv|github|registerspill)$"),
+    source: str | None = Query(
+        default=None, pattern="^(hn|arxiv|github|registerspill)$"
+    ),
 ) -> list[Story]:
     stories = [s for snap in load_all_snapshots(DATA_DIR) for s in snap.stories]
     if source:

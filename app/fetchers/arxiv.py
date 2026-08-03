@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import re
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from html import unescape
 
-from ..config import REQUEST_TIMEOUT, USER_AGENT
+from ..config import REQUEST_TIMEOUT
 from ..models import Story
 
 ARXIV_API_URL = "https://export.arxiv.org/api/query"
@@ -45,11 +44,14 @@ def parse_entry(entry: ET.Element) -> Story | None:
     published = None
     if published_raw:
         try:
-            published = datetime.fromisoformat(published_raw.replace("Z", "+00:00"))
+            published = datetime.fromisoformat(published_raw)
         except ValueError:
             pass
 
-    authors = [a.findtext("atom:name", default="", namespaces=NS).strip() for a in entry.findall("atom:author", NS)]
+    authors = [
+        a.findtext("atom:name", default="", namespaces=NS).strip()
+        for a in entry.findall("atom:author", NS)
+    ]
     authors = [a for a in authors if a]
     summary = unescape(text("summary") or "").strip().replace("\n", " ")
 

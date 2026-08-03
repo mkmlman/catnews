@@ -9,7 +9,12 @@ from app.fetchers.arxiv import parse_entry
 from app.fetchers.github import parse_item
 from app.fetchers.hn import parse_hit
 from app.models import SourceSnapshot, Story
-from app.store import combined_digest, latest_stories_by_source, save_snapshot, site_stats
+from app.store import (
+    combined_digest,
+    latest_stories_by_source,
+    save_snapshot,
+    site_stats,
+)
 from scripts.fetch_digest import due_sources
 
 SAMPLE_HIT = {
@@ -58,7 +63,9 @@ def test_arxiv_parse_entry():
 
     root = ET.fromstring(ARXIV_XML)
     ns = {"atom": "http://www.w3.org/2005/Atom"}
-    story = parse_entry(root.find("atom:entry", ns))
+    entry = root.find("atom:entry", ns)
+    assert entry is not None
+    story = parse_entry(entry)
     assert story is not None
     assert story.source == "arxiv"
     assert story.external_id == "2607.28628v1"
@@ -120,16 +127,26 @@ def test_snapshot_store_roundtrip(tmp_path):
 
 def test_combined_digest_merges_latest_per_source(tmp_path):
     save_snapshot(
-        SourceSnapshot(source="hn", date=date(2026, 8, 1), stories=[Story(source="hn", title="HN1", url="https://a")]),
-        tmp_path,
-    )
-    save_snapshot(
-        SourceSnapshot(source="hn", date=date(2026, 8, 2), stories=[Story(source="hn", title="HN2", url="https://a")]),
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 1),
+            stories=[Story(source="hn", title="HN1", url="https://a")],
+        ),
         tmp_path,
     )
     save_snapshot(
         SourceSnapshot(
-            source="arxiv", date=date(2026, 8, 2), stories=[Story(source="arxiv", title="PAPER", url="https://b")]
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="HN2", url="https://a")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 2),
+            stories=[Story(source="arxiv", title="PAPER", url="https://b")],
         ),
         tmp_path,
     )
@@ -140,7 +157,10 @@ def test_combined_digest_merges_latest_per_source(tmp_path):
 
 def test_registerspill_only_due_on_mondays(tmp_path):
     # 2026-08-03 is a Monday. Snapshot it so it's not a bootstrap fetch.
-    save_snapshot(SourceSnapshot(source="registerspill", date=date(2026, 8, 3), stories=[]), tmp_path)
+    save_snapshot(
+        SourceSnapshot(source="registerspill", date=date(2026, 8, 3), stories=[]),
+        tmp_path,
+    )
 
     tuesday = date(2026, 8, 4)
     monday_next_week = date(2026, 8, 10)

@@ -8,9 +8,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.config import APP_NAME, SOURCES, TAGLINE  # noqa: E402
-from app.render import render_markdown, render_page, render_rss  # noqa: E402
-from app.store import combined_digest, load_all_snapshots, site_stats  # noqa: E402
+from app.config import SOURCES
+from app.render import render_markdown, render_page, render_rss
+from app.store import combined_digest, load_all_snapshots, site_stats
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "app" / "static"
 
@@ -29,13 +29,18 @@ def build_site(
 ) -> None:
     snapshots = load_all_snapshots(data_dir)
     if not snapshots:
-        raise SystemExit("No snapshots found in data/ — run scripts/fetch_digest.py first.")
+        raise SystemExit(
+            "No snapshots found in data/ — run scripts/fetch_digest.py first."
+        )
 
     digest = combined_digest(data_dir)
+    assert digest is not None  # guaranteed: snapshots exist above
 
     # Static assets
     write(out_dir / "static" / "style.css", (STATIC_DIR / "style.css").read_bytes())
-    shutil.copytree(STATIC_DIR / "fonts", out_dir / "static" / "fonts", dirs_exist_ok=True)
+    shutil.copytree(
+        STATIC_DIR / "fonts", out_dir / "static" / "fonts", dirs_exist_ok=True
+    )
 
     # Pages
     write(
@@ -50,7 +55,9 @@ def build_site(
     )
     write(
         out_dir / "archive" / "index.html",
-        render_page("archive.html", base_path=base_path, base_url=base_url, snapshots=snapshots),
+        render_page(
+            "archive.html", base_path=base_path, base_url=base_url, snapshots=snapshots
+        ),
     )
     for snap in snapshots:
         write(
@@ -65,7 +72,12 @@ def build_site(
         )
     write(
         out_dir / "stats" / "index.html",
-        render_page("stats.html", base_path=base_path, base_url=base_url, stats=site_stats(data_dir)),
+        render_page(
+            "stats.html",
+            base_path=base_path,
+            base_url=base_url,
+            stats=site_stats(data_dir),
+        ),
     )
 
     # Feed + machine-readable files
@@ -75,14 +87,22 @@ def build_site(
         write(out_dir / "api" / "stories.md", render_markdown(digest))
 
     api = out_dir / "api"
-    write(api / "sources.json", json.dumps([s.model_dump(mode="json") for s in snapshots], indent=2))
+    write(
+        api / "sources.json",
+        json.dumps([s.model_dump(mode="json") for s in snapshots], indent=2),
+    )
     write(
         api / "stories.json",
-        json.dumps([s.model_dump(mode="json") for snap in snapshots for s in snap.stories], indent=2),
+        json.dumps(
+            [s.model_dump(mode="json") for snap in snapshots for s in snap.stories],
+            indent=2,
+        ),
     )
     write(api / "stats.json", site_stats(data_dir).model_dump_json(indent=2))
 
-    print(f"[catnews] built {len(snapshots)} snapshots ({len(digest.stories)} stories) -> {out_dir}")
+    print(
+        f"[catnews] built {len(snapshots)} snapshots ({len(digest.stories)} stories) -> {out_dir}"
+    )
     print(f"[catnews] base_path={base_path!r} base_url={base_url!r}")
 
 

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 import feedparser
 
-from ..config import REQUEST_TIMEOUT, USER_AGENT
+from ..config import REQUEST_TIMEOUT
 from ..models import Story
 
 FEED_URL = "https://registerspill.thorstenball.com/feed"
@@ -40,9 +40,9 @@ def parse_entry(entry) -> Story | None:
 
     published = None
     if entry.get("published_parsed"):
-        published = datetime(*entry.published_parsed[:6])
+        published = datetime(*entry.published_parsed[:6], tzinfo=UTC)
     elif entry.get("updated_parsed"):
-        published = datetime(*entry.updated_parsed[:6])
+        published = datetime(*entry.updated_parsed[:6], tzinfo=UTC)
 
     external_id = url.rstrip("/").split("/")[-1]
 
@@ -54,5 +54,7 @@ def parse_entry(entry) -> Story | None:
         author=author,
         external_id=external_id,
         published=published,
-        snippet=(snippet[:MAX_SNIPPET_CHARS] + "…") if len(snippet) > MAX_SNIPPET_CHARS else snippet or None,
+        snippet=(snippet[:MAX_SNIPPET_CHARS] + "…")
+        if len(snippet) > MAX_SNIPPET_CHARS
+        else snippet or None,
     )

@@ -11,13 +11,13 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.config import DATA_DIR, REQUEST_TIMEOUT, SOURCES, USER_AGENT  # noqa: E402
-from app.fetchers.arxiv import fetch_arxiv  # noqa: E402
-from app.fetchers.github import fetch_github  # noqa: E402
-from app.fetchers.hn import fetch_hn  # noqa: E402
-from app.fetchers.registerspill import fetch_registerspill  # noqa: E402
-from app.models import SourceSnapshot, Story  # noqa: E402
-from app.store import last_fetched, save_snapshot  # noqa: E402
+from app.config import DATA_DIR, REQUEST_TIMEOUT, SOURCES, USER_AGENT, today_utc
+from app.fetchers.arxiv import fetch_arxiv
+from app.fetchers.github import fetch_github
+from app.fetchers.hn import fetch_hn
+from app.fetchers.registerspill import fetch_registerspill
+from app.models import SourceSnapshot, Story
+from app.store import last_fetched, save_snapshot
 
 FETCHERS = {
     "hn": fetch_hn,
@@ -56,17 +56,26 @@ def apply_curation(stories: list[Story], curation: dict) -> list[Story]:
     return stories
 
 
-async def fetch_one(client, source: str, limit: int, day: date, data_dir: Path) -> SourceSnapshot:
+async def fetch_one(
+    client, source: str, limit: int, day: date, data_dir: Path
+) -> SourceSnapshot:
     fn = FETCHERS[source]
     stories = (await fn(client))[:limit]
     stories = apply_curation(stories, load_curation(day, data_dir))
     return SourceSnapshot(source=source, date=day, stories=stories)
 
 
-async def build(day: date, data_dir: Path, sources: list[str], limits: dict[str, int]) -> list[SourceSnapshot]:
-    async with httpx.AsyncClient(headers={"User-Agent": USER_AGENT}, timeout=REQUEST_TIMEOUT) as client:
+async def build(
+    day: date, data_dir: Path, sources: list[str], limits: dict[str, int]
+) -> list[SourceSnapshot]:
+    async with httpx.AsyncClient(
+        headers={"User-Agent": USER_AGENT}, timeout=REQUEST_TIMEOUT
+    ) as client:
         results = await asyncio.gather(
-            *(fetch_one(client, source, limits[source], day, data_dir) for source in sources),
+            *(
+                fetch_one(client, source, limits[source], day, data_dir)
+                for source in sources
+            ),
             return_exceptions=True,
         )
     snapshots: list[SourceSnapshot] = []
@@ -101,8 +110,15 @@ def due_sources(day: date, data_dir: Path, force: bool = False) -> list[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Fetch per-source digests for catnews.")
-    parser.add_argument("--date", type=date.fromisoformat, default=date.today(), help="Fetch date, YYYY-MM-DD")
+    parser = argparse.ArgumentParser(
+        description="Fetch per-source digests for catnews."
+    )
+    parser.add_argument(
+        "--date",
+        type=date.fromisoformat,
+        default=today_utc(),
+        help="Fetch date, YYYY-MM-DD",
+    )
     parser.add_argument(
         "--no-curation",
         action="store_true",
@@ -114,19 +130,31 @@ def main() -> None:
         default=None,
         help="Cap the number of stories per source (overrides config)",
     )
-    parser.add_argument("--source", default=None, help="Fetch only this source (e.g. hn, registerspill)")
+    parser.add_argument(
+        "--source", default=None, help="Fetch only this source (e.g. hn, registerspill)"
+    )
     parser.add_argument(
         "--all",
         action="store_true",
         help="Fetch every source regardless of cadence",
     )
-    parser.add_argument("--print", action="store_true", help="Print snapshots to stdout instead of saving")
+    parser.add_argument(
+        "--print",
+        action="store_true",
+        help="Print snapshots to stdout instead of saving",
+    )
     args = parser.parse_args()
 
     if args.source and args.source not in FETCHERS:
-        raise SystemExit(f"Unknown source {args.source!r}. Known: {', '.join(FETCHERS)}")
+        raise SystemExit(
+            f"Unknown source {args.source!r}. Known: {', '.join(FETCHERS)}"
+        )
 
-    sources = [args.source] if args.source else due_sources(args.date, DATA_DIR, force=args.all)
+    sources = (
+        [args.source]
+        if args.source
+        else due_sources(args.date, DATA_DIR, force=args.all)
+    )
     if not sources:
         print("[catnews] no sources due today; nothing to fetch.")
         return

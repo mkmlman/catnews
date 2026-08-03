@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import json
 from datetime import date
 from pathlib import Path
 
-from .config import SOURCES
+from .config import SOURCES, today_utc
 from .models import Digest, SiteStats, SourceSnapshot, Story
 
 
@@ -49,7 +48,9 @@ def save_snapshot(snapshot: SourceSnapshot, data_dir: Path) -> Path:
 
 
 def load_all_snapshots(data_dir: Path) -> list[SourceSnapshot]:
-    sources = sorted({path.stem.split("_")[1] for path in data_dir.glob("source_*_*.json")})
+    sources = sorted(
+        {path.stem.split("_")[1] for path in data_dir.glob("source_*_*.json")}
+    )
     snapshots: list[SourceSnapshot] = []
     for source in sources:
         for date_obj in list_snapshot_dates(source, data_dir):
@@ -61,11 +62,17 @@ def load_all_snapshots(data_dir: Path) -> list[SourceSnapshot]:
 
 def latest_stories_by_source(data_dir: Path) -> dict[str, list[Story]]:
     """Latest fetch of every source that has been archived."""
-    return {s.source: s.stories for s in (load_latest_snapshot(s, data_dir) for s in sorted(_sources(data_dir))) if s}
+    return {
+        s.source: s.stories
+        for s in (load_latest_snapshot(s, data_dir) for s in sorted(_sources(data_dir)))
+        if s
+    }
 
 
 def _sources(data_dir: Path) -> list[str]:
-    return sorted({path.stem.split("_")[1] for path in data_dir.glob("source_*_*.json")})
+    return sorted(
+        {path.stem.split("_")[1] for path in data_dir.glob("source_*_*.json")}
+    )
 
 
 def combined_digest(data_dir: Path, day: date | None = None) -> Digest | None:
@@ -77,7 +84,7 @@ def combined_digest(data_dir: Path, day: date | None = None) -> Digest | None:
             stories.extend(snap.stories)
     if not stories:
         return None
-    return Digest(date=day or date.today(), stories=stories)
+    return Digest(date=day or today_utc(), stories=stories)
 
 
 def site_stats(data_dir: Path) -> SiteStats:

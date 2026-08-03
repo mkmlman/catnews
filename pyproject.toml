@@ -22,8 +22,18 @@ dev = [
 catnews-fetch = "scripts.fetch_digest:main"
 
 [dependency-groups]
-dev = ["pytest>=8.0", "httpx"]
+dev = [
+    "pytest>=8.0",
+    "httpx",
+    "ruff>=0.16.1",
+    "ty>=0.0.65",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py313"
+
+[tool.ty]

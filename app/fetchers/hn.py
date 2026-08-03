@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from ..config import REQUEST_TIMEOUT, USER_AGENT
+from ..config import REQUEST_TIMEOUT
 from ..models import Story
 
 ALGOLIA_URL = "https://hn.algolia.com/api/v1/search"
@@ -49,6 +49,6 @@ def parse_created_at(value: str | None):
     if not value:
         return None
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return datetime.fromisoformat(value)
     except ValueError:
         return None

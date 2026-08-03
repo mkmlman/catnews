@@ -58,9 +58,29 @@ jobs:
           echo "PR: ${pr_url}"
           gh pr merge "${branch}" --squash --delete-branch
 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - name: Format (ruff)
+        run: uv run ruff format --check .
+
+      - name: Type check (ty)
+        run: uv run ty check
+
   deploy:
-    needs: archive
-    if: always()
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

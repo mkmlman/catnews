@@ -17,19 +17,30 @@ class Story(BaseModel):
     url: str
     author: str | None = None
     byline: str | None = Field(
-        default=None, description="Short attribution shown next to the source, e.g. the HN submitter"
+        default=None,
+        description="Short attribution shown next to the source, e.g. the HN submitter",
     )
-    external_id: str | None = Field(default=None, description="Native id in the source system")
-    summary: str | None = Field(default=None, description="Short digestible summary of the story")
-    why_read: str | None = Field(default=None, description="Curation note: why this story is worth your time")
-    authors: list[str] = Field(default_factory=list, description="Full author list (arXiv)")
+    external_id: str | None = Field(
+        default=None, description="Native id in the source system"
+    )
+    summary: str | None = Field(
+        default=None, description="Short digestible summary of the story"
+    )
+    why_read: str | None = Field(
+        default=None, description="Curation note: why this story is worth your time"
+    )
+    authors: list[str] = Field(
+        default_factory=list, description="Full author list (arXiv)"
+    )
     published: datetime | None = None
     score: int | None = None
     comments: int | None = None
     hn_url: str | None = None
     points: int | None = None
     num_comments: int | None = None
-    snippet: str | None = Field(default=None, description="Plain-text excerpt of the story")
+    snippet: str | None = Field(
+        default=None, description="Plain-text excerpt of the story"
+    )
 
     def to_markdown(self) -> str:
         """Render the story as a markdown block (matches the /api/story md output)."""

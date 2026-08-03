@@ -70,8 +70,8 @@ uv run python -m http.server 8080 --directory preview
 
 | Trigger | What happens |
 | --- | --- |
-| **Daily 07:00 UTC** (`schedule`) | `archive` job fetches any source whose cadence is due, commits it to a `digest-*` branch, opens a PR, and auto-merges it into `main`; then `deploy` job builds + publishes |
-| **Push to `main`** | `deploy` job only — fetches, builds, publishes (new snapshots are already committed by the PR merge) |
+| **Daily 07:00 UTC** (`schedule`) | `archive` job fetches any source whose cadence is due, commits it to a `digest-*` branch, opens a PR, and auto-merges it into `main`; `lint` runs ruff + ty; then `deploy` job builds + publishes |
+| **Push to `main`** | `lint` (ruff + ty) then `deploy` — fetches, builds, publishes (new snapshots are already committed by the PR merge) |
 | **`workflow_dispatch`** | Full pipeline, same as the daily schedule |
 
 Each run: `scripts/fetch_digest.py` pulls the due sources' stories into `data/` as
@@ -117,6 +117,14 @@ With no flags, only sources whose cadence is due are fetched.
 
 ```sh
 uv run pytest
+```
+
+Lint and type checks (also enforced in CI by the `lint` job, which gates deploys):
+
+```sh
+uv run ruff check .     # lints
+uv run ruff format .    # auto-format (CI runs `--check`)
+uv run ty check         # static type check
 ```
 
 ## Config (env vars)
