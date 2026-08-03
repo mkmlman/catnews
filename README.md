@@ -1,6 +1,10 @@
-# catnews — The Daily Cat
+# catnews
+
+> What's worth reading.
 
 A curated digest of stories from **Hacker News**, **arXiv**, **GitHub**, and **Register Spill**, built with Python + FastAPI.
+
+**Live site:** [https://mkmlman.github.io/catnews/](https://mkmlman.github.io/catnews/)
 
 ```
  /\_/\
