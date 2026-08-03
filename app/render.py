@@ -6,7 +6,7 @@ from pathlib import Path
 from feedgen.feed import FeedGenerator
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from .config import APP_NAME, TAGLINE
+from .config import APP_NAME
 from .models import Digest
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
@@ -25,7 +25,6 @@ def render_page(name: str, *, base_path: str, base_url: str, **context) -> str:
     template = _env.get_template(name)
     return template.render(
         app_name=APP_NAME,
-        tagline=TAGLINE,
         base_path=base_path,
         base_url=base_url,
         cat=CAT,
@@ -36,8 +35,6 @@ def render_page(name: str, *, base_path: str, base_url: str, **context) -> str:
 def render_markdown(digest: Digest) -> str:
     blocks = [
         f"# {APP_NAME} — {digest.date}",
-        "",
-        f"*{TAGLINE}*",
         "",
     ]
     for i, story in enumerate(digest.stories, 1):
@@ -63,7 +60,7 @@ def _aware(dt) -> datetime:
 def render_rss(digest: Digest, base_url: str) -> str:
     fg = FeedGenerator()
     fg.id(f"{base_url}/")
-    fg.title(f"{APP_NAME} — {TAGLINE}")
+    fg.title(APP_NAME)
     fg.link(href=base_url, rel="alternate")
     fg.subtitle("catnews — latest across all sources.")
     fg.language("en")

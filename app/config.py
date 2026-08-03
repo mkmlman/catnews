@@ -5,7 +5,6 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 
 APP_NAME = "catnews"
-TAGLINE = "Curated daily."
 
 
 def today_utc() -> date:

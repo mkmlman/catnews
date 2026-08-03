@@ -7,60 +7,64 @@
   <p class="muted">The digest as JSON, Markdown, or RSS — no auth required.</p>
 </section>
 
-<section class="stat-section">
-  <h2>Endpoints</h2>
+<section class="api-section">
+  <h2 class="api-section-title">Snapshots</h2>
   <ul class="endpoint-list">
     <li>
-      <p class="endpoint-path"><span class="method">GET</span> <a href="{{ base_path }}/api/sources.json">{{ base_path }}/api/sources</a></p>
-      <p class="endpoint-desc">All snapshots, each with its stories</p>
+      <code class="endpoint-code"><span class="method">GET</span> <a href="{{ base_path }}/api/sources.json">{{ base_path }}/api/sources</a></code>
+      <p class="endpoint-desc">All snapshots, each with its stories.</p>
     </li>
     <li>
-      <p class="endpoint-path"><span class="method">GET</span> {{ base_path }}/api/sources/&lt;source&gt;</p>
-      <p class="endpoint-desc">Latest snapshot for a source — hn, arxiv, github, registerspill</p>
+      <code class="endpoint-code"><span class="method">GET</span> {{ base_path }}/api/sources/&lt;source&gt;</code>
+      <p class="endpoint-desc">The latest snapshot for a source — hn, arxiv, github, registerspill.</p>
     </li>
     <li>
-      <p class="endpoint-path"><span class="method">GET</span> {{ base_path }}/api/sources/&lt;source&gt;/&lt;date&gt;</p>
-      <p class="endpoint-desc">A specific day's snapshot for a source (YYYY-MM-DD)</p>
-    </li>
-    <li>
-      <p class="endpoint-path"><span class="method">GET</span> <a href="{{ base_path }}/api/digest.json">{{ base_path }}/api/digest</a></p>
-      <p class="endpoint-desc">Latest story from each source, combined in source order</p>
-    </li>
-    <li>
-      <p class="endpoint-path"><span class="method">GET</span> <a href="{{ base_path }}/api/stories.json">{{ base_path }}/api/stories</a></p>
-      <p class="endpoint-desc">Every story, optionally filtered with <code>?source=hn</code></p>
-    </li>
-    <li>
-      <p class="endpoint-path"><span class="method">GET</span> <a href="{{ base_path }}/api/stats.json">{{ base_path }}/api/stats</a></p>
-      <p class="endpoint-desc">Site statistics — totals, editions, by source</p>
-    </li>
-    <li>
-      <p class="endpoint-path"><span class="method">GET</span> <a href="{{ base_path }}/api/stories.md">{{ base_path }}/api/stories.md</a></p>
-      <p class="endpoint-desc">All stories as a single Markdown document</p>
-    </li>
-    <li>
-      <p class="endpoint-path"><span class="method">GET</span> <a href="{{ base_path }}/feed.rss">{{ base_path }}/feed.rss</a></p>
-      <p class="endpoint-desc">RSS 2.0 feed of the latest combined digest</p>
+      <code class="endpoint-code"><span class="method">GET</span> {{ base_path }}/api/sources/&lt;source&gt;/&lt;date&gt;</code>
+      <p class="endpoint-desc">A specific day's snapshot for a source (YYYY-MM-DD).</p>
     </li>
   </ul>
 </section>
 
-<section class="stat-section">
-  <h2>Two ways to serve it</h2>
+<section class="api-section">
+  <h2 class="api-section-title">Digest &amp; feed</h2>
   <ul class="endpoint-list">
     <li>
-      <p class="endpoint-path"><span class="method">Pages</span> static mirror</p>
-      <p class="endpoint-desc"><code>api/sources.json</code>, <code>api/stories.json</code>, <code>api/digest.json</code>, <code>api/stats.json</code>, <code>api/stories.md</code>, and <code>feed.rss</code> are written at build time — the deployed site needs no server</p>
+      <code class="endpoint-code"><span class="method">GET</span> <a href="{{ base_path }}/api/digest.json">{{ base_path }}/api/digest</a></code>
+      <p class="endpoint-desc">The latest story from each source, combined in source order.</p>
     </li>
     <li>
-      <p class="endpoint-path"><span class="method">Dev</span> live server</p>
-      <p class="endpoint-desc"><code>uvicorn app.main:app</code> serves the full API dynamically, including the per-source routes <code>/api/sources/&lt;source&gt;</code> and <code>/api/sources/&lt;source&gt;/&lt;date&gt;</code>, plus the rendered archive pages <code>/archive/&lt;source&gt;/&lt;date&gt;/</code></p>
+      <code class="endpoint-code"><span class="method">GET</span> <a href="{{ base_path }}/api/stories.json">{{ base_path }}/api/stories</a></code>
+      <p class="endpoint-desc">Every story across all snapshots — filter with <code>?source=hn</code>.</p>
+    </li>
+    <li>
+      <code class="endpoint-code"><span class="method">GET</span> <a href="{{ base_path }}/api/stories.md">{{ base_path }}/api/stories.md</a></code>
+      <p class="endpoint-desc">All stories as a single Markdown document.</p>
+    </li>
+    <li>
+      <code class="endpoint-code"><span class="method">GET</span> <a href="{{ base_path }}/feed.rss">{{ base_path }}/feed.rss</a></code>
+      <p class="endpoint-desc">RSS 2.0 feed of the latest combined digest.</p>
     </li>
   </ul>
 </section>
 
-<section class="stat-section">
-  <h2>Example</h2>
+<section class="api-section">
+  <h2 class="api-section-title">Stats</h2>
+  <ul class="endpoint-list">
+    <li>
+      <code class="endpoint-code"><span class="method">GET</span> <a href="{{ base_path }}/api/stats.json">{{ base_path }}/api/stats</a></code>
+      <p class="endpoint-desc">Site statistics — totals, snapshots, breakdown by source.</p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-section">
+  <h2 class="api-section-title">Serving</h2>
+  <p class="prose">On <strong>GitHub Pages</strong> the API is a <em>static mirror</em> — <code>api/sources.json</code>, <code>api/stories.json</code>, <code>api/digest.json</code>, <code>api/stats.json</code>, <code>api/stories.md</code>, and <code>feed.rss</code> are written at build time, so the deployed site has no server.</p>
+  <p class="prose">The <strong>dev server</strong> (<code>uvicorn app.main:app</code>) serves everything dynamically, including the per-source routes <code>/api/sources/&lt;source&gt;</code>, <code>/api/sources/&lt;source&gt;/&lt;date&gt;</code>, and the rendered archive pages <code>/archive/&lt;source&gt;/&lt;date&gt;/</code>.</p>
+</section>
+
+<section class="api-section">
+  <h2 class="api-section-title">Example</h2>
   <pre class="code-block">$ curl {{ base_url }}/api/sources/hn | head
 {
   "source": "hn",

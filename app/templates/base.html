@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>{% block title %}{{ app_name }} — {{ tagline }}{% endblock %}</title>
+  <title>{% block title %}{{ app_name }}{% endblock %}</title>
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ base_url }}/feed.rss">
   <link rel="stylesheet" href="{{ base_path }}/static/style.css">
   <script>
@@ -33,7 +33,6 @@
       {% block content %}{% endblock %}
     </main>
     <footer class="site-footer">
-      <p class="footer-line">Curated daily.</p>
       <nav class="footer-nav">
         <a href="{{ base_path }}/">Home</a>
         <a href="{{ base_path }}/archive/">Archive</a>

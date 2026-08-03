@@ -22,7 +22,7 @@ from .store import (
     site_stats,
 )
 
-app = FastAPI(title="catnews", description="catnews — curated daily.")
+app = FastAPI(title="catnews", description="catnews — a curated digest.")
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
