@@ -93,10 +93,10 @@ def test_github_parse_item():
 
 def test_registerspill_parse_links():
     body = (
-        "<p>Re-read <a href=\"https://sahillavingia.com/reflecting\">Reflecting on My Failure</a>.</p>"
-        "<p>Met <a href=\"https://x.com/adamwathan\">Adam</a> in person.</p>"
-        "<a href=\"https://x.com/jeremygiffon/status/123\">Grip Strength</a>"
-        "<a href=\"https://substackcdn.com/image/1\">img</a>"
+        '<p>Re-read <a href="https://sahillavingia.com/reflecting">Reflecting on My Failure</a>.</p>'
+        '<p>Met <a href="https://x.com/adamwathan">Adam</a> in person.</p>'
+        '<a href="https://x.com/jeremygiffon/status/123">Grip Strength</a>'
+        '<a href="https://substackcdn.com/image/1">img</a>'
     )
     links = parse_links(body)
     titles = [l.title for l in links]

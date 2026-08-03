@@ -86,7 +86,9 @@ def parse_links(content: str) -> list[CuratedLink]:
     """Extract the links curated inside a post, attributed to their origin sites."""
     links: list[CuratedLink] = []
     seen: set[str] = set()
-    for match in re.finditer(r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', content, re.DOTALL):
+    for match in re.finditer(
+        r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', content, re.DOTALL
+    ):
         if len(links) >= MAX_LINKS:
             break
         url = html.unescape(match.group(1)).strip()
