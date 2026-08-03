@@ -121,6 +121,7 @@ def test_snapshot_store_roundtrip(tmp_path):
     assert stats.total_stories == 2
     assert stats.editions == 1
     assert stats.by_source == {"hn": 2}
+    assert stats.snapshots_by_source == {"hn": 1}
 
     latest = latest_stories_by_source(tmp_path)
     assert [s.title for s in latest["hn"]] == ["A", "B"]

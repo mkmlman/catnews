@@ -4,22 +4,52 @@
 <section class="page-header">
   <a class="back" href="{{ base_path }}/">← All editions</a>
   <h1>Stats</h1>
+  <p class="muted">{{ stats.editions }} snapshot{{ "s" if stats.editions != 1 else "" }}{% if stats.first_edition and stats.last_edition %} · {{ stats.first_edition.strftime("%b %d, %Y") }} → {{ stats.last_edition.strftime("%b %d, %Y") }}{% endif %}</p>
 </section>
+
 <div class="stat-grid">
-  <div class="stat-card"><span class="stat-value">{{ stats.total_stories }}</span><span class="stat-label">Total stories</span></div>
-  <div class="stat-card"><span class="stat-value">{{ stats.editions }}</span><span class="stat-label">Snapshots</span></div>
-  <div class="stat-card"><span class="stat-value">{{ stats.first_edition or "—" }}</span><span class="stat-label">First snapshot</span></div>
-  <div class="stat-card"><span class="stat-value">{{ stats.last_edition or "—" }}</span><span class="stat-label">Last snapshot</span></div>
+  <div class="stat-card">
+    <span class="stat-label">Stories curated</span>
+    <span class="stat-value">{{ stats.total_stories }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Snapshots</span>
+    <span class="stat-value">{{ stats.editions }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">First snapshot</span>
+    <span class="stat-value stat-value--date">{{ stats.first_edition.strftime("%b %d, %Y") if stats.first_edition else "—" }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Latest snapshot</span>
+    <span class="stat-value stat-value--date">{{ stats.last_edition.strftime("%b %d, %Y") if stats.last_edition else "—" }}</span>
+  </div>
 </div>
 
 <section class="stat-section">
   <h2>By source</h2>
   <table class="stat-table">
+    <thead>
+      <tr>
+        <th>Source</th>
+        <th>Snapshots</th>
+        <th>Stories</th>
+        <th>Share</th>
+      </tr>
+    </thead>
     <tbody>
       {% for source, count in stats.by_source.items() %}
       <tr>
-        <td><span class="source-name">{{ source_labels[source] }}</span><span class="badge badge-{{ source }}">{{ source_tags[source] }}</span></td>
+        <td>
+          <span class="source-name">{{ source_labels[source] }}</span>
+          <span class="badge badge-{{ source }}">{{ source_tags[source] }}</span>
+        </td>
+        <td>{{ stats.snapshots_by_source.get(source, 0) }}</td>
         <td>{{ count }}</td>
+        <td class="share-cell">
+          <span class="share-bar"><span class="share-fill" style="width: {{ (count * 100 // stats.total_stories) if stats.total_stories else 0 }}%"></span></span>
+          <span class="share-pct">{{ (count / stats.total_stories * 100) | round(1) if stats.total_stories else 0 }}%</span>
+        </td>
       </tr>
       {% endfor %}
     </tbody>

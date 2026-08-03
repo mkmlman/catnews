@@ -84,3 +84,4 @@ class SiteStats(BaseModel):
     first_edition: date | None
     last_edition: date | None
     by_source: dict[str, int]
+    snapshots_by_source: dict[str, int] = {}

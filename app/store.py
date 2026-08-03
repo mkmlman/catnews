@@ -110,7 +110,9 @@ def site_stats(data_dir: Path) -> SiteStats:
     snapshots = load_all_snapshots(data_dir)
     total = 0
     by_source: dict[str, int] = {}
+    snapshots_by_source: dict[str, int] = {}
     for snap in snapshots:
+        snapshots_by_source[snap.source] = snapshots_by_source.get(snap.source, 0) + 1
         for story in snap.stories:
             total += 1
             by_source[story.source] = by_source.get(story.source, 0) + 1
@@ -121,4 +123,5 @@ def site_stats(data_dir: Path) -> SiteStats:
         first_edition=min(dates) if dates else None,
         last_edition=max(dates) if dates else None,
         by_source=dict(sorted(by_source.items())),
+        snapshots_by_source=dict(sorted(snapshots_by_source.items())),
     )
