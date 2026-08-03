@@ -247,14 +247,14 @@ def test_sources_page_lists_sources(client, tmp_path):
     page = client.get("/sources/")
     assert page.status_code == 200
     assert "Hacker News" in page.text
-    assert "every day" in page.text
+    assert "daily" in page.text
     assert "Register Spill" in page.text
     assert "weekly · Monday" in page.text
 
 
 def test_source_registry_cadences(tmp_path):
     rows = {r["key"]: r for r in source_registry(tmp_path)}
-    assert rows["hn"]["cadence"] == "every day"
+    assert rows["hn"]["cadence"] == "daily"
     assert rows["arxiv"]["cadence"] == "weekly · Monday"
     assert rows["registerspill"]["cadence"] == "weekly · Monday"
     assert rows["hn"]["last_fetched"] is None

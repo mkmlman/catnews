@@ -169,6 +169,23 @@ a:focus-visible, button:focus-visible {
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
+.site-nav .repo-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px;
+  border-bottom: none;
+  border-radius: 999px;
+}
+.site-nav .repo-link svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+}
+.site-nav .repo-link:hover {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-bottom-color: transparent;
+}
 .theme-toggle {
   font-family: var(--mono);
   font-size: 0.95rem;
@@ -662,7 +679,6 @@ a:focus-visible, button:focus-visible {
 }
 .footer-nav a { color: var(--muted); padding-bottom: 2px; border-bottom: 1px solid transparent; transition: color 0.15s, border-color 0.15s; }
 .footer-nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
-.copyright { font-size: 0.75rem; color: var(--faint); margin: 0; }
 
 /* API docs page — Kami editorial */
 .api-section { padding: 30px 0 4px; animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both; }

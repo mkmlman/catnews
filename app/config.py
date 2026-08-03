@@ -74,11 +74,11 @@ WEEKDAYS = (
 
 
 def cadence_label(key: str) -> str:
-    """Human-readable cadence for a source, e.g. 'every day' or 'weekly · Mondays'."""
+    """Human-readable cadence for a source, e.g. 'daily' or 'weekly · Mondays'."""
     cfg = SOURCES[key]
     days = cfg["cadence_days"]
     if days == 1:
-        return "every day"
+        return "daily"
     if (weekday := cfg.get("weekday")) is not None:
         return f"weekly · {WEEKDAYS[weekday]}"
     if days == 7:
