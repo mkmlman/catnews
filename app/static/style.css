@@ -24,6 +24,7 @@
   --badge-hn: #9c4d14;   --badge-hn-bg: #f8e7d2;
   --badge-arxiv: #8a1f18; --badge-arxiv-bg: #f7e2df;
   --badge-github: #3b3e37; --badge-github-bg: #e9e9e2;
+  --badge-registerspill: #20507a; --badge-registerspill-bg: #dfeaf4;
 
   --serif: "Source Serif 4", Charter, "Bitstream Charter", Georgia, "Times New Roman", serif;
   --display: "Fraunces", "Source Serif 4", Charter, Georgia, "Times New Roman", serif;
@@ -53,6 +54,7 @@
   --badge-hn: #f0b177;   --badge-hn-bg: rgba(240, 177, 119, 0.15);
   --badge-arxiv: #f2a7a2; --badge-arxiv-bg: rgba(242, 167, 162, 0.15);
   --badge-github: #c8cbc1; --badge-github-bg: rgba(200, 203, 193, 0.15);
+  --badge-registerspill: #9db9db; --badge-registerspill-bg: rgba(157, 185, 219, 0.15);
 
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 16px 36px -16px rgba(0, 0, 0, 0.65);
   --glow: radial-gradient(900px 380px at 50% -120px, rgba(157, 185, 219, 0.08), transparent 70%);
@@ -335,6 +337,7 @@ a:focus-visible, button:focus-visible {
 .badge-hn { color: var(--badge-hn); background: var(--badge-hn-bg); }
 .badge-arxiv { color: var(--badge-arxiv); background: var(--badge-arxiv-bg); }
 .badge-github { color: var(--badge-github); background: var(--badge-github-bg); }
+.badge-registerspill { color: var(--badge-registerspill); background: var(--badge-registerspill-bg); }
 
 .story-score {
   font-family: var(--mono);
@@ -441,6 +444,17 @@ a:focus-visible, button:focus-visible {
   margin: 18px 0 6px;
 }
 .muted { color: var(--muted); font-style: italic; }
+
+.archive-source { padding: 26px 0 6px; }
+.archive-source + .archive-source { border-top: 1px solid var(--line); }
+.archive-source h2 {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 4px;
+}
 
 .archive-list { list-style: none; padding: 16px 0 0; margin: 0; }
 .archive-list li {

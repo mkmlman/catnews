@@ -7,9 +7,9 @@
 </section>
 <div class="stat-grid">
   <div class="stat-card"><span class="stat-value">{{ stats.total_stories }}</span><span class="stat-label">Total stories</span></div>
-  <div class="stat-card"><span class="stat-value">{{ stats.editions }}</span><span class="stat-label">Editions</span></div>
-  <div class="stat-card"><span class="stat-value">{{ stats.first_edition or "—" }}</span><span class="stat-label">First edition</span></div>
-  <div class="stat-card"><span class="stat-value">{{ stats.last_edition or "—" }}</span><span class="stat-label">Last edition</span></div>
+  <div class="stat-card"><span class="stat-value">{{ stats.editions }}</span><span class="stat-label">Snapshots</span></div>
+  <div class="stat-card"><span class="stat-value">{{ stats.first_edition or "—" }}</span><span class="stat-label">First snapshot</span></div>
+  <div class="stat-card"><span class="stat-value">{{ stats.last_edition or "—" }}</span><span class="stat-label">Last snapshot</span></div>
 </div>
 
 <section class="stat-section">
@@ -18,17 +18,6 @@
     <tbody>
       {% for source, count in stats.by_source.items() %}
       <tr><td>{{ source }}</td><td>{{ count }}</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</section>
-
-<section class="stat-section">
-  <h2>By signal</h2>
-  <table class="stat-table">
-    <tbody>
-      {% for signal, count in stats.by_signal.items() %}
-      <tr><td>{{ signal }}</td><td>{{ count }}</td></tr>
       {% endfor %}
     </tbody>
   </table>

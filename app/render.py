@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from pathlib import Path
 
 from feedgen.feed import FeedGenerator
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from .config import APP_NAME, TAGLINE
+from .config import APP_NAME, SOURCES, TAGLINE
 from .models import Digest
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
@@ -41,8 +42,6 @@ def render_markdown(digest: Digest) -> str:
         blocks.append(f"### {i}. {story.title}")
         blocks.append("")
         blocks.append(f"- **Source:** {story.source} · **By:** {story.byline or story.author or 'unknown'}")
-        if story.signal != "All":
-            blocks.append(f"- **Signal:** {story.signal}")
         if story.why_read:
             blocks.append(f"- **Why read:** {story.why_read}")
         blocks.append(f"- **Link:** {story.url}")
@@ -50,12 +49,19 @@ def render_markdown(digest: Digest) -> str:
     return "\n".join(blocks)
 
 
+def _aware(dt) -> datetime:
+    """Ensure a datetime carries tzinfo (feedgen requires aware datetimes)."""
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
 def render_rss(digest: Digest, base_url: str) -> str:
     fg = FeedGenerator()
     fg.id(f"{base_url}/")
     fg.title(f"{APP_NAME} — {TAGLINE}")
     fg.link(href=base_url, rel="alternate")
-    fg.subtitle(f"catnews — {digest.date} edition. Curated daily.")
+    fg.subtitle(f"catnews — latest across all sources.")
     fg.language("en")
 
     for story in digest.stories:
@@ -65,7 +71,7 @@ def render_rss(digest: Digest, base_url: str) -> str:
         entry.link(href=story.url)
         entry.author({"name": story.byline or story.author or "unknown"})
         if story.published:
-            entry.published(story.published)
+            entry.published(_aware(story.published))
         parts = []
         if story.why_read:
             parts.append(f"<p><strong>Why read:</strong> {story.why_read}</p>")

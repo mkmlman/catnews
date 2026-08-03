@@ -8,10 +8,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.config import APP_NAME, TAGLINE  # noqa: E402
-from app.models import Digest  # noqa: E402
+from app.config import APP_NAME, SOURCES, TAGLINE  # noqa: E402
 from app.render import render_markdown, render_page, render_rss  # noqa: E402
-from app.store import load_all, site_stats  # noqa: E402
+from app.store import combined_digest, load_all_snapshots, site_stats  # noqa: E402
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "app" / "static"
 
@@ -28,11 +27,11 @@ def build_site(
     base_path: str,
     base_url: str,
 ) -> None:
-    digests = load_all(data_dir)
-    if not digests:
-        raise SystemExit("No digests found in data/ — run scripts/fetch_digest.py first.")
+    snapshots = load_all_snapshots(data_dir)
+    if not snapshots:
+        raise SystemExit("No snapshots found in data/ — run scripts/fetch_digest.py first.")
 
-    latest = digests[-1]
+    digest = combined_digest(data_dir)
 
     # Static assets
     write(out_dir / "static" / "style.css", (STATIC_DIR / "style.css").read_bytes())
@@ -45,14 +44,13 @@ def build_site(
             "index.html",
             base_path=base_path,
             base_url=base_url,
-            digest=latest,
-            editions=len(digests),
-            stories_json=latest.model_dump_json(),
+            digest=digest,
+            editions=len(snapshots),
         ),
     )
     write(
         out_dir / "archive" / "index.html",
-        render_page("archive.html", base_path=base_path, base_url=base_url, digests=digests),
+        render_page("archive.html", base_path=base_path, base_url=base_url, snapshots=snapshots),
     )
     write(
         out_dir / "stats" / "index.html",
@@ -60,20 +58,20 @@ def build_site(
     )
 
     # Feed + machine-readable files
-    write(out_dir / "feed.rss", render_rss(latest, f"{base_url}/"))
+    if digest:
+        write(out_dir / "feed.rss", render_rss(digest, f"{base_url}/"))
+        write(out_dir / "api" / "digest.json", digest.model_dump_json(indent=2))
+        write(out_dir / "api" / "stories.md", render_markdown(digest))
 
     api = out_dir / "api"
-    write(api / "digest.json", latest.model_dump_json(indent=2))
-    for digest in digests:
-        write(api / f"digest_{digest.date.isoformat()}.json", digest.model_dump_json(indent=2))
+    write(api / "sources.json", json.dumps([s.model_dump(mode="json") for s in snapshots], indent=2))
     write(
         api / "stories.json",
-        json.dumps([s.model_dump(mode="json") for d in digests for s in d.stories], indent=2),
+        json.dumps([s.model_dump(mode="json") for snap in snapshots for s in snap.stories], indent=2),
     )
     write(api / "stats.json", site_stats(data_dir).model_dump_json(indent=2))
-    write(api / "stories.md", render_markdown(latest))
 
-    print(f"[catnews] built {len(digests)} editions ({sum(len(d.stories) for d in digests)} stories) -> {out_dir}")
+    print(f"[catnews] built {len(snapshots)} snapshots ({len(digest.stories)} stories) -> {out_dir}")
     print(f"[catnews] base_path={base_path!r} base_url={base_url!r}")
 
 
@@ -83,7 +81,7 @@ def main() -> None:
         "--data-dir",
         type=Path,
         default=None,
-        help="Directory holding digest_*.json (default: ./data)",
+        help="Directory holding source_*.json (default: ./data)",
     )
     parser.add_argument(
         "--out",

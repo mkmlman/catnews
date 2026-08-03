@@ -15,8 +15,32 @@ DATA_DIR = Path(os.environ.get("CATNEWS_DATA_DIR", Path(__file__).resolve().pare
 USER_AGENT = "catnews/0.1 (curated digest bot)"
 REQUEST_TIMEOUT = 15.0
 
-DIGEST_LIMITS = {
-    "hn": int(os.environ.get("CATNEWS_LIMIT_HN", "25")),
-    "arxiv": int(os.environ.get("CATNEWS_LIMIT_ARXIV", "15")),
-    "github": int(os.environ.get("CATNEWS_LIMIT_GITHUB", "15")),
+# Each source is fetched independently on its own cadence and archived as a
+# separate snapshot. cadence_days = minimum days between fetches.
+SOURCES: dict[str, dict] = {
+    "hn": {
+        "label": "Hacker News",
+        "cadence_days": int(os.environ.get("CATNEWS_CADENCE_HN", "2")),
+        "limit": int(os.environ.get("CATNEWS_LIMIT_HN", "25")),
+    },
+    "arxiv": {
+        "label": "arXiv",
+        "cadence_days": int(os.environ.get("CATNEWS_CADENCE_ARXIV", "7")),
+        "limit": int(os.environ.get("CATNEWS_LIMIT_ARXIV", "15")),
+    },
+    "github": {
+        "label": "GitHub",
+        "cadence_days": int(os.environ.get("CATNEWS_CADENCE_GITHUB", "1")),
+        "limit": int(os.environ.get("CATNEWS_LIMIT_GITHUB", "15")),
+    },
+    "registerspill": {
+        "label": "Register Spill",
+        "cadence_days": int(os.environ.get("CATNEWS_CADENCE_REGISTERSPILL", "7")),
+        "limit": int(os.environ.get("CATNEWS_LIMIT_REGISTERSPILL", "10")),
+        # Fetch only on the preferred weekday (0 = Monday). The daily 07:00 UTC
+        # schedule then naturally lands the weekly fetch on Monday mornings.
+        "weekday": 0,
+    },
 }
+
+SOURCE_LABELS: dict[str, str] = {k: v["label"] for k, v in SOURCES.items()}

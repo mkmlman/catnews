@@ -2,7 +2,7 @@
 {% block title %}{{ app_name }} — {{ digest.date.strftime("%A, %B %d, %Y") }}{% endblock %}
 {% block content %}
 <section class="hero">
-  <p class="edition-label">{{ digest.date.strftime("%B %d, %Y") }} · {{ editions }} edition{{ "s" if editions != 1 else "" }}</p>
+  <p class="edition-label">{{ digest.date.strftime("%B %d, %Y") }} · {{ editions }} snapshot{{ "s" if editions != 1 else "" }}</p>
   <p class="edition-sub">{{ digest.stories | length }} stories</p>
 </section>
 
@@ -13,10 +13,11 @@
     <button class="chip" data-source="hn">HN</button>
     <button class="chip" data-source="arxiv">arXiv</button>
     <button class="chip" data-source="github">GitHub</button>
+    <button class="chip" data-source="registerspill">Register Spill</button>
   </div>
 </div>
 
-<p class="no-matches" id="no-matches" hidden>No stories match the selected filters in today's edition.</p>
+<p class="no-matches" id="no-matches" hidden>No stories match the selected filters.</p>
 
 <div class="stories" id="stories">
   {% for story in digest.stories %}
@@ -47,6 +48,7 @@
 <script>
   const cards = Array.from(document.querySelectorAll(".story"));
   const noMatches = document.getElementById("no-matches");
+  const chips = Array.from(document.querySelectorAll(".chip"));
   let source = "All";
 
   function applyFilters() {
@@ -59,13 +61,23 @@
     noMatches.hidden = visible !== 0;
   }
 
+  function setActive(value) {
+    for (const chip of chips) {
+      chip.classList.toggle("is-active", chip.dataset.source === value);
+    }
+  }
+
   document.getElementById("filters").addEventListener("click", (event) => {
     const chip = event.target.closest(".chip");
     if (!chip) return;
-    document.querySelectorAll(".chip").forEach(c => c.classList.remove("is-active"));
-    chip.classList.add("is-active");
     source = chip.dataset.source;
+    setActive(source);
     applyFilters();
   });
+
+  if (location.hash === "#weekly") {
+    const rs = chips.find((c) => c.dataset.source === "registerspill");
+    if (rs) rs.click();
+  }
 </script>
 {% endblock %}

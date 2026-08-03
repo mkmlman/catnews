@@ -1,6 +1,6 @@
 # catnews — The Daily Cat
 
-A curated digest of stories from **Hacker News**, **arXiv**, and **GitHub**, built with Python + FastAPI.
+A curated digest of stories from **Hacker News**, **arXiv**, **GitHub**, and **Register Spill**, built with Python + FastAPI.
 
 ```
  /\_/\
@@ -10,35 +10,40 @@ A curated digest of stories from **Hacker News**, **arXiv**, and **GitHub**, bui
 
 ## Features
 
-- **Daily digest** of top HN front-page stories, fresh arXiv cs papers, and popular new GitHub repos.
-- **Client-side filtering** by source (All / HN / arXiv / GitHub) and signal (All / Recommended / Must-Read).
-- **Archive** and **Stats** pages.
-- **APIs**: JSON (`/api/digest`, `/api/stories`, `/api/stats`), **Markdown** (`/api/stories.md`), and **RSS** (`/feed.rss`).
-- **Curation** hooks to mark stories as *Recommended* / *Must-Read* and add *"Why read"* notes.
+- **Single feed with filters** — every source's latest stories in one grid, filtered
+  client-side by source (All / HN / arXiv / GitHub / Register Spill).
+  Each source is fetched on its own cadence and archived independently, so a weekly
+  source (Register Spill) stays readable all week.
+- **Archive** and **Stats** pages, per-source snapshots.
+- **APIs**: JSON (`/api/sources`, `/api/digest`, `/api/stories`, `/api/stats`), **Markdown** (`/api/stories.md`), and **RSS** (`/feed.rss`).
+- **Curation** hooks to add *"Why read"* notes to stories.
 
 ## Quickstart
 
 ```sh
 uv sync                       # install deps
-uv run python scripts/fetch_digest.py   # build today's digest -> data/digest_YYYY-MM-DD.json
-uv run uvicorn app.main:app --reload    # serve on http://localhost:8000 (dev server)
+uv run python scripts/fetch_digest.py --all   # fetch every source -> data/source_<name>_<date>.json
+uv run uvicorn app.main:app --reload          # serve on http://localhost:8000 (dev server)
 ```
 
 ## How stories are selected
 
-Every digest is pulled fresh from three sources (`app/fetchers/`), each capped by
-`CATNEWS_LIMIT_*`, then round-robin interleaved so the edition mixes all three:
+Each source is fetched independently and archived as its own snapshot
+(`data/source_<name>_<date>.json`), driven by `app/fetchers/`. A source is only
+re-fetched when its cadence has elapsed (`due_sources()` in `scripts/fetch_digest.py`):
 
-| Source | Criteria | Requested | Kept |
+| Source | Criteria | Cadence | Limit |
 | --- | --- | --- | --- |
-| **Hacker News** | Anything currently on the HN front page (`tags=front_page` via Algolia) | 60 | 25 |
-| **arXiv** | Latest papers in `cs.AI cs.CL cs.LG cs.SE cs.DB cs.CR cs.DC cs.NE`, sorted by submit date, newest first | 40 | 15 |
-| **GitHub** | Repos created in the last 7 days, sorted by most stars (`search/repositories`) | 40 | 15 |
+| **Hacker News** | Anything currently on the HN front page (`tags=front_page` via Algolia) | 2 days | 25 |
+| **arXiv** | Latest papers in `cs.AI cs.CL cs.LG cs.SE cs.DB cs.CR cs.DC cs.NE`, sorted by submit date, newest first | weekly | 15 |
+| **GitHub** | Repos created in the last 7 days, sorted by most stars (`search/repositories`) | daily | 15 |
+| **Register Spill** | Joy & Curiosity series posts (Substack RSS, filtered by `joy-and-curiosity-` slug) | weekly, Mondays | 10 |
 
-- A source that fails (network error, rate limit) is skipped — the other sources still
-  produce the digest.
-- These are the *raw* pull rules; see **Curation** below to promote stories to
-  *Recommended* / *Must-Read* and add "Why read" notes on top of them.
+- A source that fails (network error, rate limit) is skipped — the others still produce snapshots.
+- Register Spill has a preferred weekday (Monday): it is only fetched on Mondays, so the
+  daily 07:00 UTC schedule lands its weekly snapshot on Monday morning and the section
+  stays readable for the rest of the week.
+- These are the *raw* pull rules; see **Curation** below to add "Why read" notes on top of them.
 
 ## Static site (GitHub Pages)
 
@@ -50,10 +55,12 @@ uv run python scripts/build_site.py --base-path /catnews --base-url https://mkml
 ```
 
 This renders `site/` with plain HTML pages, `feed.rss`, and static JSON/Markdown API files
-(`api/digest.json`, `api/stories.json`, `api/stories.md`, ...). Preview it locally:
+(`api/sources.json`, `api/stories.json`, `api/digest.json`, `api/stats.json`, ...). Preview it locally —
+because the pages are built for the `/catnews` path, serve a folder that maps `/catnews` → `site/`:
 
 ```sh
-uv run python -m http.server 8080 --directory site
+mkdir -p preview && ln -sfn "$PWD/site" preview/catnews
+uv run python -m http.server 8080 --directory preview
 # then visit http://localhost:8080/catnews/
 ```
 
@@ -63,16 +70,16 @@ uv run python -m http.server 8080 --directory site
 
 | Trigger | What happens |
 | --- | --- |
-| **Daily 07:00 UTC** (`schedule`) | `archive` job fetches today's digest, commits it to a `digest-*` branch, opens a PR, and auto-merges it into `main`; then `deploy` job builds + publishes |
-| **Push to `main`** | `deploy` job only — fetches, builds, publishes (the digest is already committed by the PR merge) |
+| **Daily 07:00 UTC** (`schedule`) | `archive` job fetches any source whose cadence is due, commits it to a `digest-*` branch, opens a PR, and auto-merges it into `main`; then `deploy` job builds + publishes |
+| **Push to `main`** | `deploy` job only — fetches, builds, publishes (new snapshots are already committed by the PR merge) |
 | **`workflow_dispatch`** | Full pipeline, same as the daily schedule |
 
-Each run: `scripts/fetch_digest.py` pulls the day's stories into `data/`,
-`scripts/build_site.py` renders `site/`, and `actions/deploy-pages` publishes
-to GitHub Pages.
+Each run: `scripts/fetch_digest.py` pulls the due sources' stories into `data/` as
+per-source snapshots, `scripts/build_site.py` renders `site/`, and `actions/deploy-pages`
+publishes to GitHub Pages.
 
 The JSON "API" endpoints become static files, so links change accordingly, e.g.
-`/api/digest` → `/api/digest.json` and `/api/digest/{date}` → `/api/digest_{date}.json`.
+`/api/sources` → `/api/sources.json`.
 
 ## Curation
 
@@ -82,7 +89,6 @@ To curate a day, create `data/curation_YYYY-MM-DD.json`:
 {
   "stories": {
     "hn:49138188": {
-      "signal": "Must-Read",
       "why_read": "A systematic approach to docs. Read this before writing your next one."
     }
   }
@@ -94,14 +100,18 @@ Keys are `"<source>:<external_id>"` (HN objectID, arXiv id, GitHub `owner/repo`)
 ## CLI
 
 ```
-usage: catnews-fetch [-h] [--date YYYY-MM-DD] [--no-curation] [--limit N] [--print]
+usage: catnews-fetch [-h] [--date YYYY-MM-DD] [--no-curation] [--limit N] [--source S] [--all] [--print]
 
 positional arguments:
   --date        digest date (default: today)
   --no-curation skip applying curation overrides
   --limit N     cap stories per source
+  --source S    fetch only this source (hn | arxiv | github | registerspill)
+  --all         fetch every source regardless of cadence
   --print       print JSON instead of saving
 ```
+
+With no flags, only sources whose cadence is due are fetched.
 
 ## Tests
 
@@ -114,8 +124,10 @@ uv run pytest
 | Var | Default | Purpose |
 | --- | --- | --- |
 | `CATNEWS_BASE_URL` | `http://localhost:8000` | Canonical URL used in RSS links |
-| `CATNEWS_DATA_DIR` | `./data` | Where digest JSON lives |
-| `CATNEWS_LIMIT_HN` / `_ARXIV` / `_GITHUB` | 25 / 15 / 15 | Per-source digest caps |
+| `CATNEWS_DATA_DIR` | `./data` | Where snapshots live (`source_<name>_<date>.json`) |
+| `CATNEWS_CADENCE_HN` / `_ARXIV` / `_GITHUB` / `_REGISTERSPILL` | 2 / 7 / 1 / 7 | Min days between fetches per source |
+| `CATNEWS_LIMIT_HN` / `_ARXIV` / `_GITHUB` / `_REGISTERSPILL` | 25 / 15 / 15 / 10 | Per-source story caps |
+| `CATNEWS_BASE_PATH` | `` (root) | URL prefix for the dev server (`` for localhost, `/catnews` for Pages) |
 
 ## Repo ops (how GitHub is configured)
 

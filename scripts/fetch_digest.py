@@ -11,19 +11,26 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.config import DATA_DIR, DIGEST_LIMITS, REQUEST_TIMEOUT, USER_AGENT
-from app.fetchers.arxiv import fetch_arxiv
-from app.fetchers.github import fetch_github
-from app.fetchers.hn import fetch_hn
-from app.models import Digest, Story
+from app.config import DATA_DIR, REQUEST_TIMEOUT, SOURCES, USER_AGENT  # noqa: E402
+from app.fetchers.arxiv import fetch_arxiv  # noqa: E402
+from app.fetchers.github import fetch_github  # noqa: E402
+from app.fetchers.hn import fetch_hn  # noqa: E402
+from app.fetchers.registerspill import fetch_registerspill  # noqa: E402
+from app.models import SourceSnapshot, Story  # noqa: E402
+from app.store import last_fetched, save_snapshot  # noqa: E402
 
-FETCHERS = {"hn": fetch_hn, "arxiv": fetch_arxiv, "github": fetch_github}
+FETCHERS = {
+    "hn": fetch_hn,
+    "arxiv": fetch_arxiv,
+    "github": fetch_github,
+    "registerspill": fetch_registerspill,
+}
 
 
 def load_curation(day: date, data_dir: Path) -> dict:
     """Load optional curation overrides from data/curation_YYYY-MM-DD.json.
 
-    Shape: {"stories": {"<source>:<external_id>": {"signal": "Must-Read", "why_read": "..."}}}
+    Shape: {"stories": {"<source>:<external_id>": {"why_read": "...", "summary": "..."}}}
     """
     path = data_dir / f"curation_{day.isoformat()}.json"
     if not path.exists():
@@ -42,8 +49,6 @@ def apply_curation(stories: list[Story], curation: dict) -> list[Story]:
         overrides = curation.get(key) or curation.get(story.url)
         if not overrides:
             continue
-        if "signal" in overrides:
-            story.signal = overrides["signal"]
         if "why_read" in overrides:
             story.why_read = overrides["why_read"]
         if "summary" in overrides:
@@ -51,35 +56,53 @@ def apply_curation(stories: list[Story], curation: dict) -> list[Story]:
     return stories
 
 
-def interleave(stories_by_source: dict[str, list[Story]]) -> list[Story]:
-    """Round-robin across sources so the digest mixes HN, arXiv, and GitHub."""
-    result: list[Story] = []
-    queues = {k: list(v) for k, v in stories_by_source.items()}
-    while any(queues.values()):
-        for source in queues:
-            if queues[source]:
-                result.append(queues[source].pop(0))
-    return result
+async def fetch_one(client, source: str, limit: int, day: date, data_dir: Path) -> SourceSnapshot:
+    fn = FETCHERS[source]
+    stories = (await fn(client))[:limit]
+    stories = apply_curation(stories, load_curation(day, data_dir))
+    return SourceSnapshot(source=source, date=day, stories=stories)
 
 
-async def build(day: date, data_dir: Path, limits: dict[str, int], apply_curation_file: bool) -> Digest:
+async def build(day: date, data_dir: Path, sources: list[str], limits: dict[str, int]) -> list[SourceSnapshot]:
     async with httpx.AsyncClient(headers={"User-Agent": USER_AGENT}, timeout=REQUEST_TIMEOUT) as client:
-        by_source: dict[str, list[Story]] = {}
-        for source, fn in FETCHERS.items():
-            try:
-                by_source[source] = (await fn(client))[: limits.get(source, 50)]
-            except Exception as exc:  # noqa: BLE001 - one source failing shouldn't kill the digest
-                print(f"[catnews] {source} fetch failed: {exc}")
-                by_source[source] = []
-    stories = interleave(by_source)
-    if apply_curation_file:
-        stories = apply_curation(stories, load_curation(day, data_dir))
-    return Digest(date=day, stories=stories)
+        results = await asyncio.gather(
+            *(fetch_one(client, source, limits[source], day, data_dir) for source in sources),
+            return_exceptions=True,
+        )
+    snapshots: list[SourceSnapshot] = []
+    for source, result in zip(sources, results):
+        if isinstance(result, BaseException):
+            print(f"[catnews] {source} fetch failed: {result}")
+            continue
+        snapshots.append(result)
+    return snapshots
+
+
+def due_sources(day: date, data_dir: Path, force: bool = False) -> list[str]:
+    """Sources that haven't been fetched within their cadence (or any if force)."""
+    if force:
+        return list(SOURCES)
+    due: list[str] = []
+    for source, meta in SOURCES.items():
+        last = last_fetched(source, data_dir)
+        if last is None:
+            due.append(source)
+            continue
+        elapsed = (day - last).days
+        if elapsed < meta["cadence_days"]:
+            continue
+        # Sources with a preferred weekday (e.g. Register Spill on Mondays)
+        # only run on that weekday, otherwise they'd drift off schedule.
+        weekday = meta.get("weekday")
+        if weekday is not None and day.weekday() != weekday:
+            continue
+        due.append(source)
+    return due
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Build a day's digest for catnews.")
-    parser.add_argument("--date", type=date.fromisoformat, default=date.today(), help="Digest date, YYYY-MM-DD")
+    parser = argparse.ArgumentParser(description="Fetch per-source digests for catnews.")
+    parser.add_argument("--date", type=date.fromisoformat, default=date.today(), help="Fetch date, YYYY-MM-DD")
     parser.add_argument(
         "--no-curation",
         action="store_true",
@@ -91,23 +114,33 @@ def main() -> None:
         default=None,
         help="Cap the number of stories per source (overrides config)",
     )
-    parser.add_argument("--print", action="store_true", help="Print the digest to stdout instead of saving")
+    parser.add_argument("--source", default=None, help="Fetch only this source (e.g. hn, registerspill)")
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Fetch every source regardless of cadence",
+    )
+    parser.add_argument("--print", action="store_true", help="Print snapshots to stdout instead of saving")
     args = parser.parse_args()
 
-    limits = {k: (args.limit or v) for k, v in DIGEST_LIMITS.items()}
-    digest = asyncio.run(build(args.date, DATA_DIR, limits, apply_curation_file=not args.no_curation))
+    if args.source and args.source not in FETCHERS:
+        raise SystemExit(f"Unknown source {args.source!r}. Known: {', '.join(FETCHERS)}")
 
-    if args.print:
-        print(digest.model_dump_json(indent=2))
+    sources = [args.source] if args.source else due_sources(args.date, DATA_DIR, force=args.all)
+    if not sources:
+        print("[catnews] no sources due today; nothing to fetch.")
         return
 
-    path = save_digest(digest, DATA_DIR)
-    print(f"[catnews] saved {len(digest.stories)} stories to {path}")
-    for source, count in digest.stats.items():
-        print(f"  {source:<6} {count}")
+    limits = {source: (args.limit or SOURCES[source]["limit"]) for source in sources}
+    snapshots = asyncio.run(build(args.date, DATA_DIR, sources, limits))
 
+    if args.print:
+        print(json.dumps([s.model_dump(mode="json") for s in snapshots], indent=2))
+        return
 
-from app.store import save_digest  # noqa: E402
+    for snap in snapshots:
+        path = save_snapshot(snap, DATA_DIR)
+        print(f"[catnews] saved {snap.source}: {len(snap.stories)} stories -> {path}")
 
 
 if __name__ == "__main__":

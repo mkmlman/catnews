@@ -22,7 +22,6 @@ class Story(BaseModel):
     external_id: str | None = Field(default=None, description="Native id in the source system")
     summary: str | None = Field(default=None, description="Short digestible summary of the story")
     why_read: str | None = Field(default=None, description="Curation note: why this story is worth your time")
-    signal: str = Field(default="All", description="All | Recommended | Must-Read")
     authors: list[str] = Field(default_factory=list, description="Full author list (arXiv)")
     published: datetime | None = None
     score: int | None = None
@@ -47,7 +46,7 @@ class Story(BaseModel):
 
 
 class Digest(BaseModel):
-    """One day's edition of the digest."""
+    """One day's edition of the digest (legacy: combined sources)."""
 
     date: date
     stories: list[Story]
@@ -60,10 +59,17 @@ class Digest(BaseModel):
         return counts
 
 
+class SourceSnapshot(BaseModel):
+    """One fetch of a single source, archived under data/source_<name>_<date>.json."""
+
+    source: str
+    date: date
+    stories: list[Story]
+
+
 class SiteStats(BaseModel):
     total_stories: int
     editions: int
     first_edition: date | None
     last_edition: date | None
     by_source: dict[str, int]
-    by_signal: dict[str, int]

@@ -2,16 +2,23 @@
 {% block title %}Archive — {{ app_name }}{% endblock %}
 {% block content %}
 <section class="page-header">
-  <a class="back" href="{{ base_path }}/">← All editions</a>
+  <a class="back" href="{{ base_path }}/">← Home</a>
   <h1>Archive</h1>
-  <p class="muted">{{ digests | length }} editions published</p>
+  <p class="muted">{{ snapshots | length }} snapshots · by source</p>
 </section>
-<ul class="archive-list">
-  {% for digest in digests | reverse %}
-  <li>
-    <a href="{{ base_path }}/api/digest_{{ digest.date.isoformat() }}.json">{{ digest.date.strftime("%B %d, %Y") }}</a>
-    <span class="muted">{{ digest.stories | length }} stories</span>
-  </li>
-  {% endfor %}
-</ul>
+
+{% set sources = snapshots | map(attribute="source") | unique | list %}
+{% for source in sources %}
+<section class="archive-source">
+  <h2>{{ source }}</h2>
+  <ul class="archive-list">
+    {% for snap in snapshots if snap.source == source %}
+    <li>
+      <a href="{{ base_path }}/api/sources/{{ snap.source }}/{{ snap.date.isoformat() }}.json">{{ snap.date.strftime("%B %d, %Y") }}</a>
+      <span class="muted">{{ snap.stories | length }} stories</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endfor %}
 {% endblock %}

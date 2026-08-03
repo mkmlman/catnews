@@ -5,12 +5,12 @@ from datetime import date
 import pytest
 from fastapi.testclient import TestClient
 
-from app.config import DATA_DIR
 from app.fetchers.arxiv import parse_entry
 from app.fetchers.github import parse_item
 from app.fetchers.hn import parse_hit
-from app.models import Digest, Story
-from app.store import save_digest, site_stats
+from app.models import SourceSnapshot, Story
+from app.store import combined_digest, latest_stories_by_source, save_snapshot, site_stats
+from scripts.fetch_digest import due_sources
 
 SAMPLE_HIT = {
     "objectID": "49138188",
@@ -81,38 +81,76 @@ def test_github_parse_item():
     assert story.score == 9999
 
 
-def test_story_markdown_and_signal():
+def test_story_markdown_and_why_read():
     story = Story(
         source="hn",
         title="T",
         url="https://example.com",
         byline="alice",
         why_read="Short.",
-        signal="Must-Read",
     )
     md = story.to_markdown()
     assert "**Why read:** Short." in md
     assert "## [T](https://example.com)" in md
 
 
-def test_digest_stats_and_store_roundtrip(tmp_path):
-    digest = Digest(
+def test_snapshot_store_roundtrip(tmp_path):
+    snap = SourceSnapshot(
+        source="hn",
         date=date(2026, 8, 2),
         stories=[
             Story(source="hn", title="A", url="https://a"),
             Story(source="hn", title="B", url="https://b"),
-            Story(source="arxiv", title="C", url="https://c"),
         ],
     )
-    path = save_digest(digest, tmp_path)
+    path = save_snapshot(snap, tmp_path)
     assert path.exists()
 
-    loaded = Digest.model_validate_json(path.read_text())
-    assert loaded.stats == {"hn": 2, "arxiv": 1}
+    loaded = SourceSnapshot.model_validate_json(path.read_text())
+    assert [s.title for s in loaded.stories] == ["A", "B"]
 
     stats = site_stats(tmp_path)
-    assert stats.total_stories == 3
-    assert stats.by_source == {"arxiv": 1, "hn": 2}
+    assert stats.total_stories == 2
+    assert stats.editions == 1
+    assert stats.by_source == {"hn": 2}
+
+    latest = latest_stories_by_source(tmp_path)
+    assert [s.title for s in latest["hn"]] == ["A", "B"]
+
+
+def test_combined_digest_merges_latest_per_source(tmp_path):
+    save_snapshot(
+        SourceSnapshot(source="hn", date=date(2026, 8, 1), stories=[Story(source="hn", title="HN1", url="https://a")]),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(source="hn", date=date(2026, 8, 2), stories=[Story(source="hn", title="HN2", url="https://a")]),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv", date=date(2026, 8, 2), stories=[Story(source="arxiv", title="PAPER", url="https://b")]
+        ),
+        tmp_path,
+    )
+    digest = combined_digest(tmp_path)
+    assert digest is not None
+    assert [s.title for s in digest.stories] == ["HN2", "PAPER"]
+
+
+def test_registerspill_only_due_on_mondays(tmp_path):
+    # 2026-08-03 is a Monday. Snapshot it so it's not a bootstrap fetch.
+    save_snapshot(SourceSnapshot(source="registerspill", date=date(2026, 8, 3), stories=[]), tmp_path)
+
+    tuesday = date(2026, 8, 4)
+    monday_next_week = date(2026, 8, 10)
+
+    # Not enough elapsed time on Tuesday even though a fetch ran Monday.
+    assert "registerspill" not in due_sources(tuesday, tmp_path)
+    # A week later, on Monday, it becomes due again.
+    assert "registerspill" in due_sources(monday_next_week, tmp_path)
+    # But not on the intervening Tuesday.
+    assert "registerspill" not in due_sources(date(2026, 8, 11), tmp_path)
 
 
 @pytest.fixture()
@@ -126,18 +164,26 @@ def client(tmp_path, monkeypatch):
 
 def test_api_empty_returns_404(client):
     assert client.get("/api/digest").status_code == 404
-    assert client.get("/").status_code == 404
+    assert client.get("/").status_code == 200
 
 
 def test_api_pages_and_filters(client, tmp_path):
-    digest = Digest(
-        date=date(2026, 8, 2),
-        stories=[
-            Story(source="hn", title="HN story", url="https://a", signal="Must-Read"),
-            Story(source="arxiv", title="arXiv paper", url="https://b"),
-        ],
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="HN story", url="https://a")],
+        ),
+        tmp_path,
     )
-    save_digest(digest, tmp_path)
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 2),
+            stories=[Story(source="arxiv", title="arXiv paper", url="https://b")],
+        ),
+        tmp_path,
+    )
 
     assert client.get("/").status_code == 200
     assert client.get("/archive/").status_code == 200
@@ -146,8 +192,11 @@ def test_api_pages_and_filters(client, tmp_path):
 
     body = client.get("/api/stories", params={"source": "hn"}).json()
     assert [s["title"] for s in body] == ["HN story"]
-    body = client.get("/api/stories", params={"signal": "Must-Read"}).json()
-    assert len(body) == 1
 
     md = client.get("/api/stories.md").text
     assert "### 1. HN story" in md
+
+    snap = client.get("/api/sources/hn").json()
+    assert snap["source"] == "hn"
+    assert client.get("/api/sources/nope").status_code == 404
+    assert client.get("/api/sources/hn/2026-08-02").status_code == 200
