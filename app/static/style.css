@@ -147,11 +147,28 @@ a:focus-visible, button:focus-visible {
   border-bottom: 1px solid var(--line);
 }
 .wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-family: var(--display);
   font-weight: 600;
   font-size: 1.6rem;
   letter-spacing: -0.02em;
   color: var(--ink);
+}
+.wordmark svg {
+  width: 20px;
+  height: 20px;
+  color: var(--accent);
+  transform-origin: 50% 78%;
+  animation: paw-wave 3.6s ease-in-out infinite;
+}
+.wordmark:hover svg { color: var(--accent-deep); }
+@keyframes paw-wave {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(6deg); }
+  60% { transform: rotate(-4deg); }
+  80% { transform: rotate(2deg); }
 }
 .wordmark:hover { color: var(--accent); }
 .site-nav { display: flex; align-items: center; gap: 24px; }

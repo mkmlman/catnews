@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="#1B365D">
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 32 62; 6 32 62; -4 32 62; 2 32 62; 0 32 62" keyTimes="0;0.3;0.6;0.8;1" dur="3.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+    <ellipse cx="16" cy="26" rx="4.6" ry="6"/>
+    <ellipse cx="25" cy="19" rx="5" ry="6.6"/>
+    <ellipse cx="39" cy="19" rx="5" ry="6.6"/>
+    <ellipse cx="48" cy="26" rx="4.6" ry="6"/>
+    <path d="M32 58.5 C26.5 58.5 21.2 55.3 21 50.5 C20.6 46.6 21.4 43.8 24 37.8 C25.2 36.2 27.4 35 30 34.6 C31.15 34.35 32.18 35.15 32 36 C31.82 35.15 32.85 34.35 34 34.6 C36.6 35 38.8 36.2 40 37.8 C42.6 43.8 43.4 46.6 43 50.5 C42.8 55.3 37.5 58.5 32 58.5 Z"/>
+  </g>
+</svg>
