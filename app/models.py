@@ -9,6 +9,16 @@ class Source(str):
     """Enumerated source label for a story."""
 
 
+class CuratedLink(BaseModel):
+    """A link curated inside a story (e.g. a Register Spill newsletter post)."""
+
+    title: str = Field(description="Anchor text / title of the linked item")
+    url: str
+    site: str | None = Field(
+        default=None, description="Origin site (hostname) for attribution"
+    )
+
+
 class Story(BaseModel):
     """A single curated story in a digest."""
 
@@ -40,6 +50,10 @@ class Story(BaseModel):
     num_comments: int | None = None
     snippet: str | None = Field(
         default=None, description="Plain-text excerpt of the story"
+    )
+    links: list[CuratedLink] = Field(
+        default_factory=list,
+        description="Curated links inside the story, credited to their origin sites",
     )
 
     def to_markdown(self) -> str:

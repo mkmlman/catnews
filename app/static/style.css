@@ -442,6 +442,42 @@ a:focus-visible, button:focus-visible {
   line-height: 1.55;
 }
 
+.story-links { margin: 0 0 10px; font-size: 0.8rem; }
+.story-links summary {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  cursor: pointer;
+  list-style: none;
+  display: inline-block;
+}
+.story-links summary::after { content: " \25BE"; }
+.story-links[open] summary::after { content: " \25B4"; }
+.story-links summary:hover { text-decoration: underline; }
+.story-links-list { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 6px; }
+.story-links-list li { font-size: 0.8rem; line-height: 1.4; color: var(--ink-soft); }
+.story-links-list a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  transition: color 0.15s, border-color 0.15s;
+}
+.story-links-list a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.story-links-site {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  margin-left: 6px;
+  color: var(--muted);
+}
+.story-links-credit {
+  margin: 8px 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
 .story-foot {
   margin-top: auto;
   padding-top: 10px;

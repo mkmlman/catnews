@@ -8,6 +8,8 @@ from fastapi.testclient import TestClient
 from app.fetchers.arxiv import parse_entry
 from app.fetchers.github import parse_item
 from app.fetchers.hn import parse_hit
+from app.fetchers.registerspill import parse_entry as parse_rs_entry
+from app.fetchers.registerspill import parse_links
 from app.models import SourceSnapshot, Story
 from app.store import (
     combined_digest,
@@ -87,6 +89,35 @@ def test_github_parse_item():
     assert story.source == "github"
     assert story.title == "MoonshotAI/Kimi-K3"
     assert story.score == 9999
+
+
+def test_registerspill_parse_links():
+    body = (
+        "<p>Re-read <a href=\"https://sahillavingia.com/reflecting\">Reflecting on My Failure</a>.</p>"
+        "<p>Met <a href=\"https://x.com/adamwathan\">Adam</a> in person.</p>"
+        "<a href=\"https://x.com/jeremygiffon/status/123\">Grip Strength</a>"
+        "<a href=\"https://substackcdn.com/image/1\">img</a>"
+    )
+    links = parse_links(body)
+    titles = [l.title for l in links]
+    assert "Reflecting on My Failure" in titles
+    assert "Grip Strength" in titles
+    assert "Adam" not in titles
+    assert all(l.site for l in links)
+    assert all("substackcdn" not in l.url for l in links)
+
+
+def test_registerspill_parse_entry_attaches_links():
+    entry = {
+        "link": "https://registerspill.thorstenball.com/p/joy-and-curiosity-93",
+        "title": "Joy & Curiosity #93",
+        "author": "Thorsten Ball",
+        "content": [{"value": '<p>See <a href="https://gwern.net/">gwern</a>.</p>'}],
+    }
+    story = parse_rs_entry(entry)
+    assert story is not None
+    assert story.source == "registerspill"
+    assert [l.title for l in story.links] == ["gwern"]
 
 
 def test_story_markdown_and_why_read():
