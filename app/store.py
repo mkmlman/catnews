@@ -76,15 +76,34 @@ def _sources(data_dir: Path) -> list[str]:
 
 
 def combined_digest(data_dir: Path, day: date | None = None) -> Digest | None:
-    """A Digest combining the latest stories from every source (for RSS/markdown)."""
-    stories: list[Story] = []
+    """A Digest combining the latest stories from every source (for RSS/markdown).
+
+    Sources are interleaved round-robin so one source (e.g. a large HN pull)
+    doesn't dominate the top of the feed.
+    """
+    per_source: list[list[Story]] = []
     for source in SOURCES:
         snap = load_latest_snapshot(source, data_dir)
         if snap:
-            stories.extend(snap.stories)
+            per_source.append(snap.stories)
+    stories = interleave(per_source)
     if not stories:
         return None
     return Digest(date=day or today_utc(), stories=stories)
+
+
+def interleave(groups: list[list[Story]]) -> list[Story]:
+    """Round-robin across groups so every group appears early in the result."""
+    result: list[Story] = []
+    remaining = [list(g) for g in groups if g]
+    while remaining:
+        still_going: list[list[Story]] = []
+        for group in remaining:
+            result.append(group.pop(0))
+            if group:
+                still_going.append(group)
+        remaining = still_going
+    return result
 
 
 def source_registry(data_dir: Path) -> list[dict]:

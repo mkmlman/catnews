@@ -157,6 +157,39 @@ def test_combined_digest_merges_latest_per_source(tmp_path):
     assert [s.title for s in digest.stories] == ["HN2", "PAPER"]
 
 
+def test_combined_digest_interleaves_sources(tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(source="hn", title="HN1", url="https://a"),
+                Story(source="hn", title="HN2", url="https://a"),
+            ],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 2),
+            stories=[Story(source="arxiv", title="PAPER", url="https://b")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="github",
+            date=date(2026, 8, 2),
+            stories=[Story(source="github", title="REPO", url="https://c")],
+        ),
+        tmp_path,
+    )
+    digest = combined_digest(tmp_path)
+    assert digest is not None
+    assert [s.source for s in digest.stories] == ["hn", "arxiv", "github", "hn"]
+
+
 def test_registerspill_only_due_on_mondays(tmp_path):
     # 2026-08-03 is a Monday. Snapshot it so it's not a bootstrap fetch.
     save_snapshot(
