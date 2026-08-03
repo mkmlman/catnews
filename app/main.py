@@ -8,7 +8,7 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 
-from .config import BASE_PATH, BASE_URL, DATA_DIR
+from .config import BASE_PATH, BASE_URL, DATA_DIR, SOURCES
 from .models import Digest, SourceSnapshot, Story
 from .render import render_markdown, render_page, render_rss
 from .store import (
@@ -41,6 +41,21 @@ def index(request: Request) -> HTMLResponse:
 def archive(request: Request) -> HTMLResponse:
     snapshots = load_all_snapshots(DATA_DIR)
     return page(request, "archive.html", snapshots=snapshots)
+
+
+@app.get("/archive/{source}/{day}/", response_class=HTMLResponse)
+def archive_snapshot(request: Request, source: str, day: date) -> HTMLResponse:
+    if source not in SOURCES:
+        raise HTTPException(status_code=404, detail=f"Unknown source {source!r}.")
+    snap = load_snapshot(source, day, DATA_DIR)
+    if snap is None:
+        raise HTTPException(status_code=404, detail=f"No snapshot for {source} on {day}.")
+    return page(
+        request,
+        "snapshot.html",
+        snapshot=snap,
+        label=SOURCES[source]["label"],
+    )
 
 
 @app.get("/stats/", response_class=HTMLResponse)

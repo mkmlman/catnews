@@ -14,7 +14,7 @@
   <ul class="archive-list">
     {% for snap in snapshots if snap.source == source %}
     <li>
-      <a href="{{ base_path }}/api/sources/{{ snap.source }}/{{ snap.date.isoformat() }}.json">{{ snap.date.strftime("%B %d, %Y") }}</a>
+      <a href="{{ base_path }}/archive/{{ snap.source }}/{{ snap.date.isoformat() }}/">{{ snap.date.strftime("%B %d, %Y") }}</a>
       <span class="muted">{{ snap.stories | length }} stories</span>
     </li>
     {% endfor %}

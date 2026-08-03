@@ -34,7 +34,7 @@ re-fetched when its cadence has elapsed (`due_sources()` in `scripts/fetch_diges
 
 | Source | Criteria | Cadence | Limit |
 | --- | --- | --- | --- |
-| **Hacker News** | Anything currently on the HN front page (`tags=front_page` via Algolia) | 2 days | 25 |
+| **Hacker News** | Anything currently on the HN front page (`tags=front_page` via Algolia) | daily | 25 |
 | **arXiv** | Latest papers in `cs.AI cs.CL cs.LG cs.SE cs.DB cs.CR cs.DC cs.NE`, sorted by submit date, newest first | weekly | 15 |
 | **GitHub** | Repos created in the last 7 days, sorted by most stars (`search/repositories`) | daily | 15 |
 | **Register Spill** | Joy & Curiosity series posts (Substack RSS, filtered by `joy-and-curiosity-` slug) | weekly, Mondays | 10 |
@@ -125,7 +125,7 @@ uv run pytest
 | --- | --- | --- |
 | `CATNEWS_BASE_URL` | `http://localhost:8000` | Canonical URL used in RSS links |
 | `CATNEWS_DATA_DIR` | `./data` | Where snapshots live (`source_<name>_<date>.json`) |
-| `CATNEWS_CADENCE_HN` / `_ARXIV` / `_GITHUB` / `_REGISTERSPILL` | 2 / 7 / 1 / 7 | Min days between fetches per source |
+| `CATNEWS_CADENCE_HN` / `_ARXIV` / `_GITHUB` / `_REGISTERSPILL` | 1 / 7 / 1 / 7 | Min days between fetches per source |
 | `CATNEWS_LIMIT_HN` / `_ARXIV` / `_GITHUB` / `_REGISTERSPILL` | 25 / 15 / 15 / 10 | Per-source story caps |
 | `CATNEWS_BASE_PATH` | `` (root) | URL prefix for the dev server (`` for localhost, `/catnews` for Pages) |
 

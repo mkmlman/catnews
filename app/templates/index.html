@@ -21,25 +21,7 @@
 
 <div class="stories" id="stories">
   {% for story in digest.stories %}
-  <article class="story" data-source="{{ story.source }}">
-    <div class="story-top">
-      <span class="badge badge-{{ story.source }}">{{ story.source }}</span>
-      {% if story.score is not none %}<span class="story-score">{% if story.source == "github" %}★{% else %}▲{% endif %} {{ story.score }}</span>{% endif %}
-    </div>
-    <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h3>
-    <p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>
-    {% if story.authors %}<p class="story-authors">By {{ story.authors | join(", ") }}</p>{% endif %}
-    {% if story.summary %}
-    <details class="story-more">
-      <summary>more</summary>
-      <p class="story-summary">{{ story.summary }}</p>
-    </details>
-    {% endif %}
-    <div class="story-foot">
-      <a class="story-link" href="{{ story.url }}" target="_blank" rel="noopener">Read</a>
-      {% if story.hn_url %}<a class="discuss" href="{{ story.hn_url }}" target="_blank" rel="noopener">Discuss ›</a>{% endif %}
-    </div>
-  </article>
+  {% include "_story.html" %}
   {% endfor %}
 </div>
 {% endblock %}
@@ -74,10 +56,5 @@
     setActive(source);
     applyFilters();
   });
-
-  if (location.hash === "#weekly") {
-    const rs = chips.find((c) => c.dataset.source === "registerspill");
-    if (rs) rs.click();
-  }
 </script>
 {% endblock %}

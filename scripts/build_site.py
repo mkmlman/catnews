@@ -52,6 +52,17 @@ def build_site(
         out_dir / "archive" / "index.html",
         render_page("archive.html", base_path=base_path, base_url=base_url, snapshots=snapshots),
     )
+    for snap in snapshots:
+        write(
+            out_dir / "archive" / snap.source / snap.date.isoformat() / "index.html",
+            render_page(
+                "snapshot.html",
+                base_path=base_path,
+                base_url=base_url,
+                snapshot=snap,
+                label=SOURCES[snap.source]["label"],
+            ),
+        )
     write(
         out_dir / "stats" / "index.html",
         render_page("stats.html", base_path=base_path, base_url=base_url, stats=site_stats(data_dir)),

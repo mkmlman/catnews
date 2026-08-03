@@ -20,7 +20,7 @@ REQUEST_TIMEOUT = 15.0
 SOURCES: dict[str, dict] = {
     "hn": {
         "label": "Hacker News",
-        "cadence_days": int(os.environ.get("CATNEWS_CADENCE_HN", "2")),
+        "cadence_days": int(os.environ.get("CATNEWS_CADENCE_HN", "1")),
         "limit": int(os.environ.get("CATNEWS_LIMIT_HN", "25")),
     },
     "arxiv": {
