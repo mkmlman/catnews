@@ -8,7 +8,7 @@ A curated digest of stories from **Hacker News**, **arXiv**, **GitHub**, and **R
 
 ## License
 
-The code in this repository is released under the [MIT License](LICENSE).
+The code in this repository is released under the [MIT License](LICENSE) — do what you want with it.
 
 The **curated content** it pulls in (newsletters, articles, papers, repos) remains
 the property of its respective authors and sources; catnews merely links to and
