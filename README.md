@@ -6,6 +6,14 @@ A curated digest of stories from **Hacker News**, **arXiv**, **GitHub**, and **R
 
 **Live site:** [https://mkmlman.github.io/catnews/](https://mkmlman.github.io/catnews/)
 
+## License
+
+The code in this repository is released under the [MIT License](LICENSE).
+
+The **curated content** it pulls in (newsletters, articles, papers, repos) remains
+the property of its respective authors and sources; catnews merely links to and
+quotes from it. See the [Sources](/sources/) page for what we curate.
+
 ```
  /\_/\
  (=^.^=)
