@@ -208,6 +208,7 @@ def test_api_pages_and_filters(client, tmp_path):
     assert client.get("/").status_code == 200
     assert client.get("/archive/").status_code == 200
     assert client.get("/stats/").status_code == 200
+    assert client.get("/api/").status_code == 200
     assert client.get("/feed.rss").status_code == 200
 
     body = client.get("/api/stories", params={"source": "hn"}).json()

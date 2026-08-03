@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}API — {{ app_name }}{% endblock %}
+{% block content %}
+<section class="page-header">
+  <h1>API</h1>
+  <p class="muted">Every digest as JSON, Markdown, or RSS — no auth needed.</p>
+</section>
+
+<section class="stat-section">
+  <h2>Endpoints</h2>
+  <p class="muted">Paths are relative to the site root (<code>{{ base_path }}</code> on Pages,
+  <code>http://localhost:8000</code> on the dev server).</p>
+  <table class="stat-table">
+    <tbody>
+      <tr><td><a href="{{ base_path }}/api/sources.json">{{ base_path }}/api/sources</a></td><td>All snapshots, each with its stories</td></tr>
+      <tr><td><a href="{{ base_path }}/api/sources.json">{{ base_path }}/api/sources/&lt;source&gt;</a></td><td>Latest snapshot for a source (hn, arxiv, github, registerspill)</td></tr>
+      <tr><td>{{ base_path }}/api/sources/&lt;source&gt;/&lt;YYYY-MM-DD&gt;</td><td>A specific day's snapshot for a source</td></tr>
+      <tr><td><a href="{{ base_path }}/api/digest.json">{{ base_path }}/api/digest</a></td><td>Latest story from each source, combined in source order</td></tr>
+      <tr><td><a href="{{ base_path }}/api/stories.json">{{ base_path }}/api/stories</a></td><td>Every story, optionally filtered with <code>?source=hn</code></td></tr>
+      <tr><td><a href="{{ base_path }}/api/stats.json">{{ base_path }}/api/stats</a></td><td>Site statistics (totals, editions, by source)</td></tr>
+      <tr><td><a href="{{ base_path }}/api/stories.md">{{ base_path }}/api/stories.md</a></td><td>All stories as a Markdown document</td></tr>
+      <tr><td><a href="{{ base_path }}/feed.rss">{{ base_path }}/feed.rss</a></td><td>RSS 2.0 feed of the latest combined digest</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="stat-section">
+  <h2>Static vs live</h2>
+  <p>On GitHub Pages, the API is a <strong>static mirror</strong>:
+  <code>api/sources.json</code>, <code>api/stories.json</code>, <code>api/digest.json</code>,
+  <code>api/stats.json</code>, <code>api/stories.md</code>, and <code>feed.rss</code> are
+  generated at build time, so there is no server. The live dev server
+  (<code>uvicorn app.main:app</code>) additionally serves the per-source routes
+  (<code>/api/sources/&lt;source&gt;</code> and <code>/api/sources/&lt;source&gt;/&lt;date&gt;</code>)
+  and the rendered archive pages (<code>/archive/&lt;source&gt;/&lt;date&gt;/</code>).</p>
+</section>
+
+<section class="stat-section">
+  <h2>Example</h2>
+  <pre class="code-block">$ curl {{ base_url }}/api/sources/hn | head
+{
+  "source": "hn",
+  "date": "2026-08-03",
+  "stories": [
+    { "source": "hn", "title": "Diátaxis", "url": "https://diataxis.fr/" }
+  ]
+}</pre>
+</section>
+{% endblock %}

@@ -79,6 +79,10 @@ def build_site(
             stats=site_stats(data_dir),
         ),
     )
+    write(
+        out_dir / "api" / "index.html",
+        render_page("api.html", base_path=base_path, base_url=base_url),
+    )
 
     # Feed + machine-readable files
     if digest:

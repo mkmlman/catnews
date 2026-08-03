@@ -70,6 +70,11 @@ def stats(request: Request) -> HTMLResponse:
     return page(request, "stats.html", stats=site_stats(DATA_DIR))
 
 
+@app.get("/api/", response_class=HTMLResponse)
+def api_docs(request: Request) -> HTMLResponse:
+    return page(request, "api.html")
+
+
 # --- JSON API --------------------------------------------------------------
 
 
