@@ -20,6 +20,7 @@ from .store import (
     load_latest_snapshot,
     load_snapshot,
     site_stats,
+    source_registry,
 )
 
 app = FastAPI(title="catnews", description="catnews — a curated digest.")
@@ -46,6 +47,11 @@ def index(request: Request) -> HTMLResponse:
 def archive(request: Request) -> HTMLResponse:
     snapshots = load_all_snapshots(DATA_DIR)
     return page(request, "archive.html", snapshots=snapshots)
+
+
+@app.get("/sources/", response_class=HTMLResponse)
+def sources(request: Request) -> HTMLResponse:
+    return page(request, "sources.html", sources=source_registry(DATA_DIR))
 
 
 @app.get("/archive/{source}/{day}/", response_class=HTMLResponse)

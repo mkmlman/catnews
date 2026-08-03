@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
-from .config import SOURCES, today_utc
+from .config import SOURCES, cadence_label, today_utc
 from .models import Digest, SiteStats, SourceSnapshot, Story
 
 
@@ -85,6 +85,25 @@ def combined_digest(data_dir: Path, day: date | None = None) -> Digest | None:
     if not stories:
         return None
     return Digest(date=day or today_utc(), stories=stories)
+
+
+def source_registry(data_dir: Path) -> list[dict]:
+    """Registry rows for the Sources page: config plus latest snapshot info."""
+    rows: list[dict] = []
+    for key, cfg in SOURCES.items():
+        snap = load_latest_snapshot(key, data_dir)
+        rows.append(
+            {
+                "key": key,
+                "label": cfg["label"],
+                "tag": cfg["tag"],
+                "cadence": cadence_label(key),
+                "limit": cfg.get("limit"),
+                "last_fetched": snap.date if snap else None,
+                "stories": len(snap.stories) if snap else 0,
+            }
+        )
+    return rows
 
 
 def site_stats(data_dir: Path) -> SiteStats:

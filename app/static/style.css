@@ -479,6 +479,41 @@ a:focus-visible, button:focus-visible {
 }
 .archive-list a:hover { color: var(--accent); }
 
+.source-card { padding: 26px 0 8px; }
+.source-card + .source-card { border-top: 1px solid var(--line); }
+.source-head { display: flex; align-items: baseline; gap: 12px; }
+.source-head h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.source-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin: 14px 0 6px;
+  padding: 0;
+}
+.source-details > div { display: flex; align-items: baseline; gap: 8px; }
+.source-details dt {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.source-details dd { margin: 0; font-size: 0.95rem; color: var(--ink); }
+.source-links { margin: 8px 0 0; font-size: 0.92rem; }
+.source-links a {
+  color: var(--accent);
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.source-links a:hover { border-bottom-color: var(--accent); }
+.source-links .sep { color: var(--muted); padding: 0 2px; }
+
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -504,7 +539,8 @@ a:focus-visible, button:focus-visible {
 .stat-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
 .stat-table td { padding: 12px 4px; border-bottom: 1px solid var(--line); font-size: 1rem; }
 .stat-table td:last-child { text-align: right; font-family: var(--mono); color: var(--muted); }
-.stat-table td:first-child { text-transform: capitalize; }
+.stat-table td:first-child { display: flex; align-items: center; gap: 10px; }
+.stat-table .source-name { font-family: var(--serif); font-size: 1rem; color: var(--ink); }
 .stat-section h2 {
   font-family: var(--mono);
   font-size: 0.72rem;

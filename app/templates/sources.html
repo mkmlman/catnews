@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Sources — {{ app_name }}{% endblock %}
+{% block content %}
+<section class="page-header">
+  <a class="back" href="{{ base_path }}/">← Home</a>
+  <h1>Sources</h1>
+  <p class="muted">{{ sources | length }} sources · each fetched on its own cadence</p>
+</section>
+
+<section class="prose">
+  <p>catnews is assembled from the sources below. Each is fetched independently, archived as a snapshot, and surfaced in the combined feed. Adding a source is a single entry in <code>app/config.py</code> — snapshot, feed, archive, API, and this page all follow automatically.</p>
+</section>
+
+{% for src in sources %}
+<section class="source-card">
+  <div class="source-head">
+    <h2>{{ src.label }}</h2>
+    <span class="badge badge-{{ src.key }}">{{ src.tag }}</span>
+  </div>
+  <dl class="source-details">
+    <div>
+      <dt>Cadence</dt>
+      <dd>{{ src.cadence }}</dd>
+    </div>
+    <div>
+      <dt>Limit</dt>
+      <dd>top {{ src.limit }}</dd>
+    </div>
+    <div>
+      <dt>Last fetched</dt>
+      <dd>{% if src.last_fetched %}{{ src.last_fetched.strftime("%B %d, %Y") }} · {{ src.stories }} stories{% else %}never{% endif %}</dd>
+    </div>
+  </dl>
+  <p class="source-links">
+    {% if src.last_fetched %}
+    <a href="{{ base_path }}/archive/{{ src.key }}/{{ src.last_fetched.isoformat() }}/">latest snapshot</a><span class="sep"> · </span>
+    {% endif %}
+    <a href="{{ base_path }}/api/sources/{{ src.key }}">source API</a>
+  </p>
+</section>
+{% endfor %}
+{% endblock %}

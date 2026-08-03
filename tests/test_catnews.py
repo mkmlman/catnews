@@ -14,6 +14,7 @@ from app.store import (
     latest_stories_by_source,
     save_snapshot,
     site_stats,
+    source_registry,
 )
 from scripts.fetch_digest import due_sources
 
@@ -208,6 +209,7 @@ def test_api_pages_and_filters(client, tmp_path):
     assert client.get("/").status_code == 200
     assert client.get("/archive/").status_code == 200
     assert client.get("/stats/").status_code == 200
+    assert client.get("/sources/").status_code == 200
     assert client.get("/api/").status_code == 200
     assert client.get("/feed.rss").status_code == 200
 
@@ -226,3 +228,28 @@ def test_api_pages_and_filters(client, tmp_path):
     assert page.status_code == 200
     assert "HN story" in page.text
     assert client.get("/archive/nope/2026-08-02/").status_code == 404
+
+
+def test_sources_page_lists_sources(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="registerspill",
+            date=date(2026, 8, 3),  # a Monday
+            stories=[Story(source="registerspill", title="SP", url="https://x")],
+        ),
+        tmp_path,
+    )
+    page = client.get("/sources/")
+    assert page.status_code == 200
+    assert "Hacker News" in page.text
+    assert "every day" in page.text
+    assert "Register Spill" in page.text
+    assert "weekly · Monday" in page.text
+
+
+def test_source_registry_cadences(tmp_path):
+    rows = {r["key"]: r for r in source_registry(tmp_path)}
+    assert rows["hn"]["cadence"] == "every day"
+    assert rows["arxiv"]["cadence"] == "weekly · Monday"
+    assert rows["registerspill"]["cadence"] == "weekly · Monday"
+    assert rows["hn"]["last_fetched"] is None

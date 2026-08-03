@@ -10,7 +10,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.config import SOURCES
 from app.render import render_markdown, render_page, render_rss
-from app.store import combined_digest, load_all_snapshots, site_stats
+from app.store import (
+    combined_digest,
+    load_all_snapshots,
+    site_stats,
+    source_registry,
+)
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "app" / "static"
 
@@ -77,6 +82,15 @@ def build_site(
             base_path=base_path,
             base_url=base_url,
             stats=site_stats(data_dir),
+        ),
+    )
+    write(
+        out_dir / "sources" / "index.html",
+        render_page(
+            "sources.html",
+            base_path=base_path,
+            base_url=base_url,
+            sources=source_registry(data_dir),
         ),
     )
     write(

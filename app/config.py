@@ -29,21 +29,28 @@ REQUEST_TIMEOUT = 15.0
 SOURCES: dict[str, dict] = {
     "hn": {
         "label": "Hacker News",
+        "tag": "HN",
         "cadence_days": int(os.environ.get("CATNEWS_CADENCE_HN", "1")),
         "limit": int(os.environ.get("CATNEWS_LIMIT_HN", "25")),
     },
     "arxiv": {
         "label": "arXiv",
+        "tag": "arXiv",
         "cadence_days": int(os.environ.get("CATNEWS_CADENCE_ARXIV", "7")),
         "limit": int(os.environ.get("CATNEWS_LIMIT_ARXIV", "15")),
+        # Fetch only on the preferred weekday (0 = Monday). The daily 07:00 UTC
+        # schedule then naturally lands the weekly fetch on Monday mornings.
+        "weekday": 0,
     },
     "github": {
         "label": "GitHub",
+        "tag": "GitHub",
         "cadence_days": int(os.environ.get("CATNEWS_CADENCE_GITHUB", "1")),
         "limit": int(os.environ.get("CATNEWS_LIMIT_GITHUB", "15")),
     },
     "registerspill": {
         "label": "Register Spill",
+        "tag": "Register Spill",
         "cadence_days": int(os.environ.get("CATNEWS_CADENCE_REGISTERSPILL", "7")),
         "limit": int(os.environ.get("CATNEWS_LIMIT_REGISTERSPILL", "10")),
         # Fetch only on the preferred weekday (0 = Monday). The daily 07:00 UTC
@@ -53,3 +60,27 @@ SOURCES: dict[str, dict] = {
 }
 
 SOURCE_LABELS: dict[str, str] = {k: v["label"] for k, v in SOURCES.items()}
+SOURCE_TAGS: dict[str, str] = {k: v["tag"] for k, v in SOURCES.items()}
+
+WEEKDAYS = (
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+)
+
+
+def cadence_label(key: str) -> str:
+    """Human-readable cadence for a source, e.g. 'every day' or 'weekly · Mondays'."""
+    cfg = SOURCES[key]
+    days = cfg["cadence_days"]
+    if days == 1:
+        return "every day"
+    if (weekday := cfg.get("weekday")) is not None:
+        return f"weekly · {WEEKDAYS[weekday]}"
+    if days == 7:
+        return "weekly"
+    return f"every {days} days"

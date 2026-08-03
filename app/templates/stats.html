@@ -17,7 +17,10 @@
   <table class="stat-table">
     <tbody>
       {% for source, count in stats.by_source.items() %}
-      <tr><td>{{ source }}</td><td>{{ count }}</td></tr>
+      <tr>
+        <td><span class="source-name">{{ source_labels[source] }}</span><span class="badge badge-{{ source }}">{{ source_tags[source] }}</span></td>
+        <td>{{ count }}</td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>

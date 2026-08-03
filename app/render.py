@@ -6,7 +6,7 @@ from pathlib import Path
 from feedgen.feed import FeedGenerator
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from .config import APP_NAME
+from .config import APP_NAME, SOURCE_LABELS, SOURCE_TAGS
 from .models import Digest
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
@@ -25,6 +25,8 @@ def render_page(name: str, *, base_path: str, base_url: str, **context) -> str:
     template = _env.get_template(name)
     return template.render(
         app_name=APP_NAME,
+        source_labels=SOURCE_LABELS,
+        source_tags=SOURCE_TAGS,
         base_path=base_path,
         base_url=base_url,
         cat=CAT,
