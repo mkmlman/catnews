@@ -2,20 +2,30 @@
 {% block title %}Archive — {{ app_name }}{% endblock %}
 {% block content %}
 <section class="page-header">
-  <a class="back" href="{{ base_path }}/">← Home</a>
+  <a class="back" href="{{ base_path }}/">← All editions</a>
   <h1>Archive</h1>
-  <p class="muted">{{ snapshots | length }} snapshots · by source</p>
+  <p class="muted">{{ snapshots | length }} snapshots · every fetch, preserved</p>
 </section>
 
 {% set sources = snapshots | map(attribute="source") | unique | list %}
 {% for source in sources %}
+{% set snaps = snapshots | selectattr("source", "equalto", source) | list %}
+{% set story_total = namespace(n=0) %}
+{% for s in snaps %}{% set story_total.n = story_total.n + s.stories | length %}{% endfor %}
 <section class="archive-source">
-  <h2>{{ source }}</h2>
+  <div class="source-head">
+    <h2>{{ source_labels[source] }}</h2>
+    <span class="badge badge-{{ source }}">{{ source_tags[source] }}</span>
+  </div>
+  <p class="archive-summary">{{ snaps | length }} snapshot{{ "s" if snaps | length != 1 else "" }} · {{ story_total.n }} stor{{ "y" if story_total.n == 1 else "ies" }}</p>
   <ul class="archive-list">
-    {% for snap in snapshots if snap.source == source %}
+    {% for snap in snaps %}
     <li>
-      <a href="{{ base_path }}/archive/{{ snap.source }}/{{ snap.date.isoformat() }}/">{{ snap.date.strftime("%B %d, %Y") }}</a>
-      <span class="muted">{{ snap.stories | length }} stories</span>
+      <a href="{{ base_path }}/archive/{{ snap.source }}/{{ snap.date.isoformat() }}/">
+        <span class="archive-date">{{ snap.date.strftime("%B %d, %Y") }}</span>
+        <span class="archive-day">{{ snap.date.strftime("%A") }}</span>
+      </a>
+      <span class="archive-count">{{ snap.stories | length }} stor{{ "y" if snap.stories | length == 1 else "ies" }}</span>
     </li>
     {% endfor %}
   </ul>

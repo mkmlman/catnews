@@ -209,6 +209,10 @@ def test_api_pages_and_filters(client, tmp_path):
 
     assert client.get("/").status_code == 200
     assert client.get("/archive/").status_code == 200
+    archive = client.get("/archive/").text
+    assert "Hacker News" in archive
+    assert "Sunday" in archive
+    assert "1 story" in archive
     assert client.get("/stats/").status_code == 200
     assert client.get("/sources/").status_code == 200
     assert client.get("/api/").status_code == 200

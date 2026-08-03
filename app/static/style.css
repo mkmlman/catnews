@@ -453,31 +453,46 @@ a:focus-visible, button:focus-visible {
 }
 .muted { color: var(--muted); font-style: italic; }
 
-.archive-source { padding: 26px 0 6px; }
+.archive-source { padding: 26px 0 4px; }
 .archive-source + .archive-source { border-top: 1px solid var(--line); }
-.archive-source h2 {
+.archive-summary {
   font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
-  margin: 0 0 4px;
+  color: var(--muted);
+  margin: 6px 0 0;
 }
-
 .archive-list { list-style: none; padding: 16px 0 0; margin: 0; }
 .archive-list li {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 16px 0;
+  padding: 12px 0;
   border-bottom: 1px solid var(--line);
 }
-.archive-list a {
+.archive-list li:last-child { border-bottom: none; }
+.archive-list a { display: flex; align-items: baseline; gap: 10px; color: var(--ink); }
+.archive-date {
   font-family: var(--serif);
-  font-size: 1.1rem;
-  color: var(--ink);
+  font-size: 1.08rem;
+  letter-spacing: -0.01em;
+  transition: color 0.15s ease;
 }
-.archive-list a:hover { color: var(--accent); }
+.archive-day {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.archive-list a:hover .archive-date { color: var(--accent); }
+.archive-count {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
 
 .source-card { padding: 26px 0 8px; }
 .source-card + .source-card { border-top: 1px solid var(--line); }
