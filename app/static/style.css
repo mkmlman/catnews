@@ -834,8 +834,18 @@ a:focus-visible, button:focus-visible {
   .container { padding: 0 18px 60px; }
   .hero { padding: 36px 0 26px; }
   .stories { grid-template-columns: 1fr; }
-  .site-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .site-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .site-nav { flex-wrap: wrap; gap: 10px 16px; }
   .share-bar { display: none; }
+
+  .stat-section { overflow-x: auto; }
+  .stat-section h2 { padding-right: 12px; }
+  .stat-table { font-size: 0.84rem; min-width: 340px; }
+  .stat-table th:first-child, .stat-table td:first-child { gap: 6px; }
+  .stat-table th:nth-child(3), .stat-table td:nth-child(3) { padding-right: 4px; }
+  .stat-table th, .stat-table td { padding: 12px 4px; }
+  .share-pct { min-width: 0; }
+  .stat-table .source-name { font-size: 0.9rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
