@@ -4,7 +4,7 @@
 <section class="page-header">
   <a class="back" href="{{ base_path }}/">← All editions</a>
   <h1>Archive</h1>
-  <p class="muted">{{ snapshots | length }} snapshots · every fetch, preserved</p>
+  <p class="muted">{{ snapshots | length }} snapshots</p>
 </section>
 
 {% set sources = snapshots | map(attribute="source") | unique | list %}
