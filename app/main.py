@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from datetime import date
 
 from fastapi import FastAPI, HTTPException, Query, Request
@@ -26,6 +27,8 @@ from .store import (
 app = FastAPI(title="catnews", description="catnews — a curated digest.")
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+SOURCE_PATTERN = "^(?:" + "|".join(re.escape(k) for k in SOURCES) + ")$"
 
 
 def page(request: Request, name: str, **context) -> HTMLResponse:
@@ -120,9 +123,7 @@ def api_digest() -> SourceSnapshot | dict:
 
 @app.get("/api/stories")
 def api_stories(
-    source: str | None = Query(
-        default=None, pattern="^(hn|arxiv|github|registerspill)$"
-    ),
+    source: str | None = Query(default=None, pattern=SOURCE_PATTERN),
 ) -> list[Story]:
     stories = [s for snap in load_all_snapshots(DATA_DIR) for s in snap.stories]
     if source:

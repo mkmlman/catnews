@@ -1,0 +1,152 @@
+from __future__ import annotations
+
+import html as html_lib
+import re
+from datetime import UTC, datetime
+from urllib.parse import urlparse
+
+import feedparser
+
+from ..config import REQUEST_TIMEOUT
+from ..models import CuratedLink, Story
+
+MAX_SNIPPET_CHARS = 900
+MAX_LINKS = 30
+
+# Social hosts where bare profile/handle links are treated as inline mentions
+# rather than curated content (status/post links are still kept).
+_SOCIAL_HOSTS = {"x.com", "twitter.com", "bsky.app", "mastodon.social"}
+
+
+def strip_html(value: str) -> str:
+    """Strip tags/entities from an RSS summary and collapse whitespace."""
+    text = html_lib.unescape(re.sub(r"<[^>]+>", " ", value or ""))
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _published(entry) -> datetime | None:
+    if entry.get("published_parsed"):
+        return datetime(*entry["published_parsed"][:6], tzinfo=UTC)
+    if entry.get("updated_parsed"):
+        return datetime(*entry["updated_parsed"][:6], tzinfo=UTC)
+    return None
+
+
+def parse_entry(entry, source: str, *, url_filter: str | None = None) -> Story | None:
+    url = entry.get("link")
+    title = entry.get("title")
+    if not title or not url:
+        return None
+    if url_filter and url_filter not in url:
+        return None
+
+    snippet = entry.get("summary") or entry.get("description") or ""
+
+    content = ""
+    if entry.get("content"):
+        content = entry.get("content")[0].get("value", "")
+    if not snippet and content:
+        snippet = content
+
+    author = entry.get("author")
+    external_id = entry.get("id") or url.rstrip("/").split("/")[-1]
+
+    return Story(
+        source=source,
+        title=title.strip(),
+        url=url,
+        byline=author,
+        author=author,
+        external_id=external_id,
+        published=_published(entry),
+        snippet=(strip_html(snippet)[:MAX_SNIPPET_CHARS] or None),
+    )
+
+
+def parse_links(content: str) -> list[CuratedLink]:
+    """Extract the links curated inside a post, attributed to their origin sites."""
+    links: list[CuratedLink] = []
+    seen: set[str] = set()
+    for match in re.finditer(
+        r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', content, re.DOTALL
+    ):
+        if len(links) >= MAX_LINKS:
+            break
+        url = html_lib.unescape(match.group(1)).strip()
+        text = _anchor_text(match.group(2))
+        if not url or len(text) < 3:
+            continue
+        if url.startswith(("mailto:", "tel:")):
+            continue
+        host = urlparse(url).netloc.lower()
+        if _is_social_profile(url, host):
+            continue
+        # Skip the newsletter's own CDN/host links — image assets and self
+        # links are never curated content.
+        if "substackcdn" in host:
+            continue
+        if url in seen:
+            continue
+        seen.add(url)
+        links.append(
+            CuratedLink(
+                title=text,
+                url=url,
+                site=host.removeprefix("www.") or None,
+            )
+        )
+    return links
+
+
+def _anchor_text(fragment: str) -> str:
+    """Strip tags/entities from an anchor's inner HTML and collapse whitespace."""
+    text = html_lib.unescape(re.sub(r"<[^>]+>", " ", fragment))
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _is_social_profile(url: str, host: str) -> bool:
+    """Skip bare profile/handle links (e.g. x.com/username) that are inline
+    mentions rather than curated content, but keep status/post links."""
+    if host not in _SOCIAL_HOSTS:
+        return False
+    parts = [p for p in urlparse(url).path.split("/") if p]
+    return bool(len(parts) <= 2 and "status" not in parts)
+
+
+def _entry_links(entry, extract_links: bool) -> list[CuratedLink]:
+    if not extract_links:
+        return []
+    content = ""
+    if entry.get("content"):
+        content = entry.get("content")[0].get("value", "")
+    return parse_links(content)
+
+
+async def fetch_rss(
+    client,
+    url: str,
+    source: str,
+    *,
+    url_filter: str | None = None,
+    extract_links: bool = False,
+) -> list[Story]:
+    """Fetch any blog/newsletter feed and map entries to Story objects.
+
+    Covers Substack (/feed), Ghost, WordPress, Bear, and any standard RSS/Atom
+    feed. Optional per-source behaviors:
+
+      url_filter    only keep entries whose URL contains this substring
+                    (e.g. "joy-and-curiosity" for the Register Spill series)
+      extract_links parse the links curated inside each post into Story.links
+
+    """
+    response = await client.get(url, timeout=REQUEST_TIMEOUT)
+    response.raise_for_status()
+    parsed = feedparser.parse(response.content)
+    stories: list[Story] = []
+    for entry in parsed.entries:
+        story = parse_entry(entry, source, url_filter=url_filter)
+        if story:
+            story.links = _entry_links(entry, extract_links)
+            stories.append(story)
+    return stories

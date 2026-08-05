@@ -12,6 +12,7 @@
   <title>{% block title %}{{ app_name }}{% endblock %}</title>
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ base_url }}/feed.rss">
   <link rel="stylesheet" href="{{ base_path }}/static/style.css">
+  <style>{{ badge_css | safe }}</style>
   <script>
     (function () {
       var key = "catnews-theme";

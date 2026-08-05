@@ -4,6 +4,9 @@
 
 A curated digest of stories from **Hacker News**, **arXiv**, **GitHub**, and **Register Spill**, built with Python + FastAPI.
 
+Sources are config-driven — anyone can host their own digest of any blog, newsletter,
+or RSS feed by editing a single `sources.yaml` file.
+
 **Live site:** [https://mkmlman.github.io/catnews/](https://mkmlman.github.io/catnews/)
 
 ## License
@@ -23,7 +26,8 @@ quotes from it. See the [Sources](/sources/) page for what we curate.
 ## Features
 
 - **Single feed with filters** — every source's latest stories in one grid, filtered
-  client-side by source (All / HN / arXiv / GitHub / Register Spill).
+  client-side by source (All / HN / arXiv / GitHub / Register Spill — chips are generated
+  from `sources.yaml`).
   Each source is fetched on its own cadence and archived independently, so a weekly
   source (Register Spill) stays readable all week.
 - **Archive** and **Stats** pages; the archive lists every snapshot and each
@@ -35,6 +39,7 @@ quotes from it. See the [Sources](/sources/) page for what we curate.
 
 ```sh
 uv sync                                    # install deps
+# optional: edit sources.yaml to add/remove/retune your sources
 uv run python scripts/fetch_digest.py --all   # fetch every source -> data/source_<name>_<date>.json
 uv run python scripts/build_site.py          # build the static site into site/
 uv run uvicorn app.main:app --reload         # or serve live on http://localhost:8000
@@ -44,10 +49,12 @@ uv run uvicorn app.main:app --reload         # or serve live on http://localhost
 
 ```
 app/
-  fetchers/        one module per source (hn, arxiv, github, registerspill)
+  fetchers/        one module per built-in source (hn, arxiv, github)
+                   + rss.py: generic fetcher for any blog/newsletter feed
+                   (Substack, Ghost, ...)
   templates/       Jinja2 pages: base, index, archive, snapshot, stats
   static/          style.css + web fonts
-  config.py        source labels, cadences & limits, env vars
+  config.py        loads sources.yaml; palette + badge CSS generation; env overrides
   models.py        Story, SourceSnapshot, SiteStats, Digest (combined view)
   store.py         snapshot archive: load/save per-source data/source_*.json
   render.py        page/RSS/markdown rendering
@@ -55,9 +62,62 @@ app/
 scripts/
   fetch_digest.py  cadence-aware fetch (one snapshot per source)
   build_site.py    render a static site into site/
+sources.yaml       source definitions — the single file a host edits
 data/              source_<name>_<date>.json snapshots
 .github/workflows/ deploy.yml (archive + lint + deploy to Pages)
 ```
+
+## Adding a source
+
+Sources live in `sources.yaml` (a built-in default is used if the file is absent). Any
+blog or newsletter with a feed URL can be added as `type: rss` — no code changes needed.
+Badges are assigned from the 12-color palette below, in source order; set `color:` to any
+CSS color (e.g. `#2a5f8a`) to override a specific source.
+
+```yaml
+sources:
+  - key: escflat
+    label: Escaping Flatland
+    tag: Henrik
+    type: rss
+    url: https://www.henrikkarlsson.xyz/feed
+    cadence_days: 7
+    limit: 10
+```
+
+Two optional rss-only fields make the generic fetcher cover newsletters like
+Register Spill too — no custom code needed:
+
+```yaml
+  - key: registerspill
+    label: Register Spill
+    tag: Register Spill
+    type: rss
+    url: https://registerspill.thorstenball.com/feed
+    url_filter: joy-and-curiosity   # keep only entries whose URL contains this
+    extract_links: true             # show the links curated inside each post
+    cadence_days: 7
+    weekday: 0
+```
+
+Built-in sources (`hn`, `arxiv`, `github`) use `type: builtin` and have dedicated
+JSON-API fetchers under `app/fetchers/`. `--source` and `--limit` in the CLI accept
+any key from `sources.yaml`.
+
+The 12 badge colors, in assignment order (source #1 → ember, #2 → clay, ...):
+
+| # | Name | Hex | # | Name | Hex |
+| --- | --- | --- | --- | --- | --- |
+| 1 | ember | `#9c4d14` | 7 | plum | `#5b3e8a` |
+| 2 | clay | `#8a1f18` | 8 | teal | `#1f6f6b` |
+| 3 | graphite | `#3b3e37` | 9 | rose | `#8a2e4e` |
+| 4 | cerulean | `#20507a` | 10 | steel | `#3f4f73` |
+| 5 | moss | `#2e6b3e` | 11 | olive | `#6b5b1e` |
+| 6 | amber | `#7a4a21` | 12 | bronze | `#6b3f1e` |
+
+The palette lives in `PALETTE` in `app/config.py` (each entry also carries matching
+light and dark theme background tints). Badges cycle back to ember for the 13th
+source onward.
 
 ## How stories are selected
 
@@ -86,6 +146,10 @@ The site can be built as a fully static bundle and served for free from GitHub P
 ```sh
 uv run python scripts/build_site.py --base-path /catnews --base-url https://mkmlman.github.io/catnews
 ```
+
+The CI workflow derives `base-path` and `base-url` from the repository
+(`/<repo>` and `https://<owner>.github.io/<repo>`), so a fork deploys to its own
+Pages URL without editing the workflow.
 
 This renders `site/` with plain HTML pages (home, archive, per-snapshot archive pages,
 stats), `feed.rss`, and static JSON/Markdown API files (`api/sources.json`,
@@ -148,7 +212,7 @@ options:
   --date DATE      Fetch date, YYYY-MM-DD
   --no-curation    Skip applying data/curation_YYYY-MM-DD.json overrides
   --limit LIMIT    Cap the number of stories per source (overrides config)
-  --source SOURCE  Fetch only this source (hn | arxiv | github | registerspill)
+  --source SOURCE  Fetch only this source (any key from sources.yaml)
   --all            Fetch every source regardless of cadence
   --print          Print snapshots to stdout instead of saving
 ```
@@ -171,18 +235,22 @@ uv run ruff format .    # auto-format (CI runs `--check`)
 uv run ty check         # static type check
 ```
 
-## Config (env vars)
+## Config
+
+Sources are defined in `sources.yaml` (defaults in `app/config.py` if it's missing).
+`cadence_days`, `limit`, and `weekday` can be overridden per-source there, and per-source
+env vars remain available:
 
 | Var | Default | Purpose |
 | --- | --- | --- |
 | `CATNEWS_BASE_URL` | `http://localhost:8000` | Canonical URL used in RSS links |
 | `CATNEWS_DATA_DIR` | `./data` | Where snapshots live (`source_<name>_<date>.json`) |
-| `CATNEWS_CADENCE_HN` / `_ARXIV` / `_GITHUB` / `_REGISTERSPILL` | 1 / 7 / 1 / 7 | Min days between fetches per source |
-| `CATNEWS_LIMIT_HN` / `_ARXIV` / `_GITHUB` / `_REGISTERSPILL` | 25 / 15 / 15 / 10 | Per-source story caps |
+| `CATNEWS_CADENCE_<KEY>` | per-source | Min days between fetches per source (uppercase key) |
+| `CATNEWS_LIMIT_<KEY>` | per-source | Per-source story caps (uppercase key) |
 | `CATNEWS_BASE_PATH` | `` (root) | URL prefix for the dev server (`` for localhost, `/catnews` for Pages) |
 
-Register Spill is additionally pinned to Mondays (`weekday: 0` in `app/config.py`,
-not env-configurable): it is only fetched when at least 7 days have elapsed *and* it is Monday.
+Register Spill is pinned to Mondays (`weekday: 0` in `sources.yaml`): it is only fetched
+when at least 7 days have elapsed *and* it is Monday.
 
 ## Repo ops (how GitHub is configured)
 

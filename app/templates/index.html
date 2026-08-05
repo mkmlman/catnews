@@ -10,10 +10,9 @@
   <div class="filter-row">
     <span class="filter-label">Source</span>
     <button class="chip is-active" data-source="All">All</button>
-    <button class="chip" data-source="hn">HN</button>
-    <button class="chip" data-source="arxiv">arXiv</button>
-    <button class="chip" data-source="github">GitHub</button>
-    <button class="chip" data-source="registerspill">Register Spill</button>
+    {% for key, tag in source_tags.items() %}
+    <button class="chip" data-source="{{ key }}">{{ tag }}</button>
+    {% endfor %}
   </div>
 </div>
 

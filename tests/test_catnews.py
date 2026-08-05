@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
+from types import SimpleNamespace
 
 import pytest
 from fastapi.testclient import TestClient
@@ -8,8 +9,8 @@ from fastapi.testclient import TestClient
 from app.fetchers.arxiv import parse_entry
 from app.fetchers.github import parse_item
 from app.fetchers.hn import parse_hit
-from app.fetchers.registerspill import parse_entry as parse_rs_entry
-from app.fetchers.registerspill import parse_links
+from app.fetchers.rss import parse_entry as parse_rss_entry
+from app.fetchers.rss import parse_links, strip_html
 from app.models import SourceSnapshot, Story
 from app.store import (
     combined_digest,
@@ -107,17 +108,91 @@ def test_registerspill_parse_links():
     assert all("substackcdn" not in l.url for l in links)
 
 
-def test_registerspill_parse_entry_attaches_links():
-    entry = {
+def test_rss_url_filter_keeps_only_matching_entries():
+    joy = {
         "link": "https://registerspill.thorstenball.com/p/joy-and-curiosity-93",
         "title": "Joy & Curiosity #93",
-        "author": "Thorsten Ball",
-        "content": [{"value": '<p>See <a href="https://gwern.net/">gwern</a>.</p>'}],
     }
-    story = parse_rs_entry(entry)
+    other = {
+        "link": "https://registerspill.thorstenball.com/p/ownership",
+        "title": "Ownership",
+    }
+    assert (
+        parse_rss_entry(joy, "registerspill", url_filter="joy-and-curiosity")
+        is not None
+    )
+    assert (
+        parse_rss_entry(other, "registerspill", url_filter="joy-and-curiosity") is None
+    )
+
+
+def test_rss_parse_entry():
+    entry = {
+        "title": "On child birth",
+        "link": "https://www.henrikkarlsson.xyz/p/child-birth",
+        "author": "Henrik Karlsson",
+        "summary": "<p>Some <b>html</b> summary.</p>",
+        "published_parsed": (2026, 7, 29, 9, 55, 8, 2, 210, 0),
+        "id": "https://www.henrikkarlsson.xyz/p/child-birth",
+    }
+    story = parse_rss_entry(entry, "escflat")
     assert story is not None
-    assert story.source == "registerspill"
-    assert [l.title for l in story.links] == ["gwern"]
+    assert story.source == "escflat"
+    assert story.title == "On child birth"
+    assert story.author == "Henrik Karlsson"
+    assert story.external_id == "https://www.henrikkarlsson.xyz/p/child-birth"
+    assert story.published is not None
+    assert story.snippet is not None
+    assert "html" in story.snippet
+
+
+def test_rss_parse_entry_skips_missing_link():
+    assert parse_rss_entry({"title": "No link"}, "escflat") is None
+
+
+def test_rss_strip_html():
+    assert strip_html("<p>Hello &amp; <b>world</b></p>") == "Hello & world"
+    assert strip_html("") == ""
+
+
+def test_fetch_rss_extracts_links_when_requested():
+    import asyncio
+
+    from app.fetchers.rss import fetch_rss
+
+    feed_xml = (
+        "<rss version='2.0'><channel>"
+        "<item><title>Joy &amp; Curiosity #93</title>"
+        "<link>https://registerspill.thorstenball.com/p/joy-and-curiosity-93</link>"
+        "<author>Thorsten Ball</author>"
+        "<content:encoded xmlns:content='http://purl.org/rss/1.0/modules/content/'>"
+        '<![CDATA[<p>See <a href="https://gwern.net/">gwern</a>.</p>]]>'
+        "</content:encoded></item>"
+        "<item><title>Ownership</title>"
+        "<link>https://registerspill.thorstenball.com/p/ownership</link>"
+        "</item>"
+        "</channel></rss>"
+    )
+
+    class FakeClient:
+        async def get(self, url, timeout=None):
+            response = SimpleNamespace(content=feed_xml.encode())
+            response.raise_for_status = lambda: None
+            return response
+
+    async def run():
+        return await fetch_rss(
+            FakeClient(),
+            "https://registerspill.thorstenball.com/feed",
+            "registerspill",
+            url_filter="joy-and-curiosity",
+            extract_links=True,
+        )
+
+    stories = asyncio.run(run())
+    assert [s.title for s in stories] == ["Joy & Curiosity #93"]
+    assert stories[0].source == "registerspill"
+    assert [l.title for l in stories[0].links] == ["gwern"]
 
 
 def test_story_markdown_and_why_read():
@@ -347,3 +422,77 @@ def test_build_site_copies_all_static_assets(tmp_path):
         assert (out / "static" / name).read_bytes() == (app_static / name).read_bytes()
     assert (out / "static" / "fonts").is_dir()
     assert (out / "static" / "favicon.svg").exists()
+
+
+def test_config_loads_default_sources(tmp_path):
+    from app.config import SOURCE_LABELS, SOURCE_TAGS, SOURCES
+
+    assert "hn" in SOURCES
+    assert "arxiv" in SOURCES
+    assert SOURCE_LABELS["github"] == "GitHub"
+    assert SOURCE_TAGS["registerspill"] == "Register Spill"
+    assert SOURCES["arxiv"]["weekday"] == 0
+
+
+def test_config_loads_yaml_sources(tmp_path):
+    from app.config import load_sources
+
+    yaml_file = tmp_path / "sources.yaml"
+    yaml_file.write_text(
+        """
+defaults:
+  cadence_days: 1
+  limit: 5
+sources:
+  - key: blog
+    label: My Blog
+    tag: BLOG
+    type: rss
+    url: https://example.com/feed
+    color: "#123456"
+  - key: hn
+    label: Hacker News
+    tag: HN
+    type: builtin
+    limit: 30
+"""
+    )
+    sources = load_sources(yaml_file)
+    assert set(sources) == {"blog", "hn"}
+    assert sources["blog"]["type"] == "rss"
+    assert sources["blog"]["url"] == "https://example.com/feed"
+    # defaults applied, per-source limit overrides
+    assert sources["blog"]["cadence_days"] == 1
+    assert sources["blog"]["limit"] == 5
+    assert sources["hn"]["limit"] == 30
+
+
+def test_config_falls_back_to_builtin_when_yaml_missing(tmp_path):
+    from app.config import load_sources
+
+    missing = tmp_path / "nope.yaml"
+    assert not missing.exists()
+    sources = load_sources(missing)
+    assert set(sources) == {"hn", "arxiv", "github", "registerspill"}
+
+
+def test_badge_css_covers_every_source():
+    from app.config import SOURCES, badge_css
+
+    css = badge_css()
+    for key in SOURCES:
+        assert f".badge-{key} {{" in css
+        assert f"--badge-{key}:" in css
+    assert '[data-theme="dark"]' in css
+
+
+def test_get_fetcher_rss_and_api():
+    from app.fetchers import get_fetcher
+
+    rss_fn = get_fetcher({"key": "blog", "type": "rss", "url": "https://x/feed"})
+    assert callable(rss_fn)
+    hn_fn = get_fetcher({"key": "hn", "type": "builtin"})
+    assert callable(hn_fn)
+
+    with pytest.raises(KeyError):
+        get_fetcher({"key": "bogus", "type": "builtin"})

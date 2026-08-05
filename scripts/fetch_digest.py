@@ -12,19 +12,9 @@ import httpx
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.config import DATA_DIR, REQUEST_TIMEOUT, SOURCES, USER_AGENT, today_utc
-from app.fetchers.arxiv import fetch_arxiv
-from app.fetchers.github import fetch_github
-from app.fetchers.hn import fetch_hn
-from app.fetchers.registerspill import fetch_registerspill
+from app.fetchers import get_fetcher
 from app.models import SourceSnapshot, Story
 from app.store import last_fetched, save_snapshot
-
-FETCHERS = {
-    "hn": fetch_hn,
-    "arxiv": fetch_arxiv,
-    "github": fetch_github,
-    "registerspill": fetch_registerspill,
-}
 
 
 def load_curation(day: date, data_dir: Path) -> dict:
@@ -59,7 +49,7 @@ def apply_curation(stories: list[Story], curation: dict) -> list[Story]:
 async def fetch_one(
     client, source: str, limit: int, day: date, data_dir: Path
 ) -> SourceSnapshot:
-    fn = FETCHERS[source]
+    fn = get_fetcher(SOURCES[source])
     stories = (await fn(client))[:limit]
     stories = apply_curation(stories, load_curation(day, data_dir))
     return SourceSnapshot(source=source, date=day, stories=stories)
@@ -145,10 +135,8 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    if args.source and args.source not in FETCHERS:
-        raise SystemExit(
-            f"Unknown source {args.source!r}. Known: {', '.join(FETCHERS)}"
-        )
+    if args.source and args.source not in SOURCES:
+        raise SystemExit(f"Unknown source {args.source!r}. Known: {', '.join(SOURCES)}")
 
     sources = (
         [args.source]
