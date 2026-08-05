@@ -1,0 +1,57 @@
+# catnews sources
+# -----------------
+# The single file a host edits. Each source is fetched on its own cadence and
+# archived as a snapshot, then flows into the digest, archive, RSS, and API.
+#
+# type:
+#   - api  : a built-in fetcher (hn, arxiv, github, registerspill)
+#   - rss  : any blog/newsletter with a feed URL (Substack, Ghost, ...)
+#
+# Optional per-source fields:
+#   weekday: 0-6 (Mon-Sun) — only fetch on that weekday
+#   color  : badge color override, e.g. "#2a5f8a" (defaults to palette by order)
+#   limit  : max stories kept per fetch
+
+defaults:
+  cadence_days: 1
+  limit: 20
+
+sources:
+  - key: hn
+    label: Hacker News
+    tag: HN
+    type: api
+    cadence_days: 1
+    limit: 25
+
+  - key: arxiv
+    label: arXiv
+    tag: arXiv
+    type: api
+    cadence_days: 7
+    limit: 15
+    weekday: 0
+
+  - key: github
+    label: GitHub
+    tag: GitHub
+    type: api
+    cadence_days: 1
+    limit: 15
+
+  - key: registerspill
+    label: Register Spill
+    tag: Register Spill
+    type: api
+    cadence_days: 7
+    limit: 10
+    weekday: 0
+
+  # Example — any blog with RSS:
+  # - key: escflat
+  #   label: Escaping Flatland
+  #   tag: Henrik
+  #   type: rss
+  #   url: https://www.henrikkarlsson.xyz/feed
+  #   cadence_days: 7
+  #   limit: 10

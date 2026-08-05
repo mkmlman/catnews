@@ -10,6 +10,8 @@ from app.fetchers.github import parse_item
 from app.fetchers.hn import parse_hit
 from app.fetchers.registerspill import parse_entry as parse_rs_entry
 from app.fetchers.registerspill import parse_links
+from app.fetchers.rss import parse_entry as parse_rss_entry
+from app.fetchers.rss import strip_html
 from app.models import SourceSnapshot, Story
 from app.store import (
     combined_digest,
@@ -118,6 +120,35 @@ def test_registerspill_parse_entry_attaches_links():
     assert story is not None
     assert story.source == "registerspill"
     assert [l.title for l in story.links] == ["gwern"]
+
+
+def test_rss_parse_entry():
+    entry = {
+        "title": "On child birth",
+        "link": "https://www.henrikkarlsson.xyz/p/child-birth",
+        "author": "Henrik Karlsson",
+        "summary": "<p>Some <b>html</b> summary.</p>",
+        "published_parsed": (2026, 7, 29, 9, 55, 8, 2, 210, 0),
+        "id": "https://www.henrikkarlsson.xyz/p/child-birth",
+    }
+    story = parse_rss_entry(entry, "escflat")
+    assert story is not None
+    assert story.source == "escflat"
+    assert story.title == "On child birth"
+    assert story.author == "Henrik Karlsson"
+    assert story.external_id == "https://www.henrikkarlsson.xyz/p/child-birth"
+    assert story.published is not None
+    assert story.snippet is not None
+    assert "html" in story.snippet
+
+
+def test_rss_parse_entry_skips_missing_link():
+    assert parse_rss_entry({"title": "No link"}, "escflat") is None
+
+
+def test_rss_strip_html():
+    assert strip_html("<p>Hello &amp; <b>world</b></p>") == "Hello & world"
+    assert strip_html("") == ""
 
 
 def test_story_markdown_and_why_read():
@@ -347,3 +378,77 @@ def test_build_site_copies_all_static_assets(tmp_path):
         assert (out / "static" / name).read_bytes() == (app_static / name).read_bytes()
     assert (out / "static" / "fonts").is_dir()
     assert (out / "static" / "favicon.svg").exists()
+
+
+def test_config_loads_default_sources(tmp_path):
+    from app.config import SOURCE_LABELS, SOURCE_TAGS, SOURCES
+
+    assert "hn" in SOURCES
+    assert "arxiv" in SOURCES
+    assert SOURCE_LABELS["github"] == "GitHub"
+    assert SOURCE_TAGS["registerspill"] == "Register Spill"
+    assert SOURCES["arxiv"]["weekday"] == 0
+
+
+def test_config_loads_yaml_sources(tmp_path):
+    from app.config import load_sources
+
+    yaml_file = tmp_path / "sources.yaml"
+    yaml_file.write_text(
+        """
+defaults:
+  cadence_days: 1
+  limit: 5
+sources:
+  - key: blog
+    label: My Blog
+    tag: BLOG
+    type: rss
+    url: https://example.com/feed
+    color: "#123456"
+  - key: hn
+    label: Hacker News
+    tag: HN
+    type: api
+    limit: 30
+"""
+    )
+    sources = load_sources(yaml_file)
+    assert set(sources) == {"blog", "hn"}
+    assert sources["blog"]["type"] == "rss"
+    assert sources["blog"]["url"] == "https://example.com/feed"
+    # defaults applied, per-source limit overrides
+    assert sources["blog"]["cadence_days"] == 1
+    assert sources["blog"]["limit"] == 5
+    assert sources["hn"]["limit"] == 30
+
+
+def test_config_falls_back_to_builtin_when_yaml_missing(tmp_path):
+    from app.config import load_sources
+
+    missing = tmp_path / "nope.yaml"
+    assert not missing.exists()
+    sources = load_sources(missing)
+    assert set(sources) == {"hn", "arxiv", "github", "registerspill"}
+
+
+def test_badge_css_covers_every_source():
+    from app.config import SOURCES, badge_css
+
+    css = badge_css()
+    for key in SOURCES:
+        assert f".badge-{key} {{" in css
+        assert f"--badge-{key}:" in css
+    assert '[data-theme="dark"]' in css
+
+
+def test_get_fetcher_rss_and_api():
+    from app.fetchers import get_fetcher
+
+    rss_fn = get_fetcher({"key": "blog", "type": "rss", "url": "https://x/feed"})
+    assert callable(rss_fn)
+    hn_fn = get_fetcher({"key": "hn", "type": "api"})
+    assert callable(hn_fn)
+
+    with pytest.raises(KeyError):
+        get_fetcher({"key": "bogus", "type": "api"})

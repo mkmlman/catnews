@@ -16,7 +16,7 @@
     </li>
     <li>
       <code class="endpoint-code"><span class="method">GET</span> {{ base_path }}/api/sources/&lt;source&gt;</code>
-      <p class="endpoint-desc">The latest snapshot for a source — hn, arxiv, github, registerspill.</p>
+      <p class="endpoint-desc">The latest snapshot for a source — {{ source_tags | join(", ") }}.</p>
     </li>
     <li>
       <code class="endpoint-code"><span class="method">GET</span> {{ base_path }}/api/sources/&lt;source&gt;/&lt;date&gt;</code>

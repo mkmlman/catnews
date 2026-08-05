@@ -11,6 +11,7 @@ dependencies = [
     "feedgen>=1.0",
     "feedparser>=6.0",
     "pydantic>=2.9",
+    "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
