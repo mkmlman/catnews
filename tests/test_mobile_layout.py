@@ -52,6 +52,23 @@ def test_icons_in_fixed_non_wrapping_slot(mobile):
     assert "flex-wrap: nowrap" in css
 
 
+def test_source_filter_chips_never_wrap(mobile):
+    # Regression: the homepage Source chips wrapped onto a second row at
+    # different points on different phone widths. They must stay a single,
+    # scrollable row in a fixed order.
+    assert ".filter-row" in mobile
+    assert "flex-wrap: nowrap" in mobile
+    assert "overflow-x: auto" in mobile
+
+
+def test_source_details_stack_cleanly(mobile):
+    # Regression: the Sources page Cadence/Limit/Last-fetched rows scattered to
+    # inconsistent x-positions depending on width. They must stack as tidy
+    # full-width label/value rows.
+    assert ".source-details" in mobile
+    assert "flex-direction: column" in mobile
+
+
 def test_stat_table_never_overflows_page(mobile):
     # Regression: the 4-column stats table was wider than 320px phones, forcing
     # horizontal page scroll. It must scroll within its section instead.

@@ -858,6 +858,13 @@ a:focus-visible, button:focus-visible {
   }
   .share-bar { display: none; }
 
+  .filter-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-label, .chip { flex-shrink: 0; }
+
+  .source-details { flex-direction: column; align-items: stretch; gap: 10px 0; }
+  .source-details > div { justify-content: space-between; gap: 12px; }
+
   .stat-section { overflow-x: auto; }
   .stat-section h2 { padding-right: 12px; }
   .stat-table { font-size: 0.84rem; min-width: 340px; }
