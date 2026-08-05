@@ -71,7 +71,8 @@ data/              source_<name>_<date>.json snapshots
 
 Sources live in `sources.yaml` (a built-in default is used if the file is absent). Any
 blog or newsletter with a feed URL can be added as `type: rss` — no code changes needed.
-Badges are assigned from a 12-color palette in order; set `color:` to override.
+Badges are assigned from the 12-color palette below, in source order; set `color:` to any
+CSS color (e.g. `#2a5f8a`) to override a specific source.
 
 ```yaml
 sources:
@@ -102,6 +103,21 @@ Register Spill too — no custom code needed:
 Built-in sources (`hn`, `arxiv`, `github`) use `type: builtin` and have dedicated
 JSON-API fetchers under `app/fetchers/`. `--source` and `--limit` in the CLI accept
 any key from `sources.yaml`.
+
+The 12 badge colors, in assignment order (source #1 → ember, #2 → clay, ...):
+
+| # | Name | Hex | # | Name | Hex |
+| --- | --- | --- | --- | --- | --- |
+| 1 | ember | `#9c4d14` | 7 | plum | `#5b3e8a` |
+| 2 | clay | `#8a1f18` | 8 | teal | `#1f6f6b` |
+| 3 | graphite | `#3b3e37` | 9 | rose | `#8a2e4e` |
+| 4 | cerulean | `#20507a` | 10 | steel | `#3f4f73` |
+| 5 | moss | `#2e6b3e` | 11 | olive | `#6b5b1e` |
+| 6 | amber | `#7a4a21` | 12 | bronze | `#6b3f1e` |
+
+The palette lives in `PALETTE` in `app/config.py` (each entry also carries matching
+light and dark theme background tints). Badges cycle back to ember for the 13th
+source onward.
 
 ## How stories are selected
 
