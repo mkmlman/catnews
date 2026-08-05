@@ -30,9 +30,12 @@
   --display: "Fraunces", "Source Serif 4", Charter, Georgia, "Times New Roman", serif;
   --mono: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
 
-  --maxw: 900px;
+  --maxw: 1120px;
+  --label-xs: 0.64rem;
+  --label-sm: 0.72rem;
+  --label-md: 0.8rem;
   --shadow: 0 1px 2px rgba(35, 36, 31, 0.05), 0 12px 32px -14px rgba(35, 36, 31, 0.22);
-  --glow: radial-gradient(900px 380px at 50% -120px, rgba(27, 54, 93, 0.07), transparent 70%);
+  --glow: radial-gradient(1120px 420px at 50% -120px, rgba(27, 54, 93, 0.07), transparent 70%);
 }
 
 [data-theme="dark"] {
@@ -62,6 +65,18 @@
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 
+.stat-card,
+.endpoint-code,
+.code-block,
+.site-header,
+.site-footer,
+.story-title a,
+.back,
+.muted,
+.badge {
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+}
+
 [hidden] { display: none !important; }
 
 body {
@@ -73,6 +88,7 @@ body {
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 /* Subtle paper grain over everything */
@@ -84,7 +100,6 @@ body {
   margin: 0 auto;
   padding: 0 24px 80px;
 }
-
 a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-deep); }
 a:focus-visible, button:focus-visible {
@@ -162,7 +177,7 @@ a:focus-visible, button:focus-visible {
 .site-nav { display: flex; align-items: center; gap: 24px; margin-left: auto; }
 .site-nav a {
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
@@ -224,7 +239,7 @@ a:focus-visible, button:focus-visible {
 }
 .edition-label {
   font-family: var(--mono);
-  font-size: 0.7rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--accent);
@@ -238,7 +253,7 @@ a:focus-visible, button:focus-visible {
 }
 .sync-note {
   font-family: var(--mono);
-  font-size: 0.62rem;
+  font-size: var(--label-xs);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--faint);
@@ -275,7 +290,7 @@ a:focus-visible, button:focus-visible {
 .filter-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .filter-label {
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--faint);
@@ -283,7 +298,7 @@ a:focus-visible, button:focus-visible {
 }
 .chip {
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.05em;
   padding: 5px 13px;
   border: 1px solid transparent;
@@ -352,7 +367,7 @@ a:focus-visible, button:focus-visible {
 .badge {
   font-family: var(--mono);
   font-weight: 600;
-  font-size: 0.62rem;
+  font-size: var(--label-xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 3px 10px;
@@ -366,7 +381,7 @@ a:focus-visible, button:focus-visible {
 
 .story-score {
   font-family: var(--mono);
-  font-size: 0.7rem;
+  font-size: var(--label-sm);
   color: var(--muted);
   margin-left: auto;
   font-variant-numeric: tabular-nums;
@@ -391,55 +406,75 @@ a:focus-visible, button:focus-visible {
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
-
 .story-by {
   color: var(--muted);
-  font-size: 0.74rem;
+  font-size: var(--label-md);
   font-style: italic;
   margin: 0 0 8px;
 }
-.story-authors { color: var(--muted); font-size: 0.72rem; margin: 0 0 8px; font-style: italic; }
+
+.story-authors { color: var(--muted); font-size: var(--label-sm); margin: 0 0 8px; font-style: italic; }
 
 .story-more {
   margin: 0 0 10px;
-  font-size: 0.8rem;
+  font-size: var(--label-md);
 }
 .story-more summary {
   font-family: var(--mono);
-  font-size: 0.64rem;
+  font-size: var(--label-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
   cursor: pointer;
   list-style: none;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-.story-more summary::after { content: " \25BE"; }
-.story-more[open] summary::after { content: " \25B4"; }
+.story-more summary::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-1px);
+  transition: transform 0.2s ease;
+}
+.story-more[open] summary::after { transform: rotate(225deg) translateY(-1px); }
 .story-more summary:hover { color: var(--accent); }
 .story-summary {
   margin: 6px 0 0;
   color: var(--ink-soft);
-  font-size: 0.8rem;
+  font-size: var(--label-md);
   line-height: 1.55;
 }
 
-.story-links { margin: 0 0 10px; font-size: 0.8rem; }
+.story-links { margin: 0 0 10px; font-size: var(--label-md); }
 .story-links summary {
   font-family: var(--mono);
-  font-size: 0.64rem;
+  font-size: var(--label-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent);
   cursor: pointer;
   list-style: none;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-.story-links summary::after { content: " \25BE"; }
-.story-links[open] summary::after { content: " \25B4"; }
+.story-links summary::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-1px);
+  transition: transform 0.2s ease;
+}
+.story-links[open] summary::after { transform: rotate(225deg) translateY(-1px); }
 .story-links summary:hover { text-decoration: underline; }
 .story-links-list { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 6px; }
-.story-links-list li { font-size: 0.8rem; line-height: 1.4; color: var(--ink-soft); }
+.story-links-list li { font-size: var(--label-md); line-height: 1.4; color: var(--ink-soft); }
 .story-links-list a {
   color: var(--ink);
   border-bottom: 1px solid var(--line);
@@ -448,7 +483,7 @@ a:focus-visible, button:focus-visible {
 .story-links-list a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 .story-links-site {
   font-family: var(--mono);
-  font-size: 0.66rem;
+  font-size: var(--label-xs);
   margin-left: 6px;
   color: var(--muted);
 }
@@ -456,7 +491,7 @@ a:focus-visible, button:focus-visible {
   margin: 8px 0 0;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 0.72rem;
+  font-size: var(--label-sm);
   color: var(--muted);
 }
 
@@ -469,7 +504,7 @@ a:focus-visible, button:focus-visible {
 }
 .story-link {
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
@@ -478,7 +513,7 @@ a:focus-visible, button:focus-visible {
 .story-link:hover { color: var(--accent-deep); }
 .discuss {
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: var(--label-sm);
   color: var(--muted);
 }
 .discuss:hover { color: var(--accent); }
@@ -486,10 +521,10 @@ a:focus-visible, button:focus-visible {
 /* --------------------------------------------------------------------------
    Subpages (archive / stats)
    -------------------------------------------------------------------------- */
-.page-header { padding: 56px 0 8px; }
+.page-header { padding: 56px 0 8px; position: relative; }
 .back {
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
@@ -502,13 +537,22 @@ a:focus-visible, button:focus-visible {
   letter-spacing: -0.02em;
   margin: 18px 0 6px;
 }
+.page-header::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0.55;
+  margin: 22px 0 0;
+}
 .muted { color: var(--muted); font-style: italic; }
 
 .archive-source { padding: 26px 0 4px; }
 .archive-source + .archive-source { border-top: 1px solid var(--line); }
 .archive-summary {
   font-family: var(--mono);
-  font-size: 0.66rem;
+  font-size: var(--label-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
@@ -532,7 +576,7 @@ a:focus-visible, button:focus-visible {
 }
 .archive-day {
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -540,7 +584,7 @@ a:focus-visible, button:focus-visible {
 .archive-list a:hover .archive-date { color: var(--accent); }
 .archive-count {
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: var(--label-sm);
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
@@ -565,7 +609,7 @@ a:focus-visible, button:focus-visible {
 .source-details > div { display: flex; align-items: baseline; gap: 8px; }
 .source-details dt {
   font-family: var(--mono);
-  font-size: 0.7rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -588,35 +632,35 @@ a:focus-visible, button:focus-visible {
 }
 .stat-card {
   position: relative;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
   padding: 22px 18px 20px;
   text-align: center;
   overflow: hidden;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  transition: background-color 0.18s, border-color 0.18s;
 }
 .stat-card::before {
   content: "";
   position: absolute;
-  inset: 0 0 auto 0;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    var(--accent),
-    color-mix(in srgb, var(--accent) 45%, transparent)
-  );
-  opacity: 0.75;
+  top: 0;
+  left: 18px;
+  right: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.18s;
 }
 .stat-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--line-strong);
-  box-shadow: var(--shadow);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
 }
+.stat-card:hover::before { opacity: 1; }
 .stat-label {
   display: block;
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
@@ -642,7 +686,7 @@ a:focus-visible, button:focus-visible {
 .stat-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
 .stat-table th {
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
@@ -664,7 +708,7 @@ a:focus-visible, button:focus-visible {
 .stat-section { padding: 6px 0 0; }
 .stat-section h2 {
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
@@ -687,7 +731,7 @@ a:focus-visible, button:focus-visible {
   background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, transparent));
   opacity: 0.85;
 }
-.share-pct { min-width: 44px; text-align: right; font-size: 0.78rem; }
+.share-pct { min-width: 44px; text-align: right; font-size: var(--label-sm); }
 
 /* --------------------------------------------------------------------------
    Footer
@@ -699,14 +743,13 @@ a:focus-visible, button:focus-visible {
   text-align: center;
   color: var(--muted);
 }
-.footer-line { font-size: 0.85rem; font-style: italic; margin: 0 0 12px; }
 .footer-nav {
   display: flex;
   justify-content: center;
   gap: 18px;
   flex-wrap: wrap;
   font-family: var(--mono);
-  font-size: 0.7rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin: 0 0 14px;
@@ -722,7 +765,7 @@ a:focus-visible, button:focus-visible {
   align-items: center;
   gap: 10px;
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: var(--label-sm);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--accent);
@@ -748,11 +791,16 @@ a:focus-visible, button:focus-visible {
   font-size: 0.8rem;
   line-height: 1.7;
   color: var(--ink);
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
   padding: 10px 14px;
   overflow-x: auto;
+  transition: background-color 0.18s, border-color 0.18s;
+}
+.endpoint-code:hover {
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 .endpoint-code a {
   color: var(--ink);
@@ -762,7 +810,7 @@ a:focus-visible, button:focus-visible {
 .endpoint-code a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 .method {
   font-family: var(--mono);
-  font-size: 0.58rem;
+  font-size: var(--label-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
@@ -799,7 +847,7 @@ a:focus-visible, button:focus-visible {
   color: var(--ink-soft);
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 16px 18px;
   overflow-x: auto;
   margin: 0;
