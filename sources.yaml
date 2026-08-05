@@ -4,8 +4,9 @@
 # archived as a snapshot, then flows into the digest, archive, RSS, and API.
 #
 # type:
-#   - api  : a built-in fetcher (hn, arxiv, github, registerspill)
-#   - rss  : any blog/newsletter with a feed URL (Substack, Ghost, ...)
+#   - builtin: a dedicated fetcher shipped in app/fetchers/ — JSON APIs
+#     (hn, arxiv, github) or bespoke RSS parsing (registerspill)
+#   - rss    : any blog/newsletter with a feed URL (Substack, Ghost, ...)
 #
 # Optional per-source fields:
 #   weekday: 0-6 (Mon-Sun) — only fetch on that weekday
@@ -20,14 +21,14 @@ sources:
   - key: hn
     label: Hacker News
     tag: HN
-    type: api
+    type: builtin
     cadence_days: 1
     limit: 25
 
   - key: arxiv
     label: arXiv
     tag: arXiv
-    type: api
+    type: builtin
     cadence_days: 7
     limit: 15
     weekday: 0
@@ -35,14 +36,14 @@ sources:
   - key: github
     label: GitHub
     tag: GitHub
-    type: api
+    type: builtin
     cadence_days: 1
     limit: 15
 
   - key: registerspill
     label: Register Spill
     tag: Register Spill
-    type: api
+    type: builtin
     cadence_days: 7
     limit: 10
     weekday: 0

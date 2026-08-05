@@ -409,7 +409,7 @@ sources:
   - key: hn
     label: Hacker News
     tag: HN
-    type: api
+    type: builtin
     limit: 30
 """
     )
@@ -447,8 +447,8 @@ def test_get_fetcher_rss_and_api():
 
     rss_fn = get_fetcher({"key": "blog", "type": "rss", "url": "https://x/feed"})
     assert callable(rss_fn)
-    hn_fn = get_fetcher({"key": "hn", "type": "api"})
+    hn_fn = get_fetcher({"key": "hn", "type": "builtin"})
     assert callable(hn_fn)
 
     with pytest.raises(KeyError):
-        get_fetcher({"key": "bogus", "type": "api"})
+        get_fetcher({"key": "bogus", "type": "builtin"})

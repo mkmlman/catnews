@@ -13,8 +13,9 @@ from .rss import fetch_rss
 
 FetchFn = Callable[[httpx.AsyncClient], Awaitable[list[Story]]]
 
-# Built-in API fetchers, keyed by source key. Any source with type != "rss"
-# resolves here; rss-type sources use the generic feed fetcher instead.
+# Dedicated fetchers shipped with catnews, keyed by source key. rss-type
+# sources use the generic feed fetcher instead; everything else (JSON APIs
+# like HN/GitHub, or bespoke RSS parsing like Register Spill) resolves here.
 API_FETCHERS: dict[str, FetchFn] = {
     "hn": fetch_hn,
     "arxiv": fetch_arxiv,
@@ -26,8 +27,10 @@ API_FETCHERS: dict[str, FetchFn] = {
 def get_fetcher(cfg: dict) -> FetchFn:
     """Resolve the fetcher for a source config dict.
 
-    type: "rss"  -> generic feed fetcher bound to the source's feed URL
-    type: "api"  -> the built-in fetcher for the source key
+    type: "rss"     -> generic feed fetcher bound to the source's feed URL
+    type: "builtin" -> the dedicated fetcher shipped in app/fetchers/ for this
+                       source key (JSON APIs like HN/GitHub, or bespoke RSS
+                       parsing like Register Spill)
     """
     if cfg.get("type") == "rss":
         url = cfg["url"]

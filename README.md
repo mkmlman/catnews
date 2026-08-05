@@ -49,7 +49,7 @@ uv run uvicorn app.main:app --reload         # or serve live on http://localhost
 
 ```
 app/
-  fetchers/        one module per built-in API source (hn, arxiv, github, registerspill)
+  fetchers/        one module per built-in source (hn, arxiv, github, registerspill)
                    + rss.py: generic fetcher for any blog/newsletter feed
   templates/       Jinja2 pages: base, index, archive, snapshot, stats
   static/          style.css + web fonts
@@ -83,8 +83,9 @@ sources:
     limit: 10
 ```
 
-Built-in API sources (`hn`, `arxiv`, `github`, `registerspill`) use `type: api` and have
-dedicated fetchers under `app/fetchers/`. `--source` and `--limit` in the CLI accept any
+Built-in sources (`hn`, `arxiv`, `github`, `registerspill`) use `type: builtin` and have
+dedicated fetchers under `app/fetchers/` — JSON APIs (HN, arXiv, GitHub) or bespoke
+RSS parsing (Register Spill). `--source` and `--limit` in the CLI accept any
 key from `sources.yaml`.
 
 ## How stories are selected

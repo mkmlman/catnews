@@ -51,14 +51,14 @@ _BUILTIN_SOURCES: dict[str, dict] = {
     "hn": {
         "label": "Hacker News",
         "tag": "HN",
-        "type": "api",
+        "type": "builtin",
         "cadence_days": 1,
         "limit": 25,
     },
     "arxiv": {
         "label": "arXiv",
         "tag": "arXiv",
-        "type": "api",
+        "type": "builtin",
         "cadence_days": 7,
         "limit": 15,
         "weekday": 0,
@@ -66,14 +66,14 @@ _BUILTIN_SOURCES: dict[str, dict] = {
     "github": {
         "label": "GitHub",
         "tag": "GitHub",
-        "type": "api",
+        "type": "builtin",
         "cadence_days": 1,
         "limit": 15,
     },
     "registerspill": {
         "label": "Register Spill",
         "tag": "Register Spill",
-        "type": "api",
+        "type": "builtin",
         "cadence_days": 7,
         "limit": 10,
         "weekday": 0,
