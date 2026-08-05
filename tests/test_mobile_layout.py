@@ -69,6 +69,16 @@ def test_source_details_stack_cleanly(mobile):
     assert "flex-direction: column" in mobile
 
 
+def test_sticky_filter_bar_is_frosted_not_solid():
+    # Regression: the sticky Source filter bar used a solid var(--paper) gradient
+    # that rendered as a flat dark rectangle over the glowed page top in dark
+    # mode. It must be a translucent, blurred (frosted) surface instead.
+    css = (APP_DIR / "static" / "style.css").read_text()
+    assert "linear-gradient(var(--paper) 82%, rgba(245, 244, 237, 0));" not in css
+    assert "color-mix(in srgb, var(--paper) 58%, transparent)" in css
+    assert "backdrop-filter: blur(12px);" in css
+
+
 def test_stat_table_never_overflows_page(mobile):
     # Regression: the 4-column stats table was wider than 320px phones, forcing
     # horizontal page scroll. It must scroll within its section instead.

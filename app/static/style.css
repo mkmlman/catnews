@@ -279,7 +279,9 @@ a:focus-visible, button:focus-visible {
   gap: 12px 26px;
   padding: 18px 0;
   margin-bottom: 10px;
-  background: linear-gradient(var(--paper) 82%, rgba(245, 244, 237, 0));
+  background: color-mix(in srgb, var(--paper) 58%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 .filter-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .filter-label {
@@ -858,7 +860,7 @@ a:focus-visible, button:focus-visible {
   }
   .share-bar { display: none; }
 
-  .filter-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .filter-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .filter-row::-webkit-scrollbar { display: none; }
   .filter-label, .chip { flex-shrink: 0; }
 
