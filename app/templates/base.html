@@ -4,7 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <link rel="icon" type="image/svg+xml" href="{{ base_path }}/static/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="{{ base_path }}/static/favicon.svg?v=2">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ base_path }}/static/favicon-16.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ base_path }}/static/favicon-16-dark.png" media="(prefers-color-scheme: dark)">
   <title>{% block title %}{{ app_name }}{% endblock %}</title>
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ base_url }}/feed.rss">
   <link rel="stylesheet" href="{{ base_path }}/static/style.css">
