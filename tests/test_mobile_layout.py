@@ -39,6 +39,19 @@ def test_header_nav_wraps_on_mobile(mobile):
     assert "wrap" in mobile
 
 
+def test_icons_in_fixed_non_wrapping_slot(mobile):
+    # Regression: the GitHub icon and theme toggle used to live inside the nav and
+    # shifted rows/positions with screen width. They must stay in a dedicated
+    # always-nowrap actions slot pinned next to the wordmark.
+    assert ".header-actions" in mobile
+    assert "grid-area: actions" in mobile
+    assert ".site-nav" in mobile
+    assert "grid-area: nav" in mobile
+    css = (APP_DIR / "static" / "style.css").read_text()
+    assert ".header-actions {" in css
+    assert "flex-wrap: nowrap" in css
+
+
 def test_stat_table_never_overflows_page(mobile):
     # Regression: the 4-column stats table was wider than 320px phones, forcing
     # horizontal page scroll. It must scroll within its section instead.

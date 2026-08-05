@@ -141,8 +141,7 @@ a:focus-visible, button:focus-visible {
 .site-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: 24px;
   padding: 34px 0 22px;
   border-bottom: 1px solid var(--line);
 }
@@ -171,7 +170,7 @@ a:focus-visible, button:focus-visible {
   80% { transform: rotate(2deg); }
 }
 .wordmark:hover { color: var(--accent); }
-.site-nav { display: flex; align-items: center; gap: 24px; }
+.site-nav { display: flex; align-items: center; gap: 24px; margin-left: auto; }
 .site-nav a {
   font-family: var(--mono);
   font-size: 0.72rem;
@@ -186,19 +185,25 @@ a:focus-visible, button:focus-visible {
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
-.site-nav .repo-link {
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: nowrap;
+}
+.header-actions .repo-link {
   display: inline-flex;
   align-items: center;
   padding: 4px;
   border-bottom: none;
   border-radius: 999px;
 }
-.site-nav .repo-link svg {
+.header-actions .repo-link svg {
   display: block;
   width: 17px;
   height: 17px;
 }
-.site-nav .repo-link:hover {
+.header-actions .repo-link:hover {
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 8%, transparent);
   border-bottom-color: transparent;
@@ -834,8 +839,23 @@ a:focus-visible, button:focus-visible {
   .container { padding: 0 18px 60px; }
   .hero { padding: 36px 0 26px; }
   .stories { grid-template-columns: 1fr; }
-  .site-header { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .site-nav { flex-wrap: wrap; gap: 10px 16px; }
+
+  .site-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "wordmark actions" "nav nav";
+    align-items: center;
+    gap: 14px 16px;
+    padding: 22px 0 16px;
+  }
+  .wordmark { grid-area: wordmark; }
+  .header-actions { grid-area: actions; }
+  .site-nav {
+    grid-area: nav;
+    margin-left: 0;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+  }
   .share-bar { display: none; }
 
   .stat-section { overflow-x: auto; }
