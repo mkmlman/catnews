@@ -72,11 +72,20 @@ def test_source_details_stack_cleanly(mobile):
 def test_sticky_filter_bar_is_frosted_not_solid():
     # Regression: the sticky Source filter bar used a solid var(--paper) gradient
     # that rendered as a flat dark rectangle over the glowed page top in dark
-    # mode. It must be a translucent, blurred (frosted) surface instead.
+    # mode. It must be a transparent, blurred (glass) surface — no solid tint.
     css = (APP_DIR / "static" / "style.css").read_text()
     assert "linear-gradient(var(--paper) 82%, rgba(245, 244, 237, 0));" not in css
-    assert "color-mix(in srgb, var(--paper) 58%, transparent)" in css
     assert "backdrop-filter: blur(12px);" in css
+
+
+def test_no_svg_noise_overlay():
+    # Regression: the fixed full-viewport SVG-turbulence grain (body::before)
+    # showed through the filter bar as a dark grainy box in dark mode, and can
+    # render as a solid black box on iOS Safari. It must be gone.
+    css = (APP_DIR / "static" / "style.css").read_text()
+    assert "body::before" not in css
+    assert "feTurbulence" not in css
+    assert "--noise-opacity" not in css
 
 
 def test_stat_table_never_overflows_page(mobile):
