@@ -49,8 +49,9 @@ uv run uvicorn app.main:app --reload         # or serve live on http://localhost
 
 ```
 app/
-  fetchers/        one module per built-in source (hn, arxiv, github, registerspill)
+  fetchers/        one module per built-in source (hn, arxiv, github)
                    + rss.py: generic fetcher for any blog/newsletter feed
+                   (Substack, Ghost, ...)
   templates/       Jinja2 pages: base, index, archive, snapshot, stats
   static/          style.css + web fonts
   config.py        loads sources.yaml; palette + badge CSS generation; env overrides
@@ -83,10 +84,24 @@ sources:
     limit: 10
 ```
 
-Built-in sources (`hn`, `arxiv`, `github`, `registerspill`) use `type: builtin` and have
-dedicated fetchers under `app/fetchers/` — JSON APIs (HN, arXiv, GitHub) or bespoke
-RSS parsing (Register Spill). `--source` and `--limit` in the CLI accept any
-key from `sources.yaml`.
+Two optional rss-only fields make the generic fetcher cover newsletters like
+Register Spill too — no custom code needed:
+
+```yaml
+  - key: registerspill
+    label: Register Spill
+    tag: Register Spill
+    type: rss
+    url: https://registerspill.thorstenball.com/feed
+    url_filter: joy-and-curiosity   # keep only entries whose URL contains this
+    extract_links: true             # show the links curated inside each post
+    cadence_days: 7
+    weekday: 0
+```
+
+Built-in sources (`hn`, `arxiv`, `github`) use `type: builtin` and have dedicated
+JSON-API fetchers under `app/fetchers/`. `--source` and `--limit` in the CLI accept
+any key from `sources.yaml`.
 
 ## How stories are selected
 

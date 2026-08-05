@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
+from types import SimpleNamespace
 
 import pytest
 from fastapi.testclient import TestClient
@@ -8,10 +9,8 @@ from fastapi.testclient import TestClient
 from app.fetchers.arxiv import parse_entry
 from app.fetchers.github import parse_item
 from app.fetchers.hn import parse_hit
-from app.fetchers.registerspill import parse_entry as parse_rs_entry
-from app.fetchers.registerspill import parse_links
 from app.fetchers.rss import parse_entry as parse_rss_entry
-from app.fetchers.rss import strip_html
+from app.fetchers.rss import parse_links, strip_html
 from app.models import SourceSnapshot, Story
 from app.store import (
     combined_digest,
@@ -109,17 +108,22 @@ def test_registerspill_parse_links():
     assert all("substackcdn" not in l.url for l in links)
 
 
-def test_registerspill_parse_entry_attaches_links():
-    entry = {
+def test_rss_url_filter_keeps_only_matching_entries():
+    joy = {
         "link": "https://registerspill.thorstenball.com/p/joy-and-curiosity-93",
         "title": "Joy & Curiosity #93",
-        "author": "Thorsten Ball",
-        "content": [{"value": '<p>See <a href="https://gwern.net/">gwern</a>.</p>'}],
     }
-    story = parse_rs_entry(entry)
-    assert story is not None
-    assert story.source == "registerspill"
-    assert [l.title for l in story.links] == ["gwern"]
+    other = {
+        "link": "https://registerspill.thorstenball.com/p/ownership",
+        "title": "Ownership",
+    }
+    assert (
+        parse_rss_entry(joy, "registerspill", url_filter="joy-and-curiosity")
+        is not None
+    )
+    assert (
+        parse_rss_entry(other, "registerspill", url_filter="joy-and-curiosity") is None
+    )
 
 
 def test_rss_parse_entry():
@@ -149,6 +153,46 @@ def test_rss_parse_entry_skips_missing_link():
 def test_rss_strip_html():
     assert strip_html("<p>Hello &amp; <b>world</b></p>") == "Hello & world"
     assert strip_html("") == ""
+
+
+def test_fetch_rss_extracts_links_when_requested():
+    import asyncio
+
+    from app.fetchers.rss import fetch_rss
+
+    feed_xml = (
+        "<rss version='2.0'><channel>"
+        "<item><title>Joy &amp; Curiosity #93</title>"
+        "<link>https://registerspill.thorstenball.com/p/joy-and-curiosity-93</link>"
+        "<author>Thorsten Ball</author>"
+        "<content:encoded xmlns:content='http://purl.org/rss/1.0/modules/content/'>"
+        '<![CDATA[<p>See <a href="https://gwern.net/">gwern</a>.</p>]]>'
+        "</content:encoded></item>"
+        "<item><title>Ownership</title>"
+        "<link>https://registerspill.thorstenball.com/p/ownership</link>"
+        "</item>"
+        "</channel></rss>"
+    )
+
+    class FakeClient:
+        async def get(self, url, timeout=None):
+            response = SimpleNamespace(content=feed_xml.encode())
+            response.raise_for_status = lambda: None
+            return response
+
+    async def run():
+        return await fetch_rss(
+            FakeClient(),
+            "https://registerspill.thorstenball.com/feed",
+            "registerspill",
+            url_filter="joy-and-curiosity",
+            extract_links=True,
+        )
+
+    stories = asyncio.run(run())
+    assert [s.title for s in stories] == ["Joy & Curiosity #93"]
+    assert stories[0].source == "registerspill"
+    assert [l.title for l in stories[0].links] == ["gwern"]
 
 
 def test_story_markdown_and_why_read():

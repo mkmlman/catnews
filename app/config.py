@@ -73,7 +73,10 @@ _BUILTIN_SOURCES: dict[str, dict] = {
     "registerspill": {
         "label": "Register Spill",
         "tag": "Register Spill",
-        "type": "builtin",
+        "type": "rss",
+        "url": "https://registerspill.thorstenball.com/feed",
+        "url_filter": "joy-and-curiosity",
+        "extract_links": True,
         "cadence_days": 7,
         "limit": 10,
         "weekday": 0,
