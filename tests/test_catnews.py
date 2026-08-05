@@ -322,3 +322,28 @@ def test_source_registry_cadences(tmp_path):
     assert rows["arxiv"]["cadence"] == "weekly · Monday"
     assert rows["registerspill"]["cadence"] == "weekly · Monday"
     assert rows["hn"]["last_fetched"] is None
+
+
+def test_build_site_copies_all_static_assets(tmp_path):
+    # Regression: build_site only copied style.css + fonts, so favicon.svg 404'd
+    # on the deployed site. The whole static dir must be copied.
+    from pathlib import Path
+
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+
+    app_static = Path(__file__).resolve().parent.parent / "app" / "static"
+    for name in ("favicon.svg", "style.css"):
+        assert (out / "static" / name).read_bytes() == (app_static / name).read_bytes()
+    assert (out / "static" / "fonts").is_dir()
+    assert (out / "static" / "favicon.svg").exists()

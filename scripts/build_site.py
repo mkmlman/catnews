@@ -41,11 +41,8 @@ def build_site(
     digest = combined_digest(data_dir)
     assert digest is not None  # guaranteed: snapshots exist above
 
-    # Static assets
-    write(out_dir / "static" / "style.css", (STATIC_DIR / "style.css").read_bytes())
-    shutil.copytree(
-        STATIC_DIR / "fonts", out_dir / "static" / "fonts", dirs_exist_ok=True
-    )
+    # Static assets (style.css, fonts, favicon)
+    shutil.copytree(STATIC_DIR, out_dir / "static", dirs_exist_ok=True)
 
     # Pages
     write(
