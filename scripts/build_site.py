@@ -14,6 +14,7 @@ from app.render import (
     render_markdown,
     render_page,
     render_rss,
+    render_search_index,
     render_service_worker,
     render_trend_svg,
     walk_site_urls,
@@ -33,6 +34,19 @@ from app.store import (
 STATIC_DIR = Path(__file__).resolve().parent.parent / "app" / "static"
 
 
+def clean_output_dir(out_dir: Path) -> None:
+    """Remove a previous build, guarding against broad or ambiguous targets."""
+    if not out_dir.exists():
+        return
+    if out_dir.is_symlink() or not out_dir.is_dir():
+        raise SystemExit(f"Build output must be a real directory: {out_dir}")
+    resolved = out_dir.resolve()
+    forbidden = {Path("/").resolve(), Path.cwd().resolve(), Path.home().resolve()}
+    if resolved in forbidden:
+        raise SystemExit(f"Refusing to clean broad build output path: {out_dir}")
+    shutil.rmtree(out_dir)
+
+
 def write(path: Path, content: str | bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     mode = "wb" if isinstance(content, bytes) else "w"
@@ -50,6 +64,9 @@ def build_site(
         raise SystemExit(
             "No snapshots found in data/ — run scripts/fetch_digest.py first."
         )
+
+    clean_output_dir(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     digest = combined_digest(data_dir)
     assert digest is not None  # guaranteed: snapshots exist above
@@ -155,6 +172,13 @@ def build_site(
             indent=2,
         ),
     )
+    write(api / "search.json", render_search_index(snapshots))
+    latest_by_source = {snap.source: snap for snap in snapshots}
+    for source, snapshot in latest_by_source.items():
+        write(
+            api / "sources" / f"{source}.json",
+            snapshot.model_dump_json(indent=2),
+        )
     write(api / "stats.json", site_stats(data_dir).model_dump_json(indent=2))
     write(
         api / "trends.json",

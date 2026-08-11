@@ -11,7 +11,15 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.config import DATA_DIR, REQUEST_TIMEOUT, SOURCES, USER_AGENT, today_utc
+from app.config import (
+    DATA_DIR,
+    FETCH_ATTEMPTS,
+    FETCH_BACKOFF_SECONDS,
+    REQUEST_TIMEOUT,
+    SOURCES,
+    USER_AGENT,
+    today_utc,
+)
 from app.fetchers import get_fetcher
 from app.models import SourceSnapshot, Story
 from app.store import last_fetched, save_snapshot
@@ -56,10 +64,42 @@ async def fetch_one(
     apply_curation_overrides: bool = True,
 ) -> SourceSnapshot:
     fn = get_fetcher(SOURCES[source])
-    stories = (await fn(client))[:limit]
-    if apply_curation_overrides:
-        stories = apply_curation(stories, load_curation(day, data_dir))
-    return SourceSnapshot(source=source, date=day, stories=stories)
+    for attempt in range(1, FETCH_ATTEMPTS + 1):
+        try:
+            stories = (await fn(client))[:limit]
+            if apply_curation_overrides:
+                stories = apply_curation(stories, load_curation(day, data_dir))
+            return SourceSnapshot(source=source, date=day, stories=stories)
+        except (httpx.HTTPStatusError, httpx.TransportError) as exc:
+            if attempt >= FETCH_ATTEMPTS or not _retryable(exc):
+                raise
+            delay = _retry_delay(exc, attempt)
+            print(
+                f"[catnews] {source} attempt {attempt}/{FETCH_ATTEMPTS} failed; "
+                f"retrying in {delay:g}s: {exc}"
+            )
+            await asyncio.sleep(delay)
+    raise AssertionError("fetch retry loop exhausted without returning or raising")
+
+
+_RETRYABLE_STATUS_CODES = frozenset({408, 425, 429, 500, 502, 503, 504})
+
+
+def _retryable(exc: Exception) -> bool:
+    if isinstance(exc, httpx.HTTPStatusError):
+        return exc.response.status_code in _RETRYABLE_STATUS_CODES
+    return isinstance(exc, httpx.TransportError)
+
+
+def _retry_delay(exc: Exception, attempt: int) -> float:
+    if isinstance(exc, httpx.HTTPStatusError):
+        retry_after = exc.response.headers.get("Retry-After")
+        if retry_after:
+            try:
+                return max(0.0, min(float(retry_after), 60.0))
+            except ValueError:
+                pass
+    return FETCH_BACKOFF_SECONDS * (2 ** (attempt - 1))
 
 
 async def build(
@@ -90,7 +130,16 @@ async def build(
     snapshots: list[SourceSnapshot] = []
     for source, result in zip(sources, results):
         if isinstance(result, BaseException):
-            print(f"[catnews] {source} fetch failed: {result}")
+            last = last_fetched(source, data_dir)
+            if last:
+                print(
+                    f"[catnews] WARNING: {source} fetch failed; keeping stale "
+                    f"snapshot from {last}: {result}"
+                )
+            else:
+                print(
+                    f"[catnews] WARNING: {source} fetch failed; no snapshot available: {result}"
+                )
             continue
         snapshots.append(result)
     return snapshots

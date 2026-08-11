@@ -410,7 +410,7 @@
           }
         });
     }
-    fetchFrom(BASE + "/api/stories.json");
+    fetchFrom(BASE + "/api/search.json");
   }
 
   function searchStories(query) {

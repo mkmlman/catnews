@@ -23,6 +23,7 @@ from .render import (
     render_rss,
     render_service_worker,
     render_trend_svg,
+    search_index,
 )
 from .store import (
     arxiv_category_counts,
@@ -139,6 +140,11 @@ def api_sources() -> list[SourceSnapshot]:
     return load_all_snapshots(DATA_DIR)
 
 
+@app.get("/api/sources/{source}.json")
+def api_source_json(source: str) -> SourceSnapshot:
+    return api_source(source)
+
+
 @app.get("/api/sources/{source}")
 def api_source(source: str) -> SourceSnapshot:
     snap = load_latest_snapshot(source, DATA_DIR)
@@ -188,6 +194,12 @@ def api_stories_json(
     source: str | None = Query(default=None, pattern=SOURCE_PATTERN),
 ) -> list[Story]:
     return api_stories(source)
+
+
+@app.get("/api/search.json")
+def api_search_json() -> list[dict[str, str]]:
+    """Compact deduplicated search records for the client-side archive search."""
+    return search_index(load_all_snapshots(DATA_DIR))
 
 
 @app.get("/api/stats")

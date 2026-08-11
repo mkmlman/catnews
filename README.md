@@ -32,7 +32,7 @@ quotes from it. See the [Sources](/sources/) page for what we curate.
   source (Register Spill) stays readable all week.
 - **Archive** and **Stats** pages; the archive lists every snapshot and each
   date opens as a page (`/archive/<source>/<date>/`) in the same card layout as the home feed.
-- **APIs**: JSON (`/api/sources`, `/api/sources/<source>`, `/api/sources/<source>/<date>`, `/api/digest`, `/api/stories`, `/api/stats`), **Markdown** (`/api/stories.md`), and **RSS** (`/feed.rss`).
+- **APIs**: JSON (`/api/sources`, `/api/sources/<source>`, `/api/sources/<source>/<date>`, `/api/digest`, `/api/stories`, `/api/search.json`, `/api/stats`), **Markdown** (`/api/stories.md`), and **RSS** (`/feed.rss`).
 - **Curation** hooks to add *"Why read"* notes to stories.
 
 ## Quickstart
@@ -181,6 +181,8 @@ fetched within their window), and the static build mirrors the main API endpoint
 as files — e.g. `/api/sources` → `api/sources.json`. The dev server
 (`uvicorn app.main:app`) additionally serves live routes like
 `/api/sources/<source>/<date>` and `/archive/<source>/<date>/`.
+The static build also emits compact per-source JSON files under `api/sources/` and
+`api/search.json`, the deduplicated index used by archive search.
 
 ## Curation
 
@@ -248,6 +250,8 @@ env vars remain available:
 | `CATNEWS_CADENCE_<KEY>` | per-source | Min days between fetches per source (uppercase key) |
 | `CATNEWS_LIMIT_<KEY>` | per-source | Per-source story caps (uppercase key) |
 | `CATNEWS_BASE_PATH` | `` (root) | URL prefix for the dev server (`` for localhost, `/catnews` for Pages) |
+| `CATNEWS_FETCH_ATTEMPTS` | `3` | Attempts for transient fetch failures |
+| `CATNEWS_FETCH_BACKOFF_SECONDS` | `1.0` | Initial exponential retry delay |
 
 Register Spill is pinned to Mondays (`weekday: 0` in `sources.yaml`): it is only fetched
 when at least 7 days have elapsed *and* it is Monday.

@@ -34,8 +34,10 @@
   <p class="source-links">
     {% if src.last_fetched %}
     <a href="{{ base_path }}/archive/{{ src.key }}/{{ src.last_fetched.isoformat() }}/">latest snapshot</a><span class="sep"> · </span>
+    <a href="{{ base_path }}/api/sources/{{ src.key }}.json">source API</a>
+    {% else %}
+    <span class="muted">source API pending first snapshot</span>
     {% endif %}
-    <a href="{{ base_path }}/api/sources/{{ src.key }}">source API</a>
   </p>
 </section>
 {% endfor %}

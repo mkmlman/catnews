@@ -8,7 +8,7 @@ from feedgen.feed import FeedGenerator
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .config import APP_NAME, SOURCE_LABELS, SOURCE_TAGS, badge_css, palette_entries
-from .models import Digest
+from .models import Digest, SourceSnapshot
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -127,6 +127,36 @@ def render_markdown(digest: Digest) -> str:
         blocks.append(f"- **Link:** {story.url}")
         blocks.append("")
     return "\n".join(blocks)
+
+
+def search_index(snapshots: list[SourceSnapshot]) -> list[dict[str, str]]:
+    """Return a compact, deduplicated record set for archive search.
+
+    The full stories API intentionally preserves every historical snapshot. The
+    browser search only needs searchable text and one current copy of each
+    story, so it gets a much smaller artifact instead.
+    """
+    records: dict[str, dict[str, str]] = {}
+    for snapshot in snapshots:
+        for story in snapshot.stories:
+            identity = story.external_id or story.url
+            key = f"{story.source}:{identity}"
+            record = {
+                "source": story.source,
+                "title": story.title,
+                "url": story.url,
+            }
+            for field in ("author", "byline", "summary", "snippet", "why_read"):
+                value = getattr(story, field)
+                if value:
+                    record[field] = value
+            records[key] = record
+    return list(records.values())
+
+
+def render_search_index(snapshots: list[SourceSnapshot]) -> str:
+    """Serialize the compact browser-search artifact."""
+    return json.dumps(search_index(snapshots), indent=2, ensure_ascii=False)
 
 
 def _aware(dt) -> datetime:
@@ -255,9 +285,19 @@ def live_site_urls(snapshots: list) -> list[str]:
     for path in sorted(STATIC_DIR.rglob("*")):
         if path.is_file():
             urls.append("./static/" + path.relative_to(STATIC_DIR).as_posix())
-    urls += ["./archive/", "./stats/", "./sources/", "./api/", "./design/"]
+    urls += [
+        "./archive/",
+        "./stats/",
+        "./sources/",
+        "./api/",
+        "./api/search.json",
+        "./design/",
+    ]
+    latest_by_source: dict[str, SourceSnapshot] = {}
     for snap in snapshots:
+        latest_by_source[snap.source] = snap
         urls.append(f"./archive/{snap.source}/{snap.date.isoformat()}/")
+    urls.extend(f"./api/sources/{source}.json" for source in latest_by_source)
     return list(dict.fromkeys(urls))
 
 

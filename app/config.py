@@ -106,6 +106,17 @@ def _env_int(name: str, default: int) -> int:
         return default
 
 
+def _env_float(name: str, default: float) -> float:
+    try:
+        return float(os.environ[name])
+    except (KeyError, ValueError):
+        return default
+
+
+FETCH_ATTEMPTS = max(1, _env_int("CATNEWS_FETCH_ATTEMPTS", 3))
+FETCH_BACKOFF_SECONDS = max(0.0, _env_float("CATNEWS_FETCH_BACKOFF_SECONDS", 1.0))
+
+
 def load_sources(path: Path | None = None) -> dict[str, dict]:
     """Read source definitions from sources.yaml.
 

@@ -4,6 +4,7 @@ import asyncio
 from datetime import UTC, date, datetime
 from types import SimpleNamespace
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 
@@ -13,7 +14,7 @@ from app.fetchers.hn import parse_hit
 from app.fetchers.rss import parse_entry as parse_rss_entry
 from app.fetchers.rss import parse_links, strip_html
 from app.models import SourceSnapshot, Story
-from app.render import live_site_urls
+from app.render import live_site_urls, search_index
 from app.store import (
     arxiv_category_counts,
     combined_digest,
@@ -293,6 +294,35 @@ def test_fetch_one_can_skip_curation(monkeypatch, tmp_path):
     assert uncurated.stories[0].why_read is None
 
 
+def test_fetch_one_retries_transient_http_errors(monkeypatch, tmp_path):
+    from scripts import fetch_digest
+
+    calls = 0
+
+    async def flaky_fetch(_client):
+        nonlocal calls
+        calls += 1
+        if calls < 3:
+            request = httpx.Request("GET", "https://example.com")
+            response = httpx.Response(
+                503, request=request, headers={"Retry-After": "0"}
+            )
+            raise httpx.HTTPStatusError(
+                "temporary outage", request=request, response=response
+            )
+        return [Story(source="hn", title="Recovered", url="https://a")]
+
+    monkeypatch.setattr(fetch_digest, "get_fetcher", lambda _cfg: flaky_fetch)
+    monkeypatch.setattr(fetch_digest, "FETCH_ATTEMPTS", 3)
+    monkeypatch.setattr(fetch_digest, "FETCH_BACKOFF_SECONDS", 0.0)
+
+    snapshot = asyncio.run(
+        fetch_digest.fetch_one(None, "hn", 10, date(2026, 8, 2), tmp_path)
+    )
+    assert calls == 3
+    assert snapshot.stories[0].title == "Recovered"
+
+
 def test_combined_digest_merges_latest_per_source(tmp_path):
     save_snapshot(
         SourceSnapshot(
@@ -354,6 +384,33 @@ def test_combined_digest_interleaves_sources(tmp_path):
     digest = combined_digest(tmp_path)
     assert digest is not None
     assert [s.source for s in digest.stories] == ["hn", "arxiv", "github", "hn"]
+
+
+def test_search_index_deduplicates_historical_stories():
+    snapshots = [
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 1),
+            stories=[Story(source="hn", external_id="1", title="Old", url="https://a")],
+        ),
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(
+                    source="hn",
+                    external_id="1",
+                    title="New",
+                    url="https://a",
+                    snippet="Updated",
+                )
+            ],
+        ),
+    ]
+    index = search_index(snapshots)
+    assert len(index) == 1
+    assert index[0]["title"] == "New"
+    assert index[0]["snippet"] == "Updated"
 
 
 def test_registerspill_only_due_on_mondays(tmp_path):
@@ -426,6 +483,7 @@ def test_api_pages_and_filters(client, tmp_path):
 
     snap = client.get("/api/sources/hn").json()
     assert snap["source"] == "hn"
+    assert client.get("/api/sources/hn.json").json() == snap
     assert client.get("/api/sources/nope").status_code == 404
     assert client.get("/api/sources/hn/2026-08-02").status_code == 200
 
@@ -476,6 +534,8 @@ def test_build_site_copies_all_static_assets(tmp_path):
         tmp_path,
     )
     out = tmp_path / "site"
+    out.mkdir()
+    (out / "stale-page.html").write_text("old build")
     build_site(tmp_path, out, "/catnews", "https://example.com")
 
     app_static = Path(__file__).resolve().parent.parent / "app" / "static"
@@ -483,6 +543,13 @@ def test_build_site_copies_all_static_assets(tmp_path):
         assert (out / "static" / name).read_bytes() == (app_static / name).read_bytes()
     assert (out / "static" / "fonts").is_dir()
     assert (out / "static" / "favicon.svg").exists()
+    assert not (out / "stale-page.html").exists()
+    assert (out / "api" / "search.json").exists()
+    assert (out / "api" / "sources" / "hn.json").exists()
+
+    from scripts.check_site import check_site
+
+    assert check_site(out, "/catnews") == []
 
 
 def test_config_loads_default_sources(tmp_path):
@@ -590,6 +657,7 @@ def test_build_site_emits_pwa_files(tmp_path):
         assert rel in sw, f"missing {rel} in precache"
     assert '"./static/style.css"' in sw
     assert '"./api/stories.json"' in sw
+    assert '"./api/search.json"' in sw
 
 
 def test_index_page_has_app_js_and_search(client, tmp_path):
@@ -655,6 +723,7 @@ def test_live_app_serves_pwa(client, tmp_path):
     assert manifest.headers["content-type"] == "application/manifest+json"
     assert manifest.json()["short_name"] == "catnews"
     assert client.get("/static/style.css").status_code == 200
+    assert client.get("/api/search.json").status_code == 200
 
     sw = client.get("/sw.js")
     assert sw.status_code == 200
@@ -666,10 +735,13 @@ def test_live_app_serves_pwa(client, tmp_path):
     assert "./static/" not in live_site_urls(
         [SourceSnapshot(source="hn", date=date(2026, 8, 2), stories=[])]
     )
+    assert "./api/search.json" in live_site_urls(
+        [SourceSnapshot(source="hn", date=date(2026, 8, 2), stories=[])]
+    )
 
 
 def test_api_json_aliases_match_static_build(client, tmp_path):
-    # The client-side search fetches /api/stories.json; the live app must
+    # The client-side search fetches /api/search.json; the live app must
     # expose the same .json endpoints the static build emits.
     save_snapshot(
         SourceSnapshot(
@@ -681,13 +753,17 @@ def test_api_json_aliases_match_static_build(client, tmp_path):
     )
     for path in (
         "/api/stories.json",
+        "/api/search.json",
         "/api/digest.json",
         "/api/stats.json",
         "/api/sources.json",
+        "/api/sources/hn.json",
     ):
         assert client.get(path).status_code == 200, path
     stories = client.get("/api/stories.json").json()
     assert [s["title"] for s in stories] == ["Searchable story"]
+    search = client.get("/api/search.json").json()
+    assert [s["title"] for s in search] == ["Searchable story"]
 
 
 def test_seo_meta_tags_on_pages(client, tmp_path):
