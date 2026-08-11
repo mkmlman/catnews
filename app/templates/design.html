@@ -4,20 +4,19 @@
 <section class="page-header">
   <a class="back" href="{{ base_path }}/">← Home</a>
   <h1>Design System</h1>
-  <p class="muted">The design language of {{ app_name }} — captured, documented, live.</p>
+  <p class="muted">How {{ app_name }} looks and why.</p>
 </section>
 
 <!-- ============ HERO / TOKENS ============ -->
 <section class="ds-hero">
-  <p class="ds-eyebrow">Design System · The Daily Cat</p>
   <h2 class="ds-title">Warm restraint</h2>
-  <p class="ds-lede">Parchment canvas, ink-blue accent, serif-led hierarchy, hairline rules. The same constraint set drives the home grid, the archive, and this page itself.</p>
+  <p class="ds-lede">Parchment canvas, ink-blue accent, serif-led hierarchy, hairline rules. A fixed constraint set that drives every page.</p>
   <div class="ds-tokens">
-    <span><b>Canvas</b>#f5f4ed</span>
-    <span><b>Accent</b>#1B365D</span>
-    <span><b>Serif</b>Source Serif 4</span>
-    <span><b>Display</b>Fraunces</span>
-    <span><b>Mono</b>ui-monospace</span>
+    <span><b>Canvas</b><span data-var="--paper">#f5f4ed</span></span>
+    <span><b>Accent</b><span data-var="--accent">#1B365D</span></span>
+    <span><b>Serif</b><span class="ds-token-val">Source Serif 4</span></span>
+    <span><b>Display</b><span class="ds-token-val">Fraunces</span></span>
+    <span><b>Mono</b><span class="ds-token-val">ui-monospace</span></span>
   </div>
 </section>
 
@@ -29,12 +28,12 @@
     <p class="ds-section-lede">A small, fixed rule set. Stability comes from repetition, not decoration.</p>
   </div>
   <ol class="ds-rules">
-    <li><span class="ds-n">1</span><p>The canvas is warm parchment — never pure white, never cool gray. Light and dark themes are first-class tokens, not afterthoughts.</p></li>
-    <li><span class="ds-n">2</span><p>One ink-blue accent. Source badges are the only chromatic interruption, and each is assigned from a fixed 12-color palette.</p></li>
-    <li><span class="ds-n">3</span><p>All grays are warm with a yellow-brown undertone. No cool blue-grays at any depth.</p></li>
-    <li><span class="ds-n">4</span><p>Serif carries hierarchy; mono carries function. Headings and body in Source Serif 4, editorial display in Fraunces, and all labels, badges, and code in mono.</p></li>
-    <li><span class="ds-n">5</span><p>Separation is a hairline rule or a whisper shadow — never a hard drop shadow.</p></li>
-    <li><span class="ds-n">6</span><p>Cards are transparent until hover, then a faint accent wash. Restraint is the default state.</p></li>
+    <li><span class="ds-n">1</span><p>The canvas is warm parchment, never pure white, never cool gray. Light and dark are first-class tokens, not afterthoughts.</p></li>
+    <li><span class="ds-n">2</span><p>One ink-blue accent. Source badges are the only chromatic interruption, each drawn from a fixed 12-color palette.</p></li>
+    <li><span class="ds-n">3</span><p>All grays are warm with a yellow-brown undertone, never cool blue-grays.</p></li>
+    <li><span class="ds-n">4</span><p>Serif carries hierarchy, mono carries function. Source Serif 4 for headings and body, Fraunces for display, mono for labels, badges, and code.</p></li>
+    <li><span class="ds-n">5</span><p>Separation is a hairline rule or a whisper shadow, never a hard drop shadow.</p></li>
+    <li><span class="ds-n">6</span><p>Cards are transparent until hover, then a faint accent wash.</p></li>
   </ol>
 </section>
 
@@ -43,38 +42,38 @@
   <div class="ds-section-head">
     <p class="ds-section-num">02 · Color</p>
     <h2 class="ds-section-title">Palette</h2>
-    <p class="ds-section-lede">Warm neutrals + one ink-blue accent. Every swatch is a CSS custom property, so the same token flips cleanly between themes.</p>
+    <p class="ds-section-lede">Warm neutrals and one ink-blue accent. Every swatch is a CSS custom property, so the same token flips cleanly between themes.</p>
   </div>
 
   <h3 class="ds-subhead">Canvas</h3>
   <div class="ds-swatches">
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--paper)"></div><div class="ds-info"><p class="ds-name">Paper</p><p class="ds-role">Page background · the foundation</p><span class="ds-hex">#f5f4ed</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--paper-deep)"></div><div class="ds-info"><p class="ds-name">Paper Deep</p><p class="ds-role">Share bars · recessed surfaces</p><span class="ds-hex">#eceadf</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--card)"></div><div class="ds-info"><p class="ds-name">Card</p><p class="ds-role">Code blocks · white-paper variant</p><span class="ds-hex">#fdfcf7</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: var(--paper)"></div><div class="ds-info"><p class="ds-name">Paper</p><p class="ds-role">Page background · the foundation</p><span class="ds-hex" data-var="--paper">#f5f4ed</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: var(--paper-deep)"></div><div class="ds-info"><p class="ds-name">Paper Deep</p><p class="ds-role">Share bars · recessed surfaces</p><span class="ds-hex" data-var="--paper-deep">#eceadf</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: var(--card)"></div><div class="ds-info"><p class="ds-name">Card</p><p class="ds-role">Code blocks · white-paper variant</p><span class="ds-hex" data-var="--card">#fdfcf7</span></div></div>
   </div>
 
   <h3 class="ds-subhead">Ink &amp; text</h3>
   <div class="ds-swatches">
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--ink)"></div><div class="ds-info"><p class="ds-name">Ink</p><p class="ds-role">Primary text · warm near-black</p><span class="ds-hex">#23241f</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--ink-soft)"></div><div class="ds-info"><p class="ds-name">Ink Soft</p><p class="ds-role">Secondary text · summaries</p><span class="ds-hex">#3f413a</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--muted)"></div><div class="ds-info"><p class="ds-name">Muted</p><p class="ds-role">Tertiary text · bylines · labels</p><span class="ds-hex">#84867a</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--faint)"></div><div class="ds-info"><p class="ds-name">Faint</p><p class="ds-role">Ghost text · filter labels</p><span class="ds-hex">#b3b4a9</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: var(--ink)"></div><div class="ds-info"><p class="ds-name">Ink</p><p class="ds-role">Primary text · warm near-black</p><span class="ds-hex" data-var="--ink">#23241f</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: var(--ink-soft)"></div><div class="ds-info"><p class="ds-name">Ink Soft</p><p class="ds-role">Secondary text · summaries</p><span class="ds-hex" data-var="--ink-soft">#3f413a</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: var(--muted)"></div><div class="ds-info"><p class="ds-name">Muted</p><p class="ds-role">Tertiary text · bylines · labels</p><span class="ds-hex" data-var="--muted">#84867a</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: var(--faint)"></div><div class="ds-info"><p class="ds-name">Faint</p><p class="ds-role">Ghost text · filter labels</p><span class="ds-hex" data-var="--faint">#b3b4a9</span></div></div>
   </div>
 
   <h3 class="ds-subhead">Accent</h3>
   <div class="ds-swatches">
-    <div class="ds-swatch ds-accent"><div class="ds-chip" style="background: var(--accent)"></div><div class="ds-info"><p class="ds-name">Ink Blue</p><p class="ds-role">Links · active chips · rules · emphasis</p><span class="ds-hex">#1B365D</span></div></div>
-    <div class="ds-swatch ds-accent"><div class="ds-chip" style="background: var(--accent-deep)"></div><div class="ds-info"><p class="ds-name">Ink Blue Deep</p><p class="ds-role">Link hover · stronger emphasis</p><span class="ds-hex">#14263f</span></div></div>
+    <div class="ds-swatch ds-accent"><div class="ds-chip" style="background: var(--accent)"></div><div class="ds-info"><p class="ds-name">Ink Blue</p><p class="ds-role">Links · active chips · rules · emphasis</p><span class="ds-hex" data-var="--accent">#1B365D</span></div></div>
+    <div class="ds-swatch ds-accent"><div class="ds-chip" style="background: var(--accent-deep)"></div><div class="ds-info"><p class="ds-name">Ink Blue Deep</p><p class="ds-role">Link hover · stronger emphasis</p><span class="ds-hex" data-var="--accent-deep">#14263f</span></div></div>
   </div>
 
   <h3 class="ds-subhead">Hairlines</h3>
   <div class="ds-swatches">
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--line)"></div><div class="ds-info"><p class="ds-name">Line</p><p class="ds-role">Dividers · list rules</p><span class="ds-hex">#e2e0d4</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--line-strong)"></div><div class="ds-info"><p class="ds-name">Line Strong</p><p class="ds-role">Table headers · borders</p><span class="ds-hex">#cfcdc0</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: var(--line)"></div><div class="ds-info"><p class="ds-name">Line</p><p class="ds-role">Dividers · list rules</p><span class="ds-hex" data-var="--line">#e2e0d4</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: var(--line-strong)"></div><div class="ds-info"><p class="ds-name">Line Strong</p><p class="ds-role">Table headers · borders</p><span class="ds-hex" data-var="--line-strong">#cfcdc0</span></div></div>
   </div>
 
-  <h3 class="ds-subhead">Source badges · 12-color palette</h3>
-  <p class="ds-section-lede">Assigned in source order unless overridden with <code>color:</code> in <code>sources.yaml</code>. Each entry carries a light and a dark theme pair — rendered live below.</p>
+  <h3 class="ds-subhead">Source badges</h3>
+  <p class="ds-section-lede">Assigned in source order unless overridden with <code>color:</code> in <code>sources.yaml</code>. Each color carries a light and a dark theme pair.</p>
   <div class="ds-swatches">
     {% for entry in palette %}
     <div class="ds-swatch">
@@ -100,7 +99,7 @@
     <div class="ds-family">
       <p class="ds-glyph ds-glyph-display">Aa</p>
       <p class="ds-family-role">Display · Fraunces</p>
-      <p class="ds-family-use">Wordmark, story titles, stat values. Weight 560–620, tight letter-spacing, editorial voice.</p>
+      <p class="ds-family-use">Wordmark, story titles, stat values. Weight 560–620, tight letter-spacing.</p>
     </div>
     <div class="ds-family">
       <p class="ds-glyph ds-glyph-serif">Aa</p>
@@ -290,10 +289,10 @@
     <tr><td class="ds-task">A link</td><td class="ds-how"><code>var(--accent)</code>, hover <code>var(--accent-deep)</code></td></tr>
     <tr><td class="ds-task">Emphasize a number</td><td class="ds-how">Fraunces 560–620, tabular-nums, not bold</td></tr>
     <tr><td class="ds-task">Label something</td><td class="ds-how">mono 600, uppercase, +0.12em letter-spacing, muted/faint</td></tr>
-    <tr><td class="ds-task">Tag a source</td><td class="ds-how"><code>badge badge-&lt;source&gt;</code> — palette color in source order</td></tr>
+    <tr><td class="ds-task">Tag a source</td><td class="ds-how"><code>badge badge-&lt;source&gt;</code>, palette color in source order</td></tr>
     <tr><td class="ds-task">Filter the feed</td><td class="ds-how">chip pill, <code>.is-active</code> fills ink-blue</td></tr>
     <tr><td class="ds-task">Separate sections</td><td class="ds-how">hairline <code>var(--line)</code>, or the 40px accent rule under page headers</td></tr>
-    <tr><td class="ds-task">Show code</td><td class="ds-how"><code>.code-block</code> — card surface, hairline border, mono</td></tr>
+    <tr><td class="ds-task">Show code</td><td class="ds-how"><code>.code-block</code>, card surface, hairline border, mono</td></tr>
     <tr><td class="ds-task">Hover affordance</td><td class="ds-how">accent 6% wash + accent 18% border, never a drop shadow</td></tr>
   </table>
 </section>
@@ -310,7 +309,7 @@
     <div class="ds-anti-row">
       <p class="ds-anti-topic">Page canvas</p>
       <div class="ds-anti-pair">
-        <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>Pure white or cool gray as the page background — it makes the warmth of the parchment feel brittle.</span></p>
+        <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>Pure white or cool gray as the page background. It makes the warmth of the parchment feel brittle.</span></p>
         <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>Always warm parchment (<code>var(--paper)</code>), with the matching dark theme via <code>data-theme="dark"</code>.</span></p>
       </div>
     </div>
@@ -324,7 +323,7 @@
     <div class="ds-anti-row">
       <p class="ds-anti-topic">Grays</p>
       <div class="ds-anti-pair">
-        <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>Cool blue-grays (<code>#6b7280</code>, <code>#f3f4f6</code>) — they clash with the warm undertone.</span></p>
+        <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>Cool blue-grays (<code>#6b7280</code>, <code>#f3f4f6</code>). They clash with the warm undertone.</span></p>
         <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>Use the warm ramp: ink → ink-soft → muted → faint, all yellow-brown undertoned.</span></p>
       </div>
     </div>
@@ -332,9 +331,26 @@
       <p class="ds-anti-topic">Shadows</p>
       <div class="ds-anti-pair">
         <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>Hard drop shadows to lift cards above the page.</span></p>
-        <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>A faint glow, whisper shadow on code, or the accent hover wash — depth from restraint.</span></p>
+        <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>A faint glow, whisper shadow on code, or the accent hover wash. Depth from restraint.</span></p>
       </div>
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var root = document.documentElement;
+    function paint() {
+      var style = getComputedStyle(root);
+      document.querySelectorAll("[data-var]").forEach(function (el) {
+        var value = style.getPropertyValue(el.dataset.var);
+        if (value) el.textContent = value.trim().toLowerCase();
+      });
+    }
+    paint();
+    new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  })();
+</script>
 {% endblock %}

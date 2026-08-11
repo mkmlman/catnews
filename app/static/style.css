@@ -887,7 +887,7 @@ a:focus-visible, button:focus-visible {
   gap: 8px;
   margin: 22px 0 0;
 }
-.ds-tokens span {
+.ds-tokens > span {
   font-family: var(--mono);
   font-size: var(--label-xs);
   letter-spacing: 0.06em;
@@ -902,6 +902,7 @@ a:focus-visible, button:focus-visible {
   margin-right: 6px;
 }
 .ds-tokens b::after { content: "·"; color: var(--faint); margin-left: 6px; }
+.ds-tokens [data-var], .ds-tokens .ds-token-val { color: var(--accent); }
 
 .ds-section { padding: 34px 0 4px; }
 .ds-section + .ds-section { border-top: 1px solid var(--line); }
@@ -1345,7 +1346,7 @@ a:focus-visible, button:focus-visible {
   .stat-table .source-name { font-size: 0.9rem; }
 
   .ds-title { font-size: 2rem; }
-  .ds-tokens span { font-size: 0.6rem; padding: 3px 9px; }
+  .ds-tokens > span { font-size: 0.6rem; padding: 3px 9px; }
   .ds-type-row { grid-template-columns: 1fr; gap: 4px; padding: 12px 0; }
   .ds-type-specs { grid-column: auto; }
   .ds-type-label { margin-bottom: 2px; }
