@@ -497,3 +497,102 @@ def test_get_fetcher_rss_and_api():
 
     with pytest.raises(KeyError):
         get_fetcher({"key": "bogus", "type": "builtin"})
+
+
+def test_build_site_emits_pwa_files(tmp_path):
+    # PWA: the static build must ship a manifest + service worker whose
+    # precache covers the whole site for full offline browsing.
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+
+    manifest = (out / "manifest.json").read_text()
+    import json
+
+    data = json.loads(manifest)
+    assert data["name"].startswith("catnews")
+    assert data["start_url"] == "./"
+    assert data["display"] == "standalone"
+
+    sw = (out / "sw.js").read_text()
+    assert "PRECACHE" in sw
+    # every emitted file (index, archive, static assets, api) is precached
+    for rel in ('"./"', '"./index.html"', '"./archive/hn/2026-08-02/"'):
+        assert rel in sw, f"missing {rel} in precache"
+    assert '"./static/style.css"' in sw
+    assert '"./api/stories.json"' in sw
+
+
+def test_index_page_has_app_js_and_search(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="HN story", url="https://a")],
+        ),
+        tmp_path,
+    )
+    page = client.get("/").text
+    # shared client script + PWA wiring present on every page
+    assert 'src="/static/app.js"' in page
+    assert 'rel="manifest"' in page
+    assert 'register("/sw.js")' in page
+    # search box is in the header
+    assert 'id="search-input"' in page
+    # story cards carry the URL needed by save/read/search
+    assert 'data-url="https://a"' in page
+    # filter affordances for the new reading model
+    assert 'data-saved="saved"' in page
+    assert 'id="hide-read"' in page
+
+
+def test_live_app_serves_pwa(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    manifest = client.get("/manifest.json")
+    assert manifest.status_code == 200
+    assert manifest.headers["content-type"] == "application/manifest+json"
+    assert manifest.json()["short_name"] == "catnews"
+
+    sw = client.get("/sw.js")
+    assert sw.status_code == 200
+    assert sw.headers["content-type"] == "application/javascript"
+    assert "PRECACHE" in sw.text
+    assert '"./archive/hn/2026-08-02/"' in sw.text
+
+
+def test_api_json_aliases_match_static_build(client, tmp_path):
+    # The client-side search fetches /api/stories.json; the live app must
+    # expose the same .json endpoints the static build emits.
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="Searchable story", url="https://a")],
+        ),
+        tmp_path,
+    )
+    for path in (
+        "/api/stories.json",
+        "/api/digest.json",
+        "/api/stats.json",
+        "/api/sources.json",
+    ):
+        assert client.get(path).status_code == 200, path
+    stories = client.get("/api/stories.json").json()
+    assert [s["title"] for s in stories] == ["Searchable story"]

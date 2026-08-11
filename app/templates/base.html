@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#1B365D">
+  <link rel="manifest" href="{{ base_path }}/manifest.json">
   <link rel="icon" type="image/svg+xml" href="{{ base_path }}/static/favicon.svg?v=2">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32.png" media="(prefers-color-scheme: light)">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
@@ -35,7 +37,12 @@
         <a href="{{ base_path }}/design/">Design</a>
         <a href="{{ base_path }}/feed.rss">RSS</a>
       </nav>
+      <div class="search" id="search">
+        <input type="search" id="search-input" placeholder="Search" aria-label="Search the archive" autocomplete="off">
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
       <div class="header-actions">
+        <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
         <a class="repo-link" href="https://github.com/mkmlman/catnews" target="_blank" rel="noopener" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
         <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme"></button>
       </div>
@@ -55,6 +62,7 @@
         <a href="{{ base_path }}/api/digest.json">JSON</a>
         <a href="{{ base_path }}/api/stories.md">Markdown</a>
       </nav>
+      <p class="footer-keys">Keyboard&nbsp;· <kbd>j</kbd> <kbd>k</kbd> move · <kbd>o</kbd> open · <kbd>s</kbd> save · <kbd>m</kbd> read · <kbd>/</kbd> search</p>
     </footer>
   </div>
   <script>
@@ -73,6 +81,42 @@
       paint();
     })();
   </script>
+  <script>
+    window.CATNEWS = {
+      basePath: {{ base_path | tojson }},
+      sourceTags: {{ source_tags | tojson }}
+    };
+  </script>
+  <script src="{{ base_path }}/static/app.js" defer></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("{{ base_path }}/sw.js").catch(function (err) {
+        console.warn("catnews: service worker registration failed", err);
+      });
+    }
+  </script>
   {% block scripts %}{% endblock %}
+
+  <div class="install-dialog" id="install-dialog" hidden>
+    <div class="install-dialog-card" role="dialog" aria-modal="true" aria-labelledby="install-dialog-title">
+      <h2 id="install-dialog-title">Install catnews</h2>
+      <p class="muted">catnews works offline — the whole archive is cached on your device after your first visit. Install it like an app:</p>
+      <div class="install-steps">
+        <details open>
+          <summary>Desktop (Chrome, Edge, Firefox)</summary>
+          <p>Click the <strong>Install app</strong> button in the header — or the <span class="install-cue">⊕</span> icon in your browser's address bar.</p>
+        </details>
+        <details>
+          <summary>Android (Chrome)</summary>
+          <p>Open the browser menu (<span class="install-cue">⋮</span>) and tap <strong>Add to Home screen</strong>.</p>
+        </details>
+        <details>
+          <summary>iPhone / iPad (Safari)</summary>
+          <p>Tap the <strong>Share</strong> button (<span class="install-cue">⎋</span>) and choose <strong>Add to Home Screen</strong>.</p>
+        </details>
+      </div>
+      <button class="install-dialog-close" id="install-dialog-close" type="button">Got it</button>
+    </div>
+  </div>
 </body>
 </html>

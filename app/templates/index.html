@@ -13,7 +13,12 @@
     {% for key, tag in source_tags.items() %}
     <button class="chip" data-source="{{ key }}">{{ tag }}</button>
     {% endfor %}
+    <button class="chip" data-saved="saved">Saved</button>
   </div>
+  <label class="hide-read">
+    <input type="checkbox" id="hide-read">
+    <span>Hide read</span>
+  </label>
 </div>
 
 <p class="no-matches" id="no-matches" hidden>No stories match the selected filters.</p>
@@ -23,37 +28,4 @@
   {% include "_story.html" %}
   {% endfor %}
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-  const cards = Array.from(document.querySelectorAll(".story"));
-  const noMatches = document.getElementById("no-matches");
-  const chips = Array.from(document.querySelectorAll(".chip"));
-  let source = "All";
-
-  function applyFilters() {
-    let visible = 0;
-    for (const card of cards) {
-      const match = source === "All" || card.dataset.source === source;
-      card.hidden = !match;
-      if (match) visible++;
-    }
-    noMatches.hidden = visible !== 0;
-  }
-
-  function setActive(value) {
-    for (const chip of chips) {
-      chip.classList.toggle("is-active", chip.dataset.source === value);
-    }
-  }
-
-  document.getElementById("filters").addEventListener("click", (event) => {
-    const chip = event.target.closest(".chip");
-    if (!chip) return;
-    source = chip.dataset.source;
-    setActive(source);
-    applyFilters();
-  });
-</script>
 {% endblock %}

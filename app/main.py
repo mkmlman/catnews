@@ -14,7 +14,14 @@ from fastapi.staticfiles import StaticFiles
 
 from .config import BASE_PATH, BASE_URL, DATA_DIR, SOURCES, today_utc
 from .models import Digest, SourceSnapshot, Story
-from .render import render_markdown, render_page, render_rss
+from .render import (
+    live_site_urls,
+    render_manifest,
+    render_markdown,
+    render_page,
+    render_rss,
+    render_service_worker,
+)
 from .store import (
     combined_digest,
     load_all_snapshots,
@@ -126,6 +133,11 @@ def api_digest() -> SourceSnapshot | dict:
     return digest.model_dump(mode="json")
 
 
+@app.get("/api/digest.json")
+def api_digest_json() -> SourceSnapshot | dict:
+    return api_digest()
+
+
 @app.get("/api/stories")
 def api_stories(
     source: str | None = Query(default=None, pattern=SOURCE_PATTERN),
@@ -136,9 +148,26 @@ def api_stories(
     return stories
 
 
+@app.get("/api/stories.json")
+def api_stories_json(
+    source: str | None = Query(default=None, pattern=SOURCE_PATTERN),
+) -> list[Story]:
+    return api_stories(source)
+
+
 @app.get("/api/stats")
 def api_stats() -> dict:
     return site_stats(DATA_DIR).model_dump(mode="json")
+
+
+@app.get("/api/stats.json")
+def api_stats_json() -> dict:
+    return api_stats()
+
+
+@app.get("/api/sources.json")
+def api_sources_json() -> list[SourceSnapshot]:
+    return api_sources()
 
 
 # --- Markdown / RSS --------------------------------------------------------
@@ -164,3 +193,20 @@ def rss() -> Response:
 @app.get("/feed")
 def feed_redirect() -> RedirectResponse:
     return RedirectResponse("/feed.rss")
+
+
+# --- PWA (install + offline) -------------------------------------------------
+
+
+@app.get("/manifest.json")
+def manifest() -> Response:
+    return Response(content=render_manifest(), media_type="application/manifest+json")
+
+
+@app.get("/sw.js")
+def service_worker() -> Response:
+    urls = live_site_urls(load_all_snapshots(DATA_DIR))
+    return Response(
+        content=render_service_worker(urls, version=today_utc().isoformat()),
+        media_type="application/javascript",
+    )

@@ -8,8 +8,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.config import SOURCES
-from app.render import render_markdown, render_page, render_rss
+from app.config import SOURCES, today_utc
+from app.render import (
+    render_manifest,
+    render_markdown,
+    render_page,
+    render_rss,
+    render_service_worker,
+    walk_site_urls,
+)
 from app.store import (
     combined_digest,
     load_all_snapshots,
@@ -118,6 +125,15 @@ def build_site(
         ),
     )
     write(api / "stats.json", site_stats(data_dir).model_dump_json(indent=2))
+
+    # PWA: manifest + service worker with full offline precache (written last
+    # so walk_site_urls sees every emitted file)
+    version = today_utc().isoformat()
+    write(out_dir / "manifest.json", render_manifest())
+    write(
+        out_dir / "sw.js",
+        render_service_worker(walk_site_urls(out_dir), version=version),
+    )
 
     print(
         f"[catnews] built {len(snapshots)} snapshots ({len(digest.stories)} stories) -> {out_dir}"

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -10,6 +11,7 @@ from .config import APP_NAME, SOURCE_LABELS, SOURCE_TAGS, badge_css, palette_ent
 from .models import Digest
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
+STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 CAT = r"""  /\_/\
  (=^.^=)
@@ -59,6 +61,129 @@ def _aware(dt) -> datetime:
     if dt.tzinfo is None:
         return dt.replace(tzinfo=UTC)
     return dt
+
+
+def render_manifest() -> str:
+    """Web app manifest (PWA install metadata). Served at {base_path}/manifest.json."""
+    manifest = {
+        "name": "catnews — The Daily Cat",
+        "short_name": APP_NAME,
+        "description": "A curated daily digest of HN, arXiv, GitHub, and Register Spill stories.",
+        "start_url": "./",
+        "scope": "./",
+        "display": "standalone",
+        "background_color": "#f5f4ed",
+        "theme_color": "#1B365D",
+        "icons": [
+            {"src": "./static/favicon.svg", "sizes": "any", "type": "image/svg+xml"},
+            {
+                "src": "./static/favicon-180.png",
+                "sizes": "180x180",
+                "type": "image/png",
+            },
+        ],
+    }
+    return json.dumps(manifest, indent=2)
+
+
+def render_service_worker(urls: list[str], version: str) -> str:
+    """Service worker that precaches the whole site for full offline browsing.
+
+    `urls` are relative to the worker's location (e.g. "./", "./index.html",
+    "./archive/", "./static/style.css") so the same worker works under any
+    base_path. Navigation requests are network-first (fresh daily digest when
+    online, cached copy when offline); everything else is cache-first.
+    """
+    precache = ",\n    ".join(json.dumps(u) for u in urls)
+    return f"""// catnews service worker — build {version}
+const CACHE = "catnews-{version}";
+const PRECACHE = [
+    {precache}
+];
+
+self.addEventListener("install", (event) => {{
+    event.waitUntil(
+        caches.open(CACHE).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting())
+    );
+}});
+
+self.addEventListener("activate", (event) => {{
+    event.waitUntil(
+        caches.keys()
+            .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+            .then(() => self.clients.claim())
+    );
+}});
+
+self.addEventListener("fetch", (event) => {{
+    const {{
+        request
+    }} = event;
+    if (request.method !== "GET") return;
+    const url = new URL(request.url);
+    if (url.origin !== location.origin) return;
+
+    if (request.mode === "navigate") {{
+        // Fresh digest when online; cached page when offline.
+        event.respondWith(
+            fetch(request)
+                .then((response) => {{
+                    const copy = response.clone();
+                    caches.open(CACHE).then((cache) => cache.put(request, copy));
+                    return response;
+                }})
+                .catch(() =>
+                    caches.match(request).then((match) => match || caches.match("./index.html"))
+                )
+        );
+        return;
+    }}
+
+    event.respondWith(
+        caches.match(request).then((cached) => {{
+            const fresh = fetch(request)
+                .then((response) => {{
+                    if (response.ok) {{
+                        const copy = response.clone();
+                        caches.open(CACHE).then((cache) => cache.put(request, copy));
+                    }}
+                    return response;
+                }})
+                .catch(() => cached);
+            return cached || fresh;
+        }})
+    );
+}});
+"""
+
+
+def walk_site_urls(out_dir: Path) -> list[str]:
+    """Relative precache URLs for every file emitted into an output dir.
+
+    Directory navigation URLs (e.g. "./archive/") are added alongside their
+    index.html files so offline navigation matches cached entries.
+    """
+    urls = ["./"]
+    for path in sorted(out_dir.rglob("*")):
+        if not path.is_file() or path.name == "sw.js":
+            continue
+        rel = path.relative_to(out_dir).as_posix()
+        urls.append("./" + rel)
+        if rel.endswith("/index.html"):
+            urls.append("./" + rel[: -len("index.html")])
+    return list(dict.fromkeys(urls))
+
+
+def live_site_urls(snapshots: list) -> list[str]:
+    """Relative precache URLs for the live FastAPI app (no static build dir)."""
+    urls = ["./", "./static/"]
+    for path in sorted(STATIC_DIR.rglob("*")):
+        if path.is_file():
+            urls.append("./static/" + path.relative_to(STATIC_DIR).as_posix())
+    urls += ["./archive/", "./stats/", "./sources/", "./api/", "./design/"]
+    for snap in snapshots:
+        urls.append(f"./archive/{snap.source}/{snap.date.isoformat()}/")
+    return list(dict.fromkeys(urls))
 
 
 def render_rss(digest: Digest, base_url: str) -> str:
