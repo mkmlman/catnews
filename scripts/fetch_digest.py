@@ -47,23 +47,42 @@ def apply_curation(stories: list[Story], curation: dict) -> list[Story]:
 
 
 async def fetch_one(
-    client, source: str, limit: int, day: date, data_dir: Path
+    client,
+    source: str,
+    limit: int,
+    day: date,
+    data_dir: Path,
+    *,
+    apply_curation_overrides: bool = True,
 ) -> SourceSnapshot:
     fn = get_fetcher(SOURCES[source])
     stories = (await fn(client))[:limit]
-    stories = apply_curation(stories, load_curation(day, data_dir))
+    if apply_curation_overrides:
+        stories = apply_curation(stories, load_curation(day, data_dir))
     return SourceSnapshot(source=source, date=day, stories=stories)
 
 
 async def build(
-    day: date, data_dir: Path, sources: list[str], limits: dict[str, int]
+    day: date,
+    data_dir: Path,
+    sources: list[str],
+    limits: dict[str, int],
+    *,
+    apply_curation_overrides: bool = True,
 ) -> list[SourceSnapshot]:
     async with httpx.AsyncClient(
         headers={"User-Agent": USER_AGENT}, timeout=REQUEST_TIMEOUT
     ) as client:
         results = await asyncio.gather(
             *(
-                fetch_one(client, source, limits[source], day, data_dir)
+                fetch_one(
+                    client,
+                    source,
+                    limits[source],
+                    day,
+                    data_dir,
+                    apply_curation_overrides=apply_curation_overrides,
+                )
                 for source in sources
             ),
             return_exceptions=True,
@@ -147,8 +166,19 @@ def main() -> None:
         print("[catnews] no sources due today; nothing to fetch.")
         return
 
-    limits = {source: (args.limit or SOURCES[source]["limit"]) for source in sources}
-    snapshots = asyncio.run(build(args.date, DATA_DIR, sources, limits))
+    limits = {
+        source: (args.limit if args.limit is not None else SOURCES[source]["limit"])
+        for source in sources
+    }
+    snapshots = asyncio.run(
+        build(
+            args.date,
+            DATA_DIR,
+            sources,
+            limits,
+            apply_curation_overrides=not args.no_curation,
+        )
+    )
 
     if args.print:
         print(json.dumps([s.model_dump(mode="json") for s in snapshots], indent=2))

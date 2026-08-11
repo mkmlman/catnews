@@ -1,10 +1,25 @@
 from __future__ import annotations
 
+import tempfile
 from datetime import date
 from pathlib import Path
 
 from .config import SOURCES, cadence_label, today_utc
 from .models import Digest, SiteStats, SourceSnapshot, Story
+
+
+def _snapshot_parts(path: Path) -> tuple[str, date] | None:
+    """Extract a source key and date from a snapshot filename."""
+    stem = path.stem
+    if not stem.startswith("source_"):
+        return None
+    source, separator, raw_date = stem.removeprefix("source_").rpartition("_")
+    if not separator or not source:
+        return None
+    try:
+        return source, date.fromisoformat(raw_date)
+    except ValueError:
+        return None
 
 
 def snapshot_path(source: str, date_obj: date, data_dir: Path) -> Path:
@@ -14,10 +29,9 @@ def snapshot_path(source: str, date_obj: date, data_dir: Path) -> Path:
 def list_snapshot_dates(source: str, data_dir: Path) -> list[date]:
     dates: list[date] = []
     for path in data_dir.glob(f"source_{source}_*.json"):
-        try:
-            dates.append(date.fromisoformat(path.stem.replace(f"source_{source}_", "")))
-        except ValueError:
-            continue
+        parts = _snapshot_parts(path)
+        if parts and parts[0] == source:
+            dates.append(parts[1])
     return sorted(dates)
 
 
@@ -43,13 +57,31 @@ def last_fetched(source: str, data_dir: Path) -> date | None:
 def save_snapshot(snapshot: SourceSnapshot, data_dir: Path) -> Path:
     path = snapshot_path(snapshot.source, snapshot.date, data_dir)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(snapshot.model_dump_json(indent=2))
+    temp_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            "w",
+            encoding="utf-8",
+            dir=data_dir,
+            prefix=f".{path.name}.",
+            delete=False,
+        ) as temp_file:
+            temp_path = Path(temp_file.name)
+            temp_file.write(snapshot.model_dump_json(indent=2))
+        temp_path.replace(path)
+    finally:
+        if temp_path:
+            temp_path.unlink(missing_ok=True)
     return path
 
 
 def load_all_snapshots(data_dir: Path) -> list[SourceSnapshot]:
     sources = sorted(
-        {path.stem.split("_")[1] for path in data_dir.glob("source_*_*.json")}
+        {
+            parts[0]
+            for path in data_dir.glob("source_*_*.json")
+            if (parts := _snapshot_parts(path))
+        }
     )
     snapshots: list[SourceSnapshot] = []
     for source in sources:
@@ -71,7 +103,11 @@ def latest_stories_by_source(data_dir: Path) -> dict[str, list[Story]]:
 
 def _sources(data_dir: Path) -> list[str]:
     return sorted(
-        {path.stem.split("_")[1] for path in data_dir.glob("source_*_*.json")}
+        {
+            parts[0]
+            for path in data_dir.glob("source_*_*.json")
+            if (parts := _snapshot_parts(path))
+        }
     )
 
 

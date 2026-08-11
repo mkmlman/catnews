@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from datetime import UTC, date, datetime
 from types import SimpleNamespace
 
@@ -12,12 +13,14 @@ from app.fetchers.hn import parse_hit
 from app.fetchers.rss import parse_entry as parse_rss_entry
 from app.fetchers.rss import parse_links, strip_html
 from app.models import SourceSnapshot, Story
+from app.render import live_site_urls
 from app.store import (
     arxiv_category_counts,
     combined_digest,
     days_archiving,
     fetch_health,
     latest_stories_by_source,
+    load_all_snapshots,
     save_snapshot,
     site_stats,
     source_registry,
@@ -239,6 +242,55 @@ def test_snapshot_store_roundtrip(tmp_path):
 
     latest = latest_stories_by_source(tmp_path)
     assert [s.title for s in latest["hn"]] == ["A", "B"]
+
+
+def test_snapshot_store_supports_source_keys_with_underscores(tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="my_source",
+            date=date(2026, 8, 2),
+            stories=[Story(source="my_source", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+
+    snapshots = load_all_snapshots(tmp_path)
+    assert [(s.source, s.date) for s in snapshots] == [("my_source", date(2026, 8, 2))]
+    assert list(latest_stories_by_source(tmp_path)) == ["my_source"]
+
+
+def test_fetch_one_can_skip_curation(monkeypatch, tmp_path):
+    from scripts import fetch_digest
+
+    save_curation = tmp_path / "curation_2026-08-02.json"
+    save_curation.write_text('{"stories": {"hn:1": {"why_read": "Curated note"}}}')
+
+    async def fake_fetch(_client):
+        return [
+            Story(
+                source="hn",
+                title="A",
+                url="https://a",
+                external_id="1",
+            )
+        ]
+
+    monkeypatch.setattr(fetch_digest, "get_fetcher", lambda _cfg: fake_fetch)
+
+    async def run(apply_curation_overrides):
+        return await fetch_digest.fetch_one(
+            None,
+            "hn",
+            10,
+            date(2026, 8, 2),
+            tmp_path,
+            apply_curation_overrides=apply_curation_overrides,
+        )
+
+    curated = asyncio.run(run(True))
+    uncurated = asyncio.run(run(False))
+    assert curated.stories[0].why_read == "Curated note"
+    assert uncurated.stories[0].why_read is None
 
 
 def test_combined_digest_merges_latest_per_source(tmp_path):
@@ -602,12 +654,18 @@ def test_live_app_serves_pwa(client, tmp_path):
     assert manifest.status_code == 200
     assert manifest.headers["content-type"] == "application/manifest+json"
     assert manifest.json()["short_name"] == "catnews"
+    assert client.get("/static/style.css").status_code == 200
 
     sw = client.get("/sw.js")
     assert sw.status_code == 200
     assert sw.headers["content-type"] == "application/javascript"
     assert "PRECACHE" in sw.text
+    assert '"./static/"' not in sw.text
     assert '"./archive/hn/2026-08-02/"' in sw.text
+
+    assert "./static/" not in live_site_urls(
+        [SourceSnapshot(source="hn", date=date(2026, 8, 2), stories=[])]
+    )
 
 
 def test_api_json_aliases_match_static_build(client, tmp_path):
@@ -790,15 +848,15 @@ def test_stats_page_and_trends_endpoint(client, tmp_path):
 
     page = client.get("/stats/").text
     assert "Stories per week" in page
-    assert "2026-W32" in page
-    assert "2026-W33" in page
     assert 'class="trend-chart"' in page
+    assert "<summary>More detail</summary>" in page
     assert "Top domains" in page
     assert "arxiv.org" in page
     assert "arXiv categories" in page
     assert "cs.LG" in page
     assert "Fetch health" in page
     assert "Days archiving" in page
+    assert "stat-table--trends" not in page
 
     trends = client.get("/api/trends.json").json()
     assert [r["week"] for r in trends] == ["2026-W32", "2026-W33"]

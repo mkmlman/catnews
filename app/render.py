@@ -61,7 +61,7 @@ def render_trend_svg(trends: list[dict], source_keys: list[str]) -> str:
 
     n_weeks = len(trends)
     n_sources = len(source_keys)
-    max_total = max(t["total"] for t in trends) or 1
+    max_total = max((c for t in trends for c in t["counts"].values()), default=1) or 1
 
     group_gap = 24
     group_w = (plot_w - group_gap * (n_weeks - 1)) / n_weeks
@@ -85,21 +85,21 @@ def render_trend_svg(trends: list[dict], source_keys: list[str]) -> str:
             f'y2="{gy:.1f}" class="trend-chart-grid"/>'
         )
         parts.append(
-            f'<text x="{pad_l - 6}" y="{gy + 3:.1f}" class="trend-chart-y">{val}</text>'
+            f'<text x="{pad_l - 6}" y="{gy + 3:.1f}" text-anchor="end" '
+            f'class="trend-chart-y">{val}</text>'
         )
-    # bars
+    # bars (every source drawn so groups align across weeks)
     for wi, week in enumerate(trends):
         x0 = pad_l + wi * (group_w + group_gap)
         for si, key in enumerate(source_keys):
             val = week["counts"].get(key, 0)
-            if not val:
-                continue
             bx = x0 + si * (bar_w + bar_gap)
             by = y(val)
             parts.append(
                 f'<rect x="{bx:.1f}" y="{by:.1f}" width="{bar_w:.1f}" '
                 f'height="{pad_t + plot_h - by:.1f}" class="trend-chart-bar" '
-                f'fill="var(--badge-{key}-bg)" data-source="{key}"/>'
+                f'fill="var(--badge-{key}-bg)" data-source="{key}"'
+                f"{' opacity="0.25"' if not val else ''}/>"
             )
         # week label
         wx = x0 + group_w / 2
@@ -249,7 +249,9 @@ def walk_site_urls(out_dir: Path) -> list[str]:
 
 def live_site_urls(snapshots: list) -> list[str]:
     """Relative precache URLs for the live FastAPI app (no static build dir)."""
-    urls = ["./", "./static/"]
+    # StaticFiles serves individual assets, not a directory index at /static/.
+    # Including that 404ing URL would make cache.addAll() reject the whole install.
+    urls = ["./"]
     for path in sorted(STATIC_DIR.rglob("*")):
         if path.is_file():
             urls.append("./static/" + path.relative_to(STATIC_DIR).as_posix())

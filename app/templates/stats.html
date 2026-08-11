@@ -72,103 +72,79 @@
       {% endfor %}
     </div>
   </div>
-  <table class="stat-table stat-table--trends">
-    <thead>
-      <tr>
-        <th>Week</th>
-        {% for source in source_labels %}
-        <th class="trend-source">{{ source_tags[source] }}</th>
-        {% endfor %}
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% set max_total = trends | map(attribute="total") | max %}
-      {% for row in trends %}
-      <tr>
-        <td class="trend-week">{{ row.start.strftime("%b %d") }} – {{ row.end.strftime("%b %d") }} <span class="trend-week--tag">{{ row.week }}</span></td>
-        {% for source in source_labels %}
-        <td class="trend-cell">
-          {% set n = row.counts.get(source, 0) %}
-          {% if n %}
-          <span class="trend-bar"><span class="trend-fill" style="width: {{ (n * 100 // max_total) if max_total else 0 }}%; background: var(--badge-{{ source }}-bg);"></span></span>
-          <span class="trend-num">{{ n }}</span>
-          {% else %}
-          <span class="trend-num trend-num--empty">—</span>
-          {% endif %}
-        </td>
-        {% endfor %}
-        <td class="trend-total">{{ row.total }}</td>
-      </tr>
+</section>
+{% endif %}
+
+{% if domains or arxiv_categories or fetch_health %}
+<details class="stat-details">
+  <summary>More detail</summary>
+
+  {% if domains %}
+  <div class="stat-detail-block">
+    <h2>Top domains</h2>
+    <ul class="rank-list">
+      {% set domain_max = domains[0][1] %}
+      {% for host, count in domains %}
+      <li class="rank-item">
+        <span class="rank-name">{{ host }}</span>
+        <span class="rank-bar"><span class="rank-fill" style="width: {{ (count * 100 // domain_max) if domain_max else 0 }}%"></span></span>
+        <span class="rank-num">{{ count }}</span>
+      </li>
       {% endfor %}
-    </tbody>
-  </table>
-</section>
-{% endif %}
+    </ul>
+  </div>
+  {% endif %}
 
-{% if domains %}
-<section class="stat-section">
-  <h2>Top domains</h2>
-  <ul class="rank-list">
-    {% set domain_max = domains[0][1] %}
-    {% for host, count in domains %}
-    <li class="rank-item">
-      <span class="rank-name">{{ host }}</span>
-      <span class="rank-bar"><span class="rank-fill" style="width: {{ (count * 100 // domain_max) if domain_max else 0 }}%"></span></span>
-      <span class="rank-num">{{ count }}</span>
-    </li>
-    {% endfor %}
-  </ul>
-</section>
-{% endif %}
-
-{% if arxiv_categories %}
-<section class="stat-section">
-  <h2>arXiv categories</h2>
-  <ul class="rank-list">
-    {% set cat_max = arxiv_categories[0][1] %}
-    {% for cat, count in arxiv_categories %}
-    <li class="rank-item">
-      <span class="rank-name rank-name--mono">{{ cat }}</span>
-      <span class="rank-bar"><span class="rank-fill" style="width: {{ (count * 100 // cat_max) if cat_max else 0 }}%"></span></span>
-      <span class="rank-num">{{ count }}</span>
-    </li>
-    {% endfor %}
-  </ul>
-</section>
-{% endif %}
-
-{% if fetch_health %}
-<section class="stat-section">
-  <h2>Fetch health</h2>
-  <table class="stat-table stat-table--health">
-    <thead>
-      <tr>
-        <th>Source</th>
-        <th>Last fetch</th>
-        <th>Snapshots</th>
-        <th>Expected</th>
-        <th>Rate</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in fetch_health %}
-      <tr>
-        <td>
-          <span class="source-name">{{ source_labels[row.source] }}</span>
-          <span class="badge badge-{{ row.source }}">{{ source_tags[row.source] }}</span>
-        </td>
-        <td>{{ row.last_fetched.strftime("%b %d, %Y") if row.last_fetched else "—" }}</td>
-        <td>{{ row.actual }}</td>
-        <td>{{ row.expected }}</td>
-        <td class="share-cell">
-          <span class="share-bar"><span class="share-fill" style="width: {{ row.rate }}%;"></span></span>
-          <span class="share-pct">{{ row.rate }}%</span>
-        </td>
-      </tr>
+  {% if arxiv_categories %}
+  <div class="stat-detail-block">
+    <h2>arXiv categories</h2>
+    <ul class="rank-list">
+      {% set cat_max = arxiv_categories[0][1] %}
+      {% for cat, count in arxiv_categories %}
+      <li class="rank-item">
+        <span class="rank-name rank-name--mono">{{ cat }}</span>
+        <span class="rank-bar"><span class="rank-fill" style="width: {{ (count * 100 // cat_max) if cat_max else 0 }}%"></span></span>
+        <span class="rank-num">{{ count }}</span>
+      </li>
       {% endfor %}
-    </tbody>
-  </table>
-</section>
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if fetch_health %}
+  <div class="stat-detail-block">
+    <h2>Fetch health</h2>
+    <table class="stat-table stat-table--health">
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th>Last fetch</th>
+          <th>Snapshots</th>
+          <th>Expected</th>
+          <th>Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in fetch_health %}
+        <tr>
+          <td>
+            <span class="source-name">{{ source_labels[row.source] }}</span>
+            <span class="badge badge-{{ row.source }}">{{ source_tags[row.source] }}</span>
+          </td>
+          <td>{{ row.last_fetched.strftime("%b %d, %Y") if row.last_fetched else "—" }}</td>
+          <td>{{ row.actual }}</td>
+          <td>{{ row.expected }}</td>
+          <td class="share-cell">
+            <span class="share-bar"><span class="share-fill" style="width: {{ row.rate }}%;"></span></span>
+            <span class="share-pct">{{ row.rate }}%</span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</details>
 {% endif %}
 {% endblock %}
