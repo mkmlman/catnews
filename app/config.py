@@ -30,6 +30,21 @@ SOURCES_FILE = Path(__file__).resolve().parent.parent / "sources.yaml"
 
 # Badge palette, assigned to sources in definition order unless a source sets
 # an explicit `color`. Each entry: (light fg, light bg, dark fg, dark bg).
+PALETTE_NAMES: tuple[str, ...] = (
+    "ember",
+    "clay",
+    "graphite",
+    "cerulean",
+    "moss",
+    "amber",
+    "plum",
+    "teal",
+    "rose",
+    "steel",
+    "olive",
+    "bronze",
+)
+
 PALETTE: list[tuple[str, str, str, str]] = [
     ("#9c4d14", "#f8e7d2", "#f0b177", "rgba(240, 177, 119, 0.15)"),  # ember
     ("#8a1f18", "#f7e2df", "#f2a7a2", "rgba(242, 167, 162, 0.15)"),  # clay
@@ -156,6 +171,20 @@ def cadence_label(key: str) -> str:
     if days == 7:
         return "weekly"
     return f"every {days} days"
+
+
+def palette_entries() -> list[dict[str, str]]:
+    """Named palette entries for the design-system page (light + dark pairs)."""
+    return [
+        {
+            "name": name,
+            "light_fg": fg,
+            "light_bg": bg,
+            "dark_fg": dark_fg,
+            "dark_bg": dark_bg,
+        }
+        for name, (fg, bg, dark_fg, dark_bg) in zip(PALETTE_NAMES, PALETTE)
+    ]
 
 
 def badge_color(key: str) -> tuple[str, str, str, str]:

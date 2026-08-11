@@ -84,6 +84,11 @@ def api_docs(request: Request) -> HTMLResponse:
     return page(request, "api.html")
 
 
+@app.get("/design/", response_class=HTMLResponse)
+def design_system(request: Request) -> HTMLResponse:
+    return page(request, "design.html")
+
+
 # --- JSON API --------------------------------------------------------------
 
 
