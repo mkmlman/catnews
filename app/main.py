@@ -38,9 +38,15 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 SOURCE_PATTERN = "^(?:" + "|".join(re.escape(k) for k in SOURCES) + ")$"
 
 
-def page(request: Request, name: str, **context) -> HTMLResponse:
+def page(request: Request, name: str, page_path: str = "/", **context) -> HTMLResponse:
     return HTMLResponse(
-        render_page(name, base_path=BASE_PATH, base_url=BASE_URL, **context)
+        render_page(
+            name,
+            base_path=BASE_PATH,
+            base_url=BASE_URL,
+            page_path=page_path,
+            **context,
+        )
     )
 
 
@@ -50,18 +56,23 @@ def index(request: Request) -> HTMLResponse:
     if digest is None:
         digest = Digest(date=today_utc(), stories=[])
     editions = len(load_all_snapshots(DATA_DIR))
-    return page(request, "index.html", digest=digest, editions=editions)
+    return page(request, "index.html", "/", digest=digest, editions=editions)
 
 
 @app.get("/archive/", response_class=HTMLResponse)
 def archive(request: Request) -> HTMLResponse:
     snapshots = load_all_snapshots(DATA_DIR)
-    return page(request, "archive.html", snapshots=snapshots)
+    return page(request, "archive.html", "/archive/", snapshots=snapshots)
 
 
 @app.get("/sources/", response_class=HTMLResponse)
 def sources(request: Request) -> HTMLResponse:
-    return page(request, "sources.html", sources=source_registry(DATA_DIR))
+    return page(
+        request,
+        "sources.html",
+        "/sources/",
+        sources=source_registry(DATA_DIR),
+    )
 
 
 @app.get("/archive/{source}/{day}/", response_class=HTMLResponse)
@@ -76,6 +87,7 @@ def archive_snapshot(request: Request, source: str, day: date) -> HTMLResponse:
     return page(
         request,
         "snapshot.html",
+        f"/archive/{source}/{day.isoformat()}/",
         snapshot=snap,
         label=SOURCES[source]["label"],
     )
@@ -83,17 +95,17 @@ def archive_snapshot(request: Request, source: str, day: date) -> HTMLResponse:
 
 @app.get("/stats/", response_class=HTMLResponse)
 def stats(request: Request) -> HTMLResponse:
-    return page(request, "stats.html", stats=site_stats(DATA_DIR))
+    return page(request, "stats.html", "/stats/", stats=site_stats(DATA_DIR))
 
 
 @app.get("/api/", response_class=HTMLResponse)
 def api_docs(request: Request) -> HTMLResponse:
-    return page(request, "api.html")
+    return page(request, "api.html", "/api/")
 
 
 @app.get("/design/", response_class=HTMLResponse)
 def design_system(request: Request) -> HTMLResponse:
-    return page(request, "design.html")
+    return page(request, "design.html", "/design/")
 
 
 # --- JSON API --------------------------------------------------------------

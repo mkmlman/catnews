@@ -13,17 +13,24 @@ from .models import Digest
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
-CAT = r"""  /\_/\
- (=^.^=)
- (")_(")"""
-
 _env = Environment(
     loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html"])
 )
 
 
-def render_page(name: str, *, base_path: str, base_url: str, **context) -> str:
-    """Render a template to a full HTML string. Works for the live app and static builds."""
+def render_page(
+    name: str,
+    *,
+    base_path: str,
+    base_url: str,
+    page_path: str = "/",
+    **context,
+) -> str:
+    """Render a template to a full HTML string. Works for the live app and static builds.
+
+    `page_path` is the URL path (including base_path) used for the canonical
+    og:url, e.g. "/catnews/archive/" or "/archive/hn/2026-08-02/".
+    """
     template = _env.get_template(name)
     return template.render(
         app_name=APP_NAME,
@@ -33,7 +40,7 @@ def render_page(name: str, *, base_path: str, base_url: str, **context) -> str:
         palette=palette_entries(),
         base_path=base_path,
         base_url=base_url,
-        cat=CAT,
+        og_url=f"{base_url}{page_path}",
         **context,
     )
 

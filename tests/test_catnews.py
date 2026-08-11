@@ -596,3 +596,28 @@ def test_api_json_aliases_match_static_build(client, tmp_path):
         assert client.get(path).status_code == 200, path
     stories = client.get("/api/stories.json").json()
     assert [s["title"] for s in stories] == ["Searchable story"]
+
+
+def test_seo_meta_tags_on_pages(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="HN story", url="https://a")],
+        ),
+        tmp_path,
+    )
+    page = client.get("/").text
+    # Open Graph
+    assert 'property="og:site_name" content="catnews"' in page
+    assert 'property="og:type" content="website"' in page
+    assert 'property="og:title"' in page
+    assert 'property="og:url"' in page
+    assert 'property="og:image"' in page
+    # Twitter card
+    assert 'name="twitter:card" content="summary"' in page
+    assert 'name="twitter:title"' in page
+    assert 'name="twitter:image"' in page
+    # RSS autodiscovery link
+    assert 'rel="alternate" type="application/rss+xml"' in page
+    assert 'href="http://localhost:8000/feed.rss"' in page

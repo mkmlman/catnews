@@ -12,7 +12,22 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{{ base_path }}/static/favicon-16.png" media="(prefers-color-scheme: light)">
   <link rel="icon" type="image/png" sizes="16x16" href="{{ base_path }}/static/favicon-16-dark.png" media="(prefers-color-scheme: dark)">
   <title>{% block title %}{{ app_name }}{% endblock %}</title>
+  <meta name="description" content="catnews — a curated daily digest of Hacker News, arXiv, GitHub, and Register Spill stories. What's worth reading.">
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ base_url }}/feed.rss">
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="catnews">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ self.title() }}">
+  <meta property="og:description" content="catnews — a curated daily digest of HN, arXiv, GitHub, and Register Spill stories. What's worth reading.">
+  <meta property="og:url" content="{{ og_url }}">
+  <meta property="og:image" content="{{ base_url }}/static/favicon-180.png">
+
+  <!-- Twitter card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ self.title() }}">
+  <meta name="twitter:description" content="catnews — a curated daily digest of HN, arXiv, GitHub, and Register Spill stories. What's worth reading.">
+  <meta name="twitter:image" content="{{ base_url }}/static/favicon-180.png">
   <link rel="stylesheet" href="{{ base_path }}/static/style.css">
   <style>{{ badge_css | safe }}</style>
   <script>

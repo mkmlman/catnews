@@ -58,6 +58,7 @@ def build_site(
             "index.html",
             base_path=base_path,
             base_url=base_url,
+            page_path="/",
             digest=digest,
             editions=len(snapshots),
         ),
@@ -65,7 +66,11 @@ def build_site(
     write(
         out_dir / "archive" / "index.html",
         render_page(
-            "archive.html", base_path=base_path, base_url=base_url, snapshots=snapshots
+            "archive.html",
+            base_path=base_path,
+            base_url=base_url,
+            page_path="/archive/",
+            snapshots=snapshots,
         ),
     )
     for snap in snapshots:
@@ -75,6 +80,7 @@ def build_site(
                 "snapshot.html",
                 base_path=base_path,
                 base_url=base_url,
+                page_path=f"/archive/{snap.source}/{snap.date.isoformat()}/",
                 snapshot=snap,
                 label=SOURCES[snap.source]["label"],
             ),
@@ -85,6 +91,7 @@ def build_site(
             "stats.html",
             base_path=base_path,
             base_url=base_url,
+            page_path="/stats/",
             stats=site_stats(data_dir),
         ),
     )
@@ -94,16 +101,27 @@ def build_site(
             "sources.html",
             base_path=base_path,
             base_url=base_url,
+            page_path="/sources/",
             sources=source_registry(data_dir),
         ),
     )
     write(
         out_dir / "api" / "index.html",
-        render_page("api.html", base_path=base_path, base_url=base_url),
+        render_page(
+            "api.html",
+            base_path=base_path,
+            base_url=base_url,
+            page_path="/api/",
+        ),
     )
     write(
         out_dir / "design" / "index.html",
-        render_page("design.html", base_path=base_path, base_url=base_url),
+        render_page(
+            "design.html",
+            base_path=base_path,
+            base_url=base_url,
+            page_path="/design/",
+        ),
     )
 
     # Feed + machine-readable files
