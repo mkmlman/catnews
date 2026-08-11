@@ -94,6 +94,10 @@ def build_site(
         out_dir / "api" / "index.html",
         render_page("api.html", base_path=base_path, base_url=base_url),
     )
+    write(
+        out_dir / "design" / "index.html",
+        render_page("design.html", base_path=base_path, base_url=base_url),
+    )
 
     # Feed + machine-readable files
     if digest:
