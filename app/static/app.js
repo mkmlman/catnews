@@ -151,22 +151,48 @@
   var filtersEl = document.getElementById("filters");
   var noMatches = document.getElementById("no-matches");
   var hideRead = document.getElementById("hide-read");
-  var state = { source: "All", savedOnly: false };
+  var keywordFilter = document.getElementById("keyword-filter");
+  var loadMoreBtn = document.getElementById("load-more");
+  var PAGE_SIZE = 12;
+  var state = { source: "All", savedOnly: false, loaded: PAGE_SIZE };
+
+  function keywordTokens() {
+    if (!keywordFilter) return [];
+    return normalize(keywordFilter.value)
+      .split(/\s+/)
+      .filter(Boolean);
+  }
+
+  function cardText(card) {
+    return normalize(card.textContent || "");
+  }
 
   function applyFilters() {
     if (!filtersEl) return;
+    var tokens = keywordTokens();
     var visible = 0;
-    cards.forEach(function (card) {
+    var matched = 0;
+    cards.forEach(function (card, index) {
       var url = card.getAttribute("data-url");
       var sourceMatch =
         state.source === "All" || card.getAttribute("data-source") === state.source;
       var savedMatch = !state.savedOnly || (url && saved.has(url));
       var readMatch = !hideRead || !hideRead.checked || !url || !read.has(url);
-      var match = sourceMatch && savedMatch && readMatch;
-      card.hidden = !match;
-      if (match) visible++;
+      var textMatch = true;
+      if (tokens.length) {
+        var haystack = cardText(card);
+        textMatch = tokens.every(function (token) {
+          return haystack.indexOf(token) !== -1;
+        });
+      }
+      var match = sourceMatch && savedMatch && readMatch && textMatch;
+      if (match) matched++;
+      var show = match && index < state.loaded;
+      card.hidden = !show;
+      if (show) visible++;
     });
-    if (noMatches) noMatches.hidden = visible !== 0;
+    if (noMatches) noMatches.hidden = matched !== 0;
+    if (loadMoreBtn) loadMoreBtn.hidden = matched <= state.loaded;
   }
 
   function setActiveChips() {
@@ -205,6 +231,15 @@
     });
     if (hideRead) {
       hideRead.addEventListener("change", applyFilters);
+    }
+    if (keywordFilter) {
+      keywordFilter.addEventListener("input", applyFilters);
+    }
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener("click", function () {
+        state.loaded += PAGE_SIZE;
+        applyFilters();
+      });
     }
     updateCounts();
     applyFilters();

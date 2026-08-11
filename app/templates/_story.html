@@ -4,8 +4,8 @@
     {% if story.score is not none %}<span class="story-score">{% if story.source == "github" %}★{% else %}▲{% endif %} {{ story.score }}</span>{% endif %}
   </div>
   <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h3>
-  {% if story.authors %}<p class="story-authors">By {{ story.authors | join(", ") }}</p>
-  {% else %}<p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>{% endif %}
+  {% if story.authors %}<p class="story-by">By {{ story.authors | join(", ") }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}</p>
+  {% else %}<p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>{% endif %}
   {% if story.links %}
   <details class="story-links">
     <summary>{{ story.links | length }} curated link{{ "s" if story.links | length != 1 else "" }}</summary>

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import UTC, date, datetime
 from types import SimpleNamespace
 
 import pytest
@@ -553,6 +553,32 @@ def test_index_page_has_app_js_and_search(client, tmp_path):
     # filter affordances for the new reading model
     assert 'data-saved="saved"' in page
     assert 'id="hide-read"' in page
+    # keyword filter + load-more for the growing feed
+    assert 'id="keyword-filter"' in page
+    assert 'id="load-more"' in page
+
+
+def test_per_story_timestamp_rendered(client, tmp_path):
+    # Each story card shows its published date so a daily digest is scannable.
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(
+                    source="hn",
+                    title="Timed story",
+                    url="https://a",
+                    published=datetime(2026, 8, 1, 9, 30, tzinfo=UTC),
+                ),
+                Story(source="hn", title="No date", url="https://b"),
+            ],
+        ),
+        tmp_path,
+    )
+    page = client.get("/").text
+    assert '<time datetime="2026-08-01T09:30:00+00:00">Aug 01, 2026</time>' in page
+    assert "Aug 01, 2026" in page
 
 
 def test_live_app_serves_pwa(client, tmp_path):

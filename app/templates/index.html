@@ -15,10 +15,13 @@
     {% endfor %}
     <button class="chip" data-saved="saved">Saved</button>
   </div>
-  <label class="hide-read">
-    <input type="checkbox" id="hide-read">
-    <span>Hide read</span>
-  </label>
+  <div class="filter-row filter-row--secondary">
+    <input type="search" id="keyword-filter" class="keyword-filter" placeholder="Filter by keyword" aria-label="Filter stories by keyword" autocomplete="off">
+    <label class="hide-read">
+      <input type="checkbox" id="hide-read">
+      <span>Hide read</span>
+    </label>
+  </div>
 </div>
 
 <p class="no-matches" id="no-matches" hidden>No stories match the selected filters.</p>
@@ -28,4 +31,6 @@
   {% include "_story.html" %}
   {% endfor %}
 </div>
+
+<button class="load-more" id="load-more" type="button" hidden>Load more</button>
 {% endblock %}
