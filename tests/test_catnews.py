@@ -856,7 +856,8 @@ def test_stats_page_and_trends_endpoint(client, tmp_path):
     assert "cs.LG" in page
     assert "Fetch health" in page
     assert "Days archiving" in page
-    assert "stat-table--trends" not in page
+    assert "View data table" in page
+    assert "stat-table--trends" in page
 
     trends = client.get("/api/trends.json").json()
     assert [r["week"] for r in trends] == ["2026-W32", "2026-W33"]

@@ -44,7 +44,7 @@
   <div class="container">
     <header class="site-header">
       <a class="wordmark" href="{{ base_path }}/">{% include "cat-logo.html" %}<span>{{ app_name }}</span></a>
-      <nav class="site-nav">
+      <nav class="site-nav" id="primary-nav" aria-label="Primary navigation">
         <a href="{{ base_path }}/archive/">Archive</a>
         <a href="{{ base_path }}/sources/">Sources</a>
         <a href="{{ base_path }}/stats/">Stats</a>
@@ -57,6 +57,9 @@
         <div class="search-results" id="search-results" hidden></div>
       </div>
       <div class="header-actions">
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">
+          <span class="nav-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
         <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
         <a class="repo-link" href="https://github.com/mkmlman/catnews" target="_blank" rel="noopener" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
         <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme"></button>

@@ -34,6 +34,35 @@
   var installDialogClose = document.getElementById("install-dialog-close");
   var deferredPrompt = null;
 
+  /* -------------------------------------------------------------
+     Compact mobile navigation
+     ------------------------------------------------------------- */
+  var navToggle = document.getElementById("nav-toggle");
+  var siteHeader = document.querySelector(".site-header");
+  var primaryNav = document.getElementById("primary-nav");
+
+  function setNavOpen(open) {
+    if (!navToggle || !siteHeader || !primaryNav) return;
+    siteHeader.classList.toggle("nav-open", open);
+    navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    navToggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  }
+
+  if (navToggle) {
+    navToggle.addEventListener("click", function () {
+      setNavOpen(navToggle.getAttribute("aria-expanded") !== "true");
+    });
+    primaryNav.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () { setNavOpen(false); });
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") setNavOpen(false);
+    });
+    document.addEventListener("click", function (event) {
+      if (siteHeader && !siteHeader.contains(event.target)) setNavOpen(false);
+    });
+  }
+
   function showInstallDialog() {
     if (installDialog) installDialog.hidden = false;
   }
@@ -154,6 +183,9 @@
   var keywordFilter = document.getElementById("keyword-filter");
   var loadMoreBtn = document.getElementById("load-more");
   var exportSavedBtn = document.getElementById("export-saved");
+  var filterStatus = document.getElementById("filter-status");
+  var sourceFilterRow = document.querySelector(".filter-row--sources");
+  var filterScrollCue = document.querySelector(".filter-scroll-cue");
   var PAGE_SIZE = 12;
   var state = { source: "All", savedOnly: false, loaded: PAGE_SIZE };
 
@@ -194,6 +226,18 @@
     });
     if (noMatches) noMatches.hidden = matched !== 0;
     if (loadMoreBtn) loadMoreBtn.hidden = matched <= state.loaded;
+    if (filterStatus) {
+      var scope = state.savedOnly
+        ? "saved stories"
+        : state.source === "All"
+          ? "stories"
+          : (CFG.sourceTags[state.source] || state.source) + " stories";
+      filterStatus.textContent = matched === 0
+        ? "No matching stories"
+        : visible < matched
+          ? "Showing " + visible + " of " + matched + " " + scope
+          : "Showing " + matched + " " + scope;
+    }
   }
 
   function setActiveChips() {
@@ -201,8 +245,10 @@
     chips.forEach(function (chip) {
       if (chip.dataset.source !== undefined) {
         chip.classList.toggle("is-active", chip.dataset.source === state.source);
+        chip.setAttribute("aria-pressed", chip.dataset.source === state.source ? "true" : "false");
       } else if (chip.dataset.saved !== undefined) {
         chip.classList.toggle("is-active", state.savedOnly);
+        chip.setAttribute("aria-pressed", state.savedOnly ? "true" : "false");
       }
     });
   }
@@ -245,6 +291,18 @@
     }
     updateCounts();
     applyFilters();
+  }
+
+  function updateFilterScrollCue() {
+    if (!sourceFilterRow || !filterScrollCue) return;
+    var atEnd = sourceFilterRow.scrollLeft + sourceFilterRow.clientWidth >= sourceFilterRow.scrollWidth - 4;
+    filterScrollCue.hidden = atEnd || sourceFilterRow.scrollWidth <= sourceFilterRow.clientWidth;
+  }
+
+  if (sourceFilterRow) {
+    sourceFilterRow.addEventListener("scroll", updateFilterScrollCue, { passive: true });
+    window.addEventListener("resize", updateFilterScrollCue);
+    updateFilterScrollCue();
   }
 
   /* -------------------------------------------------------------

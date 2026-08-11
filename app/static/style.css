@@ -193,6 +193,25 @@ a:focus-visible, button:focus-visible {
   gap: 14px;
   flex-wrap: nowrap;
 }
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.nav-toggle:hover { color: var(--accent); border-color: var(--accent); }
+.nav-toggle-icon { display: grid; gap: 3px; width: 14px; }
+.nav-toggle-icon span { display: block; height: 1px; background: currentColor; transition: transform 0.18s, opacity 0.18s; }
+.nav-open .nav-toggle-icon span:nth-child(1) { transform: translateY(4px) rotate(45deg); }
+.nav-open .nav-toggle-icon span:nth-child(2) { opacity: 0; }
+.nav-open .nav-toggle-icon span:nth-child(3) { transform: translateY(-4px) rotate(-45deg); }
 .header-actions .repo-link {
   display: inline-flex;
   align-items: center;
@@ -369,6 +388,8 @@ a:focus-visible, button:focus-visible {
   backdrop-filter: blur(12px);
 }
 .filter-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.filter-scroll { position: relative; min-width: 0; flex: 1 1 auto; }
+.filter-scroll-cue { display: none; }
 .filter-label {
   font-family: var(--mono);
   font-size: var(--label-sm);
@@ -395,6 +416,15 @@ a:focus-visible, button:focus-visible {
   background: var(--accent);
   border-color: var(--accent);
 }
+.filter-status {
+  flex: 1 0 100%;
+  margin: -2px 0 0;
+  font-family: var(--mono);
+  font-size: var(--label-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
 
 /* --------------------------------------------------------------------------
    Stories
@@ -404,6 +434,7 @@ a:focus-visible, button:focus-visible {
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   padding: 8px 0;
+  min-width: 0;
 }
 .no-matches {
   text-align: center;
@@ -415,6 +446,7 @@ a:focus-visible, button:focus-visible {
   position: relative;
   display: flex;
   flex-direction: column;
+  min-width: 0;
   padding: 16px 18px;
   background: transparent;
   border: 1px solid transparent;
@@ -500,6 +532,17 @@ a:focus-visible, button:focus-visible {
 .story-more {
   margin: 0 0 10px;
   font-size: var(--label-md);
+}
+.story-excerpt {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  margin: 10px 0 0;
+  color: var(--ink-soft);
+  font-size: var(--label-md);
+  line-height: 1.5;
 }
 .story-more summary {
   font-family: var(--mono);
@@ -1011,6 +1054,30 @@ a:focus-visible, button:focus-visible {
 }
 .stat-details[open] summary::before { content: "– "; }
 .stat-detail-block { padding: 18px 0 6px; }
+.stat-trends-data { margin-top: 12px; }
+.stat-trends-table-wrap { overflow-x: auto; }
+.stat-table--trends th,
+.stat-table--trends td {
+  min-width: 82px;
+  text-align: right;
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+.stat-table--trends th:first-child,
+.stat-table--trends td:first-child { min-width: 150px; text-align: left; }
+.stat-table--trends tbody th { color: var(--muted); font-weight: 400; }
+.trend-week-tag { display: block; color: var(--faint); font-size: var(--label-xs); font-weight: 400; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .share-cell { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
 .share-bar {
   flex: 1;
@@ -1716,7 +1783,7 @@ a:focus-visible, button:focus-visible {
   .site-header {
     display: grid;
     grid-template-columns: 1fr auto;
-    grid-template-areas: "wordmark actions" "nav nav" "search search";
+    grid-template-areas: "wordmark actions" "search search";
     align-items: center;
     gap: 14px 16px;
     padding: 22px 0 16px;
@@ -1725,10 +1792,20 @@ a:focus-visible, button:focus-visible {
   .header-actions { grid-area: actions; }
   .site-nav {
     grid-area: nav;
+    display: none;
     margin-left: 0;
     flex-wrap: wrap;
     gap: 10px 16px;
   }
+  .site-header.nav-open { grid-template-areas: "wordmark actions" "nav nav" "search search"; }
+  .site-header.nav-open .site-nav {
+    display: flex;
+    margin: 0;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .nav-toggle { display: inline-flex; }
+  .header-actions { gap: 8px; }
   .search {
     grid-area: search;
     display: flex;
@@ -1743,8 +1820,26 @@ a:focus-visible, button:focus-visible {
   .search-results { width: 100%; }
   .share-bar { display: none; }
 
+  .filter-scroll { width: 100%; overflow: hidden; }
   .filter-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .filter-row::-webkit-scrollbar { display: none; }
+  .filter-row--sources { padding-right: 54px; }
+  .filter-scroll-cue {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    padding: 7px 0 0 18px;
+    font-family: var(--mono);
+    font-size: var(--label-xs);
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--paper) 92%, transparent) 35%);
+    pointer-events: none;
+  }
+  .filter-scroll-cue[hidden] { display: none; }
+  .filter-status { margin-top: 2px; }
   .filter-label, .chip { flex-shrink: 0; }
 
   .source-details { flex-direction: column; align-items: stretch; gap: 10px 0; }

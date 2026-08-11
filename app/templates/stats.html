@@ -71,6 +71,30 @@
       <span class="trend-legend-item"><span class="trend-legend-swatch" style="background: var(--badge-{{ source }}-bg);"></span>{{ source_tags[source] }}</span>
       {% endfor %}
     </div>
+    <details class="stat-details stat-trends-data">
+      <summary>View data table</summary>
+      <div class="stat-detail-block stat-trends-table-wrap">
+        <table class="stat-table stat-table--trends">
+          <caption class="sr-only">Stories per week by source</caption>
+          <thead>
+            <tr>
+              <th scope="col">Week</th>
+              {% for source in source_labels %}<th scope="col">{{ source_tags[source] }}</th>{% endfor %}
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in trends %}
+            <tr>
+              <th scope="row">{{ row.start.strftime("%b %d") }} – {{ row.end.strftime("%b %d") }} <span class="trend-week-tag">{{ row.week }}</span></th>
+              {% for source in source_labels %}<td>{{ row.counts.get(source, 0) }}</td>{% endfor %}
+              <td>{{ row.total }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </details>
   </div>
 </section>
 {% endif %}

@@ -33,10 +33,10 @@ def test_mobile_media_query_exists():
 
 
 def test_header_nav_wraps_on_mobile(mobile):
-    # Regression: the top nav stayed a single non-wrapping row, overflowing the
-    # viewport horizontally on phones <=390px. It must wrap instead.
+    # The full nav is collapsed on phones and only expands when requested.
     assert ".site-nav" in mobile
-    assert "wrap" in mobile
+    assert "display: none" in mobile
+    assert ".nav-toggle" in mobile
 
 
 def test_icons_in_fixed_non_wrapping_slot(mobile):
@@ -59,6 +59,7 @@ def test_source_filter_chips_never_wrap(mobile):
     assert ".filter-row" in mobile
     assert "flex-wrap: nowrap" in mobile
     assert "overflow-x: auto" in mobile
+    assert ".filter-scroll-cue" in mobile
 
 
 def test_source_details_stack_cleanly(mobile):
@@ -103,3 +104,36 @@ def test_stories_single_column_on_mobile(mobile):
 def test_homepage_has_viewport_meta():
     base = (APP_DIR / "templates" / "base.html").read_text()
     assert 'name="viewport" content="width=device-width, initial-scale=1"' in base
+
+
+def test_mobile_navigation_has_accessible_toggle():
+    base = (APP_DIR / "templates" / "base.html").read_text()
+    assert 'id="nav-toggle"' in base
+    assert 'aria-controls="primary-nav"' in base
+    assert 'aria-expanded="false"' in base
+
+
+def test_story_filters_are_accessible_buttons():
+    index = (APP_DIR / "templates" / "index.html").read_text()
+    assert 'type="button"' in index
+    assert 'aria-pressed="true"' in index
+    assert 'aria-controls="stories"' in index
+
+
+def test_story_excerpt_and_progress_markup_exist():
+    story = (APP_DIR / "templates" / "_story.html").read_text()
+    index = (APP_DIR / "templates" / "index.html").read_text()
+    assert "story-excerpt" in story
+    assert 'id="filter-status"' in index
+
+
+def test_story_excerpts_can_wrap_without_mobile_overflow():
+    assert "min-width: 0" in CSS
+    assert "overflow-wrap: anywhere" in CSS
+
+
+def test_stats_has_accessible_trends_table():
+    stats = (APP_DIR / "templates" / "stats.html").read_text()
+    assert "stat-table--trends" in stats
+    assert 'scope="col"' in stats
+    assert 'scope="row"' in stats
