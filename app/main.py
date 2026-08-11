@@ -21,14 +21,20 @@ from .render import (
     render_page,
     render_rss,
     render_service_worker,
+    render_trend_svg,
 )
 from .store import (
+    arxiv_category_counts,
     combined_digest,
+    days_archiving,
+    fetch_health,
     load_all_snapshots,
     load_latest_snapshot,
     load_snapshot,
     site_stats,
     source_registry,
+    top_domains,
+    weekly_trends,
 )
 
 app = FastAPI(title="catnews", description="catnews — a curated digest.")
@@ -95,7 +101,19 @@ def archive_snapshot(request: Request, source: str, day: date) -> HTMLResponse:
 
 @app.get("/stats/", response_class=HTMLResponse)
 def stats(request: Request) -> HTMLResponse:
-    return page(request, "stats.html", "/stats/", stats=site_stats(DATA_DIR))
+    trends = weekly_trends(DATA_DIR)
+    return page(
+        request,
+        "stats.html",
+        "/stats/",
+        stats=site_stats(DATA_DIR),
+        trends=trends,
+        trends_chart=render_trend_svg(trends, list(SOURCES)),
+        domains=top_domains(DATA_DIR),
+        arxiv_categories=arxiv_category_counts(DATA_DIR),
+        days=days_archiving(DATA_DIR),
+        fetch_health=fetch_health(DATA_DIR),
+    )
 
 
 @app.get("/api/", response_class=HTMLResponse)
@@ -175,6 +193,16 @@ def api_stats() -> dict:
 @app.get("/api/stats.json")
 def api_stats_json() -> dict:
     return api_stats()
+
+
+@app.get("/api/trends")
+def api_trends() -> list[dict]:
+    return weekly_trends(DATA_DIR)
+
+
+@app.get("/api/trends.json")
+def api_trends_json() -> list[dict]:
+    return api_trends()
 
 
 @app.get("/api/sources.json")

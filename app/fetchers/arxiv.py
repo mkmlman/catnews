@@ -57,6 +57,17 @@ def parse_entry(entry: ET.Element) -> Story | None:
 
     external_id = id_url.rstrip("/").split("/abs/")[-1] if "/abs/" in id_url else None
 
+    primary = entry.find("arxiv:primary_category", NS)
+    category = None
+    if primary is not None:
+        category = (primary.get("term") or "").strip() or None
+    if category is None:
+        for node in entry.findall("atom:category", NS):
+            term = (node.get("term") or "").strip()
+            if term:
+                category = term
+                break
+
     return Story(
         source="arxiv",
         title=title,
@@ -65,6 +76,7 @@ def parse_entry(entry: ET.Element) -> Story | None:
         author=authors[0] if authors else None,
         byline=authors[0] if authors else None,
         external_id=external_id,
+        category=category,
         published=published,
         snippet=summary[:MAX_SUMMARY_CHARS] if summary else None,
     )

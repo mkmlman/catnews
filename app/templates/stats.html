@@ -24,6 +24,12 @@
     <span class="stat-label">Latest snapshot</span>
     <span class="stat-value stat-value--date">{{ stats.last_edition.strftime("%b %d, %Y") if stats.last_edition else "—" }}</span>
   </div>
+  {% if days %}
+  <div class="stat-card">
+    <span class="stat-label">Days archiving</span>
+    <span class="stat-value">{{ days }}</span>
+  </div>
+  {% endif %}
 </div>
 
 <section class="stat-section">
@@ -55,4 +61,114 @@
     </tbody>
   </table>
 </section>
+
+{% if trends %}
+<section class="stat-section">
+  <h2>Stories per week</h2>
+  <div class="trend-chart-wrap">{{ trends_chart | safe }}
+    <div class="trend-legend">
+      {% for source in source_labels %}
+      <span class="trend-legend-item"><span class="trend-legend-swatch" style="background: var(--badge-{{ source }}-bg);"></span>{{ source_tags[source] }}</span>
+      {% endfor %}
+    </div>
+  </div>
+  <table class="stat-table stat-table--trends">
+    <thead>
+      <tr>
+        <th>Week</th>
+        {% for source in source_labels %}
+        <th class="trend-source">{{ source_tags[source] }}</th>
+        {% endfor %}
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set max_total = trends | map(attribute="total") | max %}
+      {% for row in trends %}
+      <tr>
+        <td class="trend-week">{{ row.start.strftime("%b %d") }} – {{ row.end.strftime("%b %d") }} <span class="trend-week--tag">{{ row.week }}</span></td>
+        {% for source in source_labels %}
+        <td class="trend-cell">
+          {% set n = row.counts.get(source, 0) %}
+          {% if n %}
+          <span class="trend-bar"><span class="trend-fill" style="width: {{ (n * 100 // max_total) if max_total else 0 }}%; background: var(--badge-{{ source }}-bg);"></span></span>
+          <span class="trend-num">{{ n }}</span>
+          {% else %}
+          <span class="trend-num trend-num--empty">—</span>
+          {% endif %}
+        </td>
+        {% endfor %}
+        <td class="trend-total">{{ row.total }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+{% if domains %}
+<section class="stat-section">
+  <h2>Top domains</h2>
+  <ul class="rank-list">
+    {% set domain_max = domains[0][1] %}
+    {% for host, count in domains %}
+    <li class="rank-item">
+      <span class="rank-name">{{ host }}</span>
+      <span class="rank-bar"><span class="rank-fill" style="width: {{ (count * 100 // domain_max) if domain_max else 0 }}%"></span></span>
+      <span class="rank-num">{{ count }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if arxiv_categories %}
+<section class="stat-section">
+  <h2>arXiv categories</h2>
+  <ul class="rank-list">
+    {% set cat_max = arxiv_categories[0][1] %}
+    {% for cat, count in arxiv_categories %}
+    <li class="rank-item">
+      <span class="rank-name rank-name--mono">{{ cat }}</span>
+      <span class="rank-bar"><span class="rank-fill" style="width: {{ (count * 100 // cat_max) if cat_max else 0 }}%"></span></span>
+      <span class="rank-num">{{ count }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if fetch_health %}
+<section class="stat-section">
+  <h2>Fetch health</h2>
+  <table class="stat-table stat-table--health">
+    <thead>
+      <tr>
+        <th>Source</th>
+        <th>Last fetch</th>
+        <th>Snapshots</th>
+        <th>Expected</th>
+        <th>Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in fetch_health %}
+      <tr>
+        <td>
+          <span class="source-name">{{ source_labels[row.source] }}</span>
+          <span class="badge badge-{{ row.source }}">{{ source_tags[row.source] }}</span>
+        </td>
+        <td>{{ row.last_fetched.strftime("%b %d, %Y") if row.last_fetched else "—" }}</td>
+        <td>{{ row.actual }}</td>
+        <td>{{ row.expected }}</td>
+        <td class="share-cell">
+          <span class="share-bar"><span class="share-fill" style="width: {{ row.rate }}%;"></span></span>
+          <span class="share-pct">{{ row.rate }}%</span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
 {% endblock %}

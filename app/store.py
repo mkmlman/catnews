@@ -144,3 +144,117 @@ def site_stats(data_dir: Path) -> SiteStats:
         by_source=dict(sorted(by_source.items())),
         snapshots_by_source=dict(sorted(snapshots_by_source.items())),
     )
+
+
+def weekly_trends(data_dir: Path) -> list[dict]:
+    """Story counts by source per ISO week, for the stats trends table.
+
+    Returns a list of dicts (oldest first):
+      {"week": "2026-W32", "start": date, "end": date,
+       "counts": {"hn": 25, ...}, "total": 27}
+    """
+    from collections import defaultdict
+
+    buckets: dict[tuple[int, int], dict] = {}
+    for snap in load_all_snapshots(data_dir):
+        iso = snap.date.isocalendar()
+        key = (iso.year, iso.week)
+        bucket = buckets.setdefault(key, {"counts": defaultdict(int), "dates": set()})
+        bucket["dates"].add(snap.date)
+        for story in snap.stories:
+            bucket["counts"][story.source] += 1
+    rows: list[dict] = []
+    for (year, week_num), bucket in sorted(buckets.items()):
+        counts = dict(sorted(bucket["counts"].items()))
+        rows.append(
+            {
+                "week": f"{year}-W{week_num:02d}",
+                "start": min(bucket["dates"]),
+                "end": max(bucket["dates"]),
+                "counts": counts,
+                "total": sum(counts.values()),
+            }
+        )
+    return rows
+
+
+def top_domains(data_dir: Path, limit: int = 10) -> list[tuple[str, int]]:
+    """Most common story URL hostnames across all archived snapshots."""
+    from collections import Counter
+    from urllib.parse import urlparse
+
+    counter: Counter[str] = Counter()
+    for snap in load_all_snapshots(data_dir):
+        for story in snap.stories:
+            host = urlparse(story.url).netloc
+            host = host.removeprefix("www.")
+            if host:
+                counter[host] += 1
+    return counter.most_common(limit)
+
+
+def arxiv_category_counts(data_dir: Path) -> list[tuple[str, int]]:
+    """Most common arXiv primary categories across archived arXiv stories."""
+    from collections import Counter
+
+    counter: Counter[str] = Counter()
+    for snap in load_all_snapshots(data_dir):
+        for story in snap.stories:
+            if story.category:
+                counter[story.category] += 1
+    return counter.most_common()
+
+
+def days_archiving(data_dir: Path) -> int:
+    """Number of calendar days spanned by the archive (1 if a single day)."""
+    dates = [s.date for s in load_all_snapshots(data_dir)]
+    if not dates:
+        return 0
+    return (max(dates) - min(dates)).days + 1
+
+
+def fetch_health(data_dir: Path) -> list[dict]:
+    """Per-source fetch success: actual snapshots vs expected by cadence.
+
+    Expected count = number of fetch dates the source's cadence implies,
+    anchored at the source's own first snapshot and spanning through the
+    most recent archive date.
+    """
+    from datetime import timedelta
+
+    from .config import SOURCES
+
+    snapshots = load_all_snapshots(data_dir)
+    if not snapshots:
+        return []
+    by_source: dict[str, list] = {}
+    for snap in snapshots:
+        by_source.setdefault(snap.source, []).append(snap.date)
+
+    last_archive = max(s.date for s in snapshots)
+    rows: list[dict] = []
+    for source in sorted(SOURCES):
+        cfg = SOURCES[source]
+        actual = sorted(by_source.get(source, []))
+        expected = 0
+        if actual:
+            first = actual[0]
+            weekday = cfg.get("weekday")
+            day = first
+            if weekday is not None:
+                delta = (weekday - day.weekday()) % 7
+                day += timedelta(days=delta)
+            while day <= last_archive:
+                expected += 1
+                day += timedelta(days=cfg["cadence_days"])
+        rate = min(len(actual) / expected * 100, 100.0) if expected else 100.0
+        rows.append(
+            {
+                "source": source,
+                "expected": expected,
+                "actual": len(actual),
+                "rate": round(rate, 1),
+                "last_fetched": actual[-1] if actual else None,
+            }
+        )
+    return rows

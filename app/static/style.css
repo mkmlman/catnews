@@ -694,6 +694,26 @@ a:focus-visible, button:focus-visible {
   border-color: var(--accent);
 }
 
+.export-saved {
+  font-family: var(--mono);
+  font-size: var(--label-sm);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+  margin-left: auto;
+  white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s;
+}
+.export-saved:hover {
+  color: var(--card);
+  background: var(--accent);
+}
+
 .search {
   position: relative;
   display: inline-flex;
@@ -987,6 +1007,128 @@ a:focus-visible, button:focus-visible {
   opacity: 0.85;
 }
 .share-pct { min-width: 44px; text-align: right; font-size: var(--label-sm); }
+
+.stat-table--trends th,
+.stat-table--trends td {
+  text-align: right;
+  font-family: var(--mono);
+  padding: 12px 6px;
+}
+.stat-table--trends th:first-child,
+.stat-table--trends td:first-child {
+  text-align: left;
+  display: table-cell;
+}
+.stat-table--trends th:nth-child(3),
+.stat-table--trends td:nth-child(3) { padding-right: 6px; }
+.stat-table--trends td:first-child { font-family: var(--mono); color: var(--muted); white-space: nowrap; }
+.stat-table--trends td:last-child { font-weight: 600; color: var(--ink); }
+.trend-week { font-size: var(--label-sm); }
+.trend-week--tag { color: var(--faint); margin-left: 8px; font-size: var(--label-xs); }
+.trend-cell { display: table-cell; min-width: 88px; }
+.trend-bar {
+  display: inline-block;
+  vertical-align: middle;
+  width: 44px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--paper-deep);
+  overflow: hidden;
+  margin-right: 8px;
+}
+.trend-fill { display: block; height: 100%; border-radius: 999px; opacity: 0.9; }
+.trend-num { font-size: var(--label-sm); color: var(--muted); }
+.trend-num--empty { color: var(--faint); }
+.trend-total { font-family: var(--mono); }
+@media (max-width: 640px) {
+  .stat-table--trends { min-width: 0; }
+  .trend-bar { width: 28px; }
+  .stat-table--trends th, .stat-table--trends td { padding: 10px 4px; }
+  .trend-week--tag { display: none; }
+}
+
+.trend-chart-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 14px 0 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px;
+  background: var(--card);
+}
+.trend-chart { width: 100%; height: auto; display: block; }
+.trend-chart text { fill: var(--faint); font-family: var(--mono); font-size: 10px; }
+.trend-chart-grid { stroke: var(--line); stroke-width: 1; }
+.trend-chart-bar { opacity: 0.85; }
+.trend-chart-bar:hover { opacity: 1; }
+.trend-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.trend-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: var(--label-sm);
+  color: var(--muted);
+}
+.trend-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.rank-list { list-style: none; margin: 0; padding: 0; }
+.rank-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+.rank-item:last-child { border-bottom: none; }
+.rank-name {
+  flex: 0 0 220px;
+  font-size: 0.9rem;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rank-name--mono { font-family: var(--mono); font-size: var(--label-sm); }
+.rank-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--paper-deep);
+  overflow: hidden;
+  max-width: 320px;
+}
+.rank-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, transparent));
+  opacity: 0.85;
+}
+.rank-num {
+  flex: 0 0 36px;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: var(--label-sm);
+  color: var(--muted);
+}
+.stat-table--health th, .stat-table--health td { text-align: right; }
+.stat-table--health th:first-child, .stat-table--health td:first-child { text-align: left; display: table-cell; }
+@media (max-width: 640px) {
+  .rank-name { flex-basis: 140px; }
+}
 
 /* --------------------------------------------------------------------------
    Footer

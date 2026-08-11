@@ -45,6 +45,72 @@ def render_page(
     )
 
 
+def render_trend_svg(trends: list[dict], source_keys: list[str]) -> str:
+    """Inline SVG bar chart of stories per week, one bar group per source.
+
+    `trends` is the list of dicts from store.weekly_trends; `source_keys` the
+    ordered source keys. Colors come from the badge palette (--badge-{key}-bg
+    as fill so light/dark themes both read well).
+    """
+    if not trends:
+        return ""
+    width, height = 640, 220
+    pad_l, pad_r, pad_t, pad_b = 36, 12, 16, 34
+    plot_w = width - pad_l - pad_r
+    plot_h = height - pad_t - pad_b
+
+    n_weeks = len(trends)
+    n_sources = len(source_keys)
+    max_total = max(t["total"] for t in trends) or 1
+
+    group_gap = 24
+    group_w = (plot_w - group_gap * (n_weeks - 1)) / n_weeks
+    bar_gap = 3
+    bar_w = (group_w - bar_gap * (n_sources - 1)) / n_sources
+
+    def y(v: int) -> float:
+        return pad_t + plot_h - (plot_h * v / max_total)
+
+    parts: list[str] = []
+    parts.append(
+        f'<svg class="trend-chart" viewBox="0 0 {width} {height}" role="img" '
+        f'aria-label="Stories per week by source" xmlns="http://www.w3.org/2000/svg">'
+    )
+    # horizontal gridlines + y labels
+    for i in range(5):
+        gy = pad_t + plot_h * i / 4
+        val = int(max_total * (1 - i / 4))
+        parts.append(
+            f'<line x1="{pad_l}" y1="{gy:.1f}" x2="{width - pad_r}" '
+            f'y2="{gy:.1f}" class="trend-chart-grid"/>'
+        )
+        parts.append(
+            f'<text x="{pad_l - 6}" y="{gy + 3:.1f}" class="trend-chart-y">{val}</text>'
+        )
+    # bars
+    for wi, week in enumerate(trends):
+        x0 = pad_l + wi * (group_w + group_gap)
+        for si, key in enumerate(source_keys):
+            val = week["counts"].get(key, 0)
+            if not val:
+                continue
+            bx = x0 + si * (bar_w + bar_gap)
+            by = y(val)
+            parts.append(
+                f'<rect x="{bx:.1f}" y="{by:.1f}" width="{bar_w:.1f}" '
+                f'height="{pad_t + plot_h - by:.1f}" class="trend-chart-bar" '
+                f'fill="var(--badge-{key}-bg)" data-source="{key}"/>'
+            )
+        # week label
+        wx = x0 + group_w / 2
+        parts.append(
+            f'<text x="{wx:.1f}" y="{height - 12}" text-anchor="middle" '
+            f'class="trend-chart-x">{week["start"].strftime("%b %d")}</text>'
+        )
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
 def render_markdown(digest: Digest) -> str:
     blocks = [
         f"# {APP_NAME} — {digest.date}",

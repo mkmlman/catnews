@@ -15,13 +15,19 @@ from app.render import (
     render_page,
     render_rss,
     render_service_worker,
+    render_trend_svg,
     walk_site_urls,
 )
 from app.store import (
+    arxiv_category_counts,
     combined_digest,
+    days_archiving,
+    fetch_health,
     load_all_snapshots,
     site_stats,
     source_registry,
+    top_domains,
+    weekly_trends,
 )
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "app" / "static"
@@ -85,6 +91,7 @@ def build_site(
                 label=SOURCES[snap.source]["label"],
             ),
         )
+    trends = weekly_trends(data_dir)
     write(
         out_dir / "stats" / "index.html",
         render_page(
@@ -93,6 +100,12 @@ def build_site(
             base_url=base_url,
             page_path="/stats/",
             stats=site_stats(data_dir),
+            trends=trends,
+            trends_chart=render_trend_svg(trends, list(SOURCES)),
+            domains=top_domains(data_dir),
+            arxiv_categories=arxiv_category_counts(data_dir),
+            days=days_archiving(data_dir),
+            fetch_health=fetch_health(data_dir),
         ),
     )
     write(
@@ -143,6 +156,10 @@ def build_site(
         ),
     )
     write(api / "stats.json", site_stats(data_dir).model_dump_json(indent=2))
+    write(
+        api / "trends.json",
+        json.dumps(weekly_trends(data_dir), indent=2, default=str),
+    )
 
     # PWA: manifest + service worker with full offline precache (written last
     # so walk_site_urls sees every emitted file)

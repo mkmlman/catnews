@@ -153,6 +153,7 @@
   var hideRead = document.getElementById("hide-read");
   var keywordFilter = document.getElementById("keyword-filter");
   var loadMoreBtn = document.getElementById("load-more");
+  var exportSavedBtn = document.getElementById("export-saved");
   var PAGE_SIZE = 12;
   var state = { source: "All", savedOnly: false, loaded: PAGE_SIZE };
 
@@ -213,6 +214,7 @@
     } else if (savedChip) {
       savedChip.textContent = "Saved";
     }
+    if (exportSavedBtn) exportSavedBtn.hidden = saved.size === 0;
   }
 
   if (filtersEl) {
@@ -449,5 +451,51 @@
         searchResults.hidden = true;
       }
     });
+  }
+
+  /* -------------------------------------------------------------
+     Export saved stories as Markdown (personal digest)
+     ------------------------------------------------------------- */
+  function storyToMarkdown(story, index) {
+    var lines = [
+      "### " + index + ". " + (story.title || ""),
+      "",
+      "- **Source:** " +
+        (story.source || "unknown") +
+        " · **By:** " +
+        (story.byline || story.author || "unknown"),
+    ];
+    if (story.why_read) lines.push("- **Why read:** " + story.why_read);
+    if (story.summary) lines.push("- **Summary:** " + story.summary);
+    lines.push("- **Link:** " + (story.url || ""));
+    return lines.join("\n");
+  }
+
+  function downloadSavedDigest() {
+    loadStories(function (stories) {
+      var savedStories = stories.filter(function (s) {
+        return saved.has(s.url);
+      });
+      if (!savedStories.length) return;
+      var today = new Date().toISOString().slice(0, 10);
+      var blocks = ["# " + (CFG.appName || "catnews") + " — personal digest", ""];
+      savedStories.forEach(function (story, i) {
+        blocks.push(storyToMarkdown(story, i + 1));
+        blocks.push("");
+      });
+      var blob = new Blob([blocks.join("\n")], { type: "text/markdown;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "catnews-saved-" + today + ".md";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  if (exportSavedBtn) {
+    exportSavedBtn.addEventListener("click", downloadSavedDigest);
   }
 })();

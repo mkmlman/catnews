@@ -13,11 +13,16 @@ from app.fetchers.rss import parse_entry as parse_rss_entry
 from app.fetchers.rss import parse_links, strip_html
 from app.models import SourceSnapshot, Story
 from app.store import (
+    arxiv_category_counts,
     combined_digest,
+    days_archiving,
+    fetch_health,
     latest_stories_by_source,
     save_snapshot,
     site_stats,
     source_registry,
+    top_domains,
+    weekly_trends,
 )
 from scripts.fetch_digest import due_sources
 
@@ -50,7 +55,8 @@ def test_hn_parse_hit_no_url_uses_hn_item():
 
 
 ARXIV_XML = """<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:arxiv="http://arxiv.org/schemas/atom">
   <entry>
     <id>http://arxiv.org/abs/2607.28628v1</id>
     <published>2026-07-29T17:00:00Z</published>
@@ -58,6 +64,7 @@ ARXIV_XML = """<?xml version="1.0" encoding="UTF-8"?>
     <author><name>Jonathan J. Heckman</name></author>
     <author><name>Shani Meynet</name></author>
     <summary>We study tracing via local models.</summary>
+    <arxiv:primary_category term="hep-th"/>
   </entry>
 </feed>"""
 
@@ -75,6 +82,7 @@ def test_arxiv_parse_entry():
     assert story.external_id == "2607.28628v1"
     assert story.authors == ["Jonathan J. Heckman", "Shani Meynet"]
     assert story.url == "http://arxiv.org/abs/2607.28628v1"
+    assert story.category == "hep-th"
 
 
 def test_github_parse_item():
@@ -647,3 +655,154 @@ def test_seo_meta_tags_on_pages(client, tmp_path):
     # RSS autodiscovery link
     assert 'rel="alternate" type="application/rss+xml"' in page
     assert 'href="http://localhost:8000/feed.rss"' in page
+
+
+def test_weekly_trends_buckets_by_iso_week(tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 3),
+            stories=[
+                Story(source="hn", title="HN1", url="https://a"),
+                Story(source="hn", title="HN2", url="https://b"),
+            ],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="github",
+            date=date(2026, 8, 4),
+            stories=[Story(source="github", title="Repo", url="https://c")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 10),
+            stories=[Story(source="arxiv", title="Paper", url="https://d")],
+        ),
+        tmp_path,
+    )
+
+    trends = weekly_trends(tmp_path)
+    assert [r["week"] for r in trends] == ["2026-W32", "2026-W33"]
+    assert trends[0]["counts"] == {"github": 1, "hn": 2}
+    assert trends[0]["total"] == 3
+    assert trends[1]["counts"] == {"arxiv": 1}
+    assert trends[1]["start"] == date(2026, 8, 10)
+
+
+def test_top_domains_and_arxiv_categories(tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 3),
+            stories=[
+                Story(source="hn", title="A", url="https://www.bbc.com/news/a"),
+                Story(source="hn", title="B", url="https://bbc.com/news/b"),
+                Story(source="hn", title="C", url="https://openai.com/blog"),
+            ],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 3),
+            stories=[
+                Story(
+                    source="arxiv", title="P1", url="https://a.com/1", category="cs.LG"
+                ),
+                Story(
+                    source="arxiv", title="P2", url="https://b.com/2", category="cs.LG"
+                ),
+                Story(
+                    source="arxiv", title="P3", url="https://c.com/3", category="cs.AI"
+                ),
+            ],
+        ),
+        tmp_path,
+    )
+
+    domains = top_domains(tmp_path)
+    assert domains[0] == ("bbc.com", 2)
+    assert ("openai.com", 1) in domains
+    assert arxiv_category_counts(tmp_path) == [("cs.LG", 2), ("cs.AI", 1)]
+    assert days_archiving(tmp_path) == 1
+
+
+def test_fetch_health_compares_actual_to_expected(tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 3),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 4),
+            stories=[Story(source="hn", title="B", url="https://b")],
+        ),
+        tmp_path,
+    )
+
+    health = fetch_health(tmp_path)
+    by_source = {row["source"]: row for row in health}
+    assert "hn" in by_source
+    assert by_source["hn"]["actual"] == 2
+    assert by_source["hn"]["expected"] >= 2
+    assert by_source["hn"]["rate"] == 100.0
+    assert by_source["hn"]["last_fetched"] == date(2026, 8, 4)
+    assert all(
+        row["source"] in {"hn", "arxiv", "github", "registerspill"} for row in health
+    )
+
+
+def test_stats_page_and_trends_endpoint(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 3),
+            stories=[Story(source="hn", title="HN story", url="https://a")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 10),
+            stories=[
+                Story(
+                    source="arxiv",
+                    title="Paper",
+                    url="https://arxiv.org/abs/2607.1",
+                    category="cs.LG",
+                )
+            ],
+        ),
+        tmp_path,
+    )
+
+    page = client.get("/stats/").text
+    assert "Stories per week" in page
+    assert "2026-W32" in page
+    assert "2026-W33" in page
+    assert 'class="trend-chart"' in page
+    assert "Top domains" in page
+    assert "arxiv.org" in page
+    assert "arXiv categories" in page
+    assert "cs.LG" in page
+    assert "Fetch health" in page
+    assert "Days archiving" in page
+
+    trends = client.get("/api/trends.json").json()
+    assert [r["week"] for r in trends] == ["2026-W32", "2026-W33"]
+    assert trends[0]["counts"]["hn"] == 1
+
+    page = client.get("/").text
+    assert 'id="export-saved"' in page

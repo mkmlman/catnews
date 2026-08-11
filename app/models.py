@@ -42,6 +42,9 @@ class Story(BaseModel):
     authors: list[str] = Field(
         default_factory=list, description="Full author list (arXiv)"
     )
+    category: str | None = Field(
+        default=None, description="Primary category (arXiv), e.g. cs.LG"
+    )
     published: datetime | None = None
     score: int | None = None
     comments: int | None = None
