@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ app_name }} — {{ digest.date.strftime("%A, %B %d, %Y") }}{% endblock %}
+{% block title %}{{ app_name }}{% endblock %}
 {% block content %}
 <section class="hero">
   <p class="edition-label">{{ digest.date.strftime("%B %d, %Y") }} · {{ editions }} snapshot{{ "s" if editions != 1 else "" }}</p>
