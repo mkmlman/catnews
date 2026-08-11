@@ -709,6 +709,28 @@ def test_per_story_timestamp_rendered(client, tmp_path):
     assert "Aug 01, 2026" in page
 
 
+def test_story_previews_are_not_rendered_on_cards(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 10),
+            stories=[
+                Story(
+                    source="arxiv",
+                    title="CoinRAG: Contextualized Information Nugget KV Cache Reuse",
+                    url="https://arxiv.org/abs/2608.07458",
+                    snippet="Recent optimization studies on Retrieval-Augmented Generation (RAG) have exploited chunk-level KV cache reuse.",
+                )
+            ],
+        ),
+        tmp_path,
+    )
+    page = client.get("/").text
+    assert "CoinRAG: Contextualized Information Nugget KV Cache Reuse" in page
+    assert "Recent optimization studies on Retrieval-Augmented Generation" not in page
+    assert "story-excerpt" not in page
+
+
 def test_live_app_serves_pwa(client, tmp_path):
     save_snapshot(
         SourceSnapshot(

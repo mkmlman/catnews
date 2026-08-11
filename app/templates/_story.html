@@ -1,5 +1,4 @@
 <article class="story" data-source="{{ story.source }}" data-url="{{ story.url }}">
-  {% set excerpt = story.summary or story.snippet %}
   <div class="story-top">
     <span class="badge badge-{{ story.source }}">{{ source_tags[story.source] }}</span>
     {% if story.score is not none %}<span class="story-score">{% if story.source == "github" %}★{% else %}▲{% endif %} {{ story.score }}</span>{% endif %}
@@ -27,7 +26,6 @@
     <p class="story-summary">{{ story.summary }}</p>
   </details>
   {% endif %}
-  {% if excerpt %}<p class="story-excerpt">{{ excerpt }}</p>{% endif %}
   <div class="story-foot">
     <a class="story-link" href="{{ story.url }}" target="_blank" rel="noopener">Read</a>
     {% if story.hn_url %}<a class="discuss" href="{{ story.hn_url }}" target="_blank" rel="noopener">Discuss ›</a>{% endif %}

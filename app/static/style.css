@@ -533,17 +533,6 @@ a:focus-visible, button:focus-visible {
   margin: 0 0 10px;
   font-size: var(--label-md);
 }
-.story-excerpt {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  overflow-wrap: anywhere;
-  margin: 10px 0 0;
-  color: var(--ink-soft);
-  font-size: var(--label-md);
-  line-height: 1.5;
-}
 .story-more summary {
   font-family: var(--mono);
   font-size: var(--label-xs);

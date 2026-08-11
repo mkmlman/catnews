@@ -120,16 +120,15 @@ def test_story_filters_are_accessible_buttons():
     assert 'aria-controls="stories"' in index
 
 
-def test_story_excerpt_and_progress_markup_exist():
+def test_story_previews_are_not_rendered_and_progress_markup_exists():
     story = (APP_DIR / "templates" / "_story.html").read_text()
     index = (APP_DIR / "templates" / "index.html").read_text()
-    assert "story-excerpt" in story
+    assert "story-excerpt" not in story
     assert 'id="filter-status"' in index
 
 
-def test_story_excerpts_can_wrap_without_mobile_overflow():
+def test_story_cards_can_shrink_without_mobile_overflow():
     assert "min-width: 0" in CSS
-    assert "overflow-wrap: anywhere" in CSS
 
 
 def test_stats_has_accessible_trends_table():
