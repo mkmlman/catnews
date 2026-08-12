@@ -207,13 +207,21 @@
     </div>
 
     <div class="ds-comp">
-      <h3 class="ds-comp-title">Filter Chips</h3>
-      <p class="ds-hint">mono 0.72rem · pill · active = ink-blue fill</p>
-      <div class="ds-demo">
+      <h3 class="ds-comp-title">Filter Chips &amp; toggles</h3>
+      <p class="ds-hint">mono 0.72rem · pill · stroke icons · active = ink-blue fill · anchored right</p>
+      <div class="ds-demo" style="flex-direction: row; flex-wrap: wrap; gap: 8px; align-items: center;">
         <button class="chip is-active" type="button">All</button>
         {% for key, tag in source_tags.items() %}
         <button class="chip" type="button">{{ tag }}</button>
         {% endfor %}
+        <span class="filter-actions">
+          <label class="hide-read" title="Hide read">
+            <input type="checkbox" aria-label="Hide read">
+            {% include "hide-read-icon.html" %}
+          </label>
+          <button class="chip" type="button" aria-label="Show saved stories">{% include "saved-icon.html" %}<span class="chip-count"></span></button>
+          <button type="button" class="export-saved">Export ⤓</button>
+        </span>
       </div>
     </div>
 

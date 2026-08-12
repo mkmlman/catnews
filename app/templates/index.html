@@ -23,22 +23,23 @@
 <div class="filters" id="filters">
   <div class="filter-scroll">
     <div class="filter-row filter-row--sources" role="group" aria-labelledby="source-filter-label">
-    <span class="filter-label" id="source-filter-label">Source</span>
-    <button class="chip is-active" type="button" data-source="All" aria-pressed="true" aria-controls="stories">All</button>
-    {% for key, tag in source_tags.items() %}
-    <button class="chip" type="button" data-source="{{ key }}" aria-pressed="false" aria-controls="stories">{{ tag }}</button>
-    {% endfor %}
-    <button class="chip" type="button" data-saved="saved" aria-pressed="false" aria-controls="stories">Saved</button>
+      <span class="filter-label" id="source-filter-label">Source</span>
+      <button class="chip is-active" type="button" data-source="All" aria-pressed="true" aria-controls="stories">All</button>
+      {% for key, tag in source_tags.items() %}
+      <button class="chip" type="button" data-source="{{ key }}" aria-pressed="false" aria-controls="stories">{{ tag }}</button>
+      {% endfor %}
+      <span class="filter-actions">
+        <label class="hide-read" title="Hide read">
+          <input type="checkbox" id="hide-read" aria-label="Hide read">
+          {% include "hide-read-icon.html" %}
+        </label>
+        <button class="chip" type="button" data-saved="saved" aria-pressed="false" aria-controls="stories" aria-label="Show saved stories" title="Show saved stories">
+          {% include "saved-icon.html" %}<span class="chip-count"></span>
+        </button>
+        <button type="button" class="export-saved" id="export-saved" hidden>Export ⤓</button>
+      </span>
     </div>
     <span class="filter-scroll-cue" aria-hidden="true">Scroll →</span>
-  </div>
-  <div class="filter-row filter-row--secondary">
-    <input type="search" id="keyword-filter" class="keyword-filter" placeholder="Filter by keyword" aria-label="Filter stories by keyword" aria-controls="stories" autocomplete="off">
-    <label class="hide-read">
-      <input type="checkbox" id="hide-read">
-      <span>Hide read</span>
-    </label>
-    <button type="button" class="export-saved" id="export-saved" hidden>Export saved ⤓</button>
   </div>
   <p class="filter-status" id="filter-status" role="status" aria-live="polite"></p>
 </div>

@@ -230,7 +230,6 @@
   var filtersEl = document.getElementById("filters");
   var noMatches = document.getElementById("no-matches");
   var hideRead = document.getElementById("hide-read");
-  var keywordFilter = document.getElementById("keyword-filter");
   var loadMoreBtn = document.getElementById("load-more");
   var exportSavedBtn = document.getElementById("export-saved");
   var filterStatus = document.getElementById("filter-status");
@@ -255,20 +254,8 @@
 
   if (hideRead && filterPrefs.hideRead === true) hideRead.checked = true;
 
-  function keywordTokens() {
-    if (!keywordFilter) return [];
-    return normalize(keywordFilter.value)
-      .split(/\s+/)
-      .filter(Boolean);
-  }
-
-  function cardText(card) {
-    return normalize(card.textContent || "");
-  }
-
   function applyFilters() {
     if (!filtersEl) return;
-    var tokens = keywordTokens();
     var visible = 0;
     var matched = 0;
     cards.forEach(function (card, index) {
@@ -277,14 +264,7 @@
         state.source === "All" || card.getAttribute("data-source") === state.source;
       var savedMatch = !state.savedOnly || (url && saved.has(url));
       var readMatch = !hideRead || !hideRead.checked || !url || !read.has(url);
-      var textMatch = true;
-      if (tokens.length) {
-        var haystack = cardText(card);
-        textMatch = tokens.every(function (token) {
-          return haystack.indexOf(token) !== -1;
-        });
-      }
-      var match = sourceMatch && savedMatch && readMatch && textMatch;
+      var match = sourceMatch && savedMatch && readMatch;
       if (match) matched++;
       var show = match && index < state.loaded;
       card.hidden = !show;
@@ -321,10 +301,13 @@
 
   function updateCounts() {
     var savedChip = filtersEl && filtersEl.querySelector('[data-saved="saved"]');
-    if (savedChip && saved.size) {
-      savedChip.textContent = "Saved (" + saved.size + ")";
-    } else if (savedChip) {
-      savedChip.textContent = "Saved";
+    var countEl = savedChip && savedChip.querySelector(".chip-count");
+    if (savedChip && countEl) {
+      countEl.textContent = saved.size ? saved.size : "";
+      savedChip.setAttribute(
+        "aria-label",
+        saved.size ? "Show saved stories, " + saved.size + " saved" : "Show saved stories"
+      );
     }
     if (exportSavedBtn) exportSavedBtn.hidden = saved.size === 0;
   }
@@ -349,9 +332,6 @@
         persistFilterState();
         applyFilters();
       });
-    }
-    if (keywordFilter) {
-      keywordFilter.addEventListener("input", applyFilters);
     }
     if (loadMoreBtn) {
       loadMoreBtn.addEventListener("click", function () {

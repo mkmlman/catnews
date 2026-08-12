@@ -767,8 +767,7 @@ def test_index_page_has_app_js_and_search(client, tmp_path):
     # filter affordances for the new reading model
     assert 'data-saved="saved"' in page
     assert 'id="hide-read"' in page
-    # keyword filter + load-more for the growing feed
-    assert 'id="keyword-filter"' in page
+    # load-more for the growing feed
     assert 'id="load-more"' in page
 
 
