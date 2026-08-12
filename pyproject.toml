@@ -21,6 +21,7 @@ dev = [
 
 [project.scripts]
 catnews-fetch = "scripts.fetch_digest:main"
+catnews-dev = "scripts.dev:main"
 
 [dependency-groups]
 dev = [

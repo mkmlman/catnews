@@ -26,6 +26,7 @@ REQUIRED_FILES = (
     "api/search.json",
     "api/stats.json",
     "api/trends.json",
+    "api/fetch-status.json",
     "api/stories.md",
 )
 
@@ -103,6 +104,7 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
         "api/search.json",
         "api/stats.json",
         "api/trends.json",
+        "api/fetch-status.json",
     ):
         path = site_dir / relative
         if path.is_file():
@@ -139,6 +141,10 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
     sw = site_dir / "sw.js"
     if sw.is_file() and '"./api/search.json"' not in sw.read_text(encoding="utf-8"):
         errors.append("service worker does not precache api/search.json")
+    if sw.is_file() and '"./api/fetch-status.json"' not in sw.read_text(
+        encoding="utf-8"
+    ):
+        errors.append("service worker does not precache api/fetch-status.json")
     return errors
 
 

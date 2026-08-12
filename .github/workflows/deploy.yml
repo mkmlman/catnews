@@ -9,11 +9,7 @@ on:
     - cron: "0 7 * * *"
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-  pages: write
-  id-token: write
+permissions: {}
 
 concurrency:
   group: "pages"
@@ -25,6 +21,9 @@ jobs:
     # scheduled/manual runs need to archive new digests.
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -60,6 +59,8 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -85,6 +86,10 @@ jobs:
   deploy:
     needs: lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     env:
       # Keep the Pages paths available to every deploy step, including
       # static-site validation. Step-level env values do not persist.

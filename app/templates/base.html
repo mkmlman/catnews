@@ -45,16 +45,16 @@
     <header class="site-header">
       <a class="wordmark" href="{{ base_path }}/">{% include "cat-logo.html" %}<span>{{ app_name }}</span></a>
       <nav class="site-nav" id="primary-nav" aria-label="Primary navigation">
-        <a href="{{ base_path }}/archive/">Archive</a>
-        <a href="{{ base_path }}/sources/">Sources</a>
-        <a href="{{ base_path }}/stats/">Stats</a>
-        <a href="{{ base_path }}/api/">API</a>
-        <a href="{{ base_path }}/design/">Design</a>
+        <a href="{{ base_path }}/archive/"{% if page_path == "/archive/" or page_path.startswith("/archive/") %} aria-current="page"{% endif %}>Archive</a>
+        <a href="{{ base_path }}/sources/"{% if page_path == "/sources/" %} aria-current="page"{% endif %}>Sources</a>
+        <a href="{{ base_path }}/stats/"{% if page_path == "/stats/" %} aria-current="page"{% endif %}>Stats</a>
+        <a href="{{ base_path }}/api/"{% if page_path == "/api/" %} aria-current="page"{% endif %}>API</a>
+        <a href="{{ base_path }}/design/"{% if page_path == "/design/" %} aria-current="page"{% endif %}>Design</a>
         <a href="{{ base_path }}/feed.rss">RSS</a>
       </nav>
       <div class="search" id="search">
-        <input type="search" id="search-input" placeholder="Search" aria-label="Search the archive" autocomplete="off">
-        <div class="search-results" id="search-results" hidden></div>
+        <input type="search" id="search-input" placeholder="Search" aria-label="Search the archive" aria-controls="search-results" aria-expanded="false" autocomplete="off">
+        <div class="search-results" id="search-results" role="listbox" aria-label="Search results" hidden></div>
       </div>
       <div class="header-actions">
         <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">
@@ -62,10 +62,11 @@
         </button>
         <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
         <a class="repo-link" href="https://github.com/mkmlman/catnews" target="_blank" rel="noopener" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
-        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme"></button>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch to dark theme"></button>
       </div>
     </header>
-    <main>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main id="main-content" tabindex="-1">
       {% block content %}{% endblock %}
     </main>
     <footer class="site-footer">
@@ -88,7 +89,11 @@
       var btn = document.getElementById("theme-toggle");
       var root = document.documentElement;
       function paint() {
-        btn.textContent = root.getAttribute("data-theme") === "dark" ? "\u263C" : "\u263E";
+        var dark = root.getAttribute("data-theme") === "dark";
+        var next = dark ? "light" : "dark";
+        btn.textContent = dark ? "\u263C" : "\u263E";
+        btn.setAttribute("aria-label", "Switch to " + next + " theme");
+        btn.title = "Switch to " + next + " theme";
       }
       btn.addEventListener("click", function () {
         var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -117,9 +122,9 @@
   {% block scripts %}{% endblock %}
 
   <div class="install-dialog" id="install-dialog" hidden>
-    <div class="install-dialog-card" role="dialog" aria-modal="true" aria-labelledby="install-dialog-title">
+    <div class="install-dialog-card" role="dialog" aria-modal="true" aria-labelledby="install-dialog-title" aria-describedby="install-dialog-description" tabindex="-1">
       <h2 id="install-dialog-title">Install catnews</h2>
-      <p class="muted">catnews works offline — the whole archive is cached on your device after your first visit. Install it like an app:</p>
+      <p class="muted" id="install-dialog-description">catnews works offline — the whole archive is cached on your device after your first visit. Install it like an app:</p>
       <div class="install-steps">
         <details open>
           <summary>Desktop (Chrome, Edge, Firefox)</summary>

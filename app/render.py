@@ -52,6 +52,7 @@ def render_page(
         palette=palette_entries(),
         base_path=base_path,
         base_url=base_url,
+        page_path=page_path,
         og_url=f"{base_url}{page_path}",
         asset_version=static_asset_version(),
         **context,
@@ -169,7 +170,19 @@ def search_index(snapshots: list[SourceSnapshot]) -> list[dict[str, str]]:
 
 def render_search_index(snapshots: list[SourceSnapshot]) -> str:
     """Serialize the compact browser-search artifact."""
-    return json.dumps(search_index(snapshots), indent=2, ensure_ascii=False)
+    return json.dumps(
+        search_index(snapshots), ensure_ascii=False, separators=(",", ":")
+    )
+
+
+def render_json(data: object) -> str:
+    """Serialize a generated API artifact compactly and deterministically."""
+    return json.dumps(data, ensure_ascii=False, separators=(",", ":"), default=str)
+
+
+def render_fetch_status(status: dict) -> str:
+    """Serialize the build-time source freshness report."""
+    return render_json(status)
 
 
 def _aware(dt) -> datetime:
@@ -199,7 +212,7 @@ def render_manifest() -> str:
             },
         ],
     }
-    return json.dumps(manifest, indent=2)
+    return render_json(manifest)
 
 
 def render_service_worker(urls: list[str], version: str) -> str:
@@ -320,6 +333,7 @@ def live_site_urls(snapshots: list) -> list[str]:
         "./sources/",
         "./api/",
         "./api/search.json",
+        "./api/fetch-status.json",
         "./design/",
     ]
     latest_by_source: dict[str, SourceSnapshot] = {}

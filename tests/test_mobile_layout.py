@@ -119,6 +119,29 @@ def test_mobile_navigation_has_accessible_toggle():
     assert 'aria-expanded="false"' in base
 
 
+def test_shared_layout_has_skip_link_and_active_navigation():
+    base = (APP_DIR / "templates" / "base.html").read_text()
+    assert 'class="skip-link"' in base
+    assert 'id="main-content"' in base
+    assert 'aria-current="page"' in base
+
+
+def test_theme_and_install_controls_have_accessible_state_management():
+    base = (APP_DIR / "templates" / "base.html").read_text()
+    app_js = (APP_DIR / "static" / "app.js").read_text()
+    assert 'aria-describedby="install-dialog-description"' in base
+    assert 'Switch to " + next + " theme' in base
+    assert 'event.key === "Escape"' in app_js
+    assert 'event.key !== "Tab"' in app_js
+    assert "lastFocusedElement.focus()" in app_js
+
+
+def test_current_cards_and_design_system_do_not_include_scores():
+    design = (APP_DIR / "templates" / "design.html").read_text()
+    assert "story-score" not in CSS
+    assert "story-score" not in design
+
+
 def test_story_filters_are_accessible_buttons():
     index = (APP_DIR / "templates" / "index.html").read_text()
     assert 'type="button"' in index

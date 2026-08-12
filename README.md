@@ -42,6 +42,7 @@ uv sync                                    # install deps
 # optional: edit sources.yaml to add/remove/retune your sources
 uv run python scripts/fetch_digest.py --all   # fetch every source -> data/source_<name>_<date>.json
 uv run python scripts/build_site.py          # build the static site into site/
+uv run catnews-dev                           # build + validate + preview at /catnews/
 uv run uvicorn app.main:app --reload         # or serve live on http://localhost:8000
 ```
 
@@ -153,7 +154,19 @@ Pages URL without editing the workflow.
 
 This renders `site/` with plain HTML pages (home, archive, per-snapshot archive pages,
 stats), `feed.rss`, and static JSON/Markdown API files (`api/sources.json`,
-`api/stories.json`, `api/digest.json`, `api/stats.json`, `api/stories.md`). Preview it locally —
+`api/stories.json`, `api/digest.json`, `api/stats.json`, `api/fetch-status.json`,
+`api/stories.md`). The fetch-status artifact records whether each source was current,
+stale, unavailable, or skipped on the last fetch run.
+
+For the shortest local feedback loop, use the build/validate/preview command:
+
+```sh
+uv run catnews-dev
+# then visit http://127.0.0.1:8080/catnews/
+```
+
+The command builds the static artifact, validates all local references and required
+files, then serves a temporary `/catnews` mount. To run the server manually instead,
 because the pages are built for the `/catnews` path, serve a folder that maps `/catnews` → `site/`:
 
 ```sh
@@ -168,8 +181,8 @@ uv run python -m http.server 8080 --directory preview
 
 | Trigger | What happens |
 | --- | --- |
-| **Daily 07:00 UTC** (`schedule`) | `archive` fetches any source whose cadence is due, commits it to a `digest-*` branch, opens a PR, and auto-merges it into `main`; `lint` (ruff + ty) runs in parallel. `deploy` runs once `lint` passes and fetches its own data before building + publishing |
-| **Push to `main`** | `archive` is skipped (data is already committed); `lint` (ruff + ty) then `deploy` — fetches, builds, publishes |
+| **Daily 07:00 UTC** (`schedule`) | `archive` fetches any source whose cadence is due, writes a fetch-status report, commits it to a `digest-*` branch, opens a PR, and auto-merges it into `main`; `lint` (ruff + ty + tests) runs in parallel. `deploy` runs once `lint` passes and fetches its own data before building, validating, and publishing |
+| **Push to `main`** | `archive` is skipped (data is already committed); `lint` (ruff + ty + tests) then `deploy` — fetches, builds, validates, and publishes |
 | **`workflow_dispatch`** | Full pipeline, same as the daily schedule |
 
 Each run: `scripts/fetch_digest.py` pulls the due sources' stories into `data/` as
@@ -181,8 +194,11 @@ fetched within their window), and the static build mirrors the main API endpoint
 as files — e.g. `/api/sources` → `api/sources.json`. The dev server
 (`uvicorn app.main:app`) additionally serves live routes like
 `/api/sources/<source>/<date>` and `/archive/<source>/<date>/`.
-The static build also emits compact per-source JSON files under `api/sources/` and
-`api/search.json`, the deduplicated index used by archive search.
+The static build also emits compact per-source JSON files under `api/sources/`, `api/search.json`
+(the deduplicated index used by archive search), and `api/fetch-status.json` (the last
+build-time source health report). Each deployment job has only the GitHub permissions it
+needs: archive can write digests and PRs, lint can read the repository, and deploy can
+publish Pages.
 
 ## Curation
 
@@ -227,6 +243,7 @@ downloaded at most weekly).
 
 ```sh
 uv run pytest
+uv run python scripts/check_site.py --site site --base-path /catnews
 ```
 
 Lint and type checks (also enforced in CI by the `lint` job, which gates deploys):

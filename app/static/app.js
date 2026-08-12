@@ -7,6 +7,7 @@
   var BASE = CFG.basePath;
   var SAVED_KEY = "catnews:saved";
   var READ_KEY = "catnews:read";
+  var FILTER_KEY = "catnews:filters";
 
   function loadSet(key) {
     try {
@@ -23,6 +24,20 @@
     } catch (e) {}
   }
 
+  function loadObject(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      var value = raw ? JSON.parse(raw) : null;
+      return value && typeof value === "object" ? value : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveObject(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
   var saved = loadSet(SAVED_KEY);
   var read = loadSet(READ_KEY);
 
@@ -33,6 +48,16 @@
   var installDialog = document.getElementById("install-dialog");
   var installDialogClose = document.getElementById("install-dialog-close");
   var deferredPrompt = null;
+  var lastFocusedElement = null;
+
+  function closeInstallDialog() {
+    if (!installDialog) return;
+    installDialog.hidden = true;
+    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+      lastFocusedElement.focus();
+    }
+    lastFocusedElement = null;
+  }
 
   /* -------------------------------------------------------------
      Compact mobile navigation
@@ -64,17 +89,42 @@
   }
 
   function showInstallDialog() {
-    if (installDialog) installDialog.hidden = false;
+    if (!installDialog) return;
+    lastFocusedElement = document.activeElement;
+    installDialog.hidden = false;
+    if (installDialogClose) installDialogClose.focus();
   }
 
   if (installDialogClose) {
     installDialogClose.addEventListener("click", function () {
-      installDialog.hidden = true;
+      closeInstallDialog();
     });
   }
   if (installDialog) {
     installDialog.addEventListener("click", function (event) {
-      if (event.target === installDialog) installDialog.hidden = true;
+      if (event.target === installDialog) closeInstallDialog();
+    });
+    document.addEventListener("keydown", function (event) {
+      if (installDialog.hidden) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeInstallDialog();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      var focusable = installDialog.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusable.length) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     });
   }
 
@@ -187,7 +237,23 @@
   var sourceFilterRow = document.querySelector(".filter-row--sources");
   var filterScrollCue = document.querySelector(".filter-scroll-cue");
   var PAGE_SIZE = 12;
-  var state = { source: "All", savedOnly: false, loaded: PAGE_SIZE };
+  var filterPrefs = loadObject(FILTER_KEY);
+  var preferredSource = filterPrefs.source;
+  var state = {
+    source: preferredSource === "All" || CFG.sourceTags[preferredSource] ? preferredSource : "All",
+    savedOnly: filterPrefs.savedOnly === true,
+    loaded: PAGE_SIZE,
+  };
+
+  function persistFilterState() {
+    saveObject(FILTER_KEY, {
+      source: state.source,
+      savedOnly: state.savedOnly,
+      hideRead: Boolean(hideRead && hideRead.checked),
+    });
+  }
+
+  if (hideRead && filterPrefs.hideRead === true) hideRead.checked = true;
 
   function keywordTokens() {
     if (!keywordFilter) return [];
@@ -275,10 +341,14 @@
         if (state.savedOnly) state.source = "All";
       }
       setActiveChips();
+      persistFilterState();
       applyFilters();
     });
     if (hideRead) {
-      hideRead.addEventListener("change", applyFilters);
+      hideRead.addEventListener("change", function () {
+        persistFilterState();
+        applyFilters();
+      });
     }
     if (keywordFilter) {
       keywordFilter.addEventListener("input", applyFilters);
@@ -290,6 +360,7 @@
       });
     }
     updateCounts();
+    setActiveChips();
     applyFilters();
   }
 
@@ -450,6 +521,7 @@
     var query = searchInput.value.trim();
     if (!query) {
       searchResults.hidden = true;
+      searchInput.setAttribute("aria-expanded", "false");
       return;
     }
     var hits = searchStories(query);
@@ -482,6 +554,7 @@
       });
     }
     searchResults.hidden = false;
+    searchInput.setAttribute("aria-expanded", "true");
   }
 
   if (searchEl && searchInput && searchResults) {
@@ -501,12 +574,14 @@
       } else if (event.key === "Escape") {
         searchInput.value = "";
         searchResults.hidden = true;
+        searchInput.setAttribute("aria-expanded", "false");
         searchInput.blur();
       }
     });
     document.addEventListener("click", function (event) {
       if (!searchEl.contains(event.target)) {
         searchResults.hidden = true;
+        searchInput.setAttribute("aria-expanded", "false");
       }
     });
   }

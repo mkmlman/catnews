@@ -30,7 +30,12 @@
       <dt>Last fetched</dt>
       <dd>{% if src.last_fetched %}{{ src.last_fetched.strftime("%B %d, %Y") }} · {{ src.stories }} stories{% else %}never{% endif %}</dd>
     </div>
+    <div>
+      <dt>Status</dt>
+      <dd class="source-status source-status--{{ src.state }}">{{ src.state_label }}</dd>
+    </div>
   </dl>
+  {% if src.status_detail %}<p class="source-status-detail">{{ src.status_detail }}</p>{% endif %}
   <p class="source-links">
     {% if src.last_fetched %}
     <a href="{{ base_path }}/archive/{{ src.key }}/{{ src.last_fetched.isoformat() }}/">latest snapshot</a><span class="sep"> · </span>

@@ -37,19 +37,19 @@
   <table class="stat-table">
     <thead>
       <tr>
-        <th>Source</th>
-        <th>Snapshots</th>
-        <th>Stories</th>
-        <th>Share</th>
+        <th scope="col">Source</th>
+        <th scope="col">Snapshots</th>
+        <th scope="col">Stories</th>
+        <th scope="col">Share</th>
       </tr>
     </thead>
     <tbody>
       {% for source, count in stats.by_source.items() %}
       <tr>
-        <td>
+        <th scope="row">
           <span class="source-name">{{ source_labels[source] }}</span>
           <span class="badge badge-{{ source }}">{{ source_tags[source] }}</span>
-        </td>
+        </th>
         <td>{{ stats.snapshots_by_source.get(source, 0) }}</td>
         <td>{{ count }}</td>
         <td class="share-cell">
@@ -141,20 +141,20 @@
     <table class="stat-table stat-table--health">
       <thead>
         <tr>
-          <th>Source</th>
-          <th>Last fetch</th>
-          <th>Snapshots</th>
-          <th>Expected</th>
-          <th>Rate</th>
+          <th scope="col">Source</th>
+          <th scope="col">Last fetch</th>
+          <th scope="col">Snapshots</th>
+          <th scope="col">Expected</th>
+          <th scope="col">Rate</th>
         </tr>
       </thead>
       <tbody>
         {% for row in fetch_health %}
         <tr>
-          <td>
+          <th scope="row">
             <span class="source-name">{{ source_labels[row.source] }}</span>
             <span class="badge badge-{{ row.source }}">{{ source_tags[row.source] }}</span>
-          </td>
+          </th>
           <td>{{ row.last_fetched.strftime("%b %d, %Y") if row.last_fetched else "—" }}</td>
           <td>{{ row.actual }}</td>
           <td>{{ row.expected }}</td>

@@ -30,6 +30,7 @@ from .store import (
     combined_digest,
     days_archiving,
     fetch_health,
+    fetch_status,
     load_all_snapshots,
     load_latest_snapshot,
     load_snapshot,
@@ -68,7 +69,14 @@ def index(request: Request) -> HTMLResponse:
     if digest is None:
         digest = Digest(date=today_utc(), stories=[])
     editions = len(load_all_snapshots(DATA_DIR))
-    return page(request, "index.html", "/", digest=digest, editions=editions)
+    return page(
+        request,
+        "index.html",
+        "/",
+        digest=digest,
+        editions=editions,
+        freshness=fetch_status(DATA_DIR),
+    )
 
 
 @app.get("/archive/", response_class=HTMLResponse)
@@ -220,6 +228,11 @@ def api_trends() -> list[dict]:
 @app.get("/api/trends.json")
 def api_trends_json() -> list[dict]:
     return api_trends()
+
+
+@app.get("/api/fetch-status.json")
+def api_fetch_status_json() -> dict:
+    return fetch_status(DATA_DIR)
 
 
 @app.get("/api/sources.json")

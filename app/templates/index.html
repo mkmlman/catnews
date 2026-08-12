@@ -3,8 +3,22 @@
 {% block content %}
 <section class="hero">
   <p class="edition-label">{{ digest.date.strftime("%B %d, %Y") }} · {{ editions }} snapshot{{ "s" if editions != 1 else "" }}</p>
-  <p class="edition-sub">{{ digest.stories | length }} stories</p>
+  <p class="edition-sub">{{ digest.stories | length }} stories{% if freshness.latest_snapshot %} · sources through {{ freshness.latest_snapshot.strftime("%b %d, %Y") }}{% endif %}</p>
 </section>
+
+{% if freshness.has_issues %}
+<aside class="source-alert" role="status" aria-live="polite">
+  <div>
+    <strong>Some sources need attention.</strong>
+    <a href="{{ base_path }}/sources/">View source status →</a>
+  </div>
+  <ul>
+    {% for source in freshness.sources.values() if source.is_issue %}
+    <li><span class="badge badge-{{ source.key }}">{{ source.label }}</span> {{ source.state_label }}{% if source.snapshot_date %} · using {{ source.snapshot_date.strftime("%b %d, %Y") }}{% endif %}</li>
+    {% endfor %}
+  </ul>
+</aside>
+{% endif %}
 
 <div class="filters" id="filters">
   <div class="filter-scroll">

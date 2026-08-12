@@ -22,7 +22,12 @@ from app.config import (
 )
 from app.fetchers import get_fetcher
 from app.models import SourceSnapshot, Story
-from app.store import last_fetched, save_snapshot
+from app.store import (
+    last_fetched,
+    load_latest_snapshot,
+    save_fetch_report,
+    save_snapshot,
+)
 
 
 def load_curation(day: date, data_dir: Path) -> dict:
@@ -110,6 +115,25 @@ async def build(
     *,
     apply_curation_overrides: bool = True,
 ) -> list[SourceSnapshot]:
+    snapshots, _ = await build_with_status(
+        day,
+        data_dir,
+        sources,
+        limits,
+        apply_curation_overrides=apply_curation_overrides,
+    )
+    return snapshots
+
+
+async def build_with_status(
+    day: date,
+    data_dir: Path,
+    sources: list[str],
+    limits: dict[str, int],
+    *,
+    apply_curation_overrides: bool = True,
+) -> tuple[list[SourceSnapshot], dict[str, dict]]:
+    """Fetch sources and return snapshots together with freshness diagnostics."""
     async with httpx.AsyncClient(
         headers={"User-Agent": USER_AGENT}, timeout=REQUEST_TIMEOUT
     ) as client:
@@ -128,9 +152,17 @@ async def build(
             return_exceptions=True,
         )
     snapshots: list[SourceSnapshot] = []
+    statuses: dict[str, dict] = {}
     for source, result in zip(sources, results):
         if isinstance(result, BaseException):
             last = last_fetched(source, data_dir)
+            stale_snapshot = load_latest_snapshot(source, data_dir)
+            statuses[source] = {
+                "state": "stale" if last else "unavailable",
+                "snapshot_date": last.isoformat() if last else None,
+                "stories": len(stale_snapshot.stories) if stale_snapshot else 0,
+                "error": str(result)[:240],
+            }
             if last:
                 print(
                     f"[catnews] WARNING: {source} fetch failed; keeping stale "
@@ -142,7 +174,12 @@ async def build(
                 )
             continue
         snapshots.append(result)
-    return snapshots
+        statuses[source] = {
+            "state": "ok",
+            "snapshot_date": result.date.isoformat(),
+            "stories": len(result.stories),
+        }
+    return snapshots, statuses
 
 
 def due_sources(day: date, data_dir: Path, force: bool = False) -> list[str]:
@@ -212,15 +249,25 @@ def main() -> None:
         else due_sources(args.date, DATA_DIR, force=args.all)
     )
     if not sources:
+        statuses = {}
+        for source in SOURCES:
+            snapshot = load_latest_snapshot(source, DATA_DIR)
+            statuses[source] = {
+                "state": "skipped",
+                "snapshot_date": snapshot.date.isoformat() if snapshot else None,
+                "stories": len(snapshot.stories) if snapshot else 0,
+            }
+        report_path = save_fetch_report(args.date, DATA_DIR, statuses)
         print("[catnews] no sources due today; nothing to fetch.")
+        print(f"[catnews] saved fetch report -> {report_path}")
         return
 
     limits = {
         source: (args.limit if args.limit is not None else SOURCES[source]["limit"])
         for source in sources
     }
-    snapshots = asyncio.run(
-        build(
+    snapshots, statuses = asyncio.run(
+        build_with_status(
             args.date,
             DATA_DIR,
             sources,
@@ -236,6 +283,20 @@ def main() -> None:
     for snap in snapshots:
         path = save_snapshot(snap, DATA_DIR)
         print(f"[catnews] saved {snap.source}: {len(snap.stories)} stories -> {path}")
+
+    # Record both attempted sources and cadence-skipped sources. The report is
+    # itself static content: the build publishes it as api/fetch-status.json.
+    for source in SOURCES:
+        if source in statuses:
+            continue
+        snapshot = load_latest_snapshot(source, DATA_DIR)
+        statuses[source] = {
+            "state": "skipped",
+            "snapshot_date": snapshot.date.isoformat() if snapshot else None,
+            "stories": len(snapshot.stories) if snapshot else 0,
+        }
+    report_path = save_fetch_report(args.date, DATA_DIR, statuses)
+    print(f"[catnews] saved fetch report -> {report_path}")
 
 
 if __name__ == "__main__":

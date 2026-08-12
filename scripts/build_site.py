@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 import shutil
 import sys
 from pathlib import Path
@@ -10,6 +9,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.config import SOURCES
 from app.render import (
+    render_fetch_status,
+    render_json,
     render_manifest,
     render_markdown,
     render_page,
@@ -25,6 +26,7 @@ from app.store import (
     combined_digest,
     days_archiving,
     fetch_health,
+    fetch_status,
     load_all_snapshots,
     site_stats,
     source_registry,
@@ -85,6 +87,7 @@ def build_site(
             page_path="/",
             digest=digest,
             editions=len(snapshots),
+            freshness=fetch_status(data_dir),
         ),
     )
     write(
@@ -158,19 +161,18 @@ def build_site(
     # Feed + machine-readable files
     if digest:
         write(out_dir / "feed.rss", render_rss(digest, f"{base_url}/"))
-        write(out_dir / "api" / "digest.json", digest.model_dump_json(indent=2))
+        write(out_dir / "api" / "digest.json", digest.model_dump_json())
         write(out_dir / "api" / "stories.md", render_markdown(digest))
 
     api = out_dir / "api"
     write(
         api / "sources.json",
-        json.dumps([s.model_dump(mode="json") for s in snapshots], indent=2),
+        render_json([s.model_dump(mode="json") for s in snapshots]),
     )
     write(
         api / "stories.json",
-        json.dumps(
-            [s.model_dump(mode="json") for snap in snapshots for s in snap.stories],
-            indent=2,
+        render_json(
+            [s.model_dump(mode="json") for snap in snapshots for s in snap.stories]
         ),
     )
     write(api / "search.json", render_search_index(snapshots))
@@ -178,13 +180,14 @@ def build_site(
     for source, snapshot in latest_by_source.items():
         write(
             api / "sources" / f"{source}.json",
-            snapshot.model_dump_json(indent=2),
+            snapshot.model_dump_json(),
         )
-    write(api / "stats.json", site_stats(data_dir).model_dump_json(indent=2))
+    write(api / "stats.json", site_stats(data_dir).model_dump_json())
     write(
         api / "trends.json",
-        json.dumps(weekly_trends(data_dir), indent=2, default=str),
+        render_json(weekly_trends(data_dir)),
     )
+    write(api / "fetch-status.json", render_fetch_status(fetch_status(data_dir)))
 
     # PWA: manifest + service worker with full offline precache (written last
     # so walk_site_urls sees every emitted file)

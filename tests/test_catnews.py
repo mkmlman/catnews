@@ -20,8 +20,10 @@ from app.store import (
     combined_digest,
     days_archiving,
     fetch_health,
+    fetch_status,
     latest_stories_by_source,
     load_all_snapshots,
+    save_fetch_report,
     save_snapshot,
     site_stats,
     source_registry,
@@ -527,6 +529,37 @@ def test_source_registry_cadences(tmp_path):
     assert rows["hn"]["last_fetched"] is None
 
 
+def test_fetch_status_reports_stale_sources(tmp_path):
+    from app.config import SOURCES
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 10),
+            stories=[Story(source="hn", title="Older", url="https://a")],
+        ),
+        tmp_path,
+    )
+    statuses = {
+        source: {"state": "skipped", "snapshot_date": None, "stories": 0}
+        for source in SOURCES
+    }
+    statuses["hn"] = {
+        "state": "stale",
+        "snapshot_date": "2026-08-10",
+        "stories": 1,
+        "error": "temporary outage",
+    }
+    save_fetch_report(date(2026, 8, 11), tmp_path, statuses)
+
+    report = fetch_status(tmp_path)
+    assert report["date"] == date(2026, 8, 11)
+    assert report["has_issues"] is True
+    assert report["sources"]["hn"]["state_label"] == "Using older snapshot"
+    assert report["sources"]["hn"]["snapshot_date"] == date(2026, 8, 10)
+    assert report["sources"]["hn"]["detail"] == "temporary outage"
+
+
 def test_build_site_copies_all_static_assets(tmp_path):
     # Regression: build_site only copied style.css + fonts, so favicon.svg 404'd
     # on the deployed site. The whole static dir must be copied.
@@ -554,6 +587,7 @@ def test_build_site_copies_all_static_assets(tmp_path):
     assert (out / "static" / "favicon.svg").exists()
     assert not (out / "stale-page.html").exists()
     assert (out / "api" / "search.json").exists()
+    assert (out / "api" / "fetch-status.json").exists()
     assert (out / "api" / "sources" / "hn.json").exists()
 
     from scripts.check_site import check_site
@@ -667,6 +701,7 @@ def test_build_site_emits_pwa_files(tmp_path):
     assert '"./static/style.css"' in sw
     assert '"./api/stories.json"' in sw
     assert '"./api/search.json"' in sw
+    assert '"./api/fetch-status.json"' in sw
 
 
 def test_deploy_workflow_shares_pages_env_with_validation():
@@ -698,6 +733,17 @@ def test_deploy_workflow_shares_pages_env_with_validation():
     assert "env" not in validate
     assert '"$BASE_PATH"' in build["run"]
     assert '"$BASE_PATH"' in validate["run"]
+    assert workflow["permissions"] == {}
+    assert workflow["jobs"]["archive"]["permissions"] == {
+        "contents": "write",
+        "pull-requests": "write",
+    }
+    assert workflow["jobs"]["lint"]["permissions"] == {"contents": "read"}
+    assert workflow["jobs"]["deploy"]["permissions"] == {
+        "contents": "read",
+        "pages": "write",
+        "id-token": "write",
+    }
 
 
 def test_index_page_has_app_js_and_search(client, tmp_path):
@@ -789,6 +835,7 @@ def test_live_app_serves_pwa(client, tmp_path):
     assert manifest.json()["short_name"] == "catnews"
     assert client.get("/static/style.css").status_code == 200
     assert client.get("/api/search.json").status_code == 200
+    assert client.get("/api/fetch-status.json").status_code == 200
 
     sw = client.get("/sw.js")
     assert sw.status_code == 200
@@ -801,6 +848,9 @@ def test_live_app_serves_pwa(client, tmp_path):
         [SourceSnapshot(source="hn", date=date(2026, 8, 2), stories=[])]
     )
     assert "./api/search.json" in live_site_urls(
+        [SourceSnapshot(source="hn", date=date(2026, 8, 2), stories=[])]
+    )
+    assert "./api/fetch-status.json" in live_site_urls(
         [SourceSnapshot(source="hn", date=date(2026, 8, 2), stories=[])]
     )
 
@@ -819,6 +869,7 @@ def test_api_json_aliases_match_static_build(client, tmp_path):
     for path in (
         "/api/stories.json",
         "/api/search.json",
+        "/api/fetch-status.json",
         "/api/digest.json",
         "/api/stats.json",
         "/api/sources.json",

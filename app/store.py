@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import json
 import tempfile
 from datetime import date
 from pathlib import Path
 
 from .config import SOURCES, cadence_label, today_utc
 from .models import Digest, SiteStats, SourceSnapshot, Story
+
+FETCH_STATUS_FILE = "fetch-status.json"
 
 
 def _snapshot_parts(path: Path) -> tuple[str, date] | None:
@@ -73,6 +76,110 @@ def save_snapshot(snapshot: SourceSnapshot, data_dir: Path) -> Path:
         if temp_path:
             temp_path.unlink(missing_ok=True)
     return path
+
+
+def load_fetch_report(data_dir: Path) -> dict:
+    """Load the last fetch report, if the fetch job has written one."""
+    path = data_dir / FETCH_STATUS_FILE
+    if not path.is_file():
+        return {}
+    try:
+        report = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return report if isinstance(report, dict) else {}
+
+
+def save_fetch_report(day: date, data_dir: Path, statuses: dict[str, dict]) -> Path:
+    """Atomically persist the build-time source fetch report."""
+    data_dir.mkdir(parents=True, exist_ok=True)
+    path = data_dir / FETCH_STATUS_FILE
+    temp_path: Path | None = None
+    payload = {"date": day.isoformat(), "sources": statuses}
+    try:
+        with tempfile.NamedTemporaryFile(
+            "w",
+            encoding="utf-8",
+            dir=data_dir,
+            prefix=f".{path.name}.",
+            delete=False,
+        ) as temp_file:
+            temp_path = Path(temp_file.name)
+            json.dump(payload, temp_file, indent=2, ensure_ascii=False)
+            temp_file.write("\n")
+        temp_path.replace(path)
+    finally:
+        if temp_path:
+            temp_path.unlink(missing_ok=True)
+    return path
+
+
+def _status_date(value: object) -> date | None:
+    if not isinstance(value, str):
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return None
+
+
+def fetch_status(data_dir: Path) -> dict:
+    """Return display-ready source freshness information for pages and APIs.
+
+    A missing report is treated as a healthy legacy checkout when a snapshot
+    exists. This keeps old archives usable while newer fetch jobs add precise
+    stale/unavailable diagnostics.
+    """
+    report = load_fetch_report(data_dir)
+    report_sources = report.get("sources")
+    if not isinstance(report_sources, dict):
+        report_sources = {}
+
+    sources: dict[str, dict] = {}
+    for source, cfg in SOURCES.items():
+        snapshot = load_latest_snapshot(source, data_dir)
+        entry = report_sources.get(source)
+        if not isinstance(entry, dict):
+            entry = {}
+
+        state = entry.get("state")
+        if state not in {"ok", "stale", "unavailable", "skipped", "unknown"}:
+            state = "unknown" if snapshot else "unavailable"
+        snapshot_date = _status_date(entry.get("snapshot_date"))
+        if snapshot_date is None and snapshot:
+            snapshot_date = snapshot.date
+        if state == "ok" and snapshot is None:
+            state = "unavailable"
+
+        labels = {
+            "ok": "Current",
+            "stale": "Using older snapshot",
+            "unavailable": "Unavailable",
+            "skipped": "On schedule",
+            "unknown": "No fetch report",
+        }
+        sources[source] = {
+            "key": source,
+            "label": cfg["label"],
+            "state": state,
+            "state_label": labels[state],
+            "snapshot_date": snapshot_date,
+            "stories": entry.get("stories", len(snapshot.stories) if snapshot else 0),
+            "detail": str(entry.get("error", ""))[:240],
+            "is_issue": state in {"stale", "unavailable"},
+        }
+
+    snapshot_dates = [
+        row["snapshot_date"] for row in sources.values() if row["snapshot_date"]
+    ]
+    latest_snapshot = max(snapshot_dates) if snapshot_dates else None
+    report_date = _status_date(report.get("date"))
+    return {
+        "date": report_date,
+        "latest_snapshot": latest_snapshot,
+        "has_issues": any(row["is_issue"] for row in sources.values()),
+        "sources": sources,
+    }
 
 
 def load_all_snapshots(data_dir: Path) -> list[SourceSnapshot]:
@@ -145,8 +252,10 @@ def interleave(groups: list[list[Story]]) -> list[Story]:
 def source_registry(data_dir: Path) -> list[dict]:
     """Registry rows for the Sources page: config plus latest snapshot info."""
     rows: list[dict] = []
+    status_by_source = fetch_status(data_dir)["sources"]
     for key, cfg in SOURCES.items():
         snap = load_latest_snapshot(key, data_dir)
+        status = status_by_source[key]
         rows.append(
             {
                 "key": key,
@@ -156,6 +265,10 @@ def source_registry(data_dir: Path) -> list[dict]:
                 "limit": cfg.get("limit"),
                 "last_fetched": snap.date if snap else None,
                 "stories": len(snap.stories) if snap else 0,
+                "state": status["state"],
+                "state_label": status["state_label"],
+                "status_detail": status["detail"],
+                "is_issue": status["is_issue"],
             }
         )
     return rows

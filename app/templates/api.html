@@ -62,12 +62,16 @@
       <code class="endpoint-code"><span class="method">GET</span> <a href="{{ base_path }}/api/trends.json">{{ base_path }}/api/trends</a></code>
       <p class="endpoint-desc">Story counts per source, bucketed by ISO week.</p>
     </li>
+    <li>
+      <code class="endpoint-code"><span class="method">GET</span> <a href="{{ base_path }}/api/fetch-status.json">{{ base_path }}/api/fetch-status.json</a></code>
+      <p class="endpoint-desc">Build-time source freshness and fetch diagnostics.</p>
+    </li>
   </ul>
 </section>
 
 <section class="api-section">
   <h2 class="api-section-title">Serving</h2>
-  <p class="prose">On <strong>GitHub Pages</strong> the API is a <em>static mirror</em> — <code>api/sources.json</code>, <code>api/sources/&lt;source&gt;.json</code>, <code>api/stories.json</code>, <code>api/search.json</code>, <code>api/digest.json</code>, <code>api/stats.json</code>, <code>api/trends.json</code>, <code>api/stories.md</code>, and <code>feed.rss</code> are written at build time, so the deployed site has no server.</p>
+  <p class="prose">On <strong>GitHub Pages</strong> the API is a <em>static mirror</em> — <code>api/sources.json</code>, <code>api/sources/&lt;source&gt;.json</code>, <code>api/stories.json</code>, <code>api/search.json</code>, <code>api/digest.json</code>, <code>api/stats.json</code>, <code>api/trends.json</code>, <code>api/fetch-status.json</code>, <code>api/stories.md</code>, and <code>feed.rss</code> are written at build time, so the deployed site has no server.</p>
   <p class="prose">The <strong>dev server</strong> (<code>uvicorn app.main:app</code>) serves everything dynamically, including the per-source routes <code>/api/sources/&lt;source&gt;</code>, <code>/api/sources/&lt;source&gt;/&lt;date&gt;</code>, and the rendered archive pages <code>/archive/&lt;source&gt;/&lt;date&gt;/</code>.</p>
 </section>
 

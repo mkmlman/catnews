@@ -105,6 +105,24 @@ a:focus-visible, button:focus-visible {
   outline-offset: 2px;
   border-radius: 2px;
 }
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+  transform: translateY(-180%);
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--card);
+  font-family: var(--mono);
+  font-size: var(--label-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: transform 0.15s ease;
+}
+.skip-link:focus { transform: translateY(0); color: var(--card); }
+main:focus { outline: none; }
 ::selection { background: var(--accent); color: var(--paper); }
 
 /* Fonts — self-hosted */
@@ -129,14 +147,6 @@ a:focus-visible, button:focus-visible {
   src: url("./fonts/fraunces-latin-normal.woff2") format("woff2");
   font-display: swap;
 }
-@font-face {
-  font-family: "Fraunces";
-  font-style: italic;
-  font-weight: 300 700;
-  src: url("./fonts/fraunces-latin-italic.woff2") format("woff2");
-  font-display: swap;
-}
-
 /* --------------------------------------------------------------------------
    Masthead
    -------------------------------------------------------------------------- */
@@ -184,6 +194,10 @@ a:focus-visible, button:focus-visible {
   transition: color 0.15s, border-color 0.15s;
 }
 .site-nav a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.site-nav a[aria-current="page"] {
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
@@ -368,6 +382,23 @@ a:focus-visible, button:focus-visible {
   opacity: 0.55;
   margin: 22px auto 0;
 }
+.source-alert {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+.source-alert > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.source-alert strong { color: var(--ink); font-weight: 600; }
+.source-alert a { font-family: var(--mono); font-size: var(--label-sm); white-space: nowrap; }
+.source-alert ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.source-alert li { display: inline-flex; align-items: center; gap: 6px; }
 
 /* --------------------------------------------------------------------------
    Filters
@@ -489,13 +520,6 @@ a:focus-visible, button:focus-visible {
 }
 /* .badge-<source> color classes are generated per-source in base.html */
 
-.story-score {
-  font-family: var(--mono);
-  font-size: var(--label-sm);
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-
 .story-title {
   font-family: var(--display);
   font-weight: 620;
@@ -506,6 +530,7 @@ a:focus-visible, button:focus-visible {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  line-clamp: 3;
   overflow: hidden;
 }
 .story-title a { color: var(--ink); }
@@ -842,6 +867,13 @@ a:focus-visible, button:focus-visible {
   color: var(--muted);
 }
 .source-details dd { margin: 0; font-size: 0.95rem; color: var(--ink); }
+.source-status { font-family: var(--mono); font-size: var(--label-sm); letter-spacing: 0.04em; }
+.source-status--ok { color: var(--badge-moss, var(--accent)); }
+.source-status--stale,
+.source-status--unknown { color: var(--accent); }
+.source-status--unavailable { color: var(--badge-clay, var(--accent)); }
+.source-status--skipped { color: var(--muted); }
+.source-status-detail { margin: 6px 0 0; color: var(--muted); font-family: var(--mono); font-size: var(--label-xs); }
 .source-links { margin: 8px 0 0; font-size: 0.92rem; }
 .source-links a {
   color: var(--accent);
