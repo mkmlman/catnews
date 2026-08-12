@@ -811,13 +811,36 @@ def test_story_previews_are_not_rendered_on_cards(client, tmp_path):
         ),
         tmp_path,
     )
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 10),
+            stories=[
+                Story(
+                    source="hn",
+                    title="Upvoted story",
+                    url="https://news.example/1",
+                    score=482,
+                ),
+                Story(
+                    source="github",
+                    title="Stared repo",
+                    url="https://github.com/a/b",
+                    score=999,
+                ),
+            ],
+        ),
+        tmp_path,
+    )
     page = client.get("/").text
     assert "CoinRAG: Contextualized Information Nugget KV Cache Reuse" in page
     assert "Recent optimization studies on Retrieval-Augmented Generation" not in page
     assert "story-excerpt" not in page
     assert "story-more" not in page
     assert "story-links" not in page
-    assert "story-score" not in page
+    # scores ARE rendered for sources that carry them (HN points, GitHub stars)
+    assert '<span class="story-score">▲ 482</span>' in page
+    assert '<span class="story-score">★ 999</span>' in page
 
 
 def test_live_app_serves_pwa(client, tmp_path):

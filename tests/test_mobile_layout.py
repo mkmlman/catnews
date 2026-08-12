@@ -136,9 +136,9 @@ def test_theme_and_install_controls_have_accessible_state_management():
     assert "lastFocusedElement.focus()" in app_js
 
 
-def test_current_cards_and_design_system_do_not_include_scores():
+def test_card_scores_are_present_for_curated_sources():
     design = (APP_DIR / "templates" / "design.html").read_text()
-    assert "story-score" not in CSS
+    assert "story-score" in CSS
     assert "story-score" not in design
 
 
@@ -155,7 +155,7 @@ def test_story_previews_are_not_rendered_and_progress_markup_exists():
     assert "story-excerpt" not in story
     assert "story-more" not in story
     assert "story-links" not in story
-    assert "story-score" not in story
+    assert "story-score" in story
     assert 'id="filter-status"' in index
 
 

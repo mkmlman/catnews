@@ -1,6 +1,7 @@
 <article class="story" data-source="{{ story.source }}" data-url="{{ story.url }}">
   <div class="story-top">
     <span class="badge badge-{{ story.source }}">{{ source_tags[story.source] }}</span>
+    {% if story.score is not none %}<span class="story-score">{% if story.source == "github" %}★{% else %}▲{% endif %} {{ story.score }}</span>{% endif %}
   </div>
   <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h3>
   {% if story.authors %}<p class="story-by">By {{ story.authors | join(", ") }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}</p>

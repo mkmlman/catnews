@@ -508,6 +508,13 @@ main:focus { outline: none; }
   flex-wrap: wrap;
   margin-bottom: 9px;
 }
+.story-score {
+  font-family: var(--mono);
+  font-size: var(--label-sm);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
 .badge {
   font-family: var(--mono);
   font-weight: 600;
