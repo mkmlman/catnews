@@ -530,7 +530,7 @@ a:focus-visible, button:focus-visible {
 }
 
 .story-foot {
-  margin-top: auto;
+  margin-top: 0;
   padding-top: 12px;
   display: flex;
   align-items: center;

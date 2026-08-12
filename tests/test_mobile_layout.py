@@ -106,6 +106,12 @@ def test_homepage_has_viewport_meta():
     assert 'name="viewport" content="width=device-width, initial-scale=1"' in base
 
 
+def test_static_assets_use_cache_busting_versions():
+    base = (APP_DIR / "templates" / "base.html").read_text()
+    assert "style.css?v={{ asset_version }}" in base
+    assert "app.js?v={{ asset_version }}" in base
+
+
 def test_mobile_navigation_has_accessible_toggle():
     base = (APP_DIR / "templates" / "base.html").read_text()
     assert 'id="nav-toggle"' in base
@@ -132,6 +138,11 @@ def test_story_previews_are_not_rendered_and_progress_markup_exists():
 
 def test_story_cards_can_shrink_without_mobile_overflow():
     assert "min-width: 0" in CSS
+
+
+def test_story_actions_follow_metadata_without_stretching_cards():
+    assert ".story-foot" in CSS
+    assert "margin-top: 0" in CSS
 
 
 def test_stats_has_accessible_trends_table():

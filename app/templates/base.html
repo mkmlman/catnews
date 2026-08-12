@@ -28,7 +28,7 @@
   <meta name="twitter:title" content="{{ self.title() }}">
   <meta name="twitter:description" content="catnews — a curated daily digest of HN, arXiv, GitHub, and Register Spill stories. What's worth reading.">
   <meta name="twitter:image" content="{{ base_url }}/static/favicon-180.png">
-  <link rel="stylesheet" href="{{ base_path }}/static/style.css">
+  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v={{ asset_version }}">
   <style>{{ badge_css | safe }}</style>
   <script>
     (function () {
@@ -106,7 +106,7 @@
       sourceTags: {{ source_tags | tojson }}
     };
   </script>
-  <script src="{{ base_path }}/static/app.js" defer></script>
+  <script src="{{ base_path }}/static/app.js?v={{ asset_version }}" defer></script>
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("{{ base_path }}/sw.js").catch(function (err) {

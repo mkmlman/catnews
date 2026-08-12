@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.config import SOURCES, today_utc
+from app.config import SOURCES
 from app.render import (
     render_manifest,
     render_markdown,
@@ -17,6 +17,7 @@ from app.render import (
     render_search_index,
     render_service_worker,
     render_trend_svg,
+    site_version,
     walk_site_urls,
 )
 from app.store import (
@@ -187,11 +188,10 @@ def build_site(
 
     # PWA: manifest + service worker with full offline precache (written last
     # so walk_site_urls sees every emitted file)
-    version = today_utc().isoformat()
     write(out_dir / "manifest.json", render_manifest())
     write(
         out_dir / "sw.js",
-        render_service_worker(walk_site_urls(out_dir), version=version),
+        render_service_worker(walk_site_urls(out_dir), version=site_version(out_dir)),
     )
 
     print(

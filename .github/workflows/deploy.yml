@@ -85,6 +85,11 @@ jobs:
   deploy:
     needs: lint
     runs-on: ubuntu-latest
+    env:
+      # Keep the Pages paths available to every deploy step, including
+      # static-site validation. Step-level env values do not persist.
+      BASE_PATH: /${{ github.event.repository.name }}
+      BASE_URL: https://${{ github.event.repository.owner.login }}.github.io/${{ github.event.repository.name }}
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -99,11 +104,6 @@ jobs:
         run: uv run python scripts/fetch_digest.py
 
       - name: Build static site
-        env:
-          # Derive the base path/url from the repo so the workflow works for
-          # any fork: <owner>.github.io/<repo> on GitHub Pages project sites.
-          BASE_PATH: /${{ github.event.repository.name }}
-          BASE_URL: https://${{ github.event.repository.owner.login }}.github.io/${{ github.event.repository.name }}
         run: uv run python scripts/build_site.py --base-path "$BASE_PATH" --base-url "$BASE_URL"
 
       - name: Validate static site

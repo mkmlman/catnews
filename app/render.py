@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from datetime import UTC, datetime
 from pathlib import Path
@@ -12,6 +13,17 @@ from .models import Digest, SourceSnapshot
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+
+
+def static_asset_version() -> str:
+    """Return a short fingerprint for browser-loaded CSS and JavaScript."""
+    digest = hashlib.sha256()
+    for name in ("style.css", "app.js"):
+        path = STATIC_DIR / name
+        digest.update(name.encode("utf-8"))
+        digest.update(path.read_bytes())
+    return digest.hexdigest()[:12]
+
 
 _env = Environment(
     loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html"])
@@ -41,6 +53,7 @@ def render_page(
         base_path=base_path,
         base_url=base_url,
         og_url=f"{base_url}{page_path}",
+        asset_version=static_asset_version(),
         **context,
     )
 
@@ -275,6 +288,22 @@ def walk_site_urls(out_dir: Path) -> list[str]:
         if rel.endswith("/index.html"):
             urls.append("./" + rel[: -len("index.html")])
     return list(dict.fromkeys(urls))
+
+
+def site_version(out_dir: Path) -> str:
+    """Return a content fingerprint for a generated static site.
+
+    The fingerprint changes when any emitted page, asset, or data file changes,
+    including multiple rebuilds on the same calendar day. The service worker
+    uses it as its cache name so browsers cannot retain an older same-day build.
+    """
+    digest = hashlib.sha256()
+    for path in sorted(out_dir.rglob("*")):
+        if not path.is_file() or path.name == "sw.js":
+            continue
+        digest.update(path.relative_to(out_dir).as_posix().encode("utf-8"))
+        digest.update(path.read_bytes())
+    return digest.hexdigest()[:16]
 
 
 def live_site_urls(snapshots: list) -> list[str]:

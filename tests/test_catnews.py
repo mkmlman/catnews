@@ -14,7 +14,7 @@ from app.fetchers.hn import parse_hit
 from app.fetchers.rss import parse_entry as parse_rss_entry
 from app.fetchers.rss import parse_links, strip_html
 from app.models import SourceSnapshot, Story
-from app.render import live_site_urls, search_index
+from app.render import live_site_urls, search_index, site_version
 from app.store import (
     arxiv_category_counts,
     combined_digest,
@@ -413,6 +413,15 @@ def test_search_index_deduplicates_historical_stories():
     assert index[0]["snippet"] == "Updated"
 
 
+def test_static_site_version_changes_when_artifact_changes(tmp_path):
+    site = tmp_path / "site"
+    site.mkdir()
+    (site / "index.html").write_text("first")
+    first = site_version(site)
+    (site / "index.html").write_text("second")
+    assert site_version(site) != first
+
+
 def test_registerspill_only_due_on_mondays(tmp_path):
     # 2026-08-03 is a Monday. Snapshot it so it's not a bootstrap fetch.
     save_snapshot(
@@ -660,6 +669,37 @@ def test_build_site_emits_pwa_files(tmp_path):
     assert '"./api/search.json"' in sw
 
 
+def test_deploy_workflow_shares_pages_env_with_validation():
+    from pathlib import Path
+
+    import yaml
+
+    workflow = yaml.safe_load(
+        (
+            Path(__file__).resolve().parent.parent
+            / ".github"
+            / "workflows"
+            / "deploy.yml"
+        ).read_text()
+    )
+    deploy = workflow["jobs"]["deploy"]
+    assert deploy["env"]["BASE_PATH"] == "/${{ github.event.repository.name }}"
+    assert deploy["env"]["BASE_URL"] == (
+        "https://${{ github.event.repository.owner.login }}.github.io/"
+        "${{ github.event.repository.name }}"
+    )
+    build = next(
+        step for step in deploy["steps"] if step.get("name") == "Build static site"
+    )
+    validate = next(
+        step for step in deploy["steps"] if step.get("name") == "Validate static site"
+    )
+    assert "env" not in build
+    assert "env" not in validate
+    assert '"$BASE_PATH"' in build["run"]
+    assert '"$BASE_PATH"' in validate["run"]
+
+
 def test_index_page_has_app_js_and_search(client, tmp_path):
     save_snapshot(
         SourceSnapshot(
@@ -671,7 +711,7 @@ def test_index_page_has_app_js_and_search(client, tmp_path):
     )
     page = client.get("/").text
     # shared client script + PWA wiring present on every page
-    assert 'src="/static/app.js"' in page
+    assert 'src="/static/app.js?v=' in page
     assert 'rel="manifest"' in page
     assert 'register("/sw.js")' in page
     # search box is in the header
