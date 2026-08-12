@@ -729,6 +729,9 @@ def test_story_previews_are_not_rendered_on_cards(client, tmp_path):
     assert "CoinRAG: Contextualized Information Nugget KV Cache Reuse" in page
     assert "Recent optimization studies on Retrieval-Augmented Generation" not in page
     assert "story-excerpt" not in page
+    assert "story-more" not in page
+    assert "story-links" not in page
+    assert "story-score" not in page
 
 
 def test_live_app_serves_pwa(client, tmp_path):

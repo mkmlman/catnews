@@ -1,31 +1,10 @@
 <article class="story" data-source="{{ story.source }}" data-url="{{ story.url }}">
   <div class="story-top">
     <span class="badge badge-{{ story.source }}">{{ source_tags[story.source] }}</span>
-    {% if story.score is not none %}<span class="story-score">{% if story.source == "github" %}★{% else %}▲{% endif %} {{ story.score }}</span>{% endif %}
   </div>
   <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h3>
   {% if story.authors %}<p class="story-by">By {{ story.authors | join(", ") }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}</p>
   {% else %}<p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>{% endif %}
-  {% if story.links %}
-  <details class="story-links">
-    <summary>{{ story.links | length }} curated link{{ "s" if story.links | length != 1 else "" }}</summary>
-    <ol class="story-links-list">
-      {% for link in story.links %}
-      <li>
-        <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.title }}</a>
-        {% if link.site %}<span class="story-links-site">{{ link.site }}</span>{% endif %}
-      </li>
-      {% endfor %}
-    </ol>
-    <p class="story-links-credit">Curated from Register Spill · annotations by Thorsten Ball, links go to the original authors.</p>
-  </details>
-  {% endif %}
-  {% if story.summary %}
-  <details class="story-more">
-    <summary>more</summary>
-    <p class="story-summary">{{ story.summary }}</p>
-  </details>
-  {% endif %}
   <div class="story-foot">
     <a class="story-link" href="{{ story.url }}" target="_blank" rel="noopener">Read</a>
     {% if story.hn_url %}<a class="discuss" href="{{ story.hn_url }}" target="_blank" rel="noopener">Discuss ›</a>{% endif %}
