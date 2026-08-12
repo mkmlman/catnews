@@ -51,5 +51,8 @@
   {% endfor %}
 </div>
 
-<button class="load-more" id="load-more" type="button" hidden>Load more</button>
+<div class="load-more-wrap">
+  <button class="load-more" id="load-more" type="button" hidden>Load more</button>
+  <p class="load-more-count" id="load-more-count" hidden aria-live="polite"></p>
+</div>
 {% endblock %}

@@ -232,6 +232,7 @@
   var noMatches = document.getElementById("no-matches");
   var hideRead = document.getElementById("hide-read");
   var loadMoreBtn = document.getElementById("load-more");
+  var loadMoreCount = document.getElementById("load-more-count");
   var exportSavedBtn = document.getElementById("export-saved");
   var sourceFilterRow = document.querySelector(".filter-row--sources");
   var filterScrollCue = document.querySelector(".filter-scroll-cue");
@@ -272,10 +273,12 @@
     });
     if (noMatches) noMatches.hidden = matched !== 0;
     if (loadMoreBtn) {
-      loadMoreBtn.hidden = matched <= state.loaded;
-      loadMoreBtn.textContent = visible < matched
-        ? "Load more \u00B7 " + visible + " of " + matched
-        : "Load more";
+      var hasMore = matched > state.loaded;
+      loadMoreBtn.hidden = !hasMore;
+      if (loadMoreCount) {
+        loadMoreCount.hidden = !hasMore;
+        if (hasMore) loadMoreCount.textContent = visible + " of " + matched;
+      }
     }
   }
 

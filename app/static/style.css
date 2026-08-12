@@ -690,9 +690,15 @@ main:focus { outline: none; }
 }
 .hide-read:has(input:focus-visible) { border-color: var(--accent); }
 
+.load-more-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  margin: 24px 0 8px;
+}
 .load-more {
-  display: block;
-  margin: 22px auto 6px;
+  display: inline-block;
   font-family: var(--mono);
   font-size: var(--label-sm);
   letter-spacing: 0.12em;
@@ -709,6 +715,14 @@ main:focus { outline: none; }
   color: var(--card);
   background: var(--accent);
   border-color: var(--accent);
+}
+.load-more-count {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--label-xs);
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
 }
 
 .export-saved {
