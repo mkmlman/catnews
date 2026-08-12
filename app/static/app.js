@@ -169,7 +169,6 @@
     var btn = card.querySelector(".save-toggle");
     if (btn) {
       btn.setAttribute("aria-pressed", saved.has(url) ? "true" : "false");
-      btn.textContent = saved.has(url) ? "\u2605" : "\u2606";
       btn.setAttribute(
         "aria-label",
         saved.has(url) ? "Remove from saved" : "Save for later"
@@ -203,6 +202,8 @@
     btn.className = "save-toggle";
     btn.setAttribute("aria-pressed", "false");
     btn.title = "Save for later";
+    btn.innerHTML =
+      '<svg class="save-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 2.6h8v10.8l-4-2.7-4 2.7Z"/></svg>';
     btn.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();

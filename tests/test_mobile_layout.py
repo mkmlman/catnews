@@ -154,7 +154,7 @@ def test_story_previews_are_not_rendered_and_progress_markup_exists():
     index = (APP_DIR / "templates" / "index.html").read_text()
     assert "story-excerpt" not in story
     assert "story-more" not in story
-    assert "story-links" not in story
+    assert "story-links" in story
     assert "story-score" in story
     assert 'id="load-more"' in index
 

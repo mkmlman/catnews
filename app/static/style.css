@@ -571,6 +571,44 @@ main:focus { outline: none; }
   align-items: center;
   justify-content: space-between;
 }
+.story-links { margin: 0 0 10px; font-size: var(--label-md); }
+.story-links summary {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  cursor: pointer;
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  gap: 5px;
+}
+.story-links-arrow { flex-shrink: 0; transition: transform 0.2s ease; }
+.story-links[open] .story-links-arrow { transform: rotate(180deg); }
+.story-links summary:hover { text-decoration: underline; }
+.story-links-list { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 6px; }
+.story-links-list li { font-size: var(--label-md); line-height: 1.4; color: var(--ink-soft); }
+.story-links-list a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  transition: color 0.15s, border-color 0.15s;
+}
+.story-links-list a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.story-links-site {
+  font-family: var(--mono);
+  font-size: var(--label-xs);
+  margin-left: 6px;
+  color: var(--muted);
+}
+.story-links-credit {
+  margin: 8px 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: var(--label-sm);
+  color: var(--muted);
+}
 .story-link {
   font-family: var(--mono);
   font-size: var(--label-sm);
@@ -592,10 +630,10 @@ main:focus { outline: none; }
    -------------------------------------------------------------------------- */
 .story:not(.has-score) .save-toggle { margin-left: auto; }
 .save-toggle {
-  font-family: var(--mono);
-  font-size: 0.9rem;
-  line-height: 1;
-  padding: 4px 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 5px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: transparent;
@@ -603,6 +641,7 @@ main:focus { outline: none; }
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s, background-color 0.15s;
 }
+.save-toggle svg { display: block; fill: none; }
 .save-toggle:hover {
   color: var(--accent);
   border-color: var(--accent);
@@ -612,6 +651,7 @@ main:focus { outline: none; }
   background: var(--accent);
   border-color: var(--accent);
 }
+.save-toggle[aria-pressed="true"] svg { fill: currentColor; }
 
 .story.is-read { opacity: 0.55; }
 .story.is-read .story-title a { color: var(--muted); }

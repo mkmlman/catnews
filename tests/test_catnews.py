@@ -13,7 +13,7 @@ from app.fetchers.github import parse_item
 from app.fetchers.hn import parse_hit
 from app.fetchers.rss import parse_entry as parse_rss_entry
 from app.fetchers.rss import parse_links, strip_html
-from app.models import SourceSnapshot, Story
+from app.models import CuratedLink, SourceSnapshot, Story
 from app.render import live_site_urls, search_index, site_version
 from app.store import (
     arxiv_category_counts,
@@ -831,12 +831,32 @@ def test_story_previews_are_not_rendered_on_cards(client, tmp_path):
         ),
         tmp_path,
     )
+    save_snapshot(
+        SourceSnapshot(
+            source="registerspill",
+            date=date(2026, 8, 10),
+            stories=[
+                Story(
+                    source="registerspill",
+                    title="Joy & Curiosity #94",
+                    url="https://registerspill.thorstenball.com/p/joy-and-curiosity-94",
+                    links=[
+                        CuratedLink(title="What I Want to Tell You About Orbs", url="https://ampcode.com/notes/what-i-want-to-tell-you-about-orbs", site="ampcode.com"),
+                    ],
+                )
+            ],
+        ),
+        tmp_path,
+    )
     page = client.get("/").text
     assert "CoinRAG: Contextualized Information Nugget KV Cache Reuse" in page
     assert "Recent optimization studies on Retrieval-Augmented Generation" not in page
     assert "story-excerpt" not in page
     assert "story-more" not in page
-    assert "story-links" not in page
+    # curated links render on Register Spill cards
+    assert "story-links" in page
+    assert "1 curated link" in page
+    assert "What I Want to Tell You About Orbs" in page
     # scores ARE rendered for sources that carry them (HN points, GitHub stars)
     assert '<span class="story-score">▲ 482</span>' in page
     assert '<span class="story-score">★ 999</span>' in page
