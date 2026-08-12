@@ -232,7 +232,6 @@
   var hideRead = document.getElementById("hide-read");
   var loadMoreBtn = document.getElementById("load-more");
   var exportSavedBtn = document.getElementById("export-saved");
-  var filterStatus = document.getElementById("filter-status");
   var sourceFilterRow = document.querySelector(".filter-row--sources");
   var filterScrollCue = document.querySelector(".filter-scroll-cue");
   var PAGE_SIZE = 12;
@@ -271,18 +270,11 @@
       if (show) visible++;
     });
     if (noMatches) noMatches.hidden = matched !== 0;
-    if (loadMoreBtn) loadMoreBtn.hidden = matched <= state.loaded;
-    if (filterStatus) {
-      var scope = state.savedOnly
-        ? "saved stories"
-        : state.source === "All"
-          ? "stories"
-          : (CFG.sourceTags[state.source] || state.source) + " stories";
-      filterStatus.textContent = matched === 0
-        ? "No matching stories"
-        : visible < matched
-          ? "Showing " + visible + " of " + matched + " " + scope
-          : "Showing " + matched + " " + scope;
+    if (loadMoreBtn) {
+      loadMoreBtn.hidden = matched <= state.loaded;
+      loadMoreBtn.textContent = visible < matched
+        ? "Load more \u00B7 " + visible + " of " + matched
+        : "Load more";
     }
   }
 

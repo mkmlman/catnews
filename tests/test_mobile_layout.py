@@ -156,7 +156,7 @@ def test_story_previews_are_not_rendered_and_progress_markup_exists():
     assert "story-more" not in story
     assert "story-links" not in story
     assert "story-score" in story
-    assert 'id="filter-status"' in index
+    assert 'id="load-more"' in index
 
 
 def test_story_cards_can_shrink_without_mobile_overflow():

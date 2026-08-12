@@ -459,15 +459,6 @@ main:focus { outline: none; }
   gap: 6px;
   flex-shrink: 0;
 }
-.filter-status {
-  flex: 1 0 100%;
-  margin: -2px 0 0;
-  font-family: var(--mono);
-  font-size: var(--label-xs);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
 
 /* --------------------------------------------------------------------------
    Stories
@@ -1788,7 +1779,6 @@ main:focus { outline: none; }
     pointer-events: none;
   }
   .filter-scroll-cue[hidden] { display: none; }
-  .filter-status { margin-top: 2px; }
   .filter-label, .chip, .filter-actions, .hide-read { flex-shrink: 0; }
 
   .source-details { flex-direction: column; align-items: stretch; gap: 10px 0; }
