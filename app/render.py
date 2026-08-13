@@ -8,7 +8,14 @@ from pathlib import Path
 from feedgen.feed import FeedGenerator
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from .config import APP_NAME, SOURCE_LABELS, SOURCE_TAGS, badge_css, palette_entries
+from .config import (
+    APP_NAME,
+    SOURCE_LABELS,
+    SOURCE_TAGS,
+    badge_css,
+    palette_entries,
+    today_utc,
+)
 from .models import Digest, SourceSnapshot
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
@@ -63,22 +70,27 @@ def render_heatmap_svg(daily: list[dict]) -> str:
     """Inline SVG contribution-style heatmap of daily story counts.
 
     `daily` is the list of dicts from store.daily_counts (oldest first, one
-    entry per calendar day). Columns are ISO weeks (Mon-Sun, top to bottom);
-    each cell is a day, shaded by total story count via the `heat-N` CSS
-    classes so light/dark themes both read well.
+    entry per calendar day). The grid covers the rolling six months ending
+    today: columns are ISO weeks (Mon-Sun, top to bottom); every day in the
+    window gets a cell, and days with no snapshot render as an empty box
+    (heat-0) instead of being skipped.
     """
-    from datetime import timedelta
+    from datetime import date, timedelta
 
     if not daily:
         return ""
 
-    first = daily[0]["date"]
-    last = daily[-1]["date"]
-    # Align to the Monday on or before the first day so columns are full weeks.
-    monday = first - timedelta(days=first.weekday())
-    n_weeks = ((last - monday).days // 7) + 1
     counts = {row["date"]: row["count"] for row in daily}
     max_count = max(counts.values(), default=0) or 1
+    total = sum(counts.values())
+
+    today = today_utc()
+    months = today.year * 12 + today.month - 6
+    start_year, start_month0 = divmod(months - 1, 12)
+    start_month = start_month0 + 1
+    anchor = date(start_year, start_month, 1)
+    monday = anchor - timedelta(days=anchor.weekday())
+    n_weeks = ((today - monday).days // 7) + 1
 
     cell, gap = 16, 4
     pad_l, pad_r, pad_t, pad_b = 40, 16, 22, 8
@@ -98,11 +110,10 @@ def render_heatmap_svg(daily: list[dict]) -> str:
         return 1
 
     parts: list[str] = []
-    total = sum(counts.values())
     parts.append(
         f'<svg class="trend-chart heatmap" width="{width}" height="{height}" '
         f'viewBox="0 0 {width} {height}" role="img" aria-label="Stories per day, '
-        f'{total} total over {(last - first).days + 1} days" '
+        f'{total} total across the last six months" '
         f'xmlns="http://www.w3.org/2000/svg">'
     )
     # Weekday labels along the left edge (Mon / Wed / Fri).
@@ -126,16 +137,18 @@ def render_heatmap_svg(daily: list[dict]) -> str:
     for wi in range(n_weeks):
         for wd in range(7):
             day = monday + timedelta(days=wi * 7 + wd)
-            if day < first or day > last:
-                continue
             count = counts.get(day, 0)
+            total_txt = (
+                f" · {count} {'story' if count == 1 else 'stories'}"
+                if count
+                else " · no data"
+            )
             x = pad_l + wi * (cell + gap)
             y = pad_t + wd * (cell + gap)
             parts.append(
                 f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" '
                 f'class="heat heat-{shade(count)}" data-date="{day.isoformat()}">'
-                f"<title>{day.isoformat()} · {count} "
-                f"{'story' if count == 1 else 'stories'}</title></rect>"
+                f"<title>{day.isoformat()}{total_txt}</title></rect>"
             )
     parts.append("</svg>")
     return "\n".join(parts)
