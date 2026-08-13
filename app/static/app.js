@@ -676,20 +676,18 @@
   }
 
   function showHeatTip(cell) {
-    var svg = cell.ownerSVGElement;
-    if (!svg || !heatTip) return;
+    if (!heatTip) return;
     heatTip.textContent = heatTipText(cell.getAttribute("data-date"), Number(cell.getAttribute("data-count") || 0));
     heatTip.hidden = false;
     heatTipShown = true;
-    var wrap = heatTip.offsetParent || svg.parentElement;
-    var wrapRect = wrap.getBoundingClientRect();
     var cellRect = cell.getBoundingClientRect();
     var tipRect = heatTip.getBoundingClientRect();
-    var x = cellRect.left + cellRect.width / 2 - wrapRect.left;
-    x = Math.max(tipRect.width / 2, Math.min(x, wrapRect.width - tipRect.width / 2));
-    var y = cellRect.top - wrapRect.top - tipRect.height - 8;
-    if (y < 0) y = cellRect.bottom - wrapRect.top + 8;
-    heatTip.style.transform = "translate(" + x + "px," + y + "px)";
+    var x = cellRect.left + cellRect.width / 2;
+    x = Math.max(tipRect.width / 2, Math.min(x, window.innerWidth - tipRect.width / 2));
+    var y = cellRect.top - tipRect.height - 8;
+    if (y < 0) y = cellRect.bottom + 8;
+    heatTip.style.left = x + "px";
+    heatTip.style.top = y + "px";
   }
 
   function hideHeatTip() {
@@ -700,6 +698,7 @@
 
   var heatmap = document.querySelector(".trend-chart.heatmap");
   if (heatmap && heatTip) {
+    document.body.appendChild(heatTip);
     heatmap.addEventListener("mouseover", function (event) {
       var cell = event.target.closest("rect.heat");
       if (cell) showHeatTip(cell);

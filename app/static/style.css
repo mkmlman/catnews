@@ -1165,10 +1165,10 @@ main:focus { outline: none; }
 .trend-chart text { fill: var(--faint); font-family: var(--mono); font-size: 10px; }
 .heatmap-day { font-size: 9px !important; }
 .heatmap .heat-tip {
-  position: absolute;
-  top: 0;
+  position: fixed;
   left: 0;
-  z-index: 5;
+  top: 0;
+  z-index: 50;
   max-width: 260px;
   padding: 5px 9px;
   border-radius: 6px;
@@ -1179,6 +1179,7 @@ main:focus { outline: none; }
   white-space: nowrap;
   pointer-events: none;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  transform: translateZ(0);
 }
 .heat { stroke: color-mix(in srgb, var(--line) 55%, transparent); }
 .heat:hover { stroke: var(--accent); }

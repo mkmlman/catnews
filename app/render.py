@@ -140,18 +140,12 @@ def render_heatmap_svg(daily: list[dict]) -> str:
         for wd in range(7):
             day = monday + timedelta(days=wi * 7 + wd)
             count = counts.get(day, 0)
-            total_txt = (
-                f" · {count} {'story' if count == 1 else 'stories'}"
-                if count
-                else " · no data"
-            )
             x = pad_l + wi * (cell + gap)
             y = pad_t + wd * (cell + gap)
             parts.append(
                 f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" '
                 f'class="heat heat-{shade(count)}" data-date="{day.isoformat()}" '
-                f'data-count="{count}">'
-                f"<title>{day.isoformat()}{total_txt}</title></rect>"
+                f'data-count="{count}"></rect>'
             )
     parts.append("</svg>")
     return "\n".join(parts)
