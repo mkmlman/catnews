@@ -1160,6 +1160,7 @@ main:focus { outline: none; }
   background: var(--card);
 }
 .trend-chart { width: 100%; height: auto; display: block; }
+.trend-chart.heatmap { width: auto; max-width: 100%; margin: 0 auto; }
 .trend-chart text { fill: var(--faint); font-family: var(--mono); font-size: 10px; }
 .heatmap-day { font-size: 9px !important; }
 .heat { stroke: color-mix(in srgb, var(--line) 55%, transparent); }

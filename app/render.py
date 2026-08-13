@@ -80,8 +80,8 @@ def render_heatmap_svg(daily: list[dict]) -> str:
     counts = {row["date"]: row["count"] for row in daily}
     max_count = max(counts.values(), default=0) or 1
 
-    cell, gap = 12, 3
-    pad_l, pad_r, pad_t, pad_b = 34, 12, 20, 6
+    cell, gap = 16, 4
+    pad_l, pad_r, pad_t, pad_b = 40, 16, 22, 8
     width = pad_l + pad_r + n_weeks * cell + (n_weeks - 1) * gap
     height = pad_t + pad_b + 7 * cell + 6 * gap
 
@@ -100,9 +100,10 @@ def render_heatmap_svg(daily: list[dict]) -> str:
     parts: list[str] = []
     total = sum(counts.values())
     parts.append(
-        f'<svg class="trend-chart heatmap" viewBox="0 0 {width} {height}" '
-        f'role="img" aria-label="Stories per day, {total} total over '
-        f'{(last - first).days + 1} days" xmlns="http://www.w3.org/2000/svg">'
+        f'<svg class="trend-chart heatmap" width="{width}" height="{height}" '
+        f'viewBox="0 0 {width} {height}" role="img" aria-label="Stories per day, '
+        f'{total} total over {(last - first).days + 1} days" '
+        f'xmlns="http://www.w3.org/2000/svg">'
     )
     # Weekday labels along the left edge (Mon / Wed / Fri).
     for wd, label in ((0, "Mon"), (2, "Wed"), (4, "Fri")):
