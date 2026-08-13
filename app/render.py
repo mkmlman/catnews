@@ -89,7 +89,9 @@ def render_heatmap_svg(daily: list[dict]) -> str:
     start_year, start_month0 = divmod(months - 1, 12)
     start_month = start_month0 + 1
     anchor = date(start_year, start_month, 1)
-    monday = anchor - timedelta(days=anchor.weekday())
+    # Begin the grid on the first Monday of the anchor month so no cells from
+    # the previous month leak in and every column is a full Mon-Sun week.
+    monday = anchor + timedelta(days=(7 - anchor.weekday()) % 7)
     n_weeks = ((today - monday).days // 7) + 1
 
     cell, gap = 16, 4
