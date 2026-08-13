@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ app_name }} | {{ label }}{% endblock %}
+{% block og_title %}{{ label }} · {{ snapshot.date.strftime("%B %d, %Y") }} — {{ snapshot.stories | length }} stories{% endblock %}
+{% block og_description %}{{ snapshot.stories | length }} hand-curated stories from {{ label }} on {{ snapshot.date.strftime("%B %d, %Y") }}.{% endblock %}
 {% block content %}
 <section class="page-header">
   <a class="back" href="{{ base_path }}/archive/">← Archive</a>

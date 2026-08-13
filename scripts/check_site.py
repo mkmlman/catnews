@@ -20,6 +20,8 @@ REQUIRED_FILES = (
     "feed.rss",
     "manifest.json",
     "sw.js",
+    "robots.txt",
+    "sitemap.xml",
     "api/digest.json",
     "api/sources.json",
     "api/stories.json",
@@ -119,6 +121,13 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
             ElementTree.fromstring(feed.read_bytes())
         except (OSError, ElementTree.ParseError) as exc:
             errors.append(f"invalid RSS feed: {exc}")
+
+    sitemap = site_dir / "sitemap.xml"
+    if sitemap.is_file():
+        try:
+            ElementTree.fromstring(sitemap.read_bytes())
+        except (OSError, ElementTree.ParseError) as exc:
+            errors.append(f"invalid sitemap.xml: {exc}")
 
     parser = LinkParser()
     for html_file in sorted(site_dir.rglob("*.html")):

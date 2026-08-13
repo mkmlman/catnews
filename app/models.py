@@ -6,7 +6,14 @@ from pydantic import BaseModel, Field
 
 
 class Source(str):
-    """Enumerated source label for a story."""
+    """Valid source key: lowercase alphanumerics with underscores.
+
+    Sources are user-configurable via sources.yaml, so this stays a loose
+    pattern rather than a fixed enumeration; pydantic applies it to the
+    `source` fields below.
+    """
+
+    _pattern = "^[a-z0-9_]+$"
 
 
 class CuratedLink(BaseModel):
@@ -22,7 +29,10 @@ class CuratedLink(BaseModel):
 class Story(BaseModel):
     """A single curated story in a digest."""
 
-    source: str = Field(description="Where the story came from: hn | arxiv | github")
+    source: str = Field(
+        description="Where the story came from: hn | arxiv | github",
+        pattern=Source._pattern,
+    )
     title: str
     url: str
     author: str | None = None
@@ -90,7 +100,7 @@ class Digest(BaseModel):
 class SourceSnapshot(BaseModel):
     """One fetch of a single source, archived under data/source_<name>_<date>.json."""
 
-    source: str
+    source: str = Field(pattern=Source._pattern)
     date: date
     stories: list[Story]
 

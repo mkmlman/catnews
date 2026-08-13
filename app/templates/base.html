@@ -18,15 +18,15 @@
   <!-- Open Graph -->
   <meta property="og:site_name" content="catnews">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ self.title() }}">
-  <meta property="og:description" content="catnews — a curated daily digest of HN, arXiv, GitHub, and Register Spill stories. What's worth reading.">
+  <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}catnews — a curated daily digest of HN, arXiv, GitHub, and Register Spill stories. What's worth reading.{% endblock %}">
   <meta property="og:url" content="{{ og_url }}">
   <meta property="og:image" content="{{ base_url }}/static/favicon-180.png">
 
   <!-- Twitter card -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="{{ self.title() }}">
-  <meta name="twitter:description" content="catnews — a curated daily digest of HN, arXiv, GitHub, and Register Spill stories. What's worth reading.">
+  <meta name="twitter:title" content="{% block twitter_title %}{{ self.og_title() }}{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}{{ self.og_description() }}{% endblock %}">
   <meta name="twitter:image" content="{{ base_url }}/static/favicon-180.png">
   <link rel="stylesheet" href="{{ base_path }}/static/style.css?v={{ asset_version }}">
   <style>{{ badge_css | safe }}</style>

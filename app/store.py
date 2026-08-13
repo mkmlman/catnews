@@ -274,8 +274,10 @@ def source_registry(data_dir: Path) -> list[dict]:
     return rows
 
 
-def site_stats(data_dir: Path) -> SiteStats:
-    snapshots = load_all_snapshots(data_dir)
+def site_stats(
+    data_dir: Path, snapshots: list[SourceSnapshot] | None = None
+) -> SiteStats:
+    snapshots = load_all_snapshots(data_dir) if snapshots is None else snapshots
     total = 0
     by_source: dict[str, int] = {}
     snapshots_by_source: dict[str, int] = {}
@@ -295,7 +297,9 @@ def site_stats(data_dir: Path) -> SiteStats:
     )
 
 
-def weekly_trends(data_dir: Path) -> list[dict]:
+def weekly_trends(
+    data_dir: Path, snapshots: list[SourceSnapshot] | None = None
+) -> list[dict]:
     """Story counts by source per ISO week, for the stats trends table.
 
     Returns a list of dicts (oldest first):
@@ -304,8 +308,9 @@ def weekly_trends(data_dir: Path) -> list[dict]:
     """
     from collections import defaultdict
 
+    snapshots = load_all_snapshots(data_dir) if snapshots is None else snapshots
     buckets: dict[tuple[int, int], dict] = {}
-    for snap in load_all_snapshots(data_dir):
+    for snap in snapshots:
         iso = snap.date.isocalendar()
         key = (iso.year, iso.week)
         bucket = buckets.setdefault(key, {"counts": defaultdict(int), "dates": set()})
@@ -327,7 +332,9 @@ def weekly_trends(data_dir: Path) -> list[dict]:
     return rows
 
 
-def daily_counts(data_dir: Path) -> list[dict]:
+def daily_counts(
+    data_dir: Path, snapshots: list[SourceSnapshot] | None = None
+) -> list[dict]:
     """Total story counts per calendar day, zero-filled across the archive span.
 
     Returns a list of dicts (oldest first), one per day from the first to the
@@ -337,8 +344,9 @@ def daily_counts(data_dir: Path) -> list[dict]:
     from collections import defaultdict
     from datetime import timedelta
 
+    snapshots = load_all_snapshots(data_dir) if snapshots is None else snapshots
     counts: dict[date, int] = defaultdict(int)
-    for snap in load_all_snapshots(data_dir):
+    for snap in snapshots:
         counts[snap.date] += len(snap.stories)
     if not counts:
         return []
@@ -352,13 +360,18 @@ def daily_counts(data_dir: Path) -> list[dict]:
     return rows
 
 
-def top_domains(data_dir: Path, limit: int = 10) -> list[tuple[str, int]]:
+def top_domains(
+    data_dir: Path,
+    limit: int = 10,
+    snapshots: list[SourceSnapshot] | None = None,
+) -> list[tuple[str, int]]:
     """Most common story URL hostnames across all archived snapshots."""
     from collections import Counter
     from urllib.parse import urlparse
 
+    snapshots = load_all_snapshots(data_dir) if snapshots is None else snapshots
     counter: Counter[str] = Counter()
-    for snap in load_all_snapshots(data_dir):
+    for snap in snapshots:
         for story in snap.stories:
             host = urlparse(story.url).netloc
             host = host.removeprefix("www.")
@@ -367,27 +380,37 @@ def top_domains(data_dir: Path, limit: int = 10) -> list[tuple[str, int]]:
     return counter.most_common(limit)
 
 
-def arxiv_category_counts(data_dir: Path) -> list[tuple[str, int]]:
+def arxiv_category_counts(
+    data_dir: Path, snapshots: list[SourceSnapshot] | None = None
+) -> list[tuple[str, int]]:
     """Most common arXiv primary categories across archived arXiv stories."""
     from collections import Counter
 
+    snapshots = load_all_snapshots(data_dir) if snapshots is None else snapshots
     counter: Counter[str] = Counter()
-    for snap in load_all_snapshots(data_dir):
+    for snap in snapshots:
         for story in snap.stories:
             if story.category:
                 counter[story.category] += 1
     return counter.most_common()
 
 
-def days_archiving(data_dir: Path) -> int:
+def days_archiving(
+    data_dir: Path, snapshots: list[SourceSnapshot] | None = None
+) -> int:
     """Number of calendar days spanned by the archive (1 if a single day)."""
-    dates = [s.date for s in load_all_snapshots(data_dir)]
+    dates = [
+        s.date
+        for s in (load_all_snapshots(data_dir) if snapshots is None else snapshots)
+    ]
     if not dates:
         return 0
     return (max(dates) - min(dates)).days + 1
 
 
-def fetch_health(data_dir: Path) -> list[dict]:
+def fetch_health(
+    data_dir: Path, snapshots: list[SourceSnapshot] | None = None
+) -> list[dict]:
     """Per-source fetch success: actual snapshots vs expected by cadence.
 
     Expected count = number of fetch dates the source's cadence implies,
@@ -398,7 +421,7 @@ def fetch_health(data_dir: Path) -> list[dict]:
 
     from .config import SOURCES
 
-    snapshots = load_all_snapshots(data_dir)
+    snapshots = load_all_snapshots(data_dir) if snapshots is None else snapshots
     if not snapshots:
         return []
     by_source: dict[str, list] = {}

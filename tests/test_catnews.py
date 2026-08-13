@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import re
 from datetime import UTC, date, datetime
 from types import SimpleNamespace
 
@@ -1017,6 +1018,28 @@ def test_daily_counts_zero_fills_gaps(tmp_path):
     assert daily[0] == {"date": date(2026, 8, 10), "count": 2}
     assert daily[1] == {"date": date(2026, 8, 11), "count": 0}
     assert daily[2] == {"date": date(2026, 8, 12), "count": 1}
+
+
+def test_render_heatmap_svg_auto_fits_window():
+    from app.render import render_heatmap_svg
+
+    daily = [
+        {"date": date(2026, 8, 10), "count": 2},
+        {"date": date(2026, 8, 11), "count": 0},
+        {"date": date(2026, 8, 12), "count": 1},
+    ]
+    svg = render_heatmap_svg(daily)
+    assert 'class="trend-chart heatmap"' in svg
+    # Auto-fit starts at the Monday of the first data week and only spans the
+    # active period, not a fixed six-month window (which would be ~26 columns).
+    monday = re.search(r'data-date="(2026-\d\d-\d\d)"', svg)
+    assert monday is not None
+    assert (
+        monday.group(1) <= "2026-08-10"
+    )  # first column begins at/before first data day
+    assert "2026-08-10" in svg
+    assert "2026-08-12" in svg
+    assert len(re.findall(r"<rect ", svg)) < 14  # a few weeks, not six months
 
 
 def test_top_domains_and_arxiv_categories(tmp_path):

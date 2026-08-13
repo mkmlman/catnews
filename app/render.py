@@ -70,12 +70,12 @@ def render_heatmap_svg(daily: list[dict]) -> str:
     """Inline SVG contribution-style heatmap of daily story counts.
 
     `daily` is the list of dicts from store.daily_counts (oldest first, one
-    entry per calendar day). The grid covers the rolling six months ending
-    today: columns are ISO weeks (Mon-Sun, top to bottom); every day in the
-    window gets a cell, and days with no snapshot render as an empty box
-    (heat-0) instead of being skipped.
+    entry per calendar day). The grid auto-fits the archive span: it starts at
+    the Monday of the week containing the first archived day and runs through
+    today, so the chart shows the actual active period instead of a fixed
+    six-month window. Days with no snapshot render as an empty box (heat-0).
     """
-    from datetime import date, timedelta
+    from datetime import timedelta
 
     if not daily:
         return ""
@@ -85,13 +85,10 @@ def render_heatmap_svg(daily: list[dict]) -> str:
     total = sum(counts.values())
 
     today = today_utc()
-    months = today.year * 12 + today.month - 6
-    start_year, start_month0 = divmod(months - 1, 12)
-    start_month = start_month0 + 1
-    anchor = date(start_year, start_month, 1)
-    # Begin the grid on the first Monday of the anchor month so no cells from
-    # the previous month leak in and every column is a full Mon-Sun week.
-    monday = anchor + timedelta(days=(7 - anchor.weekday()) % 7)
+    first_day = min(counts)
+    # Begin on the Monday of the week containing the first archived day so the
+    # first column holds that day and no fully-empty leading column leaks in.
+    monday = first_day - timedelta(days=first_day.weekday())
     n_weeks = ((today - monday).days // 7) + 1
 
     cell, gap = 16, 4
@@ -115,7 +112,7 @@ def render_heatmap_svg(daily: list[dict]) -> str:
     parts.append(
         f'<svg class="trend-chart heatmap" width="{width}" height="{height}" '
         f'viewBox="0 0 {width} {height}" role="img" aria-label="Stories per day, '
-        f'{total} total across the last six months" '
+        f'{total} total from {monday.isoformat()} to {today.isoformat()}" '
         f'xmlns="http://www.w3.org/2000/svg">'
     )
     # Weekday labels along the left edge (Mon / Wed / Fri).
@@ -312,21 +309,45 @@ self.addEventListener("fetch", (event) => {{
 """
 
 
-def walk_site_urls(out_dir: Path) -> list[str]:
+def walk_site_urls(out_dir: Path, max_bytes: int = 0) -> list[str]:
     """Relative precache URLs for every file emitted into an output dir.
 
     Directory navigation URLs (e.g. "./archive/") are added alongside their
-    index.html files so offline navigation matches cached entries.
+    index.html files so offline navigation matches cached entries. Files
+    larger than `max_bytes` (0 = unlimited) are skipped so a growing stories
+    archive cannot blow the browser's per-cache entry quota.
     """
     urls = ["./"]
     for path in sorted(out_dir.rglob("*")):
         if not path.is_file() or path.name == "sw.js":
+            continue
+        if max_bytes and path.stat().st_size > max_bytes:
             continue
         rel = path.relative_to(out_dir).as_posix()
         urls.append("./" + rel)
         if rel.endswith("/index.html"):
             urls.append("./" + rel[: -len("index.html")])
     return list(dict.fromkeys(urls))
+
+
+def render_robots(base_url: str) -> str:
+    """Robots.txt: allow all crawlers, point to the sitemap."""
+    return f"User-agent: *\nAllow: /\nSitemap: {base_url}/sitemap.xml\n"
+
+
+def render_sitemap(base_url: str, snapshots: list) -> str:
+    """XML sitemap listing every public page (home, sections, snapshots)."""
+    urls = [f"{base_url}/", f"{base_url}/archive/", f"{base_url}/stats/"]
+    urls += [f"{base_url}/sources/", f"{base_url}/api/"]
+    for snap in snapshots:
+        urls.append(f"{base_url}/archive/{snap.source}/{snap.date.isoformat()}/")
+    entries = "\n".join(f"  <url><loc>{u}</loc></url>" for u in dict.fromkeys(urls))
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{entries}\n"
+        "</urlset>\n"
+    )
 
 
 def site_version(out_dir: Path) -> str:

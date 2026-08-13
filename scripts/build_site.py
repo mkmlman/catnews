@@ -15,9 +15,11 @@ from app.render import (
     render_manifest,
     render_markdown,
     render_page,
+    render_robots,
     render_rss,
     render_search_index,
     render_service_worker,
+    render_sitemap,
     site_version,
     walk_site_urls,
 )
@@ -113,7 +115,7 @@ def build_site(
                 label=SOURCES[snap.source]["label"],
             ),
         )
-    trends = weekly_trends(data_dir)
+    trends = weekly_trends(data_dir, snapshots)
     write(
         out_dir / "stats" / "index.html",
         render_page(
@@ -121,13 +123,13 @@ def build_site(
             base_path=base_path,
             base_url=base_url,
             page_path="/stats/",
-            stats=site_stats(data_dir),
+            stats=site_stats(data_dir, snapshots),
             trends=trends,
-            heatmap=render_heatmap_svg(daily_counts(data_dir)),
-            domains=top_domains(data_dir),
-            arxiv_categories=arxiv_category_counts(data_dir),
-            days=days_archiving(data_dir),
-            fetch_health=fetch_health(data_dir),
+            heatmap=render_heatmap_svg(daily_counts(data_dir, snapshots)),
+            domains=top_domains(data_dir, snapshots=snapshots),
+            arxiv_categories=arxiv_category_counts(data_dir, snapshots),
+            days=days_archiving(data_dir, snapshots),
+            fetch_health=fetch_health(data_dir, snapshots),
         ),
     )
     write(
@@ -183,19 +185,28 @@ def build_site(
             api / "sources" / f"{source}.json",
             snapshot.model_dump_json(),
         )
-    write(api / "stats.json", site_stats(data_dir).model_dump_json())
+    write(api / "stats.json", site_stats(data_dir, snapshots).model_dump_json())
     write(
         api / "trends.json",
-        render_json(weekly_trends(data_dir)),
+        render_json(weekly_trends(data_dir, snapshots)),
     )
     write(api / "fetch-status.json", render_fetch_status(fetch_status(data_dir)))
 
+    # SEO: robots.txt + sitemap.xml
+    write(out_dir / "robots.txt", render_robots(base_url))
+    write(out_dir / "sitemap.xml", render_sitemap(base_url, snapshots))
+
     # PWA: manifest + service worker with full offline precache (written last
-    # so walk_site_urls sees every emitted file)
+    # so walk_site_urls sees every emitted file). stories.json is excluded from
+    # precache once it gets large (it grows with the whole archive) while
+    # search.json stays cached for offline lookup.
     write(out_dir / "manifest.json", render_manifest())
     write(
         out_dir / "sw.js",
-        render_service_worker(walk_site_urls(out_dir), version=site_version(out_dir)),
+        render_service_worker(
+            walk_site_urls(out_dir, max_bytes=2_000_000),
+            version=site_version(out_dir),
+        ),
     )
 
     print(
