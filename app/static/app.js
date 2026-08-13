@@ -155,6 +155,27 @@
   }
 
   /* -------------------------------------------------------------
+     Back to top
+     ------------------------------------------------------------- */
+  var toTopBtn = document.getElementById("to-top");
+
+  function paintToTop() {
+    if (!toTopBtn) return;
+    var show = window.scrollY > 480;
+    toTopBtn.hidden = !show;
+    toTopBtn.classList.toggle("is-visible", show);
+  }
+
+  if (toTopBtn) {
+    window.addEventListener("scroll", paintToTop, { passive: true });
+    window.addEventListener("resize", paintToTop);
+    toTopBtn.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    paintToTop();
+  }
+
+  /* -------------------------------------------------------------
      Story cards: read/saved state
      ------------------------------------------------------------- */
   var cards = Array.from(document.querySelectorAll(".story"));

@@ -352,6 +352,38 @@ main:focus { outline: none; }
 .install-dialog-close:hover { background: var(--accent-deep); }
 
 /* --------------------------------------------------------------------------
+   Back to top
+   -------------------------------------------------------------------------- */
+.to-top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(35, 36, 31, 0.1);
+}
+.to-top.is-visible { opacity: 1; transform: none; }
+.to-top[hidden] { display: none; }
+.to-top svg { display: block; }
+.to-top:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 4px 14px rgba(35, 36, 31, 0.14);
+}
+
+/* --------------------------------------------------------------------------
    Hero / edition header
    -------------------------------------------------------------------------- */
 .hero {
@@ -1884,6 +1916,7 @@ main:focus { outline: none; }
   .ds-space-table .ds-bar { display: none; }
   .ds-decision { font-size: 0.84rem; }
   .ds-task { white-space: normal; }
+  .to-top { right: 14px; bottom: 14px; width: 38px; height: 38px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
