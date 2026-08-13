@@ -593,7 +593,7 @@ main:focus { outline: none; }
 }
 
 .story-foot {
-  margin-top: 0;
+  margin-top: auto;
   padding-top: 12px;
   display: flex;
   align-items: center;

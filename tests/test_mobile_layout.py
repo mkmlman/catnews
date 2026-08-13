@@ -163,9 +163,12 @@ def test_story_cards_can_shrink_without_mobile_overflow():
     assert "min-width: 0" in CSS
 
 
-def test_story_actions_follow_metadata_without_stretching_cards():
+def test_story_actions_pin_to_bottom_for_uniform_alignment():
+    # Regression: "Read"/"Discuss" drifted at the bottom of each card because
+    # the action row sat directly under content. It must pin to the card's
+    # bottom edge so the actions align uniformly across grid tiles.
     assert ".story-foot" in CSS
-    assert "margin-top: 0" in CSS
+    assert "margin-top: auto" in CSS
 
 
 def test_stats_has_accessible_trends_table():
