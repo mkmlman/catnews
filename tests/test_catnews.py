@@ -990,6 +990,35 @@ def test_weekly_trends_buckets_by_iso_week(tmp_path):
     assert trends[1]["start"] == date(2026, 8, 10)
 
 
+def test_daily_counts_zero_fills_gaps(tmp_path):
+    from app.store import daily_counts
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 10),
+            stories=[
+                Story(source="hn", title="A", url="https://a"),
+                Story(source="hn", title="B", url="https://b"),
+            ],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 12),
+            stories=[Story(source="arxiv", title="P", url="https://arxiv.org/abs/1")],
+        ),
+        tmp_path,
+    )
+    daily = daily_counts(tmp_path)
+    assert len(daily) == 3  # 8/10, 8/11, 8/12
+    assert daily[0] == {"date": date(2026, 8, 10), "count": 2}
+    assert daily[1] == {"date": date(2026, 8, 11), "count": 0}
+    assert daily[2] == {"date": date(2026, 8, 12), "count": 1}
+
+
 def test_top_domains_and_arxiv_categories(tmp_path):
     save_snapshot(
         SourceSnapshot(
@@ -1085,16 +1114,16 @@ def test_stats_page_and_trends_endpoint(client, tmp_path):
     )
 
     page = client.get("/stats/").text
-    assert "Stories per week" in page
-    assert 'class="trend-chart"' in page
-    assert "<summary>More detail</summary>" in page
+    assert "Stories per day" in page
+    assert 'class="trend-chart heatmap"' in page
+    assert 'class="heat heat-' in page
+    assert "View weekly data table" in page
     assert "Top domains" in page
     assert "arxiv.org" in page
     assert "arXiv categories" in page
     assert "cs.LG" in page
     assert "Fetch health" in page
     assert "Days archiving" in page
-    assert "View data table" in page
     assert "stat-table--trends" in page
 
     trends = client.get("/api/trends.json").json()

@@ -62,17 +62,21 @@
   </table>
 </section>
 
-{% if trends %}
+{% if heatmap %}
 <section class="stat-section">
-  <h2>Stories per week</h2>
-  <div class="trend-chart-wrap">{{ trends_chart | safe }}
-    <div class="trend-legend">
-      {% for source in source_labels %}
-      <span class="trend-legend-item"><span class="trend-legend-swatch" style="background: var(--badge-{{ source }}-bg);"></span>{{ source_tags[source] }}</span>
-      {% endfor %}
+  <h2>Stories per day</h2>
+  <div class="trend-chart-wrap">{{ heatmap | safe }}
+    <div class="trend-legend heatmap-legend">
+      <span class="trend-legend-item">Less</span>
+      <span class="heatmap-swatch"></span>
+      <span class="heatmap-swatch heat-swatch-1"></span>
+      <span class="heatmap-swatch heat-swatch-2"></span>
+      <span class="heatmap-swatch heat-swatch-3"></span>
+      <span class="heatmap-swatch heat-swatch-4"></span>
+      <span class="trend-legend-item">More</span>
     </div>
     <details class="stat-details stat-trends-data">
-      <summary>View data table</summary>
+      <summary>View weekly data table</summary>
       <div class="stat-detail-block stat-trends-table-wrap">
         <table class="stat-table stat-table--trends">
           <caption class="sr-only">Stories per week by source</caption>

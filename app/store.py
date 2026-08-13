@@ -327,6 +327,31 @@ def weekly_trends(data_dir: Path) -> list[dict]:
     return rows
 
 
+def daily_counts(data_dir: Path) -> list[dict]:
+    """Total story counts per calendar day, zero-filled across the archive span.
+
+    Returns a list of dicts (oldest first), one per day from the first to the
+    last snapshot date: {"date": date, "count": int}. Days with no snapshots
+    are included with a count of 0 so the stats heatmap shows gaps.
+    """
+    from collections import defaultdict
+    from datetime import timedelta
+
+    counts: dict[date, int] = defaultdict(int)
+    for snap in load_all_snapshots(data_dir):
+        counts[snap.date] += len(snap.stories)
+    if not counts:
+        return []
+    first = min(counts)
+    last = max(counts)
+    rows: list[dict] = []
+    day = first
+    while day <= last:
+        rows.append({"date": day, "count": counts[day]})
+        day += timedelta(days=1)
+    return rows
+
+
 def top_domains(data_dir: Path, limit: int = 10) -> list[tuple[str, int]]:
     """Most common story URL hostnames across all archived snapshots."""
     from collections import Counter

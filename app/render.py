@@ -59,68 +59,83 @@ def render_page(
     )
 
 
-def render_trend_svg(trends: list[dict], source_keys: list[str]) -> str:
-    """Inline SVG bar chart of stories per week, one bar group per source.
+def render_heatmap_svg(daily: list[dict]) -> str:
+    """Inline SVG contribution-style heatmap of daily story counts.
 
-    `trends` is the list of dicts from store.weekly_trends; `source_keys` the
-    ordered source keys. Colors come from the badge palette (--badge-{key}-bg
-    as fill so light/dark themes both read well).
+    `daily` is the list of dicts from store.daily_counts (oldest first, one
+    entry per calendar day). Columns are ISO weeks (Mon-Sun, top to bottom);
+    each cell is a day, shaded by total story count via the `heat-N` CSS
+    classes so light/dark themes both read well.
     """
-    if not trends:
+    from datetime import timedelta
+
+    if not daily:
         return ""
-    width, height = 640, 220
-    pad_l, pad_r, pad_t, pad_b = 36, 12, 16, 34
-    plot_w = width - pad_l - pad_r
-    plot_h = height - pad_t - pad_b
 
-    n_weeks = len(trends)
-    n_sources = len(source_keys)
-    max_total = max((c for t in trends for c in t["counts"].values()), default=1) or 1
+    first = daily[0]["date"]
+    last = daily[-1]["date"]
+    # Align to the Monday on or before the first day so columns are full weeks.
+    monday = first - timedelta(days=first.weekday())
+    n_weeks = ((last - monday).days // 7) + 1
+    counts = {row["date"]: row["count"] for row in daily}
+    max_count = max(counts.values(), default=0) or 1
 
-    group_gap = 24
-    group_w = (plot_w - group_gap * (n_weeks - 1)) / n_weeks
-    bar_gap = 3
-    bar_w = (group_w - bar_gap * (n_sources - 1)) / n_sources
+    cell, gap = 12, 3
+    pad_l, pad_r, pad_t, pad_b = 34, 12, 20, 6
+    width = pad_l + pad_r + n_weeks * cell + (n_weeks - 1) * gap
+    height = pad_t + pad_b + 7 * cell + 6 * gap
 
-    def y(v: int) -> float:
-        return pad_t + plot_h - (plot_h * v / max_total)
+    def shade(count: int) -> int:
+        if count <= 0:
+            return 0
+        ratio = count / max_count
+        if ratio > 0.75:
+            return 4
+        if ratio > 0.5:
+            return 3
+        if ratio > 0.25:
+            return 2
+        return 1
 
     parts: list[str] = []
+    total = sum(counts.values())
     parts.append(
-        f'<svg class="trend-chart" viewBox="0 0 {width} {height}" role="img" '
-        f'aria-label="Stories per week by source" xmlns="http://www.w3.org/2000/svg">'
+        f'<svg class="trend-chart heatmap" viewBox="0 0 {width} {height}" '
+        f'role="img" aria-label="Stories per day, {total} total over '
+        f'{(last - first).days + 1} days" xmlns="http://www.w3.org/2000/svg">'
     )
-    # horizontal gridlines + y labels
-    for i in range(5):
-        gy = pad_t + plot_h * i / 4
-        val = int(max_total * (1 - i / 4))
+    # Weekday labels along the left edge (Mon / Wed / Fri).
+    for wd, label in ((0, "Mon"), (2, "Wed"), (4, "Fri")):
+        y = pad_t + wd * (cell + gap) + cell / 2
         parts.append(
-            f'<line x1="{pad_l}" y1="{gy:.1f}" x2="{width - pad_r}" '
-            f'y2="{gy:.1f}" class="trend-chart-grid"/>'
+            f'<text x="{pad_l - 6}" y="{y + 3:.1f}" text-anchor="end" '
+            f'class="heatmap-day">{label}</text>'
         )
-        parts.append(
-            f'<text x="{pad_l - 6}" y="{gy + 3:.1f}" text-anchor="end" '
-            f'class="trend-chart-y">{val}</text>'
-        )
-    # bars (every source drawn so groups align across weeks)
-    for wi, week in enumerate(trends):
-        x0 = pad_l + wi * (group_w + group_gap)
-        for si, key in enumerate(source_keys):
-            val = week["counts"].get(key, 0)
-            bx = x0 + si * (bar_w + bar_gap)
-            by = y(val)
+    # Month labels above the first column of each month.
+    prev_month = None
+    for wi in range(n_weeks):
+        col_monday = monday + timedelta(days=wi * 7)
+        if col_monday.month != prev_month:
+            x = pad_l + wi * (cell + gap) + cell / 2
             parts.append(
-                f'<rect x="{bx:.1f}" y="{by:.1f}" width="{bar_w:.1f}" '
-                f'height="{pad_t + plot_h - by:.1f}" class="trend-chart-bar" '
-                f'fill="var(--badge-{key}-bg)" data-source="{key}"'
-                f"{' opacity="0.25"' if not val else ''}/>"
+                f'<text x="{x:.1f}" y="{pad_t - 6}" text-anchor="middle" '
+                f'class="heatmap-month">{col_monday.strftime("%b")}</text>'
             )
-        # week label
-        wx = x0 + group_w / 2
-        parts.append(
-            f'<text x="{wx:.1f}" y="{height - 12}" text-anchor="middle" '
-            f'class="trend-chart-x">{week["start"].strftime("%b %d")}</text>'
-        )
+            prev_month = col_monday.month
+    for wi in range(n_weeks):
+        for wd in range(7):
+            day = monday + timedelta(days=wi * 7 + wd)
+            if day < first or day > last:
+                continue
+            count = counts.get(day, 0)
+            x = pad_l + wi * (cell + gap)
+            y = pad_t + wd * (cell + gap)
+            parts.append(
+                f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" '
+                f'class="heat heat-{shade(count)}" data-date="{day.isoformat()}">'
+                f"<title>{day.isoformat()} · {count} "
+                f"{'story' if count == 1 else 'stories'}</title></rect>"
+            )
     parts.append("</svg>")
     return "\n".join(parts)
 

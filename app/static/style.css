@@ -1161,9 +1161,14 @@ main:focus { outline: none; }
 }
 .trend-chart { width: 100%; height: auto; display: block; }
 .trend-chart text { fill: var(--faint); font-family: var(--mono); font-size: 10px; }
-.trend-chart-grid { stroke: var(--line); stroke-width: 1; }
-.trend-chart-bar { opacity: 0.85; }
-.trend-chart-bar:hover { opacity: 1; }
+.heatmap-day { font-size: 9px !important; }
+.heat { stroke: color-mix(in srgb, var(--line) 55%, transparent); }
+.heat:hover { stroke: var(--accent); }
+.heat-0 { fill: var(--paper-deep); }
+.heat-1 { fill: color-mix(in srgb, var(--accent) 22%, var(--card)); }
+.heat-2 { fill: color-mix(in srgb, var(--accent) 45%, var(--card)); }
+.heat-3 { fill: color-mix(in srgb, var(--accent) 70%, var(--card)); }
+.heat-4 { fill: var(--accent); }
 .trend-legend {
   display: flex;
   flex-wrap: wrap;
@@ -1172,6 +1177,18 @@ main:focus { outline: none; }
   padding-top: 10px;
   border-top: 1px solid var(--line);
 }
+.heatmap-legend { align-items: center; }
+.heatmap-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+  background: var(--paper-deep);
+}
+.heatmap-swatch.heat-swatch-1 { background: color-mix(in srgb, var(--accent) 22%, var(--card)); }
+.heatmap-swatch.heat-swatch-2 { background: color-mix(in srgb, var(--accent) 45%, var(--card)); }
+.heatmap-swatch.heat-swatch-3 { background: color-mix(in srgb, var(--accent) 70%, var(--card)); }
+.heatmap-swatch.heat-swatch-4 { background: var(--accent); }
 .trend-legend-item {
   display: inline-flex;
   align-items: center;

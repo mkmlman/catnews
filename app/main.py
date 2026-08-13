@@ -17,17 +17,18 @@ from .config import BASE_PATH, BASE_URL, DATA_DIR, SOURCES, today_utc
 from .models import Digest, SourceSnapshot, Story
 from .render import (
     live_site_urls,
+    render_heatmap_svg,
     render_manifest,
     render_markdown,
     render_page,
     render_rss,
     render_service_worker,
-    render_trend_svg,
     search_index,
 )
 from .store import (
     arxiv_category_counts,
     combined_digest,
+    daily_counts,
     days_archiving,
     fetch_health,
     fetch_status,
@@ -122,7 +123,7 @@ def stats(request: Request) -> HTMLResponse:
         "/stats/",
         stats=site_stats(DATA_DIR),
         trends=trends,
-        trends_chart=render_trend_svg(trends, list(SOURCES)),
+        heatmap=render_heatmap_svg(daily_counts(DATA_DIR)),
         domains=top_domains(DATA_DIR),
         arxiv_categories=arxiv_category_counts(DATA_DIR),
         days=days_archiving(DATA_DIR),

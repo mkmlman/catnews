@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from app.config import SOURCES
 from app.render import (
     render_fetch_status,
+    render_heatmap_svg,
     render_json,
     render_manifest,
     render_markdown,
@@ -17,13 +18,13 @@ from app.render import (
     render_rss,
     render_search_index,
     render_service_worker,
-    render_trend_svg,
     site_version,
     walk_site_urls,
 )
 from app.store import (
     arxiv_category_counts,
     combined_digest,
+    daily_counts,
     days_archiving,
     fetch_health,
     fetch_status,
@@ -122,7 +123,7 @@ def build_site(
             page_path="/stats/",
             stats=site_stats(data_dir),
             trends=trends,
-            trends_chart=render_trend_svg(trends, list(SOURCES)),
+            heatmap=render_heatmap_svg(daily_counts(data_dir)),
             domains=top_domains(data_dir),
             arxiv_categories=arxiv_category_counts(data_dir),
             days=days_archiving(data_dir),
