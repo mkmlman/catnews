@@ -27,6 +27,7 @@
   --mono: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
 
   --maxw: 1120px;
+  --radius: 12px;
   --label-xs: 0.64rem;
   --label-sm: 0.72rem;
   --label-md: 0.8rem;
@@ -54,7 +55,10 @@
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 92px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
 
 .stat-card,
 .endpoint-code,
@@ -124,6 +128,31 @@ a:focus-visible, button:focus-visible {
 .skip-link:focus { transform: translateY(0); color: var(--card); }
 main:focus { outline: none; }
 ::selection { background: var(--accent); color: var(--paper); }
+
+/* Warm, quiet scrollbars */
+:root { color-scheme: light; }
+@media (min-width: 560px) {
+  * { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--line-strong) 85%, var(--ink)) transparent; }
+  *::-webkit-scrollbar { width: 10px; height: 10px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--line-strong) 85%, var(--ink));
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--muted) 80%, var(--ink));
+    background-clip: content-box;
+  }
+}
+
+/* Native form controls pick up the ink-blue accent */
+input[type="checkbox"],
+input[type="radio"],
+select {
+  accent-color: var(--accent);
+}
 
 /* Fonts — self-hosted */
 @font-face {
@@ -244,20 +273,25 @@ main:focus { outline: none; }
   border-bottom-color: transparent;
 }
 .theme-toggle {
-  font-family: var(--mono);
-  font-size: 0.95rem;
-  line-height: 1;
-  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   border: 1px solid var(--line-strong);
   border-radius: 999px;
   background: transparent;
   color: var(--muted);
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+  transition: color 0.15s, border-color 0.15s, background-color 0.15s, transform 0.15s ease;
 }
+.theme-toggle svg { display: block; }
 .theme-toggle:hover {
   color: var(--accent);
   border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  transform: rotate(14deg);
 }
 .install-btn {
   display: inline-flex;
@@ -404,6 +438,7 @@ main:focus { outline: none; }
   font-size: 0.9rem;
   font-style: italic;
   margin: 0;
+  text-wrap: balance;
 }
 .hero::after {
   content: "";
@@ -444,11 +479,14 @@ main:focus { outline: none; }
   align-items: center;
   justify-content: space-between;
   gap: 12px 26px;
-  padding: 18px 0;
-  margin-bottom: 10px;
-  background: transparent;
+  padding: 14px 18px;
+  margin: 0 -6px 12px;
+  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--paper) 62%, transparent);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 .filter-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .filter-scroll { position: relative; min-width: 0; flex: 1 1 auto; }
@@ -609,6 +647,7 @@ main:focus { outline: none; }
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
 }
 .story-by {
   color: var(--muted);
@@ -715,6 +754,7 @@ main:focus { outline: none; }
 
 .story.is-read { opacity: 0.55; }
 .story.is-read .story-title a { color: var(--muted); }
+.story.is-read .story-title a:hover { color: var(--accent); text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent); }
 .story.is-read .save-toggle { opacity: 0.9; }
 
 .story.is-selected {
@@ -901,6 +941,7 @@ main:focus { outline: none; }
   font-size: 2.4rem;
   letter-spacing: -0.02em;
   margin: 18px 0 6px;
+  text-wrap: balance;
 }
 .page-header::after {
   content: "";
@@ -928,10 +969,18 @@ main:focus { outline: none; }
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 12px 0;
+  padding: 12px 10px;
   border-bottom: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 0 -10px;
+  transition: background-color 0.18s, border-color 0.18s;
 }
 .archive-list li:last-child { border-bottom: none; }
+.archive-list li:hover {
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.archive-list li:hover .archive-day { color: var(--accent); }
 .archive-list a { display: flex; align-items: baseline; gap: 10px; color: var(--ink); }
 .archive-date {
   font-family: var(--serif);
@@ -1010,8 +1059,13 @@ main:focus { outline: none; }
   padding: 22px 18px 20px;
   text-align: center;
   overflow: hidden;
-  transition: background-color 0.18s, border-color 0.18s;
+  transition: background-color 0.18s, border-color 0.18s, transform 0.18s ease;
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
+.stat-grid .stat-card:nth-child(2) { animation-delay: 0.05s; }
+.stat-grid .stat-card:nth-child(3) { animation-delay: 0.1s; }
+.stat-grid .stat-card:nth-child(4) { animation-delay: 0.15s; }
+.stat-grid .stat-card:nth-child(n + 5) { animation-delay: 0.2s; }
 .stat-card::before {
   content: "";
   position: absolute;
@@ -1027,6 +1081,7 @@ main:focus { outline: none; }
 .stat-card:hover {
   background: color-mix(in srgb, var(--accent) 6%, transparent);
   border-color: color-mix(in srgb, var(--accent) 18%, transparent);
+  transform: translateY(-2px);
 }
 .stat-card:hover::before { opacity: 1; }
 .stat-label {
@@ -1911,6 +1966,7 @@ main:focus { outline: none; }
   .share-bar { display: none; }
 
   .filter-scroll { width: 100%; overflow: hidden; }
+  .filters { padding: 12px 10px; margin: 0 -4px 10px; }
   .filter-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .filter-row::-webkit-scrollbar { display: none; }
   .filter-row--sources { padding-right: 54px; }
