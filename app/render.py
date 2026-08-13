@@ -147,11 +147,19 @@ def render_heatmap_svg(daily: list[dict]) -> str:
             )
             x = pad_l + wi * (cell + gap)
             y = pad_t + wd * (cell + gap)
-            parts.append(
+            rect = (
                 f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" '
                 f'class="heat heat-{shade(count)}" data-date="{day.isoformat()}">'
                 f"<title>{day.isoformat()}{total_txt}</title></rect>"
             )
+            if count:
+                text_class = "heat-count-in" if shade(count) <= 2 else "heat-count"
+                rect += (
+                    f'<text class="{text_class}" x="{x + cell / 2}" '
+                    f'y="{y + cell / 2}" text-anchor="middle" dominant-baseline="central">'
+                    f"{count}</text>"
+                )
+            parts.append(rect)
     parts.append("</svg>")
     return "\n".join(parts)
 

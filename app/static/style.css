@@ -1163,6 +1163,21 @@ main:focus { outline: none; }
 .trend-chart.heatmap { width: auto; max-width: 100%; margin: 0 auto; }
 .trend-chart text { fill: var(--faint); font-family: var(--mono); font-size: 10px; }
 .heatmap-day { font-size: 9px !important; }
+.heatmap .heat-count {
+  fill: var(--card);
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  pointer-events: none;
+  text-shadow: 0 1px 1px rgba(35, 36, 31, 0.35);
+}
+.heatmap .heat-count-in {
+  fill: var(--accent-deep);
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  pointer-events: none;
+}
 .heat { stroke: color-mix(in srgb, var(--line) 55%, transparent); }
 .heat:hover { stroke: var(--accent); }
 .heat-0 { fill: var(--paper-deep); }
