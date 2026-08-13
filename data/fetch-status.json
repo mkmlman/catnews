@@ -1,0 +1,25 @@
+{
+  "date": "2026-08-13",
+  "sources": {
+    "hn": {
+      "state": "ok",
+      "snapshot_date": "2026-08-13",
+      "stories": 25
+    },
+    "github": {
+      "state": "ok",
+      "snapshot_date": "2026-08-13",
+      "stories": 15
+    },
+    "arxiv": {
+      "state": "skipped",
+      "snapshot_date": "2026-08-10",
+      "stories": 15
+    },
+    "registerspill": {
+      "state": "skipped",
+      "snapshot_date": "2026-08-10",
+      "stories": 10
+    }
+  }
+}
