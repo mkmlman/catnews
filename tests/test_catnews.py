@@ -841,7 +841,11 @@ def test_story_previews_are_not_rendered_on_cards(client, tmp_path):
                     title="Joy & Curiosity #94",
                     url="https://registerspill.thorstenball.com/p/joy-and-curiosity-94",
                     links=[
-                        CuratedLink(title="What I Want to Tell You About Orbs", url="https://ampcode.com/notes/what-i-want-to-tell-you-about-orbs", site="ampcode.com"),
+                        CuratedLink(
+                            title="What I Want to Tell You About Orbs",
+                            url="https://ampcode.com/notes/what-i-want-to-tell-you-about-orbs",
+                            site="ampcode.com",
+                        ),
                     ],
                 )
             ],

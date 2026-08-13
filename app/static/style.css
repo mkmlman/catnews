@@ -459,6 +459,15 @@ main:focus { outline: none; }
   gap: 6px;
   flex-shrink: 0;
 }
+.view-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 8px 0 2px;
+  border-right: 1px solid var(--line);
+  margin-right: 2px;
+}
+.view-toggle .chip { padding: 5px 8px; gap: 0; }
 
 /* --------------------------------------------------------------------------
    Stories
@@ -476,6 +485,25 @@ main:focus { outline: none; }
   font-style: italic;
   padding: 70px 0;
 }
+.stories.view-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 0 8px;
+}
+.stories.view-list .story {
+  padding: 24px 2px;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  animation: none;
+  transition: border-color 0.18s;
+}
+.stories.view-list .story:hover {
+  border-top-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+}
+.stories.view-list .story:hover .story-title a { color: var(--accent-deep); }
 .story {
   position: relative;
   display: flex;

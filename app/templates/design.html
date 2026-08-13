@@ -215,6 +215,10 @@
         <button class="chip" type="button">{{ tag }}</button>
         {% endfor %}
         <span class="filter-actions">
+          <span class="view-toggle" role="group" aria-label="Story layout">
+            <button class="chip view-btn is-active" type="button" aria-label="Card grid view" title="Card grid view">{% include "view-grid-icon.html" %}</button>
+            <button class="chip view-btn" type="button" aria-label="Editorial list view" title="Editorial list view">{% include "view-list-icon.html" %}</button>
+          </span>
           <label class="hide-read" title="Hide read">
             <input type="checkbox" aria-label="Hide read">
             {% include "hide-read-icon.html" %}

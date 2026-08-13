@@ -29,6 +29,14 @@
       <button class="chip" type="button" data-source="{{ key }}" aria-pressed="false" aria-controls="stories">{{ tag }}</button>
       {% endfor %}
       <span class="filter-actions">
+        <span class="view-toggle" role="group" aria-label="Story layout">
+          <button class="chip view-btn view-btn--grid is-active" type="button" data-view="grid" aria-pressed="true" aria-label="Card grid view" title="Card grid view">
+            {% include "view-grid-icon.html" %}
+          </button>
+          <button class="chip view-btn view-btn--list" type="button" data-view="list" aria-pressed="false" aria-label="Editorial list view" title="Editorial list view">
+            {% include "view-list-icon.html" %}
+          </button>
+        </span>
         <label class="hide-read" title="Hide read">
           <input type="checkbox" id="hide-read" aria-label="Hide read">
           {% include "hide-read-icon.html" %}

@@ -8,6 +8,7 @@
   var SAVED_KEY = "catnews:saved";
   var READ_KEY = "catnews:read";
   var FILTER_KEY = "catnews:filters";
+  var VIEW_KEY = "catnews:view";
 
   function loadSet(key) {
     try {
@@ -236,13 +237,20 @@
   var exportSavedBtn = document.getElementById("export-saved");
   var sourceFilterRow = document.querySelector(".filter-row--sources");
   var filterScrollCue = document.querySelector(".filter-scroll-cue");
+  var storiesEl = document.getElementById("stories");
+  var viewBtns = filtersEl && filtersEl.querySelectorAll(".view-btn");
   var PAGE_SIZE = 12;
   var filterPrefs = loadObject(FILTER_KEY);
   var preferredSource = filterPrefs.source;
+  var viewPref = null;
+  try {
+    viewPref = localStorage.getItem(VIEW_KEY);
+  } catch (e) {}
   var state = {
     source: preferredSource === "All" || CFG.sourceTags[preferredSource] ? preferredSource : "All",
     savedOnly: filterPrefs.savedOnly === true,
     loaded: PAGE_SIZE,
+    view: viewPref === "list" ? "list" : "grid",
   };
 
   function persistFilterState() {
@@ -295,6 +303,17 @@
     });
   }
 
+  function paintView() {
+    if (storiesEl) storiesEl.classList.toggle("view-list", state.view === "list");
+    if (viewBtns) {
+      viewBtns.forEach(function (btn) {
+        var active = btn.getAttribute("data-view") === state.view;
+        btn.classList.toggle("is-active", active);
+        btn.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
+  }
+
   function updateCounts() {
     var savedChip = filtersEl && filtersEl.querySelector('[data-saved="saved"]');
     var countEl = savedChip && savedChip.querySelector(".chip-count");
@@ -318,6 +337,12 @@
       } else if (chip.dataset.saved !== undefined) {
         state.savedOnly = !state.savedOnly;
         if (state.savedOnly) state.source = "All";
+      } else if (chip.dataset.view !== undefined) {
+        state.view = chip.dataset.view;
+        try {
+          localStorage.setItem(VIEW_KEY, state.view);
+        } catch (e) {}
+        paintView();
       }
       setActiveChips();
       persistFilterState();
@@ -338,6 +363,7 @@
     updateCounts();
     setActiveChips();
     applyFilters();
+    paintView();
   }
 
   function updateFilterScrollCue() {
