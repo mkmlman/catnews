@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import re
 from datetime import UTC, date, datetime
+from pathlib import Path
 from types import SimpleNamespace
 
 import httpx
@@ -656,6 +657,31 @@ def test_badge_css_covers_every_source():
         assert f".badge-{key} {{" in css
         assert f"--badge-{key}:" in css
     assert '[data-theme="dark"]' in css
+    assert '[data-theme="pitch"]' in css
+
+
+def test_theme_cycle_includes_pitch_black():
+    from app.config import badge_css
+
+    css = badge_css()
+    assert '[data-theme="dark"], [data-theme="pitch"]' in css
+
+
+def test_css_defines_pitch_black_palette():
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    assert '[data-theme="pitch"]' in css
+    assert "--paper: #000000;" in css
+
+
+def test_base_theme_toggle_cycles_three_states():
+    base = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
+    ).read_text()
+    assert '["light", "dark", "pitch"]' in base
+    assert "theme-color-meta" in base
+    assert 'meta.content = next === "pitch" ? "#000000"' in base
 
 
 def test_get_fetcher_rss_and_api():

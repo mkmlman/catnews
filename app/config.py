@@ -212,7 +212,7 @@ def badge_color(key: str) -> tuple[str, str, str, str]:
 def badge_css() -> str:
     """CSS custom-property + class rules for every source badge (light & dark)."""
     light: list[str] = [":root {"]
-    dark: list[str] = ['[data-theme="dark"] {']
+    dark: list[str] = ['[data-theme="dark"], [data-theme="pitch"] {']
     rules: list[str] = []
     for key in SOURCES:
         fg, bg, dark_fg, dark_bg = badge_color(key)

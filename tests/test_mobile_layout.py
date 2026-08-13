@@ -130,7 +130,7 @@ def test_theme_and_install_controls_have_accessible_state_management():
     base = (APP_DIR / "templates" / "base.html").read_text()
     app_js = (APP_DIR / "static" / "app.js").read_text()
     assert 'aria-describedby="install-dialog-description"' in base
-    assert 'Switch to " + next + " theme' in base
+    assert 'Switch to " + labels[next] + " theme' in base
     assert 'event.key === "Escape"' in app_js
     assert 'event.key !== "Tab"' in app_js
     assert "lastFocusedElement.focus()" in app_js
