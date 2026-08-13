@@ -654,4 +654,60 @@
   if (exportSavedBtn) {
     exportSavedBtn.addEventListener("click", downloadSavedDigest);
   }
+
+  /* -------------------------------------------------------------
+     Heatmap tooltip (GitHub-style) on the stats page
+     ------------------------------------------------------------- */
+  var heatTip = document.getElementById("heat-tip");
+  var heatTipShown = false;
+
+  var HEAT_MONTHS = [
+    "January", "February", "March", "April", "May", "June", "July",
+    "August", "September", "October", "November", "December",
+  ];
+
+  function heatTipText(dateStr, count) {
+    var parts = dateStr.split("-");
+    var label = HEAT_MONTHS[Number(parts[1]) - 1] + " " + Number(parts[2]) + ", " + parts[0];
+    if (count > 0) {
+      return count + " " + (count === 1 ? "story" : "stories") + " on " + label;
+    }
+    return "No data on " + label;
+  }
+
+  function showHeatTip(cell) {
+    var svg = cell.ownerSVGElement;
+    if (!svg || !heatTip) return;
+    heatTip.textContent = heatTipText(cell.getAttribute("data-date"), Number(cell.getAttribute("data-count") || 0));
+    heatTip.hidden = false;
+    heatTipShown = true;
+    var wrap = heatTip.offsetParent || svg.parentElement;
+    var wrapRect = wrap.getBoundingClientRect();
+    var cellRect = cell.getBoundingClientRect();
+    var tipRect = heatTip.getBoundingClientRect();
+    var x = cellRect.left + cellRect.width / 2 - wrapRect.left;
+    x = Math.max(tipRect.width / 2, Math.min(x, wrapRect.width - tipRect.width / 2));
+    var y = cellRect.top - wrapRect.top - tipRect.height - 8;
+    if (y < 0) y = cellRect.bottom - wrapRect.top + 8;
+    heatTip.style.transform = "translate(" + x + "px," + y + "px)";
+  }
+
+  function hideHeatTip() {
+    if (!heatTip) return;
+    heatTip.hidden = true;
+    heatTipShown = false;
+  }
+
+  var heatmap = document.querySelector(".trend-chart.heatmap");
+  if (heatmap && heatTip) {
+    heatmap.addEventListener("mouseover", function (event) {
+      var cell = event.target.closest("rect.heat");
+      if (cell) showHeatTip(cell);
+    });
+    heatmap.addEventListener("mouseout", function (event) {
+      if (event.target.closest("rect.heat")) hideHeatTip();
+    });
+    window.addEventListener("resize", hideHeatTip);
+    window.addEventListener("scroll", hideHeatTip, { passive: true });
+  }
 })();
