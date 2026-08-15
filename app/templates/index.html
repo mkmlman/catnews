@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block title %}{{ app_name }}{% endblock %}
 {% block content %}
+{% set ns = namespace(counts={}) %}
+{% for story in digest.stories %}
+{% if ns.counts.update({story.source: ns.counts.get(story.source, 0) + 1}) %}{% endif %}
+{% endfor %}
 <section class="hero">
   <h1 class="sr-only">{{ app_name }} — {{ digest.date.strftime("%B %d, %Y") }}</h1>
   <p class="edition-label">{{ digest.date.strftime("%B %d, %Y") }} · {{ editions }} snapshot{{ "s" if editions != 1 else "" }}</p>
@@ -25,9 +29,9 @@
   <div class="filter-scroll">
     <div class="filter-row filter-row--sources" role="group" aria-labelledby="source-filter-label">
       <span class="filter-label" id="source-filter-label">Source</span>
-      <button class="chip is-active" type="button" data-source="All" aria-pressed="true" aria-controls="stories">All</button>
+      <button class="chip is-active" type="button" data-source="All" aria-pressed="true" aria-controls="stories">All<span class="chip-count">{{ ns.counts.values() | sum }}</span></button>
       {% for key, tag in source_tags.items() %}
-      <button class="chip" type="button" data-source="{{ key }}" aria-pressed="false" aria-controls="stories">{{ tag }}</button>
+      <button class="chip" type="button" data-source="{{ key }}" aria-pressed="false" aria-controls="stories">{{ tag }}<span class="chip-count">{{ ns.counts.get(key, 0) }}</span></button>
       {% endfor %}
       <span class="filter-actions">
         <span class="view-toggle" role="group" aria-label="Story layout">
@@ -52,9 +56,16 @@
   </div>
 </div>
 
-<p class="no-matches" id="no-matches" hidden>No stories match the selected filters.</p>
+<div class="no-matches" id="no-matches" role="status" hidden>
+  {% include "cat-logo.html" %}
+  <p>No stories match the selected filters.</p>
+</div>
 
 <div class="stories" id="stories" aria-label="Stories">
+  {% set ns = namespace(counts={}) %}
+  {% for story in digest.stories %}
+  {% if ns.counts.update({story.source: ns.counts.get(story.source, 0) + 1}) %}{% endif %}
+  {% endfor %}
   {% for story in digest.stories %}
   {% include "_story.html" %}
   {% endfor %}

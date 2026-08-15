@@ -675,11 +675,11 @@ def test_css_defines_pitch_black_palette():
     assert "--paper: #000000;" in css
 
 
-def test_base_theme_toggle_cycles_three_states():
+def test_base_theme_toggle_cycles_through_all_states():
     base = (
         Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
     ).read_text()
-    assert '["light", "dark", "pitch"]' in base
+    assert '["light", "dark", "pitch", "auto"]' in base
     assert "theme-color-meta" in base
     assert 'meta.content = next === "pitch" ? "#000000"' in base
 

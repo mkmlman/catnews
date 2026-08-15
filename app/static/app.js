@@ -155,6 +155,31 @@
   }
 
   /* -------------------------------------------------------------
+     Sticky frosted header: measure height for the filters bar and
+     deepen the scrim once the page scrolls.
+     ------------------------------------------------------------- */
+  var headerEl = document.querySelector(".site-header");
+  var desktopMq = window.matchMedia("(min-width: 861px)");
+
+  function paintStickyOffsets() {
+    if (!headerEl) return;
+    var h = desktopMq.matches ? headerEl.offsetHeight : 0;
+    document.documentElement.style.setProperty("--header-h", h + "px");
+  }
+
+  function paintHeaderScrim() {
+    if (headerEl) headerEl.classList.toggle("is-scrolled", window.scrollY > 8);
+  }
+
+  if (headerEl) {
+    window.addEventListener("resize", paintStickyOffsets);
+    window.addEventListener("load", paintStickyOffsets);
+    window.addEventListener("scroll", paintHeaderScrim, { passive: true });
+    paintStickyOffsets();
+    paintHeaderScrim();
+  }
+
+  /* -------------------------------------------------------------
      Back to top
      ------------------------------------------------------------- */
   var toTopBtn = document.getElementById("to-top");
@@ -531,15 +556,58 @@
     });
   }
 
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return {
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+      }[c];
+    });
+  }
+
+  function markText(text, tokens) {
+    if (!text) return "";
+    var lower = text.toLowerCase();
+    var out = "";
+    var i = 0;
+    tokens.forEach(function (tk) {
+      if (!tk) return;
+      var idx = lower.indexOf(tk, i);
+      while (idx !== -1) {
+        out += escapeHtml(text.slice(i, idx));
+        out += "<mark>" + escapeHtml(text.slice(idx, idx + tk.length)) + "</mark>";
+        i = idx + tk.length;
+        idx = lower.indexOf(tk, i);
+      }
+    });
+    out += escapeHtml(text.slice(i));
+    return out;
+  }
+
+  var activeSearchIndex = -1;
+
+  function paintActiveResult() {
+    var items = searchResults.querySelectorAll("a.search-result");
+    items.forEach(function (el, i) {
+      el.classList.toggle("is-active", i === activeSearchIndex);
+      el.setAttribute("aria-selected", i === activeSearchIndex ? "true" : "false");
+    });
+    if (activeSearchIndex >= 0 && items[activeSearchIndex]) {
+      items[activeSearchIndex].scrollIntoView({ block: "nearest" });
+    }
+  }
+
   function renderResults() {
     var query = searchInput.value.trim();
     if (!query) {
       searchResults.hidden = true;
       searchInput.setAttribute("aria-expanded", "false");
+      activeSearchIndex = -1;
       return;
     }
+    var tokens = normalize(query).split(/\s+/).filter(Boolean);
     var hits = searchStories(query);
     searchResults.innerHTML = "";
+    activeSearchIndex = -1;
     if (!hits.length) {
       var none = document.createElement("div");
       none.className = "search-result search-result--none";
@@ -552,21 +620,30 @@
         a.href = story.url;
         a.target = "_blank";
         a.rel = "noopener";
+        a.setAttribute("role", "option");
         var tag = document.createElement("span");
         tag.className = "badge badge-" + (story.source || "");
         tag.textContent = CFG.sourceTags[story.source] || story.source || "";
         var text = document.createElement("span");
         text.className = "search-result-title";
-        text.textContent = story.title || "";
+        text.innerHTML = markText(story.title, tokens);
         var sub = document.createElement("span");
         sub.className = "search-result-sub";
-        sub.textContent = story.byline || story.author || "";
+        sub.innerHTML = markText(story.byline || story.author || "", tokens);
         a.appendChild(tag);
         a.appendChild(text);
         a.appendChild(sub);
+        a.addEventListener("mouseover", function () {
+          activeSearchIndex = Array.prototype.indexOf.call(
+            searchResults.children,
+            a
+          );
+          paintActiveResult();
+        });
         searchResults.appendChild(a);
       });
     }
+    paintActiveResult();
     searchResults.hidden = false;
     searchInput.setAttribute("aria-expanded", "true");
   }
@@ -579,16 +656,32 @@
     });
     searchInput.addEventListener("input", renderResults);
     searchInput.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        var first = searchResults.querySelector("a.search-result");
-        if (first) {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        var next = activeSearchIndex;
+        var count = searchResults.querySelectorAll("a.search-result").length;
+        if (!count) return;
+        activeSearchIndex = next < count - 1 ? next + 1 : 0;
+        paintActiveResult();
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        var count2 = searchResults.querySelectorAll("a.search-result").length;
+        if (!count2) return;
+        activeSearchIndex = activeSearchIndex > 0 ? activeSearchIndex - 1 : count2 - 1;
+        paintActiveResult();
+      } else if (event.key === "Enter") {
+        var active = activeSearchIndex >= 0
+          ? searchResults.children[activeSearchIndex]
+          : searchResults.querySelector("a.search-result");
+        if (active && active.tagName === "A") {
           event.preventDefault();
-          window.open(first.href, "_blank", "noopener");
+          window.open(active.href, "_blank", "noopener");
         }
       } else if (event.key === "Escape") {
         searchInput.value = "";
         searchResults.hidden = true;
         searchInput.setAttribute("aria-expanded", "false");
+        activeSearchIndex = -1;
         searchInput.blur();
       }
     });

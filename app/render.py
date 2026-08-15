@@ -66,6 +66,22 @@ def render_page(
     )
 
 
+def snapshot_nav(
+    snapshot: SourceSnapshot, snapshots: list[SourceSnapshot]
+) -> tuple[SourceSnapshot | None, SourceSnapshot | None]:
+    """Return (older, newer) sibling snapshots for the same source, by date."""
+    same = sorted(
+        (s for s in snapshots if s.source == snapshot.source),
+        key=lambda s: s.date,
+    )
+    for i, s in enumerate(same):
+        if s.date == snapshot.date:
+            prev = same[i - 1] if i > 0 else None
+            next_snap = same[i + 1] if i < len(same) - 1 else None
+            return prev, next_snap
+    return None, None
+
+
 def render_heatmap_svg(daily: list[dict]) -> str:
     """Inline SVG contribution-style heatmap of daily story counts.
 

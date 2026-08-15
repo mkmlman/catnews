@@ -41,20 +41,36 @@
   <meta name="twitter:description" content="{% block twitter_description %}{{ self.og_description() }}{% endblock %}">
   <meta name="twitter:image" content="{{ base_url }}/static/favicon-180.png">
   <link rel="stylesheet" href="{{ base_path }}/static/style.css?v={{ asset_version }}">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/fraunces-latin-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/sourceserif4-latin-normal.woff2">
   <style>{{ badge_css | safe }}</style>
   <script>
     (function () {
       var key = "catnews-theme";
       var stored = null;
       try { stored = localStorage.getItem(key); } catch (e) {}
-      var theme = stored;
-      if (theme !== "light" && theme !== "dark" && theme !== "pitch") {
-        theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      var mql = window.matchMedia("(prefers-color-scheme: dark)");
+      function resolve(t) {
+        if (t === "auto") return mql.matches ? "dark" : "light";
+        return t;
       }
-      document.documentElement.setAttribute("data-theme", theme);
-      var meta = document.getElementById("theme-color-meta");
-      if (meta) {
-        meta.content = theme === "pitch" ? "#000000" : theme === "dark" ? "#16150f" : "#f5f4ed";
+      var theme = resolve(stored);
+      if (theme !== "light" && theme !== "dark" && theme !== "pitch") {
+        theme = mql.matches ? "dark" : "light";
+      }
+      function paint() {
+        document.documentElement.setAttribute("data-theme", theme);
+        var meta = document.getElementById("theme-color-meta");
+        if (meta) {
+          meta.content = theme === "pitch" ? "#000000" : theme === "dark" ? "#16150f" : "#f5f4ed";
+        }
+      }
+      paint();
+      if (stored === "auto") {
+        mql.addEventListener("change", function (e) {
+          theme = e.matches ? "dark" : "light";
+          paint();
+        });
       }
     })();
   </script>
@@ -89,6 +105,7 @@
       {% block content %}{% endblock %}
     </main>
     <footer class="site-footer">
+      <p class="footer-brand">{% include "cat-logo.html" %}<span>{{ app_name }}</span></p>
       <nav class="footer-nav">
         <a href="{{ base_path }}/">Home</a>
         <a href="{{ base_path }}/archive/">Archive</a>
@@ -108,31 +125,49 @@
       var btn = document.getElementById("theme-toggle");
       var iconHost = document.getElementById("theme-toggle-icon");
       var root = document.documentElement;
+      var mql = window.matchMedia("(prefers-color-scheme: dark)");
       var sun = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="3.2"/><path d="M8 1.2v1.8M8 13v1.8M2.3 2.3l1.3 1.3M12.4 12.4l1.3 1.3M1.2 8H3M13 8h1.8M2.3 13.7l1.3-1.3M12.4 3.6l1.3-1.3"/></svg>';
       var moon = '<svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.6 8.9a5.9 5.9 0 0 1-6.6-6.6 5.7 5.7 0 0 0-2.2 1.7 6 6 0 1 0 8.9 8.9 5.7 5.7 0 0 0-.1-4z" opacity="0.9"/></svg>';
       var pitch = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.4"/><circle cx="8" cy="8" r="2.6" fill="currentColor" stroke="none"/></svg>';
-      var labels = { light: "light", dark: "dark", pitch: "pitch-black" };
-      var icons = { light: sun, dark: moon, pitch: pitch };
+      var auto = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 2.6a5.4 5.4 0 1 1 0 10.8 5.4 5.4 0 0 1 0-10.8z" fill="currentColor" opacity="0.5"/></svg>';
+      var labels = { light: "light", dark: "dark", pitch: "pitch-black", auto: "system" };
+      var icons = { light: sun, dark: moon, pitch: pitch, auto: auto };
+      var key = "catnews-theme";
+      function read() { try { return localStorage.getItem(key); } catch (e) { return null; } }
+      function write(v) { try { localStorage.setItem(key, v); } catch (e) {} }
       function paint() {
-        var current = root.getAttribute("data-theme");
-        var order = ["light", "dark", "pitch"];
+        var current = read();
+        var order = ["light", "dark", "pitch", "auto"];
         var next = order[(order.indexOf(current) + 1) % order.length];
         btn.setAttribute("aria-label", "Switch to " + labels[next] + " theme");
         btn.title = "Switch to " + labels[next] + " theme";
         if (iconHost) iconHost.innerHTML = icons[next];
       }
-      btn.addEventListener("click", function () {
-        var current = root.getAttribute("data-theme");
-        var order = ["light", "dark", "pitch"];
-        var next = order[(order.indexOf(current) + 1) % order.length];
-        root.setAttribute("data-theme", next);
-        try { localStorage.setItem("catnews-theme", next); } catch (e) {}
+      function checkAuto() {
+        if (read() !== "auto") return;
+        root.setAttribute("data-theme", mql.matches ? "dark" : "light");
         var meta = document.getElementById("theme-color-meta");
         if (meta) {
-          meta.content = next === "pitch" ? "#000000" : next === "dark" ? "#16150f" : "#f5f4ed";
+          meta.content = mql.matches ? "#16150f" : "#f5f4ed";
+        }
+      }
+      btn.addEventListener("click", function () {
+        var current = read();
+        var order = ["light", "dark", "pitch", "auto"];
+        var next = order[(order.indexOf(current) + 1) % order.length];
+        write(next);
+        if (next === "auto") {
+          checkAuto();
+        } else {
+          root.setAttribute("data-theme", next);
+          var meta = document.getElementById("theme-color-meta");
+          if (meta) {
+            meta.content = next === "pitch" ? "#000000" : next === "dark" ? "#16150f" : "#f5f4ed";
+          }
         }
         paint();
       });
+      mql.addEventListener("change", checkAuto);
       paint();
     })();
   </script>

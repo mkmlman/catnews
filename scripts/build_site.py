@@ -21,6 +21,7 @@ from app.render import (
     render_service_worker,
     render_sitemap,
     site_version,
+    snapshot_nav,
     walk_site_urls,
 )
 from app.store import (
@@ -104,6 +105,7 @@ def build_site(
         ),
     )
     for snap in snapshots:
+        prev_snap, next_snap = snapshot_nav(snap, snapshots)
         write(
             out_dir / "archive" / snap.source / snap.date.isoformat() / "index.html",
             render_page(
@@ -113,6 +115,8 @@ def build_site(
                 page_path=f"/archive/{snap.source}/{snap.date.isoformat()}/",
                 snapshot=snap,
                 label=SOURCES[snap.source]["label"],
+                prev_snapshot=prev_snap,
+                next_snapshot=next_snap,
             ),
         )
     trends = weekly_trends(data_dir, snapshots)

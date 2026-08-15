@@ -123,10 +123,11 @@ body {
 }
 a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-deep); }
-a:focus-visible, button:focus-visible {
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible,
+textarea:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 .skip-link {
   position: fixed;
@@ -341,6 +342,30 @@ select {
   background: transparent;
 }
 
+/* Sticky frosted masthead on desktop: full-bleed via negative margins,
+   with a deeper scrim once the page scrolls. */
+@media (min-width: 861px) {
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding-left: max(24px, calc((100vw - var(--maxw)) / 2 + 24px));
+    padding-right: max(24px, calc((100vw - var(--maxw)) / 2 + 24px));
+    background: color-mix(in srgb, var(--paper) 66%, transparent);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    transition: background-color 0.25s ease, border-color 0.25s ease,
+      color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .site-header.is-scrolled {
+    background: color-mix(in srgb, var(--paper) 90%, transparent);
+    box-shadow: 0 1px 0 var(--line),
+      0 12px 32px -18px color-mix(in srgb, var(--ink) 38%, transparent);
+  }
+}
+
 .install-dialog {
   position: fixed;
   inset: 0;
@@ -491,7 +516,7 @@ select {
    -------------------------------------------------------------------------- */
 .filters {
   position: sticky;
-  top: 0;
+  top: var(--header-h, 0px);
   z-index: 10;
   display: flex;
   flex-wrap: wrap;
@@ -534,7 +559,8 @@ select {
   transition: color 0.15s, border-color 0.15s, background-color 0.15s;
 }
 .chip svg { display: block; flex-shrink: 0; }
-.chip-count { font-variant-numeric: tabular-nums; }
+.chip-count { font-variant-numeric: tabular-nums; opacity: 0.85; font-size: 0.88em; }
+.chip.is-active .chip-count { opacity: 0.9; }
 .chip:hover { color: var(--ink); border-color: var(--line-strong); }
 .chip.is-active {
   color: var(--card);
@@ -569,10 +595,26 @@ select {
   min-width: 0;
 }
 .no-matches {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
   text-align: center;
+  color: var(--faint);
+  padding: 70px 20px;
+}
+.no-matches svg {
+  width: 34px;
+  height: 34px;
+  color: var(--accent);
+  opacity: 0.5;
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.no-matches p {
+  margin: 0;
   color: var(--muted);
   font-style: italic;
-  padding: 70px 0;
+  text-wrap: balance;
 }
 .stories.view-list {
   display: flex;
@@ -605,6 +647,10 @@ select {
   transition: background-color 0.18s, border-color 0.18s;
   animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
+.stories:not(.view-list) .story {
+  transition: background-color 0.18s, border-color 0.18s, transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
 .story:nth-child(2) { animation-delay: 0.04s; }
 .story:nth-child(3) { animation-delay: 0.08s; }
 .story:nth-child(4) { animation-delay: 0.12s; }
@@ -619,6 +665,10 @@ select {
 .story:hover {
   background: color-mix(in srgb, var(--accent) 6%, transparent);
   border-color: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.stories:not(.view-list) .story:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -20px color-mix(in srgb, var(--ink) 42%, transparent);
 }
 
 .story-top {
@@ -660,19 +710,25 @@ select {
   line-clamp: 3;
   overflow: hidden;
 }
-.story-title a { color: var(--ink); }
+.story-title a {
+  color: var(--ink);
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 calc(100% - 1px);
+  background-size: 0% 1px;
+  transition: color 0.3s ease, background-size 0.3s ease;
+}
 .story-title a:hover {
   color: var(--accent);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background-size: 100% 1px;
 }
 .story-by {
   color: var(--muted);
   font-size: var(--label-md);
   font-style: italic;
   margin: 0 0 8px;
+  text-wrap: pretty;
+  font-variant-numeric: tabular-nums;
 }
 .story-by time {
   color: var(--faint);
@@ -726,6 +782,7 @@ select {
   font-style: italic;
   font-size: var(--label-sm);
   color: var(--muted);
+  text-wrap: pretty;
 }
 .story-link {
   font-family: var(--mono);
@@ -773,7 +830,7 @@ select {
 
 .story.is-read { opacity: 0.55; }
 .story.is-read .story-title a { color: var(--muted); }
-.story.is-read .story-title a:hover { color: var(--accent); text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.story.is-read .story-title a:hover { color: var(--accent); background-color: transparent; }
 .story.is-read .save-toggle { opacity: 0.9; }
 
 .story.is-selected {
@@ -914,6 +971,16 @@ select {
   text-decoration: none;
 }
 .search-result:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.search-result.is-active {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.search-result mark {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+  border-radius: 2px;
+  padding: 0 1px;
+}
 .search-result:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: -2px;
@@ -984,6 +1051,24 @@ select {
   margin: 22px 0 0;
 }
 .muted { color: var(--muted); font-style: italic; }
+
+.snapshot-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 0 0 6px;
+}
+.snapshot-nav-link {
+  font-family: var(--mono);
+  font-size: var(--label-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.snapshot-nav-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
 .archive-source { padding: 26px 0 4px; }
 .archive-source + .archive-source { border-top: 1px solid var(--line); }
@@ -1276,6 +1361,7 @@ select {
 }
 .heat { stroke: color-mix(in srgb, var(--line) 55%, transparent); }
 .heat:hover { stroke: var(--accent); }
+.heat:focus { stroke: var(--accent); outline: none; }
 .heat-0 { fill: var(--paper-deep); }
 .heat-1 { fill: color-mix(in srgb, var(--accent) 22%, var(--card)); }
 .heat-2 { fill: color-mix(in srgb, var(--accent) 45%, var(--card)); }
@@ -1366,11 +1452,45 @@ select {
    Footer
    -------------------------------------------------------------------------- */
 .site-footer {
+  position: relative;
   margin-top: 70px;
-  padding-top: 40px;
+  padding-top: 44px;
   border-top: 1px solid var(--line);
   text-align: center;
   color: var(--muted);
+}
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(560px, 92%);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 45%, var(--line-strong)),
+    transparent
+  );
+  opacity: 0.7;
+}
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 18px;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+}
+.footer-brand svg {
+  width: 19px;
+  height: 19px;
+  color: var(--accent);
+  opacity: 0.75;
 }
 .footer-nav {
   display: flex;
@@ -1478,6 +1598,7 @@ select {
   line-height: 1.65;
   color: var(--ink-soft);
   margin: 0 0 16px;
+  text-wrap: pretty;
 }
 .prose code {
   font-family: var(--mono);

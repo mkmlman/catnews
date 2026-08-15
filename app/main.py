@@ -24,6 +24,7 @@ from .render import (
     render_rss,
     render_service_worker,
     search_index,
+    snapshot_nav,
 )
 from .store import (
     arxiv_category_counts,
@@ -105,12 +106,16 @@ def archive_snapshot(request: Request, source: str, day: date) -> HTMLResponse:
         raise HTTPException(
             status_code=404, detail=f"No snapshot for {source} on {day}."
         )
+    snapshots = load_all_snapshots(DATA_DIR)
+    prev_snap, next_snap = snapshot_nav(snap, snapshots)
     return page(
         request,
         "snapshot.html",
         f"/archive/{source}/{day.isoformat()}/",
         snapshot=snap,
         label=SOURCES[source]["label"],
+        prev_snapshot=prev_snap,
+        next_snapshot=next_snap,
     )
 
 
