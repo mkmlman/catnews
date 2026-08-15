@@ -1088,23 +1088,27 @@ def test_sparkline_points_normalizes_weekly_counts():
         {"counts": {"hn": 5, "blog": 8}, "total": 13},
     ]
     points = sparkline_points(weekly, "hn")
-    n = len(points.split())
+    assert points is not None
+    n = len(points["points"].split())
     assert n == 3  # one point per week
     # Peak week maps to the top of the chart, empty-to-zero weeks to baseline.
-    tokens = [tuple(map(float, p.split(","))) for p in points.split(" ")]
+    tokens = [tuple(map(float, p.split(","))) for p in points["points"].split(" ")]
     assert tokens[1][1] < tokens[0][1]
-    assert tokens[0][1] > tokens[1][1] * 0  # sanity: x runs left to right
     xs = [t[0] for t in tokens]
     assert xs == sorted(xs)
+    # Area closes the line onto the baseline; end dot rides the last point.
+    assert points["area"].endswith("97.0,25.0 3.0,25.0")
+    assert points["last"]["x"] == "97.0"
+    assert points["last"]["y"] == f"{tokens[2][1]:.1f}"
 
     # A source missing from every week renders a flat baseline sparkline.
     flat = sparkline_points(weekly, "missing")
-    assert flat.split(" ")
-    ys = {p.split(",")[1] for p in flat.split(" ")}
+    assert flat is not None
+    ys = {p.split(",")[1] for p in flat["points"].split(" ")}
     assert len(ys) == 1
 
     # Fewer than two weeks of data yields no sparkline.
-    assert sparkline_points([weekly[0]], "hn") == ""
+    assert sparkline_points([weekly[0]], "hn") is None
 
 
 def test_help_dialog_and_shortcut_markup():

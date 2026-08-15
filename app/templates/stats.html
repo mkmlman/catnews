@@ -59,9 +59,18 @@
           <span class="share-pct">{{ (count / stats.total_stories * 100) | round(1) if stats.total_stories else 0 }}%</span>
         </td>
         <td class="spark-cell">
-          {% if series %}
-          <svg class="stat-spark" viewBox="0 0 100 28" aria-hidden="true" role="img" aria-label="Weekly story trend">
-            <polyline class="spark-line" points="{{ series }}"></polyline>
+          {% set series = sparklines.get(source) %}
+          {% if series and series.points %}
+          <svg class="stat-spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true" role="img" aria-label="Weekly story trend">
+            <defs>
+              <linearGradient id="spark-fade-{{ source }}" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--spark-area)"></stop>
+                <stop offset="100%" stop-color="transparent"></stop>
+              </linearGradient>
+            </defs>
+            <polygon class="spark-area" fill="url(#spark-fade-{{ source }})" points="{{ series.area }}"></polygon>
+            <polyline class="spark-line" vector-effect="non-scaling-stroke" points="{{ series.points }}"></polyline>
+            <circle class="spark-dot" vector-effect="non-scaling-stroke" cx="{{ series.last.x }}" cy="{{ series.last.y }}" r="2"></circle>
           </svg>
           {% else %}<span class="muted">—</span>{% endif %}
         </td>

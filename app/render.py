@@ -84,16 +84,21 @@ def snapshot_nav(
 
 def sparkline_points(
     weekly: list[dict], source: str, width: int = 100, height: int = 28
-) -> str:
-    """Return a polyline points string for a source's weekly story counts.
+) -> dict | None:
+    """Return sparkline geometry for a source's weekly story counts.
 
     Maps counts onto a `width`x`height` viewBox, oldest week first, with a
-    bottom baseline. Returns an empty string when the source has fewer than
-    two weeks of data.
+    bottom baseline. Returns::
+
+        {"point"|"points": "<x,y> ...", "area": "<x,y> ...", "last": "x,y"}
+
+    where `points` is the trend polyline, `area` is the same polyline closed
+    onto the baseline for an area fill, and `last` is the newest point (for an
+    end dot). Returns None when the source has fewer than two weeks of data.
     """
     vals = [row["counts"].get(source, 0) for row in weekly if "counts" in row]
     if len(vals) < 2:
-        return ""
+        return None
     peak = max(vals) or 1
     pad = 3
     span = height - pad
@@ -103,7 +108,13 @@ def sparkline_points(
         x = pad + i * (width - 2 * pad) / (n - 1)
         y = height - pad - (v / peak) * (span - 2)
         points.append(f"{x:.1f},{y:.1f}")
-    return " ".join(points)
+    baseline = f"{width - pad:.1f},{height - pad:.1f} {pad:.1f},{height - pad:.1f}"
+    lx, ly = points[-1].split(",")
+    return {
+        "points": " ".join(points),
+        "area": " ".join([*points, baseline]),
+        "last": {"x": lx, "y": ly},
+    }
 
 
 def render_heatmap_svg(daily: list[dict]) -> str:

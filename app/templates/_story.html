@@ -10,7 +10,7 @@
   <details class="story-links">
     <summary>
       {{ story.links | length }} curated link{{ "s" if story.links | length != 1 else "" }}
-      <svg class="story-links-arrow" viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+      <svg class="story-links-arrow" viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 3v8a1 1 0 0 0 1 1h7"/><path d="M9 9l3 3-3 3"/></svg>
     </summary>
     <ol class="story-links-list">
       {% for link in story.links %}
