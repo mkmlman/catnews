@@ -8,24 +8,24 @@
 </section>
 
 <div class="stat-grid">
-  <div class="stat-card">
+  <div class="stat-card" style="--i: 0">
     <span class="stat-label">Stories curated</span>
     <span class="stat-value">{{ stats.total_stories }}</span>
   </div>
-  <div class="stat-card">
+  <div class="stat-card" style="--i: 1">
     <span class="stat-label">Snapshots</span>
     <span class="stat-value">{{ stats.editions }}</span>
   </div>
-  <div class="stat-card">
+  <div class="stat-card" style="--i: 2">
     <span class="stat-label">First snapshot</span>
     <span class="stat-value stat-value--date">{{ stats.first_edition.strftime("%b %d, %Y") if stats.first_edition else "—" }}</span>
   </div>
-  <div class="stat-card">
+  <div class="stat-card" style="--i: 3">
     <span class="stat-label">Latest snapshot</span>
     <span class="stat-value stat-value--date">{{ stats.last_edition.strftime("%b %d, %Y") if stats.last_edition else "—" }}</span>
   </div>
   {% if days %}
-  <div class="stat-card">
+  <div class="stat-card" style="--i: 4">
     <span class="stat-label">Days archiving</span>
     <span class="stat-value">{{ days }}</span>
   </div>

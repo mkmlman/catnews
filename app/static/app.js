@@ -53,11 +53,29 @@
 
   function closeInstallDialog() {
     if (!installDialog) return;
-    installDialog.hidden = true;
+    closeWithFade(installDialog, function () {
+      installDialog.hidden = true;
+    });
     if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
       lastFocusedElement.focus();
     }
     lastFocusedElement = null;
+  }
+
+  var EASE_MS = 160;
+  /* Fade an element out (opacity + list of transition:...), then run `done`.
+     Honors prefers-reduced-motion by hiding immediately. */
+  function closeWithFade(el, done) {
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !el) {
+      if (done) done();
+      return;
+    }
+    el.classList.add("is-closing");
+    setTimeout(function () {
+      if (done) done();
+      el.classList.remove("is-closing");
+    }, EASE_MS);
   }
 
   /* -------------------------------------------------------------
@@ -216,7 +234,9 @@
 
   function closeHelp() {
     if (!helpDialog) return;
-    helpDialog.hidden = true;
+    closeWithFade(helpDialog, function () {
+      helpDialog.hidden = true;
+    });
     if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
       lastFocusedElement.focus();
     }
@@ -543,7 +563,8 @@
   function updateFilterScrollCue() {
     if (!sourceFilterRow || !filterScrollCue) return;
     var atEnd = sourceFilterRow.scrollLeft + sourceFilterRow.clientWidth >= sourceFilterRow.scrollWidth - 4;
-    filterScrollCue.hidden = atEnd || sourceFilterRow.scrollWidth <= sourceFilterRow.clientWidth;
+    var hasMore = sourceFilterRow.scrollWidth > sourceFilterRow.clientWidth;
+    filterScrollCue.classList.toggle("is-hidden", atEnd || !hasMore);
   }
 
   if (sourceFilterRow) {
@@ -644,8 +665,7 @@
     row.className = "search-result search-result--none search-result--loading";
     row.textContent = "Searching the archive…";
     searchResults.appendChild(row);
-    searchResults.hidden = false;
-    searchInput.setAttribute("aria-expanded", "true");
+    showSearchResults();
   }
 
   function loadStories(cb) {
@@ -740,11 +760,30 @@
     }
   }
 
+  var searchHideTimer = null;
+  function hideSearchResults() {
+    if (!searchResults) return;
+    searchResults.classList.add("is-closing");
+    clearTimeout(searchHideTimer);
+    searchHideTimer = setTimeout(function () {
+      searchResults.hidden = true;
+      searchResults.classList.remove("is-closing");
+    }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : EASE_MS);
+    searchInput.setAttribute("aria-expanded", "false");
+  }
+  function showSearchResults() {
+    if (!searchResults) return;
+    clearTimeout(searchHideTimer);
+    searchResults.classList.remove("is-closing");
+    searchResults.hidden = false;
+    searchInput.setAttribute("aria-expanded", "true");
+    searchInput.classList.add("is-typing");
+  }
+
   function renderResults() {
     var query = searchInput.value.trim();
     if (!query) {
-      searchResults.hidden = true;
-      searchInput.setAttribute("aria-expanded", "false");
+      hideSearchResults();
       activeSearchIndex = -1;
       return;
     }
@@ -788,8 +827,7 @@
       });
     }
     paintActiveResult();
-    searchResults.hidden = false;
-    searchInput.setAttribute("aria-expanded", "true");
+    showSearchResults();
   }
 
   if (searchEl && searchInput && searchResults) {
@@ -824,16 +862,14 @@
         }
       } else if (event.key === "Escape") {
         searchInput.value = "";
-        searchResults.hidden = true;
-        searchInput.setAttribute("aria-expanded", "false");
+        hideSearchResults();
         activeSearchIndex = -1;
         searchInput.blur();
       }
     });
     document.addEventListener("click", function (event) {
       if (!searchEl.contains(event.target)) {
-        searchResults.hidden = true;
-        searchInput.setAttribute("aria-expanded", "false");
+        hideSearchResults();
       }
     });
   }

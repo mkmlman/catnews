@@ -681,7 +681,7 @@ def test_base_theme_toggle_cycles_through_all_states():
     ).read_text()
     assert '["light", "dark", "pitch", "auto"]' in base
     assert "theme-color-meta" in base
-    assert 'resolved === "pitch" ? "#000000"' in base
+    assert "catnewsChromeMeta" in base
 
 
 def test_get_fetcher_rss_and_api():

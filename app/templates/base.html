@@ -65,6 +65,33 @@
           meta.content = theme === "pitch" ? "#000000" : theme === "dark" ? "#16150f" : "#f5f4ed";
         }
       }
+      /* Deepen the browser-chrome tint once scrolled past the hero. */
+      var scrolledMeta = false;
+      function paintChromeMeta() {
+        var meta = document.getElementById("theme-color-meta");
+        if (!meta) return;
+        var t = document.documentElement.getAttribute("data-theme") || "light";
+        var deep = scrolledMeta;
+        meta.content =
+          t === "pitch"
+            ? "#000000"
+            : t === "dark"
+              ? (deep ? "#0c0b07" : "#16150f")
+              : (deep ? "#e6e4d8" : "#f5f4ed");
+      }
+      window.addEventListener(
+        "scroll",
+        function () {
+          var next = window.scrollY > 120;
+          if (next !== scrolledMeta) {
+            scrolledMeta = next;
+            paintChromeMeta();
+          }
+        },
+        { passive: true }
+      );
+      window.catnewsChromeMeta = paintChromeMeta;
+      paintChromeMeta();
       paint();
       if (stored === "auto") {
         mql.addEventListener("change", function (e) {
@@ -141,9 +168,8 @@
       function setTheme(resolved) {
         var paint = function () {
           root.setAttribute("data-theme", resolved);
-          var meta = document.getElementById("theme-color-meta");
-          if (meta) {
-            meta.content = resolved === "pitch" ? "#000000" : resolved === "dark" ? "#16150f" : "#f5f4ed";
+          if (typeof window.catnewsChromeMeta === "function") {
+            window.catnewsChromeMeta();
           }
         };
         if (document.startViewTransition) document.startViewTransition(paint);

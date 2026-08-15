@@ -67,7 +67,8 @@
   {% if ns.counts.update({story.source: ns.counts.get(story.source, 0) + 1}) %}{% endif %}
   {% endfor %}
   {% for story in digest.stories %}
-  {% include "_story.html" %}
+  {% set outer_loop_index = loop.index0 %}
+  {% include "_story.html" with context %}
   {% endfor %}
 </div>
 
