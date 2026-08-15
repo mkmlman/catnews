@@ -2,7 +2,7 @@
 {% block title %}{{ app_name }} | Sources{% endblock %}
 {% block content %}
 <section class="page-header">
-  <a class="back" href="{{ base_path }}/">← Home</a>
+  {{ crumbs([("Home", base_path ~ "/"), ("Sources", None)]) }}
   <h1>Sources</h1>
   <p class="muted">{{ sources | length }} sources · each fetched on its own cadence</p>
 </section>

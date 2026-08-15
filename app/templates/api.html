@@ -2,7 +2,7 @@
 {% block title %}{{ app_name }} | API{% endblock %}
 {% block content %}
 <section class="page-header">
-  <a class="back" href="{{ base_path }}/">← Home</a>
+  {{ crumbs([("Home", base_path ~ "/"), ("API", None)]) }}
   <h1>API</h1>
   <p class="muted">The digest as JSON, Markdown, or RSS — no auth required.</p>
 </section>

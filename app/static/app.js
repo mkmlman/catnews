@@ -484,27 +484,18 @@
       cb(storiesCache);
       return;
     }
-    var triedJson = false;
-    function fetchFrom(path) {
-      fetch(path)
-        .then(function (res) {
-          if (!res.ok) throw new Error("not available");
-          return res.json();
-        })
-        .then(function (stories) {
-          storiesCache = stories;
-          cb(storiesCache);
-        })
-        .catch(function () {
-          if (!triedJson) {
-            triedJson = true;
-            fetchFrom(BASE + "/api/stories");
-          } else {
-            cb([]);
-          }
-        });
-    }
-    fetchFrom(BASE + "/api/search.json");
+    fetch(BASE + "/api/search.json")
+      .then(function (res) {
+        if (!res.ok) throw new Error("not available");
+        return res.json();
+      })
+      .then(function (stories) {
+        storiesCache = stories;
+        cb(storiesCache);
+      })
+      .catch(function () {
+        cb([]);
+      });
   }
 
   function searchStories(query) {
@@ -705,6 +696,20 @@
     });
     heatmap.addEventListener("mouseout", function (event) {
       if (event.target.closest("rect.heat")) hideHeatTip();
+    });
+    heatmap.addEventListener("focusin", function (event) {
+      var cell = event.target.closest("rect.heat");
+      if (cell) showHeatTip(cell);
+    });
+    heatmap.addEventListener("focusout", function (event) {
+      if (event.target.closest("rect.heat")) hideHeatTip();
+    });
+    heatmap.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        var cell = event.target.closest("rect.heat");
+        if (cell) showHeatTip(cell);
+      }
     });
     window.addEventListener("resize", hideHeatTip);
     window.addEventListener("scroll", hideHeatTip, { passive: true });

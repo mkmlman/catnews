@@ -2,7 +2,7 @@
 {% block title %}{{ app_name }} | Archive{% endblock %}
 {% block content %}
 <section class="page-header">
-  <a class="back" href="{{ base_path }}/">← All editions</a>
+  {{ crumbs([("Home", base_path ~ "/"), ("Archive", None)]) }}
   <h1>Archive</h1>
   <p class="muted">{{ snapshots | length }} snapshots</p>
 </section>

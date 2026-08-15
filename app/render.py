@@ -139,10 +139,16 @@ def render_heatmap_svg(daily: list[dict]) -> str:
             count = counts.get(day, 0)
             x = pad_l + wi * (cell + gap)
             y = pad_t + wd * (cell + gap)
+            if count == 1:
+                label = f"1 story on {day.strftime('%B %d, %Y')}"
+            elif count > 1:
+                label = f"{count} stories on {day.strftime('%B %d, %Y')}"
+            else:
+                label = f"No stories on {day.strftime('%B %d, %Y')}"
             parts.append(
                 f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" '
                 f'class="heat heat-{shade(count)}" data-date="{day.isoformat()}" '
-                f'data-count="{count}"></rect>'
+                f'data-count="{count}" tabindex="0" aria-label="{label}"></rect>'
             )
     parts.append("</svg>")
     return "\n".join(parts)
@@ -218,7 +224,7 @@ def _aware(dt) -> datetime:
 def render_manifest() -> str:
     """Web app manifest (PWA install metadata). Served at {base_path}/manifest.json."""
     manifest = {
-        "name": "catnews — The Daily Cat",
+        "name": "catnews",
         "short_name": APP_NAME,
         "description": "A curated daily digest of HN, arXiv, GitHub, and Register Spill stories.",
         "start_url": "./",

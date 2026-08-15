@@ -4,7 +4,7 @@
 {% block og_description %}{{ snapshot.stories | length }} hand-curated stories from {{ label }} on {{ snapshot.date.strftime("%B %d, %Y") }}.{% endblock %}
 {% block content %}
 <section class="page-header">
-  <a class="back" href="{{ base_path }}/archive/">← Archive</a>
+  {{ crumbs([("Home", base_path ~ "/"), ("Archive", base_path ~ "/archive/"), (label ~ " · " ~ snapshot.date.strftime("%B %d, %Y"), None)]) }}
   <h1>{{ label }}</h1>
   <p class="muted">{{ snapshot.date.strftime("%A, %B %d, %Y") }} · {{ snapshot.stories | length }} stories</p>
 </section>

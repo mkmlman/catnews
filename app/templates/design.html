@@ -2,7 +2,7 @@
 {% block title %}{{ app_name }} | Design System{% endblock %}
 {% block content %}
 <section class="page-header">
-  <a class="back" href="{{ base_path }}/">← Home</a>
+  {{ crumbs([("Home", base_path ~ "/"), ("Design System", None)]) }}
   <h1>Design System</h1>
   <p class="muted">How {{ app_name }} looks and why.</p>
 </section>
@@ -231,11 +231,11 @@
 
     <div class="ds-comp">
       <h3 class="ds-comp-title">Links &amp; buttons</h3>
-      <p class="ds-hint">story-link is the primary CTA · back is secondary · method tags mark verbs</p>
+      <p class="ds-hint">story-link is the primary CTA · breadcrumbs mark secondary nav · method tags mark verbs</p>
       <div class="ds-demo">
         <span class="ds-stack">
           <a class="story-link" href="{{ base_path }}/">Read</a>
-          <a class="back" href="{{ base_path }}/">← Home</a>
+          {{ crumbs([("Home", base_path ~ "/"), ("Stats", base_path ~ "/stats/"), ("Current", None)]) }}
           <span class="method">GET</span><code class="ds-inline-code">{{ base_path }}/api/sources</code>
         </span>
       </div>

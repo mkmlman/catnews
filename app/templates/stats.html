@@ -2,7 +2,7 @@
 {% block title %}{{ app_name }} | Stats{% endblock %}
 {% block content %}
 <section class="page-header">
-  <a class="back" href="{{ base_path }}/">← All editions</a>
+  {{ crumbs([("Home", base_path ~ "/"), ("Stats", None)]) }}
   <h1>Stats</h1>
   <p class="muted">{{ stats.editions }} snapshot{{ "s" if stats.editions != 1 else "" }}{% if stats.first_edition and stats.last_edition %} · {{ stats.first_edition.strftime("%b %d, %Y") }} → {{ stats.last_edition.strftime("%b %d, %Y") }}{% endif %}</p>
 </section>

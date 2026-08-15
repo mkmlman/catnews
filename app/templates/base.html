@@ -1,11 +1,21 @@
 <!DOCTYPE html>
+{% macro crumbs(items) %}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  {% for label, href in items %}
+    {% if href %}
+    <a class="crumb" href="{{ href }}">{{ label }}</a>
+    {% else %}
+    <span class="crumb crumb-current" aria-current="page">{{ label }}</span>
+    {% endif %}
+    {% if not loop.last %}<span class="crumb-sep" aria-hidden="true">/</span>{% endif %}
+  {% endfor %}
+</nav>
+{% endmacro %}
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#f5f4ed" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#16150f" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" id="theme-color-meta" content="#f5f4ed">
   <link rel="manifest" href="{{ base_path }}/manifest.json">
   <link rel="icon" type="image/svg+xml" href="{{ base_path }}/static/favicon.svg?v=2">
@@ -160,7 +170,7 @@
         </details>
         <details>
           <summary>iPhone / iPad (Safari)</summary>
-          <p>Tap the <strong>Share</strong> button (<span class="install-cue">⎋</span>) and choose <strong>Add to Home Screen</strong>.</p>
+          <p>Tap the <strong>Share</strong> button (<span class="install-cue">⤴</span>) and choose <strong>Add to Home Screen</strong>.</p>
         </details>
       </div>
       <button class="install-dialog-close" id="install-dialog-close" type="button">Got it</button>
