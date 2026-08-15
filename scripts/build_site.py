@@ -22,6 +22,7 @@ from app.render import (
     render_sitemap,
     site_version,
     snapshot_nav,
+    sparkline_points,
     walk_site_urls,
 )
 from app.store import (
@@ -130,6 +131,7 @@ def build_site(
             stats=site_stats(data_dir, snapshots),
             trends=trends,
             heatmap=render_heatmap_svg(daily_counts(data_dir, snapshots)),
+            sparklines={source: sparkline_points(trends, source) for source in SOURCES},
             domains=top_domains(data_dir, snapshots=snapshots),
             arxiv_categories=arxiv_category_counts(data_dir, snapshots),
             days=days_archiving(data_dir, snapshots),

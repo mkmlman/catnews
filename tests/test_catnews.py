@@ -681,7 +681,7 @@ def test_base_theme_toggle_cycles_through_all_states():
     ).read_text()
     assert '["light", "dark", "pitch", "auto"]' in base
     assert "theme-color-meta" in base
-    assert 'meta.content = next === "pitch" ? "#000000"' in base
+    assert 'resolved === "pitch" ? "#000000"' in base
 
 
 def test_get_fetcher_rss_and_api():
@@ -1066,6 +1066,56 @@ def test_render_heatmap_svg_auto_fits_window():
     assert "2026-08-10" in svg
     assert "2026-08-12" in svg
     assert len(re.findall(r"<rect ", svg)) < 14  # a few weeks, not six months
+
+
+def test_render_heatmap_svg_draws_year_boundary_hairline():
+    from app.render import render_heatmap_svg
+
+    daily = [
+        {"date": date(2025, 12, 29), "count": 1},
+        {"date": date(2026, 1, 5), "count": 2},
+    ]
+    svg = render_heatmap_svg(daily)
+    assert '<line class="heatmap-year"' in svg
+
+
+def test_sparkline_points_normalizes_weekly_counts():
+    from app.render import sparkline_points
+
+    weekly = [
+        {"counts": {"hn": 10, "blog": 0}, "total": 10},
+        {"counts": {"hn": 20, "blog": 5}, "total": 25},
+        {"counts": {"hn": 5, "blog": 8}, "total": 13},
+    ]
+    points = sparkline_points(weekly, "hn")
+    n = len(points.split())
+    assert n == 3  # one point per week
+    # Peak week maps to the top of the chart, empty-to-zero weeks to baseline.
+    tokens = [tuple(map(float, p.split(","))) for p in points.split(" ")]
+    assert tokens[1][1] < tokens[0][1]
+    assert tokens[0][1] > tokens[1][1] * 0  # sanity: x runs left to right
+    xs = [t[0] for t in tokens]
+    assert xs == sorted(xs)
+
+    # A source missing from every week renders a flat baseline sparkline.
+    flat = sparkline_points(weekly, "missing")
+    assert flat.split(" ")
+    ys = {p.split(",")[1] for p in flat.split(" ")}
+    assert len(ys) == 1
+
+    # Fewer than two weeks of data yields no sparkline.
+    assert sparkline_points([weekly[0]], "hn") == ""
+
+
+def test_help_dialog_and_shortcut_markup():
+    base = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
+    ).read_text()
+    assert 'id="help-dialog"' in base
+    assert 'id="help-toggle"' in base
+    assert "footer-personal" in base
+    assert "footer-to-top" in base
+    assert "scroll-progress" in base
 
 
 def test_top_domains_and_arxiv_categories(tmp_path):

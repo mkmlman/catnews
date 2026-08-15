@@ -76,6 +76,7 @@
   </script>
 </head>
 <body>
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
   <div class="container">
     <header class="site-header">
       <a class="wordmark" href="{{ base_path }}/">{% include "cat-logo.html" %}<span>{{ app_name }}</span></a>
@@ -117,7 +118,9 @@
         <a href="{{ base_path }}/api/digest.json">JSON</a>
         <a href="{{ base_path }}/api/stories.md">Markdown</a>
       </nav>
-      <p class="footer-keys">Keyboard&nbsp;· <kbd>j</kbd> <kbd>k</kbd> move · <kbd>o</kbd> open · <kbd>s</kbd> save · <kbd>m</kbd> read · <kbd>/</kbd> search</p>
+      <p class="footer-keys">Keyboard&nbsp;· <kbd>j</kbd> <kbd>k</kbd> move · <kbd>o</kbd> open · <kbd>s</kbd> save · <kbd>m</kbd> read · <kbd>/</kbd> search · <button class="help-toggle" id="help-toggle" type="button" aria-haspopup="dialog">? shortcuts</button></p>
+      <p class="footer-personal" id="footer-personal" hidden></p>
+      <p class="footer-to-top"><button type="button" id="footer-to-top">↑ Back to top</button></p>
     </footer>
   </div>
   <script>
@@ -135,6 +138,17 @@
       var key = "catnews-theme";
       function read() { try { return localStorage.getItem(key); } catch (e) { return null; } }
       function write(v) { try { localStorage.setItem(key, v); } catch (e) {} }
+      function setTheme(resolved) {
+        var paint = function () {
+          root.setAttribute("data-theme", resolved);
+          var meta = document.getElementById("theme-color-meta");
+          if (meta) {
+            meta.content = resolved === "pitch" ? "#000000" : resolved === "dark" ? "#16150f" : "#f5f4ed";
+          }
+        };
+        if (document.startViewTransition) document.startViewTransition(paint);
+        else paint();
+      }
       function paint() {
         var current = read();
         var order = ["light", "dark", "pitch", "auto"];
@@ -143,28 +157,19 @@
         btn.title = "Switch to " + labels[next] + " theme";
         if (iconHost) iconHost.innerHTML = icons[next];
       }
+      function resolve(t) {
+        return t === "auto" ? (mql.matches ? "dark" : "light") : t;
+      }
       function checkAuto() {
         if (read() !== "auto") return;
-        root.setAttribute("data-theme", mql.matches ? "dark" : "light");
-        var meta = document.getElementById("theme-color-meta");
-        if (meta) {
-          meta.content = mql.matches ? "#16150f" : "#f5f4ed";
-        }
+        setTheme(mql.matches ? "dark" : "light");
       }
       btn.addEventListener("click", function () {
         var current = read();
         var order = ["light", "dark", "pitch", "auto"];
         var next = order[(order.indexOf(current) + 1) % order.length];
         write(next);
-        if (next === "auto") {
-          checkAuto();
-        } else {
-          root.setAttribute("data-theme", next);
-          var meta = document.getElementById("theme-color-meta");
-          if (meta) {
-            meta.content = next === "pitch" ? "#000000" : next === "dark" ? "#16150f" : "#f5f4ed";
-          }
-        }
+        setTheme(resolve(next));
         paint();
       });
       mql.addEventListener("change", checkAuto);
@@ -211,5 +216,23 @@
       <button class="install-dialog-close" id="install-dialog-close" type="button">Got it</button>
     </div>
   </div>
+
+  <div class="help-dialog" id="help-dialog" hidden>
+    <div class="install-dialog-card" role="dialog" aria-modal="true" aria-labelledby="help-dialog-title" tabindex="-1">
+      <h2 id="help-dialog-title">Keyboard shortcuts</h2>
+      <p class="muted">Everything works from the keyboard.</p>
+      <ul class="help-keys">
+        <li><span>Move through stories</span><span><b>j</b><kbd>j</kbd><kbd>k</kbd></span></li>
+        <li><span>Open selected story</span><span><b>o · Enter</b><kbd>o</kbd><kbd>⏎</kbd></span></li>
+        <li><span>Save for later</span><span><b>s</b><kbd>s</kbd></span></li>
+        <li><span>Mark as read</span><span><b>m</b><kbd>m</kbd></span></li>
+        <li><span>Search the archive</span><span><b>/</b><kbd>/</kbd></span></li>
+        <li><span>Move in search results</span><span><b>↑ ↓</b><kbd>↑</kbd><kbd>↓</kbd></span></li>
+      </ul>
+      <button class="install-dialog-close" id="help-dialog-close" type="button">Got it</button>
+    </div>
+  </div>
+
+  <div class="copy-toast" id="copy-toast" role="status" aria-live="polite"></div>
 </body>
 </html>

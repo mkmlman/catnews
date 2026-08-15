@@ -82,6 +82,30 @@ def snapshot_nav(
     return None, None
 
 
+def sparkline_points(
+    weekly: list[dict], source: str, width: int = 100, height: int = 28
+) -> str:
+    """Return a polyline points string for a source's weekly story counts.
+
+    Maps counts onto a `width`x`height` viewBox, oldest week first, with a
+    bottom baseline. Returns an empty string when the source has fewer than
+    two weeks of data.
+    """
+    vals = [row["counts"].get(source, 0) for row in weekly if "counts" in row]
+    if len(vals) < 2:
+        return ""
+    peak = max(vals) or 1
+    pad = 3
+    span = height - pad
+    n = len(vals)
+    points: list[str] = []
+    for i, v in enumerate(vals):
+        x = pad + i * (width - 2 * pad) / (n - 1)
+        y = height - pad - (v / peak) * (span - 2)
+        points.append(f"{x:.1f},{y:.1f}")
+    return " ".join(points)
+
+
 def render_heatmap_svg(daily: list[dict]) -> str:
     """Inline SVG contribution-style heatmap of daily story counts.
 
@@ -149,6 +173,20 @@ def render_heatmap_svg(daily: list[dict]) -> str:
                 f'class="heatmap-month">{col_monday.strftime("%b")}</text>'
             )
             prev_month = col_monday.month
+    # Year-boundary hairlines: a subtle dashed separator the day the year
+    # ticks over, drawn between two adjacent week columns.
+    prev_year = None
+    for wi in range(n_weeks):
+        col_monday = monday + timedelta(days=wi * 7)
+        year = col_monday.year
+        if prev_year is not None and year != prev_year:
+            x = pad_l + wi * (cell + gap) - gap / 2
+            parts.append(
+                f'<line class="heatmap-year" x1="{x:.1f}" y1="{pad_t}" '
+                f'x2="{x:.1f}" y2="{pad_t + 7 * cell + 6 * gap}"></line>'
+            )
+        prev_year = year
+
     for wi in range(n_weeks):
         for wd in range(7):
             day = monday + timedelta(days=wi * 7 + wd)

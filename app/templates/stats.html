@@ -41,10 +41,12 @@
         <th scope="col">Snapshots</th>
         <th scope="col">Stories</th>
         <th scope="col">Share</th>
+        <th scope="col">Trend</th>
       </tr>
     </thead>
     <tbody>
       {% for source, count in stats.by_source.items() %}
+      {% set series = sparklines.get(source, "") %}
       <tr>
         <th scope="row">
           <span class="source-name">{{ source_labels[source] }}</span>
@@ -55,6 +57,13 @@
         <td class="share-cell">
           <span class="share-bar"><span class="share-fill" style="width: {{ (count * 100 // stats.total_stories) if stats.total_stories else 0 }}%"></span></span>
           <span class="share-pct">{{ (count / stats.total_stories * 100) | round(1) if stats.total_stories else 0 }}%</span>
+        </td>
+        <td class="spark-cell">
+          {% if series %}
+          <svg class="stat-spark" viewBox="0 0 100 28" aria-hidden="true" role="img" aria-label="Weekly story trend">
+            <polyline class="spark-line" points="{{ series }}"></polyline>
+          </svg>
+          {% else %}<span class="muted">—</span>{% endif %}
         </td>
       </tr>
       {% endfor %}

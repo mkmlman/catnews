@@ -25,6 +25,7 @@ from .render import (
     render_service_worker,
     search_index,
     snapshot_nav,
+    sparkline_points,
 )
 from .store import (
     arxiv_category_counts,
@@ -129,6 +130,7 @@ def stats(request: Request) -> HTMLResponse:
         stats=site_stats(DATA_DIR),
         trends=trends,
         heatmap=render_heatmap_svg(daily_counts(DATA_DIR)),
+        sparklines={source: sparkline_points(trends, source) for source in SOURCES},
         domains=top_domains(DATA_DIR),
         arxiv_categories=arxiv_category_counts(DATA_DIR),
         days=days_archiving(DATA_DIR),

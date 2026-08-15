@@ -180,6 +180,116 @@
   }
 
   /* -------------------------------------------------------------
+     Reading progress hairline
+     ------------------------------------------------------------- */
+  var progressBar = document.getElementById("scroll-progress");
+
+  function paintProgress() {
+    if (!progressBar) return;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + "%";
+  }
+  window.addEventListener("scroll", paintProgress, { passive: true });
+  window.addEventListener("resize", paintProgress);
+  paintProgress();
+
+  /* -------------------------------------------------------------
+     Footer: back to top + keyboard-shortcuts help dialog
+     ------------------------------------------------------------- */
+  var footerToTop = document.getElementById("footer-to-top");
+  if (footerToTop) {
+    footerToTop.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  var helpToggle = document.getElementById("help-toggle");
+  var helpDialog = document.getElementById("help-dialog");
+  var helpDialogClose = document.getElementById("help-dialog-close");
+
+  function openHelp() {
+    if (!helpDialog) return;
+    lastFocusedElement = document.activeElement;
+    helpDialog.hidden = false;
+    if (helpDialogClose) helpDialogClose.focus();
+  }
+
+  function closeHelp() {
+    if (!helpDialog) return;
+    helpDialog.hidden = true;
+    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+      lastFocusedElement.focus();
+    }
+    lastFocusedElement = null;
+  }
+
+  if (helpToggle) helpToggle.addEventListener("click", openHelp);
+  if (helpDialogClose) helpDialogClose.addEventListener("click", closeHelp);
+  if (helpDialog) {
+    helpDialog.addEventListener("click", function (event) {
+      if (event.target === helpDialog) closeHelp();
+    });
+    document.addEventListener("keydown", function (event) {
+      if (helpDialog.hidden) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeHelp();
+      }
+    });
+  }
+
+  /* -------------------------------------------------------------
+     Click-to-copy on API endpoints
+     ------------------------------------------------------------- */
+  var copyToast = document.getElementById("copy-toast");
+  var copyTimer = null;
+
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  function showCopyToast(text) {
+    if (!copyToast) return;
+    copyToast.textContent = text;
+    copyToast.classList.add("is-visible");
+    clearTimeout(copyTimer);
+    copyTimer = setTimeout(function () {
+      copyToast.classList.remove("is-visible");
+    }, 1400);
+  }
+
+  document.querySelectorAll(".endpoint-code").forEach(function (el) {
+    var anchor = el.querySelector("a");
+    var value = anchor ? anchor.getAttribute("href") : null;
+    if (!value) {
+      var clean = (el.textContent || "").replace(/^GET\s+/, "").trim();
+      if (clean && clean.indexOf("<") === -1) value = clean;
+    }
+    if (!value) return;
+    el.setAttribute("data-copyable", "1");
+    el.addEventListener("click", function (event) {
+      if (event.target.closest("a")) return;
+      var done = function () { showCopyToast("Copied " + value); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(value).then(done, function () {
+          fallbackCopy(value);
+          done();
+        });
+      } else {
+        fallbackCopy(value);
+        done();
+      }
+    });
+  });
+
+  /* -------------------------------------------------------------
      Back to top
      ------------------------------------------------------------- */
   var toTopBtn = document.getElementById("to-top");
@@ -371,6 +481,17 @@
       );
     }
     if (exportSavedBtn) exportSavedBtn.hidden = saved.size === 0;
+    paintPersonalFooter();
+  }
+
+  function paintPersonalFooter() {
+    var el = document.getElementById("footer-personal");
+    if (!el) return;
+    var parts = [];
+    if (saved.size) parts.push(saved.size + " saved");
+    if (read.size) parts.push(read.size + " read");
+    el.textContent = parts.join(" · ");
+    el.hidden = parts.length === 0;
   }
 
   if (filtersEl) {
@@ -402,8 +523,15 @@
     }
     if (loadMoreBtn) {
       loadMoreBtn.addEventListener("click", function () {
+        var before = state.loaded;
         state.loaded += PAGE_SIZE;
         applyFilters();
+        cards.slice(before, state.loaded).forEach(function (card) {
+          if (!card || card.hidden || card.hasAttribute("hidden")) return;
+          card.style.animation = "none";
+          void card.offsetWidth;
+          card.style.animation = "";
+        });
       });
     }
     updateCounts();
@@ -461,6 +589,11 @@
       if (input) input.focus();
       return;
     }
+    if (event.key === "?") {
+      event.preventDefault();
+      openHelp();
+      return;
+    }
     if (list.length === 0) return;
 
     if (event.key === "j" || event.key === "k") {
@@ -502,6 +635,17 @@
 
   function normalize(s) {
     return (s || "").toLowerCase();
+  }
+
+  function renderLoadingRow() {
+    if (!searchResults) return;
+    searchResults.innerHTML = "";
+    var row = document.createElement("div");
+    row.className = "search-result search-result--none search-result--loading";
+    row.textContent = "Searching the archive…";
+    searchResults.appendChild(row);
+    searchResults.hidden = false;
+    searchInput.setAttribute("aria-expanded", "true");
   }
 
   function loadStories(cb) {
@@ -650,6 +794,7 @@
 
   if (searchEl && searchInput && searchResults) {
     searchInput.addEventListener("focus", function () {
+      if (!storiesCache) renderLoadingRow();
       loadStories(function () {
         renderResults();
       });
@@ -806,5 +951,28 @@
     });
     window.addEventListener("resize", hideHeatTip);
     window.addEventListener("scroll", hideHeatTip, { passive: true });
+  }
+
+  /* -------------------------------------------------------------
+     Stats: share/rank bars grow in from zero when scrolled into view
+     ------------------------------------------------------------- */
+  var statBars = document.querySelectorAll(".share-fill, .rank-fill");
+  if (statBars.length && "IntersectionObserver" in window) {
+    statBars.forEach(function (bar) {
+      var target = bar.style.width;
+      bar.style.width = "0%";
+      var io = new IntersectionObserver(
+        function (entries, obs) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              bar.style.width = target;
+              obs.disconnect();
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+      io.observe(bar);
+    });
   }
 })();
