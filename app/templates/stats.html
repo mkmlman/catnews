@@ -46,7 +46,6 @@
     </thead>
     <tbody>
       {% for source, count in stats.by_source.items() %}
-      {% set series = sparklines.get(source, "") %}
       <tr>
         <th scope="row">
           <span class="source-name">{{ source_labels[source] }}</span>

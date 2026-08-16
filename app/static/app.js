@@ -685,7 +685,7 @@
     if (!searchResults) return;
     searchResults.innerHTML = "";
     var row = document.createElement("div");
-    row.className = "search-result search-result--none search-result--loading";
+    row.className = "search-result search-result--loading";
     row.textContent = "Searching the archive…";
     searchResults.appendChild(row);
     showSearchResults();

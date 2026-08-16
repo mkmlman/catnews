@@ -20,7 +20,7 @@
   <p class="archive-summary">{{ snaps | length }} snapshot{{ "s" if snaps | length != 1 else "" }} · {{ story_total.n }} stor{{ "y" if story_total.n == 1 else "ies" }}</p>
   <ul class="archive-list">
     {% for snap in snaps %}
-    <li>
+    <li style="--i: {{ loop.index0 }}">
       <a href="{{ base_path }}/archive/{{ snap.source }}/{{ snap.date.isoformat() }}/">
         <span class="archive-date">{{ snap.date.strftime("%B %d, %Y") }}</span>
         <span class="archive-day">{{ snap.date.strftime("%A") }}</span>
