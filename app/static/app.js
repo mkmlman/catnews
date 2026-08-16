@@ -781,10 +781,8 @@
     if (activeSearchIndex >= 0 && items[activeSearchIndex]) {
       items[activeSearchIndex].scrollIntoView({ block: "nearest" });
       searchInput.setAttribute("aria-activedescendant", items[activeSearchIndex].id);
-      searchInput.setAttribute("aria-selected", "true");
     } else {
       searchInput.removeAttribute("aria-activedescendant");
-      searchInput.setAttribute("aria-selected", "false");
     }
   }
 
