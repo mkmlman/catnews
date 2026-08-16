@@ -263,6 +263,7 @@
      ------------------------------------------------------------- */
   var copyToast = document.getElementById("copy-toast");
   var copyTimer = null;
+  var toastHidden = false;
 
   function fallbackCopy(text) {
     var ta = document.createElement("textarea");
@@ -275,14 +276,32 @@
     document.body.removeChild(ta);
   }
 
-  function showCopyToast(text) {
+  function scheduleCopyToastHide() {
     if (!copyToast) return;
-    copyToast.textContent = text;
-    copyToast.classList.add("is-visible");
     clearTimeout(copyTimer);
+    if (toastHidden) return;
     copyTimer = setTimeout(function () {
       copyToast.classList.remove("is-visible");
     }, 1400);
+  }
+
+  function showCopyToast(text) {
+    if (!copyToast) return;
+    toastHidden = false;
+    copyToast.textContent = text;
+    copyToast.classList.add("is-visible");
+    scheduleCopyToastHide();
+  }
+
+  if (copyToast) {
+    copyToast.addEventListener("mouseenter", function () {
+      toastHidden = true;
+      clearTimeout(copyTimer);
+    });
+    copyToast.addEventListener("mouseleave", function () {
+      toastHidden = false;
+      scheduleCopyToastHide();
+    });
   }
 
   document.querySelectorAll(".endpoint-code").forEach(function (el) {
@@ -296,7 +315,11 @@
     el.setAttribute("data-copyable", "1");
     el.addEventListener("click", function (event) {
       if (event.target.closest("a")) return;
-      var done = function () { showCopyToast("Copied " + value); };
+      var done = function () {
+        showCopyToast("Copied " + value);
+        el.classList.add("is-copied");
+        setTimeout(function () { el.classList.remove("is-copied"); }, 900);
+      };
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(value).then(done, function () {
           fallbackCopy(value);
@@ -757,6 +780,11 @@
     });
     if (activeSearchIndex >= 0 && items[activeSearchIndex]) {
       items[activeSearchIndex].scrollIntoView({ block: "nearest" });
+      searchInput.setAttribute("aria-activedescendant", items[activeSearchIndex].id);
+      searchInput.setAttribute("aria-selected", "true");
+    } else {
+      searchInput.removeAttribute("aria-activedescendant");
+      searchInput.setAttribute("aria-selected", "false");
     }
   }
 
@@ -795,11 +823,15 @@
       var none = document.createElement("div");
       none.className = "search-result search-result--none";
       none.textContent = "No matches.";
+      none.id = "search-result-" + 0;
+      none.style.setProperty("--i", 0);
       searchResults.appendChild(none);
     } else {
       hits.forEach(function (story) {
         var a = document.createElement("a");
         a.className = "search-result";
+        a.id = "search-result-" + Array.prototype.indexOf.call(hits, story);
+        a.style.setProperty("--i", Array.prototype.indexOf.call(hits, story));
         a.href = story.url;
         a.target = "_blank";
         a.rel = "noopener";
