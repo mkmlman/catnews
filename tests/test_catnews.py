@@ -1046,9 +1046,10 @@ def test_daily_counts_zero_fills_gaps(tmp_path):
     assert daily[2] == {"date": date(2026, 8, 12), "count": 1}
 
 
-def test_render_heatmap_svg_auto_fits_window():
+def test_render_heatmap_svg_auto_fits_window(monkeypatch):
     from app.render import render_heatmap_svg
 
+    monkeypatch.setattr("app.render.today_utc", lambda: date(2026, 8, 14))
     daily = [
         {"date": date(2026, 8, 10), "count": 2},
         {"date": date(2026, 8, 11), "count": 0},
