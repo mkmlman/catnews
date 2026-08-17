@@ -157,6 +157,16 @@ def build_site(
             page_path="/api/",
         ),
     )
+    # Styled GitHub Pages 404 (served for any missing path)
+    write(
+        out_dir / "404.html",
+        render_page(
+            "404.html",
+            base_path=base_path,
+            base_url=base_url,
+            page_path="/404/",
+        ),
+    )
     write(
         out_dir / "design" / "index.html",
         render_page(
@@ -202,10 +212,11 @@ def build_site(
     write(out_dir / "robots.txt", render_robots(base_url))
     write(out_dir / "sitemap.xml", render_sitemap(base_url, snapshots))
 
-    # PWA: manifest + service worker with full offline precache (written last
-    # so walk_site_urls sees every emitted file). stories.json is excluded from
-    # precache once it gets large (it grows with the whole archive) while
-    # search.json stays cached for offline lookup.
+    # PWA: manifest + service worker. Precaches only the stable app shell
+    # (see render._sw_stable): daily digest, feed, sitemap, and API data files
+    # are excluded so a stable fingerprint — and cache name — survives the
+    # daily data refresh without re-downloading the whole archive every day.
+    # Written last so walk_site_urls sees every emitted file.
     write(out_dir / "manifest.json", render_manifest())
     write(
         out_dir / "sw.js",

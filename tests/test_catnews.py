@@ -419,11 +419,16 @@ def test_search_index_deduplicates_historical_stories():
 
 def test_static_site_version_changes_when_artifact_changes(tmp_path):
     site = tmp_path / "site"
-    site.mkdir()
-    (site / "index.html").write_text("first")
+    static = site / "static"
+    static.mkdir(parents=True)
+    (static / "style.css").write_text("first")
     first = site_version(site)
-    (site / "index.html").write_text("second")
+    (static / "style.css").write_text("second")
     assert site_version(site) != first
+    # Mutable files (fresh digest, feeds) never bump the SW cache version.
+    (site / "index.html").write_text("digest one")
+    (site / "feed.rss").write_text("<rss/>")
+    assert site_version(site) == (site_version(site))
 
 
 def test_registerspill_only_due_on_mondays(tmp_path):
@@ -697,8 +702,9 @@ def test_get_fetcher_rss_and_api():
 
 
 def test_build_site_emits_pwa_files(tmp_path):
-    # PWA: the static build must ship a manifest + service worker whose
-    # precache covers the whole site for full offline browsing.
+    # PWA: the static build must ship a manifest + service worker that precache
+    # the stable app shell, so the cache name survives the daily data refresh
+    # (mutable digest/feed/API files revalidate on demand instead).
     from scripts.build_site import build_site
 
     save_snapshot(
@@ -722,13 +728,24 @@ def test_build_site_emits_pwa_files(tmp_path):
 
     sw = (out / "sw.js").read_text()
     assert "PRECACHE" in sw
-    # every emitted file (index, archive, static assets, api) is precached
-    for rel in ('"./"', '"./index.html"', '"./archive/hn/2026-08-02/"'):
-        assert rel in sw, f"missing {rel} in precache"
-    assert '"./static/style.css"' in sw
-    assert '"./api/stories.json"' in sw
-    assert '"./api/search.json"' in sw
-    assert '"./api/fetch-status.json"' in sw
+    import re
+
+    match = re.search(r"PRECACHE = \[(.*?)\];", sw, re.DOTALL)
+    assert match
+    precache = match.group(1)
+    # stable app shell is precached
+    for rel in ('"./"', '"./static/style.css"', '"./404.html"', '"./archive/"'):
+        assert rel in precache, f"missing {rel} in precache"
+    # mutable digest/feed/API data is NOT precached (cache-name stability)
+    for rel in (
+        '"./index.html"',
+        '"./feed.rss"',
+        '"./api/stories.json"',
+        '"./api/search.json"',
+        '"./api/fetch-status.json"',
+        '"./archive/hn/2026-08-02/"',
+    ):
+        assert rel not in precache, f"did not expect {rel} in precache"
 
 
 def test_deploy_workflow_shares_pages_env_with_validation():
@@ -1236,3 +1253,111 @@ def test_stats_page_and_trends_endpoint(client, tmp_path):
 
     page = client.get("/").text
     assert 'id="export-saved"' in page
+
+
+def test_safe_http_url_guards_schemes():
+    from app.fetchers.sanitize import safe_http_url
+
+    assert safe_http_url("https://example.com/a") == "https://example.com/a"
+    assert safe_http_url("http://example.com") == "http://example.com"
+    assert safe_http_url("javascript:alert(1)") is None
+    assert safe_http_url("data:text/html,x") is None
+    assert safe_http_url("ftp://example.com") is None
+    assert safe_http_url("/relative/path") is None
+    assert safe_http_url(None, fallback="fb") == "fb"
+    assert safe_http_url("javascript:alert(1)", fallback="fb") == "fb"
+
+
+def test_hn_unsafe_url_falls_back_to_item():
+    hit = dict(SAMPLE_HIT)
+    hit["url"] = "javascript:alert(1)"
+    story = parse_hit(hit)
+    assert story.url == "https://news.ycombinator.com/item?id=49138188"
+
+
+def test_rss_drops_non_http_link():
+    entry = {"title": "Sneaky", "link": "javascript:alert(1)"}
+    assert parse_rss_entry(entry, "escflat") is None
+
+
+def test_rss_links_drop_non_http():
+    body = (
+        '<a href="javascript:alert(1)">badcode</a>'
+        '<a href="mailto:a@b.c">mailme</a>'
+        '<a href="https://ok.example/thing">good enough</a>'
+    )
+    urls = [link.url for link in parse_links(body)]
+    assert urls == ["https://ok.example/thing"]
+
+
+def test_walk_site_urls_precaches_only_stable_files(tmp_path):
+    from app.render import walk_site_urls
+
+    (tmp_path / "static").mkdir()
+    (tmp_path / "static" / "style.css").write_text("a{}")
+    (tmp_path / "index.html").write_text("<h1>x</h1>")
+    (tmp_path / "feed.rss").write_text("<rss/>")
+    (tmp_path / "sitemap.xml").write_text("<urlset/>")
+    (tmp_path / "404.html").write_text("<h1>nf</h1>")
+    (tmp_path / "api").mkdir()
+    (tmp_path / "api" / "stories.json").write_text("[]")
+    (tmp_path / "archive" / "hn" / "2026-08-02").mkdir(parents=True)
+    (tmp_path / "archive" / "hn" / "2026-08-02" / "index.html").write_text(
+        "<h1>snap</h1>"
+    )
+
+    urls = walk_site_urls(tmp_path)
+    assert "./static/style.css" in urls
+    assert "./404.html" in urls
+    assert "./index.html" not in urls
+    assert "./feed.rss" not in urls
+    assert "./sitemap.xml" not in urls
+    assert "./api/stories.json" not in urls
+    assert "./archive/hn/2026-08-02/" not in urls
+
+
+def test_site_version_ignores_mutable_files(tmp_path):
+    (tmp_path / "static").mkdir()
+    (tmp_path / "static" / "app.js").write_text("x")
+    (tmp_path / "api").mkdir()
+    (tmp_path / "api" / "stories.json").write_text("old")
+    (tmp_path / "index.html").write_text("old")
+
+    v1 = site_version(tmp_path)
+    (tmp_path / "api" / "stories.json").write_text("new")
+    (tmp_path / "index.html").write_text("new")
+    (tmp_path / "feed.rss").write_text("<rss/>")
+    assert site_version(tmp_path) == v1
+
+    (tmp_path / "static" / "app.js").write_text("changed")
+    assert site_version(tmp_path) != v1
+
+
+def test_og_image_renders_valid_png():
+    import struct
+
+    from app.og_image import render_og_image
+
+    png = render_og_image()
+    assert png.startswith(b"\x89PNG\r\n\x1a\n")
+    width, height = struct.unpack(">II", png[16:24])
+    assert (width, height) == (1200, 630)
+
+
+def test_404_page_served_and_home_has_social_meta(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="HN story", url="https://a")],
+        ),
+        tmp_path,
+    )
+
+    assert client.get("/404.html").status_code == 200
+    assert "Not found" in client.get("/404.html").text
+
+    home = client.get("/").text
+    assert '<link rel="canonical"' in home
+    assert "/static/og.png" in home
+    assert 'rel="noopener noreferrer"' in home

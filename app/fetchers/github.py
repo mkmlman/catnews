@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from ..config import REQUEST_TIMEOUT, USER_AGENT, today_utc
 from ..models import Story
+from .sanitize import safe_http_url
 
 GITHUB_SEARCH_URL = "https://api.github.com/search/repositories"
 
@@ -34,7 +35,7 @@ def parse_item(item: dict) -> Story:
     return Story(
         source="github",
         title=full_name,
-        url=item.get("html_url") or f"https://github.com/{full_name}",
+        url=safe_http_url(item.get("html_url")) or f"https://github.com/{full_name}",
         byline=item.get("owner", {}).get("login"),
         author=item.get("owner", {}).get("login"),
         external_id=full_name,

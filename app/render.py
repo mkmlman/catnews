@@ -32,6 +32,24 @@ def static_asset_version() -> str:
     return digest.hexdigest()[:12]
 
 
+def _sw_stable(rel: str) -> bool:
+    """True when a built file belongs in the service worker's permanent precache.
+
+    Mutable files (the daily digest, feeds, sitemap, API data) and per-snapshot
+    archive pages are excluded: they change on the daily refresh, and
+    fingerprinting them would force the service worker to re-download the whole
+    cache every single day. Those resources still work offline because the SW
+    fetch handler caches them on first visit (network-first for navigations).
+    """
+    if rel.endswith((".json", ".md")):
+        return False
+    if rel in ("index.html", "feed.rss", "sitemap.xml"):
+        return False
+    if rel.startswith("archive/") and rel != "archive/index.html":
+        return False
+    return not (rel.startswith("api/") and rel != "api/index.html")
+
+
 _env = Environment(
     loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html"])
 )
@@ -310,12 +328,14 @@ def render_manifest() -> str:
 
 
 def render_service_worker(urls: list[str], version: str) -> str:
-    """Service worker that precaches the whole site for full offline browsing.
+    """Service worker with app-shell precache and offline browsing.
 
     `urls` are relative to the worker's location (e.g. "./", "./index.html",
     "./archive/", "./static/style.css") so the same worker works under any
-    base_path. Navigation requests are network-first (fresh daily digest when
-    online, cached copy when offline); everything else is cache-first.
+    base_path. Only stable app-shell files belong here (see ``_sw_stable``);
+    daily-changing pages and data revalidate via the fetch handler instead.
+    Navigation requests are network-first (fresh daily digest when online,
+    cached copy when offline); everything else is cache-first.
     """
     precache = ",\n    ".join(json.dumps(u) for u in urls)
     return f"""// catnews service worker — build {version}
@@ -395,6 +415,8 @@ def walk_site_urls(out_dir: Path, max_bytes: int = 0) -> list[str]:
         if max_bytes and path.stat().st_size > max_bytes:
             continue
         rel = path.relative_to(out_dir).as_posix()
+        if not _sw_stable(rel):
+            continue
         urls.append("./" + rel)
         if rel.endswith("/index.html"):
             urls.append("./" + rel[: -len("index.html")])
@@ -424,15 +446,21 @@ def render_sitemap(base_url: str, snapshots: list) -> str:
 def site_version(out_dir: Path) -> str:
     """Return a content fingerprint for a generated static site.
 
-    The fingerprint changes when any emitted page, asset, or data file changes,
-    including multiple rebuilds on the same calendar day. The service worker
-    uses it as its cache name so browsers cannot retain an older same-day build.
+    Only stable files are fingerprinted (see ``_sw_stable``): mutable digest,
+    feed, sitemap, and API data files, and growing per-snapshot archive pages
+    are ignored so the fingerprint — and therefore the service worker cache
+    name — survives daily data refreshes. The service worker uses it as its
+    cache name; a stable name means returning browsers do not re-download the
+    entire precache every day.
     """
     digest = hashlib.sha256()
     for path in sorted(out_dir.rglob("*")):
         if not path.is_file() or path.name == "sw.js":
             continue
-        digest.update(path.relative_to(out_dir).as_posix().encode("utf-8"))
+        rel = path.relative_to(out_dir).as_posix()
+        if not _sw_stable(rel):
+            continue
+        digest.update(rel.encode("utf-8"))
         digest.update(path.read_bytes())
     return digest.hexdigest()[:16]
 
@@ -460,6 +488,23 @@ def live_site_urls(snapshots: list) -> list[str]:
         urls.append(f"./archive/{snap.source}/{snap.date.isoformat()}/")
     urls.extend(f"./api/sources/{source}.json" for source in latest_by_source)
     return list(dict.fromkeys(urls))
+
+
+def app_version() -> str:
+    """Content fingerprint for the live app (templates + static assets).
+
+    Used as the dev service worker's cache name so it stays stable across daily
+    data refreshes and only reinstalls when templates or assets actually
+    change. The static build uses ``site_version`` instead.
+    """
+    digest = hashlib.sha256()
+    for base in (TEMPLATES_DIR, STATIC_DIR):
+        for path in sorted(base.rglob("*")):
+            if not path.is_file():
+                continue
+            digest.update(path.relative_to(base).as_posix().encode("utf-8"))
+            digest.update(path.read_bytes())
+    return digest.hexdigest()[:16]
 
 
 def render_rss(digest: Digest, base_url: str) -> str:

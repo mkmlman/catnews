@@ -3,7 +3,7 @@
     <span class="badge badge-{{ story.source }}">{{ source_tags[story.source] }}</span>
     {% if story.score is not none %}<span class="story-score">{% if story.source == "github" %}★{% else %}▲{% endif %} {{ story.score }}</span>{% endif %}
   </div>
-  <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h3>
+  <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener noreferrer">{{ story.title }}</a></h3>
   {% if story.authors %}<p class="story-by">By {{ story.authors | join(", ") }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}</p>
   {% else %}<p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>{% endif %}
   {% if story.links and story.source == "registerspill" %}
@@ -15,7 +15,7 @@
     <ol class="story-links-list">
       {% for link in story.links %}
       <li>
-        <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.title }}</a>
+        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.title }}</a>
         {% if link.site %}<span class="story-links-site">{{ link.site }}</span>{% endif %}
       </li>
       {% endfor %}
@@ -24,7 +24,7 @@
   </details>
   {% endif %}
   <div class="story-foot">
-    <a class="story-link" href="{{ story.url }}" target="_blank" rel="noopener">Read</a>
-    {% if story.hn_url %}<a class="discuss" href="{{ story.hn_url }}" target="_blank" rel="noopener">Discuss ›</a>{% endif %}
+    <a class="story-link" href="{{ story.url }}" target="_blank" rel="noopener noreferrer">Read</a>
+    {% if story.hn_url %}<a class="discuss" href="{{ story.hn_url }}" target="_blank" rel="noopener noreferrer">Discuss ›</a>{% endif %}
   </div>
 </article>

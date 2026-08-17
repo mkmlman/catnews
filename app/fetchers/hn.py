@@ -4,6 +4,7 @@ from datetime import datetime
 
 from ..config import REQUEST_TIMEOUT
 from ..models import Story
+from .sanitize import safe_http_url
 
 ALGOLIA_URL = "https://hn.algolia.com/api/v1/search"
 
@@ -25,7 +26,10 @@ async def fetch_hn(client) -> list[Story]:
 
 def parse_hit(hit: dict) -> Story:
     external_id = str(hit.get("objectID", ""))
-    url = hit.get("url") or f"https://news.ycombinator.com/item?id={external_id}"
+    url = (
+        safe_http_url(hit.get("url"))
+        or f"https://news.ycombinator.com/item?id={external_id}"
+    )
     author = hit.get("author") or "unknown"
     snippet = (hit.get("story_text") or "").strip() if hit.get("story_text") else None
     return Story(

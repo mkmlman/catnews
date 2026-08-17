@@ -148,12 +148,27 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
             )
 
     sw = site_dir / "sw.js"
-    if sw.is_file() and '"./api/search.json"' not in sw.read_text(encoding="utf-8"):
-        errors.append("service worker does not precache api/search.json")
-    if sw.is_file() and '"./api/fetch-status.json"' not in sw.read_text(
-        encoding="utf-8"
-    ):
-        errors.append("service worker does not precache api/fetch-status.json")
+    if sw.is_file():
+        sw_text = sw.read_text(encoding="utf-8")
+        # Inspect only the PRECACHE array, not the whole worker (its offline
+        # fallback references ./index.html regardless of what it precaches).
+        import re
+
+        match = re.search(r"PRECACHE = \[(.*?)\];", sw_text, re.DOTALL)
+        precache = match.group(1) if match else ""
+        # Precaches the stable app shell only; mutable data and feed files are
+        # explicitly excluded so the SW cache never churns on the daily refresh.
+        if '"./static/style.css"' not in precache:
+            errors.append("service worker does not precache static/style.css")
+        for rel in (
+            "./api/search.json",
+            "./api/fetch-status.json",
+            "./api/digest.json",
+            "./index.html",
+            "./feed.rss",
+        ):
+            if f'"{rel}"' in precache:
+                errors.append(f"service worker should not precache mutable file {rel}")
     return errors
 
 

@@ -16,6 +16,7 @@ from fastapi.staticfiles import StaticFiles
 from .config import BASE_PATH, BASE_URL, DATA_DIR, SOURCES, today_utc
 from .models import Digest, SourceSnapshot, Story
 from .render import (
+    app_version,
     live_site_urls,
     render_heatmap_svg,
     render_manifest,
@@ -146,6 +147,11 @@ def api_docs(request: Request) -> HTMLResponse:
 @app.get("/design/", response_class=HTMLResponse)
 def design_system(request: Request) -> HTMLResponse:
     return page(request, "design.html", "/design/")
+
+
+@app.get("/404.html", response_class=HTMLResponse)
+def not_found(request: Request) -> HTMLResponse:
+    return page(request, "404.html", "/404/")
 
 
 # --- JSON API --------------------------------------------------------------
@@ -285,6 +291,6 @@ def manifest() -> Response:
 def service_worker() -> Response:
     urls = live_site_urls(load_all_snapshots(DATA_DIR))
     return Response(
-        content=render_service_worker(urls, version=today_utc().isoformat()),
+        content=render_service_worker(urls, version=app_version()),
         media_type="application/javascript",
     )

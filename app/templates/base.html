@@ -25,6 +25,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{{ base_path }}/static/favicon-16-dark.png" media="(prefers-color-scheme: dark)">
   <title>{% block title %}{{ app_name }}{% endblock %}</title>
   <meta name="description" content="catnews — a curated daily digest of Hacker News, arXiv, GitHub, and Register Spill stories. What's worth reading.">
+  <link rel="canonical" href="{{ og_url }}">
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ base_url }}/feed.rss">
 
   <!-- Open Graph -->
@@ -33,13 +34,13 @@
   <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
   <meta property="og:description" content="{% block og_description %}catnews — a curated daily digest of HN, arXiv, GitHub, and Register Spill stories. What's worth reading.{% endblock %}">
   <meta property="og:url" content="{{ og_url }}">
-  <meta property="og:image" content="{{ base_url }}/static/favicon-180.png">
+  <meta property="og:image" content="{{ base_url }}/static/og.png">
 
   <!-- Twitter card -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="{% block twitter_title %}{{ self.og_title() }}{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}{{ self.og_description() }}{% endblock %}">
-  <meta name="twitter:image" content="{{ base_url }}/static/favicon-180.png">
+  <meta name="twitter:image" content="{{ base_url }}/static/og.png">
   <link rel="stylesheet" href="{{ base_path }}/static/style.css?v={{ asset_version }}">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/fraunces-latin-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/sourceserif4-latin-normal.woff2">
@@ -124,7 +125,7 @@
           <span class="nav-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
         </button>
         <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
-        <a class="repo-link" href="https://github.com/mkmlman/catnews" target="_blank" rel="noopener" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
+        <a class="repo-link" href="https://github.com/mkmlman/catnews" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
         <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch to dark theme"><span id="theme-toggle-icon">{% include "theme-icon-sun.html" %}</span></button>
       </div>
     </header>
@@ -224,7 +225,7 @@
   <div class="install-dialog" id="install-dialog" hidden>
     <div class="install-dialog-card" role="dialog" aria-modal="true" aria-labelledby="install-dialog-title" aria-describedby="install-dialog-description" tabindex="-1">
       <h2 id="install-dialog-title">Install catnews</h2>
-      <p class="muted" id="install-dialog-description">catnews works offline — the whole archive is cached on your device after your first visit. Install it like an app:</p>
+      <p class="muted" id="install-dialog-description">catnews works offline — the pages you visit are cached on your device, and the app shell installs like an app:</p>
       <div class="install-steps">
         <details open>
           <summary>Desktop (Chrome, Edge, Firefox)</summary>

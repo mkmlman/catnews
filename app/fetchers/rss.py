@@ -9,6 +9,7 @@ import feedparser
 
 from ..config import REQUEST_TIMEOUT
 from ..models import CuratedLink, Story
+from .sanitize import safe_http_url
 
 MAX_SNIPPET_CHARS = 900
 MAX_LINKS = 30
@@ -36,6 +37,9 @@ def parse_entry(entry, source: str, *, url_filter: str | None = None) -> Story |
     url = entry.get("link")
     title = entry.get("title")
     if not title or not url:
+        return None
+    url = safe_http_url(url)
+    if url is None:
         return None
     if url_filter and url_filter not in url:
         return None
@@ -76,7 +80,7 @@ def parse_links(content: str) -> list[CuratedLink]:
         text = _anchor_text(match.group(2))
         if not url or len(text) < 3:
             continue
-        if url.startswith(("mailto:", "tel:")):
+        if safe_http_url(url) is None:
             continue
         host = urlparse(url).netloc.lower()
         if _is_social_profile(url, host):

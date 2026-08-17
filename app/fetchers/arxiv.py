@@ -6,6 +6,7 @@ from html import unescape
 
 from ..config import REQUEST_TIMEOUT
 from ..models import Story
+from .sanitize import safe_http_url
 
 ARXIV_API_URL = "https://export.arxiv.org/api/query"
 
@@ -71,7 +72,7 @@ def parse_entry(entry: ET.Element) -> Story | None:
     return Story(
         source="arxiv",
         title=title,
-        url=id_url or f"https://arxiv.org/abs/{external_id}",
+        url=safe_http_url(id_url) or f"https://arxiv.org/abs/{external_id}",
         authors=authors,
         author=authors[0] if authors else None,
         byline=authors[0] if authors else None,
