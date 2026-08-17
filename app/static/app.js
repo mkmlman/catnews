@@ -313,8 +313,11 @@
   }
 
   document.querySelectorAll(".endpoint-code").forEach(function (el) {
-    var anchor = el.querySelector("a");
-    var value = anchor ? anchor.getAttribute("href") : null;
+    var value = el.getAttribute("data-copy") || null;
+    if (!value) {
+      var anchor = el.querySelector("a");
+      value = anchor ? anchor.getAttribute("href") : null;
+    }
     if (!value) {
       var clean = (el.textContent || "").replace(/^GET\s+/, "").trim();
       if (clean && clean.indexOf("<") === -1) value = clean;
@@ -337,6 +340,78 @@
         fallbackCopy(value);
         done();
       }
+    });
+  });
+
+  document.querySelectorAll(".endpoint-copy").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var code = btn.closest("li") ? btn.closest("li").querySelector(".endpoint-code") : null;
+      var value = code ? (code.getAttribute("data-copy") || "") : "";
+      if (!value) return;
+      var done = function () {
+        showCopyToast("Copied " + value);
+        btn.classList.add("is-copied");
+        setTimeout(function () { btn.classList.remove("is-copied"); }, 900);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(value).then(done, function () {
+          fallbackCopy(value);
+          done();
+        });
+      } else {
+        fallbackCopy(value);
+        done();
+      }
+    });
+  });
+
+  /* -------------------------------------------------------------
+     API Run buttons — execute the endpoint and show its response
+     ------------------------------------------------------------- */
+  var RUN_MAX = 4000;
+
+  function apiRunText(text, path) {
+    if (path.indexOf(".json") !== -1) {
+      try {
+        return JSON.stringify(JSON.parse(text), null, 2);
+      } catch (e) { /* fall through to raw */ }
+    }
+    return text || "";
+  }
+
+  document.querySelectorAll(".endpoint-run").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var li = btn.closest("li");
+      var out = li ? li.querySelector(".endpoint-output") : null;
+      var path = btn.getAttribute("data-run") || "";
+      if (!out || !path) return;
+
+      var full = new URL(path, window.location.origin).toString();
+      out.hidden = false;
+      out.textContent = "… fetching " + full;
+      btn.disabled = true;
+
+      fetch(full)
+        .then(function (res) {
+          return res.text().then(function (body) {
+            return { ok: res.ok, status: res.status, body: body };
+          });
+        })
+        .then(function (data) {
+          var text = data.ok
+            ? apiRunText(data.body, path)
+            : "HTTP " + data.status + "\n" + (data.body || "").slice(0, 300);
+          if (text.length > RUN_MAX) {
+            text = text.slice(0, RUN_MAX) + "\n… (truncated)";
+          }
+          out.textContent = text;
+        })
+        .catch(function (err) {
+          out.textContent = "Error: " + err.message;
+        })
+        .then(function () {
+          btn.disabled = false;
+        });
     });
   });
 
