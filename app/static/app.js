@@ -41,6 +41,8 @@
 
   var saved = loadSet(SAVED_KEY);
   var read = loadSet(READ_KEY);
+  var SAVED_META_KEY = "catnews:saved-meta";
+  var savedMeta = loadObject(SAVED_META_KEY);
 
   /* -------------------------------------------------------------
      PWA install button + help dialog
@@ -114,6 +116,23 @@
     if (installDialogClose) installDialogClose.focus();
   }
 
+  function trapDialogFocus(dialog, event) {
+    if (!dialog || dialog.hidden || event.key !== "Tab") return;
+    var focusable = dialog.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (!focusable.length) return;
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
   if (installDialogClose) {
     installDialogClose.addEventListener("click", function () {
       closeInstallDialog();
@@ -130,20 +149,7 @@
         closeInstallDialog();
         return;
       }
-      if (event.key !== "Tab") return;
-      var focusable = installDialog.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      if (!focusable.length) return;
-      var first = focusable[0];
-      var last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
+      trapDialogFocus(installDialog, event);
     });
   }
 
@@ -254,7 +260,9 @@
       if (event.key === "Escape") {
         event.preventDefault();
         closeHelp();
+        return;
       }
+      trapDialogFocus(helpDialog, event);
     });
   }
 
@@ -376,11 +384,30 @@
     }
   }
 
+  function collectCardMeta(card) {
+    var link = card.querySelector(".story-title a, .story-link");
+    var by = card.querySelector(".story-by");
+    var meta = {
+      title: link ? link.textContent.trim() : "",
+      source: card.getAttribute("data-source") || "",
+      byline: "",
+    };
+    if (by) meta.byline = by.textContent.replace(/^by\s+/i, "").trim();
+    return meta;
+  }
+
   function toggleSaved(url) {
-    if (saved.has(url)) saved.delete(url);
-    else saved.add(url);
+    var card = cardByUrl.get(url);
+    if (saved.has(url)) {
+      saved.delete(url);
+      delete savedMeta[url];
+    } else {
+      saved.add(url);
+      if (card) savedMeta[url] = collectCardMeta(card);
+    }
     saveSet(SAVED_KEY, saved);
-    paintCard(cardByUrl.get(url), url);
+    saveObject(SAVED_META_KEY, savedMeta);
+    paintCard(card, url);
     updateCounts();
   }
 
@@ -621,8 +648,18 @@
   }
 
   document.addEventListener("keydown", function (event) {
+    // Let native controls keep their default keys: the shortcut layer must not
+    // hijack Enter on buttons/links/<details>, tab from form fields, etc.
     var target = event.target;
-    if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) {
+    if (
+      target &&
+      (target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.tagName === "SELECT" ||
+        target.closest(
+          "button, a, summary, [role='button'], [contenteditable='true']"
+        ))
+    ) {
       return;
     }
 
@@ -926,6 +963,22 @@
     loadStories(function (stories) {
       var savedStories = stories.filter(function (s) {
         return saved.has(s.url);
+      });
+      var have = {};
+      savedStories.forEach(function (s) {
+        have[s.url] = true;
+      });
+      var meta = loadObject(SAVED_META_KEY);
+      saved.forEach(function (url) {
+        if (have[url]) return;
+        var m = meta[url];
+        if (!m || !m.title) return;
+        savedStories.push({
+          url: url,
+          title: m.title,
+          source: m.source || "unknown",
+          byline: m.byline || "unknown",
+        });
       });
       if (!savedStories.length) return;
       var today = new Date().toISOString().slice(0, 10);

@@ -470,8 +470,20 @@ def render_rss(digest: Digest, base_url: str) -> str:
     fg.subtitle("catnews — latest across all sources.")
     fg.language("en")
 
-    for story in digest.stories:
-        entry = fg.add_entry()
+    # Feed readers expect a single newest-first stream, but the digest
+    # interleaves sources round-robin so no source dominates the site. Sort the
+    # feed by published date (newest first); undated items sink to the end.
+    stories = sorted(
+        digest.stories,
+        key=lambda s: (
+            s.published is not None,
+            s.published or datetime.min.replace(tzinfo=UTC),
+        ),
+        reverse=True,
+    )
+
+    for story in stories:
+        entry = fg.add_entry(order="append")
         entry.id(story.url)
         entry.title(story.title)
         entry.link(href=story.url)

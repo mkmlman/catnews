@@ -62,10 +62,6 @@
 </div>
 
 <div class="stories" id="stories" aria-label="Stories">
-  {% set ns = namespace(counts={}) %}
-  {% for story in digest.stories %}
-  {% if ns.counts.update({story.source: ns.counts.get(story.source, 0) + 1}) %}{% endif %}
-  {% endfor %}
   {% for story in digest.stories %}
   {% set outer_loop_index = loop.index0 %}
   {% include "_story.html" with context %}
