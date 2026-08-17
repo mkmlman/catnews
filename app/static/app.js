@@ -568,7 +568,7 @@
     if (!filtersEl) return;
     var visible = 0;
     var matched = 0;
-    cards.forEach(function (card, index) {
+    cards.forEach(function (card) {
       var url = card.getAttribute("data-url");
       var sourceMatch =
         state.source === "All" || card.getAttribute("data-source") === state.source;
@@ -576,7 +576,7 @@
       var readMatch = !hideRead || !hideRead.checked || !url || !read.has(url);
       var match = sourceMatch && savedMatch && readMatch;
       if (match) matched++;
-      var show = match && index < state.loaded;
+      var show = match && matched <= state.loaded;
       card.hidden = !show;
       if (show) visible++;
     });
@@ -646,9 +646,11 @@
       if (chip.dataset.source !== undefined) {
         state.source = chip.dataset.source;
         if (state.source !== "All") state.savedOnly = false;
+        state.loaded = PAGE_SIZE;
       } else if (chip.dataset.saved !== undefined) {
         state.savedOnly = !state.savedOnly;
         if (state.savedOnly) state.source = "All";
+        state.loaded = PAGE_SIZE;
       } else if (chip.dataset.view !== undefined) {
         state.view = chip.dataset.view;
         try {
@@ -662,20 +664,25 @@
     });
     if (hideRead) {
       hideRead.addEventListener("change", function () {
+        state.loaded = PAGE_SIZE;
         persistFilterState();
         applyFilters();
       });
     }
     if (loadMoreBtn) {
       loadMoreBtn.addEventListener("click", function () {
-        var before = state.loaded;
+        var previouslyHidden = [];
+        cards.forEach(function (card) {
+          if (card.hidden || card.hasAttribute("hidden")) previouslyHidden.push(card);
+        });
         state.loaded += PAGE_SIZE;
         applyFilters();
-        cards.slice(before, state.loaded).forEach(function (card) {
-          if (!card || card.hidden || card.hasAttribute("hidden")) return;
-          card.style.animation = "none";
-          void card.offsetWidth;
-          card.style.animation = "";
+        previouslyHidden.forEach(function (card) {
+          if (!card.hidden && !card.hasAttribute("hidden")) {
+            card.style.animation = "none";
+            void card.offsetWidth;
+            card.style.animation = "";
+          }
         });
       });
     }
