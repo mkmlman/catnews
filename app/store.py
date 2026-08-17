@@ -78,6 +78,22 @@ def save_snapshot(snapshot: SourceSnapshot, data_dir: Path) -> Path:
     return path
 
 
+def unseen_stories(snapshot: SourceSnapshot, data_dir: Path) -> list[Story]:
+    """Stories not already archived for this source (keyed on external_id/url).
+
+    A rolling feed (blog RSS, HN top stories) always returns the same recent
+    entries on consecutive fetches; each daily snapshot would otherwise pile up
+    near-duplicates in the archive. This keeps only genuinely new stories, so
+    an archive page reads as "what was published that day".
+    """
+    archived: set[str] = set()
+    for snapshot_date in list_snapshot_dates(snapshot.source, data_dir):
+        prior = load_snapshot(snapshot.source, snapshot_date, data_dir)
+        if prior:
+            archived.update(s.external_id or s.url for s in prior.stories)
+    return [s for s in snapshot.stories if (s.external_id or s.url) not in archived]
+
+
 def load_fetch_report(data_dir: Path) -> dict:
     """Load the last fetch report, if the fetch job has written one."""
     path = data_dir / FETCH_STATUS_FILE

@@ -30,6 +30,7 @@ from app.store import (
     site_stats,
     source_registry,
     top_domains,
+    unseen_stories,
     weekly_trends,
 )
 from scripts.fetch_digest import due_sources
@@ -379,6 +380,57 @@ def test_fetch_one_retries_transient_http_errors(monkeypatch, tmp_path):
     )
     assert calls == 3
     assert snapshot.stories[0].title == "Recovered"
+
+
+def test_unseen_stories_filters_prior_snapshots(tmp_path):
+    # A rolling feed repeats its recent entries every fetch; unseen_stories
+    # keeps only genuinely new stories so consecutive snapshots don't duplicate.
+    prior = SourceSnapshot(
+        source="simonw",
+        date=date(2026, 8, 16),
+        stories=[
+            Story(
+                source="simonw",
+                title="Old",
+                url="https://sw.net/old",
+                external_id="old",
+            ),
+            Story(source="simonw", title="No id", url="https://sw.net/no-id"),
+        ],
+    )
+    save_snapshot(prior, tmp_path)
+
+    fresh = SourceSnapshot(
+        source="simonw",
+        date=date(2026, 8, 17),
+        stories=[
+            Story(
+                source="simonw",
+                title="Old",
+                url="https://sw.net/old",
+                external_id="old",
+            ),
+            Story(source="simonw", title="No id again", url="https://sw.net/no-id"),
+            Story(
+                source="simonw",
+                title="New",
+                url="https://sw.net/new",
+                external_id="new",
+            ),
+        ],
+    )
+    kept = unseen_stories(fresh, tmp_path)
+    assert [s.title for s in kept] == ["New"]
+
+    # Stories from other sources are never treated as duplicates.
+    other = SourceSnapshot(
+        source="hn",
+        date=date(2026, 8, 17),
+        stories=[
+            Story(source="hn", title="HN", url="https://sw.net/old", external_id="old")
+        ],
+    )
+    assert [s.title for s in unseen_stories(other, tmp_path)] == ["HN"]
 
 
 def test_combined_digest_merges_latest_per_source(tmp_path):

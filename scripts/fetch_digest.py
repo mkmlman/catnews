@@ -27,6 +27,7 @@ from app.store import (
     load_latest_snapshot,
     save_fetch_report,
     save_snapshot,
+    unseen_stories,
 )
 
 
@@ -281,6 +282,20 @@ def main() -> None:
         return
 
     for snap in snapshots:
+        fresh = unseen_stories(snap, DATA_DIR)
+        if not fresh:
+            prior = load_latest_snapshot(snap.source, DATA_DIR)
+            print(
+                f"[catnews] {snap.source}: no new stories since last fetch; "
+                "not creating a snapshot"
+            )
+            statuses[snap.source] = {
+                "state": "skipped",
+                "snapshot_date": prior.date.isoformat() if prior else None,
+                "stories": len(prior.stories) if prior else 0,
+            }
+            continue
+        snap = snap.model_copy(update={"stories": fresh})
         path = save_snapshot(snap, DATA_DIR)
         print(f"[catnews] saved {snap.source}: {len(snap.stories)} stories -> {path}")
 
