@@ -1,24 +1,24 @@
 {
-  "date": "2026-08-16",
+  "date": "2026-08-17",
   "sources": {
     "hn": {
       "state": "ok",
-      "snapshot_date": "2026-08-16",
+      "snapshot_date": "2026-08-17",
       "stories": 25
+    },
+    "arxiv": {
+      "state": "ok",
+      "snapshot_date": "2026-08-17",
+      "stories": 15
     },
     "github": {
       "state": "ok",
-      "snapshot_date": "2026-08-16",
-      "stories": 15
-    },
-    "arxiv": {
-      "state": "skipped",
-      "snapshot_date": "2026-08-10",
+      "snapshot_date": "2026-08-17",
       "stories": 15
     },
     "registerspill": {
-      "state": "skipped",
-      "snapshot_date": "2026-08-10",
+      "state": "ok",
+      "snapshot_date": "2026-08-17",
       "stories": 10
     }
   }
