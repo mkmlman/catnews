@@ -1,0 +1,781 @@
+{
+  "source": "simonw",
+  "date": "2026-08-17",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "We Tracked a Shipment of Rare Books. It Ended at an Amazon AI Training Facility",
+      "url": "https://simonwillison.net/2026/Aug/17/we-tracked-a-shipment-of-rare-books-it-ended-at-an-amazon-ai-tra/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/17/we-tracked-a-shipment-of-rare-books-it-ended-at-an-amazon-ai-tra/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-17T15:21:29Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "We Tracked a Shipment of Rare Books. It Ended at an Amazon AI Training Facility Excellent piece of reporting from 404 Media. For a while now there have been stories of book dealers receiving orders for large volumes of books from apparently price-insensitive anonymous customers, widely suspected to be companies looking to scan them for AI training (see my previous coverage of Anthropic's book scanning from June 2025.) 404 Media investigated with an AirTag! In July, one bookseller told me they received a very large order of around 1,000 books on Biblio, one of these marketplaces. The seller agreed to put an Apple AirTag provided by 404 Media in one of the books included in this order so we could see where the book was going. And by extension, which company, AI or otherwise, was behind this massive order. The book ended up delivered to the VGT3 corner of the LAS8 Amazon facility in the nor",
+      "links": [
+        {
+          "title": "We Tracked a Shipment of Rare Books. It Ended at an Amazon AI Tr",
+          "url": "https://www.404media.co/we-tracked-a-shipment-of-rare-books-it-ended-at-an-amazon-ai-training-facility/",
+          "site": "404media.co"
+        },
+        {
+          "title": "LAS8 Amazon facility",
+          "url": "https://maps.app.goo.gl/2hMqbHrovTSZxh1U9",
+          "site": "maps.app.goo.gl"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Markdown SVG upgrades",
+      "url": "https://simonwillison.net/2026/Aug/16/markdown-svg-upgrades/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/16/markdown-svg-upgrades/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-16T23:59:37Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "I started building my markdown-svg-renderer tool in May , but I've since added enough features to it that it's worth talking about here again. It's evolved into my ideal tool for sharing Markdown transcripts that include SVG documents. Given my proclivity for drawing pelicans riding bicycles this is a problem that I needed to solve! The tool is very simple. Navigate to markdown-svg-renderer in your browser and paste in some Markdown to see it rendered... or save that Markdown to a CORS-friendly URL or a GitHub Gist and paste in a URL to that document. The URL option will give you a bookmarkable page, for example https://tools.simonwillison.net/markdown-svg-renderer#url=https%3A%2F%2Fgist.github.com%2Fsimonw%2F6f9e48293be5c916652d29f0dc0b0657 - which bakes in the URL to this Gist . If you visit the Gist you'll see raw SVG: In the rendered tool that looks like this instead: As you can see,",
+      "links": [
+        {
+          "title": "this Gist",
+          "url": "https://gist.github.com/simonw/6f9e48293be5c916652d29f0dc0b0657",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "new today",
+          "url": "https://github.com/simonw/tools/commit/73e0327f6df9887ba2a9f9f16a2d06a45451d248",
+          "site": "github.com"
+        },
+        {
+          "title": "ffmpeg.wasm",
+          "url": "https://github.com/ffmpegwasm/ffmpeg.wasm",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Qwen 3.8 27B is excellent, but it defaults to wildly overthinking things",
+      "url": "https://simonwillison.net/2026/Aug/16/qwen-38-27b/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/16/qwen-38-27b/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-16T22:00:39Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Friday's big release was Qwen 3.8 27B , an Apache 2 licensed 27B parameter vision-capable LLM from Alibaba's Qwen research lab. I've been looking forward to this one: 27B is an excellent size for running a model on a reasonably specced laptop, and its predecessor Qwen 3.6 27B was impressive. Qwen's self-reported benchmarks for this model are eye-opening. They show a boost from both Qwen 3.6 27B and the closed-weight Qwen 3.7-Plus, which was one of Qwen's strongest models of any size as recently as May this year . It will be interesting to hear what independent benchmarks have to say about the model. I've been running the model on two different machines: my 128GB M5 Max MacBook Pro, and an NVIDIA DGX Spark . On both machines I'm running LM Studio and their 17GB Q4_K_M quantized build . I also tried using llama-server directly on the Spark. The default of extra high results in spectacular ",
+      "links": [
+        {
+          "title": "Qwen 3.8 27B",
+          "url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+          "site": "huggingface.co"
+        },
+        {
+          "title": "self-reported benchmarks",
+          "url": "https://huggingface.co/Qwen/Qwen3.8-27B#benchmark-results",
+          "site": "huggingface.co"
+        },
+        {
+          "title": "May this year",
+          "url": "https://qwen.ai/blog?id=qwen3.7-plus",
+          "site": "qwen.ai"
+        },
+        {
+          "title": "their 17GB Q4_K_M quantized build",
+          "url": "https://lmstudio.ai/models/qwen3.8",
+          "site": "lmstudio.ai"
+        },
+        {
+          "title": "last week",
+          "url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B",
+          "site": "huggingface.co"
+        },
+        {
+          "title": "the reasoning trace",
+          "url": "https://gist.github.com/simonw/a05cc78b2061555bd61d3bb9686e689f",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "this single prompt",
+          "url": "https://gist.github.com/simonw/121ad098860028b2fab603fa12da1fd9",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "transcript here",
+          "url": "https://gist.github.com/simonw/8e78b1c64d9a56d08eedb954aa9445ee",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "this reply",
+          "url": "https://gist.github.com/simonw/6693d74a6bd45f641d43ceb9961dd95f#core-idea-actors--plugins-no-built-in-user-accounts",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "pi_jsonl_to_md.py",
+          "url": "https://github.com/simonw/tools/blob/main/python/pi_jsonl_to_md.py",
+          "site": "github.com"
+        },
+        {
+          "title": "that session transcript",
+          "url": "https://gist.github.com/simonw/491e55ac9d741202ea0af5d9d93775d4",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "track token speed",
+          "url": "https://artificialanalysis.ai/models#speed",
+          "site": "artificialanalysis.ai"
+        },
+        {
+          "title": "Multi-Token Prediction",
+          "url": "https://sebastianraschka.com/llm-architecture-gallery/mtp/",
+          "site": "sebastianraschka.com"
+        },
+        {
+          "title": "this tweet",
+          "url": "https://twitter.com/ggerganov/status/2088340681701925253",
+          "site": "twitter.com"
+        },
+        {
+          "title": "a comparative benchmark on the Spark",
+          "url": "https://gist.github.com/simonw/b08c7eb9c126c806ba8987e269ea736b",
+          "site": "gist.github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Dario Amodei",
+      "url": "https://simonwillison.net/2026/Aug/16/dario-amodei/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/16/dario-amodei/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-16T15:05:36Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "I do agree that the public has a negative view of AI (and that this is a big problem), but I don’t think it is primarily caused by me or any other AI leader warning about AI’s risks. I think it is fundamentally a crisis of trust. I think that ordinary people don’t trust companies, governments, or the tech industry and always suspect that we are cooking up some new way to screw them over. The causes of this go back decades and AI is just the latest iteration of it. I don’t think that a glitzy marketing campaign with a positive spin (which some have advocated that Anthropic do) is the way to win back that trust — at this point, saying that AI will cure cancer is more a cliche than it is inspiring, and most people think it is deceptive. The thing that will work is actually curing cancer . I think by far the most accurate criticism of AI companies including Anthropic is that we haven’t yet d",
+      "links": [
+        {
+          "title": "Dario Amodei",
+          "url": "https://twitter.com/darioamodei/status/2088758819304443967",
+          "site": "twitter.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "CORS Chat",
+      "url": "https://simonwillison.net/2026/Aug/15/cors-chat/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/15/cors-chat/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-15T14:49:54Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Tool: CORS Chat I built this today ( with GPT-5.6-Sol xhigh ) to help test Qwen 3.8 27B running in LM Studio on both my M5 MacBook Pro and an NVIDIA DGX Spark. It provides a web UI for exercising an OpenAI-Responses-compatible chat endpoint. I've tried it against LM Studio with the --cors option and OpenRouter, and both work fine. Conversations are persisted in the browser and can be exported as copy-pasted JSON. One fun detail is that it notices SVG images that are being generated and progressively renders them in the chat while the tokens are still streaming in. Tags: svg , ai , generative-ai , llms , cors , openrouter , lm-studio",
+      "links": [
+        {
+          "title": "with GPT-5.6-Sol xhigh",
+          "url": "https://gist.github.com/simonw/92a1d97773744b45bf259e003013cf36",
+          "site": "gist.github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Northern Gannet",
+      "url": "https://simonwillison.net/2026/Aug/15/sighting-391300422/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/15/sighting-391300422/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-15T03:22:00Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Northern Gannet, in Pillar Point Harbor, CA, US This is Morris. Morris is a local celebrity: the only known Northern Gannet ( Morus bassanus ) in the entire Pacific Ocean. They showed up in the Farallon Islands off the coast of San Francisco 14 years ago . They have since made Pillar Point harbor their home, where they are quite easy to spot: the only white bird with a yellow head, usually hanging out with the smaller black Brandt’s cormorants near the harbor sign visible from the end of the commercial pier. Tags: photography , wildlife , half-moon-bay",
+      "links": [
+        {
+          "title": "14 years ago",
+          "url": "https://baynature.org/magazine/spring2017/atlantic-bird-makes-home-california-maybe-melting-arctic-ice/",
+          "site": "baynature.org"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Don't classify. Hallucinate!",
+      "url": "https://simonwillison.net/2026/Aug/14/dont-classify-hallucinate/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/14/dont-classify-hallucinate/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-14T21:54:35Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Don't classify. Hallucinate! I still have quite a bit of older content on my blog that I never got round to tagging. My blog has 1,856 tags - likely too many to feed to an LLM in one go and say \"which of these tags match the following content\". Doug Turnbull has a neat solution. Tell the model to output tags without any details of the existing vocabulary, then use vector embeddings against the existing corpus to find the concrete tags that are closest to the ones the model imagined might fit! His example prompt suggests including an example of the shape of your tags to help the model make a more useful guess: Your task is to create novel, never seen before, furniture, home goods, or hardware classification that best fit a search query. Product classifications might look like: Furniture / Living Room Furniture / Coffee Tables & End Tables / Coffee Tables Décor & Pillows / Decorative Pillo",
+      "links": [
+        {
+          "title": "Don't classify. Hallucinate!",
+          "url": "https://softwaredoug.com/blog/2026/08/10/hypothetical-classifications",
+          "site": "softwaredoug.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "sqlite-utils 4.2.1",
+      "url": "https://simonwillison.net/2026/Aug/13/sqlite-utils-2/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/13/sqlite-utils-2/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-13T23:53:47Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Release: sqlite-utils 4.2.1 Fixes a crashing bug in sqlite-utils 4.2 . I'd introduced code that looks like this: from typing_extensions import Self It turned out the typing-extensions package was not listed as a dependency for sqlite-utils - it was installed by one of the other dependencies in the dev dependency group , but when you uvx sqlite-utils directly you don't get those dependencies. As part of fixing this I figured out how to run a smoke test to ensure the CLI tool still works even without those dev dependencies, which can be run from the project checkout: uv run --isolated --no-default-groups sqlite-utils --help The --no-default-groups argument prevents it from installing that default dev group, and --isolated means that even if there is a .venv/ folder containing extra dependencies they will be ignored for the duration of that uv run command. Tags: packaging , python , sqlite-",
+      "links": [
+        {
+          "title": "sqlite-utils 4.2.1",
+          "url": "https://github.com/simonw/sqlite-utils/releases/tag/4.2.1",
+          "site": "github.com"
+        },
+        {
+          "title": "typing-extensions",
+          "url": "https://pypi.org/project/typing-extensions/",
+          "site": "pypi.org"
+        },
+        {
+          "title": "dev dependency group",
+          "url": "https://github.com/simonw/sqlite-utils/blob/56dd09702fdb9e899f577ffd51693c1f2176cb08/pyproject.toml#L34-L55",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "sqlite-utils 4.2",
+      "url": "https://simonwillison.net/2026/Aug/13/sqlite-utils/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/13/sqlite-utils/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-13T20:11:29Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Release: sqlite-utils 4.2 Lots of improvements in this one relating to the table.transform() feature , which adds support for complex alter table operations by creating a fresh table, copying across the data and then dropping and replacing the old one. transform() now preserves a much larger array of edge-case schema definitions, including check constraints, unique constraints and even comments describing the columns. There are also new introspection properties for check constraints, and a whole lot of other smaller changes. Includes contributions from Bunlong Heng , ethanhawkes-gif , Rami Abdelrazzaq , nyxst4ck , and ikatyal2110 . (It later turned out 4.2 had a crashing bug , fixed in 4.2.1 .) Tags: releases , sqlite , sqlite-utils",
+      "links": [
+        {
+          "title": "sqlite-utils 4.2",
+          "url": "https://github.com/simonw/sqlite-utils/releases/tag/4.2",
+          "site": "github.com"
+        },
+        {
+          "title": "table.transform() feature",
+          "url": "https://sqlite-utils.datasette.io/en/stable/python-api.html#transforming-a-table",
+          "site": "sqlite-utils.datasette.io"
+        },
+        {
+          "title": "new introspection properties",
+          "url": "https://sqlite-utils.datasette.io/en/stable/python-api.html#checks",
+          "site": "sqlite-utils.datasette.io"
+        },
+        {
+          "title": "Bunlong Heng",
+          "url": "https://github.com/bunlongheng",
+          "site": "github.com"
+        },
+        {
+          "title": "ethanhawkes-gif",
+          "url": "https://github.com/ethanhawkes-gif",
+          "site": "github.com"
+        },
+        {
+          "title": "Rami Abdelrazzaq",
+          "url": "https://github.com/RamiNoodle733",
+          "site": "github.com"
+        },
+        {
+          "title": "nyxst4ck",
+          "url": "https://github.com/nyxst4ck",
+          "site": "github.com"
+        },
+        {
+          "title": "ikatyal2110",
+          "url": "https://github.com/ikatyal2110",
+          "site": "github.com"
+        },
+        {
+          "title": "a crashing bug",
+          "url": "https://github.com/simonw/sqlite-utils/issues/842",
+          "site": "github.com"
+        },
+        {
+          "title": "4.2.1",
+          "url": "https://sqlite-utils.datasette.io/en/stable/changelog.html#v4-2-1",
+          "site": "sqlite-utils.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-gemini 0.33",
+      "url": "https://simonwillison.net/2026/Aug/13/llm-gemini/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/13/llm-gemini/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-13T19:37:34Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Release: llm-gemini 0.33 It's been a while since the last llm-gemini release. This version of the plugin adds support for today's Gemini 3.7 Flash release, plus gemini-3.6-flash , gemini-3.5-flash-lite and two embedding models gemini-embedding-2 and gemini-embedding-001 . The plugin is also upgraded for compatibility with LLM 0.32, which means you can now see reasoning traces and you can also enable server-side tools using this pattern: llm -m gemini-3.7-flash -T CodeExecution \\ 'use python to calculate (factorial of 13) * 3' I had Gemini 3.7 Flash draw me some pelicans riding bicycles at high, medium, and low thinking efforts (minimal, which was an option in 3.6 Flash, has been removed in 3.7.) Here's the high level one, which is pretty great: Update 14th August 2026 : I had originally said that the SVG rendered incorrectly in Chrome and Firefox, and blamed Gemini 3.7 Flash for producin",
+      "links": [
+        {
+          "title": "llm-gemini 0.33",
+          "url": "https://github.com/simonw/llm-gemini/releases/tag/0.33",
+          "site": "github.com"
+        },
+        {
+          "title": "Gemini 3.7 Flash",
+          "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-3-7-flash/",
+          "site": "blog.google"
+        },
+        {
+          "title": "a bug In my rendering tool",
+          "url": "https://github.com/simonw/tools/commit/78fca0e647a9e20eff16900cf4485a6d622087e9",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "alchemy-utils 0.1a1",
+      "url": "https://simonwillison.net/2026/Aug/13/alchemy-utils/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/13/alchemy-utils/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-13T03:03:17Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Release: alchemy-utils 0.1a1 Performance boost for DuckDB exports and CSV imports, see here .",
+      "links": [
+        {
+          "title": "alchemy-utils 0.1a1",
+          "url": "https://github.com/simonw/alchemy-utils/releases/tag/0.1a1",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "DeepSeek V4 Pro 0813 (on OpenRouter)",
+      "url": "https://simonwillison.net/2026/Aug/12/deepseek-v4-pro-0813/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/12/deepseek-v4-pro-0813/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-12T23:59:23Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "DeepSeek V4 Pro 0813 (on OpenRouter) The latest DeepSeek Pro model is now available, via API only. I had to link to OpenRouter because DeepSeek don't have any obvious announcement page for their new model. I haven't been able to confirm if they plan to release the open weights, but given the weights are available for both April's deepseek-ai/DeepSeek-V4-Pro and July's deepseek-ai/DeepSeek-V4-Flash-0731 it seems likely. Update : the weights are now available on Hugging Face, 1.7T parameters, 893 GB. Interestingly I got very different looking pelicans for the three different reasoning levels of low, medium, and high. I've not noticed this kind of difference from any other model: Low: Medium: High: In terms of benchmarks... as far as I can tell those were released to the Official DeepSeek WeChat Group, then copied and pasted into a post on Reddit which was deleted by the moderators for bein",
+      "links": [
+        {
+          "title": "DeepSeek V4 Pro 0813 (on OpenRouter)",
+          "url": "https://openrouter.ai/deepseek/deepseek-v4-pro-0813",
+          "site": "openrouter.ai"
+        },
+        {
+          "title": "deepseek-ai/DeepSeek-V4-Pro",
+          "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+          "site": "huggingface.co"
+        },
+        {
+          "title": "deepseek-ai/DeepSeek-V4-Flash-0731",
+          "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731",
+          "site": "huggingface.co"
+        },
+        {
+          "title": "are now available",
+          "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813",
+          "site": "huggingface.co"
+        },
+        {
+          "title": "a post on Reddit",
+          "url": "https://www.reddit.com/r/LocalLLaMA/comments/1vmi0fg/removed_by_moderator/",
+          "site": "reddit.com"
+        },
+        {
+          "title": "this ASCII-art table on Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49274600#49275180",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "alchemy-utils 0.1a0",
+      "url": "https://simonwillison.net/2026/Aug/12/alchemy-utils/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/12/alchemy-utils/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-12T19:51:30Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Release: alchemy-utils 0.1a0 I've long pondered what a database agnostic version of my sqlite-utils Python library and CLI utility might look like. This morning (literally a shower project) I tasked Codex and GPT-5.6 Sol Ultra with building a prototype: Do a research spike to see what it would take to build a library with the same core API as SQLite-utils - in particular the insert and upsert and insert_all and upsert_all and create and update methods, and the table introspection stuff - but backed by SQLalchemy so it works for multiple database engines Test against PostgreSQL and SQLite and duckdb Use ~/dev/sqlite-utils for reference Create a git repo for this and commit and early and often - use uv init to start the project - use red/green TDD and pytest, see ~/dev/django-sql-dashboard for one idea as to how the PostgreSQL tests could work It took very few follow-up prompts to produce ",
+      "links": [
+        {
+          "title": "alchemy-utils 0.1a0",
+          "url": "https://github.com/simonw/alchemy-utils/releases/tag/0.1a0",
+          "site": "github.com"
+        },
+        {
+          "title": "sqlite-utils",
+          "url": "https://sqlite-utils.datasette.io/",
+          "site": "sqlite-utils.datasette.io"
+        },
+        {
+          "title": "very few follow-up prompts",
+          "url": "https://gist.github.com/simonw/bd10e4886688e0fd1b833e4afaabf19e",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "every tree in San Francisco",
+          "url": "https://github.com/simonw/sf-tree-history/blob/main/Street_Tree_List.csv",
+          "site": "github.com"
+        },
+        {
+          "title": "had Codex optimize it",
+          "url": "https://github.com/simonw/alchemy-utils/commit/e3b8d03e040867b256aeff7db322a0b0eb1f8b06",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Florian Herrengt",
+      "url": "https://simonwillison.net/2026/Aug/12/florian-herrengt/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/12/florian-herrengt/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-12T15:08:47Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "But then users start to report a weird bug. It's the 4th time your team has been trying to fix it. I mean... asking AI to fix it. Unfortunately, it seems like not even Fable can figure it out. You go talk to the person who worked on this feature. \"So where does the data come from?\" \"Hmm... actually I don't know. Let me ask Claude.\" You sit next to each other watching an endless wall of text appear on the screen. Neither of you has any idea whether any of it is true but Claude seems very confident. [...] This project has become so convoluted, with so many layers and services, that no one on your team could possibly start to understand what's going on. — Florian Herrengt , AI is removing the middle class of software engineering Tags: ai-misuse , cognitive-debt , generative-ai , ai , llms , ai-assisted-programming",
+      "links": [
+        {
+          "title": "Florian Herrengt",
+          "url": "https://blog.florianherrengt.com/ai-removing-middle-class-software-engineering.html",
+          "site": "blog.florianherrengt.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "There are no lossless transformations of natural-language text",
+      "url": "https://simonwillison.net/2026/Aug/11/there-are-no-lossless-transformations-of-natural-language-text/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/11/there-are-no-lossless-transformations-of-natural-language-text/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-11T23:48:35Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "There are no lossless transformations of natural-language text Sophie Alpert shares her \"internal policy on acceptable use of AI writing by engineers\". It's a short read (supporting its own recommendations) and really good. If you chose to have LLMs help massage your writing the following rule seems crucial to me: You must stand behind every idea and every sentence in your docs . It is your responsibility to make sure that the entire document is representative of your own thoughts before you share it. If a reviewer asks, “What did you mean by this line?”, it’s not acceptable to reply with “Oh sorry, AI wrote that, just ignore it.” You will confuse your readers (and waste their time) if you present them things that are not genuinely representative of your thoughts. The \"no lossless transformations\" idea from the post title is expanded on here: There are no lossless transformations of natu",
+      "links": [
+        {
+          "title": "There are no lossless transformations of natural-language text",
+          "url": "https://sophiebits.com/2026/06/25/there-are-no-lossless-transformations-of-natural-language-text",
+          "site": "sophiebits.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Stealing Reasoning Traces from Proprietary LLM APIs",
+      "url": "https://simonwillison.net/2026/Aug/11/stealing-reasoning-traces/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/11/stealing-reasoning-traces/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-11T22:40:45Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Stealing Reasoning Traces from Proprietary LLM APIs A vanity domain name ( stolen-thoughts.com ) for a neat paper : Anthropic, OpenAI, and Google return encrypted chain-of-thought blocks to clients that can be replayed across sessions, users, and models. We take a trace produced by a frontier model, replay it into a weaker sibling, jailbreak the weaker model, and recover the stronger model’s hidden reasoning in plaintext You can see an example of these encrypted blocks by running: curl https://api.openai.com/v1/responses \\ -H \" Content-Type: application/json \" \\ -H \" Authorization: Bearer $( llm keys get openai ) \" \\ -d ' { \"model\": \"gpt-5.6-luna\", \"input\": \"Solve step by step: What is the smallest positive integer divisible by every integer from 1 through 20?\", \"reasoning\": { \"effort\": \"medium\" }, \"include\": [\"reasoning.encrypted_content\"], \"store\": false, \"stream\": false } ' Here's the",
+      "links": [
+        {
+          "title": "Stealing Reasoning Traces from Proprietary LLM APIs",
+          "url": "https://stolen-thoughts.com/",
+          "site": "stolen-thoughts.com"
+        },
+        {
+          "title": "a neat paper",
+          "url": "https://www.alphaxiv.org/abs/2608.09867",
+          "site": "alphaxiv.org"
+        },
+        {
+          "title": "was removed in the 4.6 models",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#migrating-away-from-prefilled-responses",
+          "site": "platform.claude.com"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49257876",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-upload-dbs 0.5a0",
+      "url": "https://simonwillison.net/2026/Aug/11/datasette-upload-dbs/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/11/datasette-upload-dbs/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-11T20:35:13Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Release: datasette-upload-dbs 0.5a0 This plugin has been around for a while - it lets users upload a brand new SQLite database to a hosted Datasette instance, at which point that database will start being served by that instance. It can also be used to atomically swap a database with a more recent version. The uploaded database is saved to a file, verified, then swapped in so /name starts serving the new one. The new release adds a formalized API, so you can replace an existing database (or add a new one) like this: curl -X POST \\ -H \"Authorization: Bearer $API_TOKEN\" \\ -H \"Accept: application/json\" \\ -F \"db=@content.db\" \\ -F \"db_name=content\" \\ https://your-instance.example.com/-/upload-dbs This means you can build fresh databases in an environment such as GitHub Actions and swap them in production as soon as that build has completed. Tags: datasette",
+      "links": [
+        {
+          "title": "datasette-upload-dbs 0.5a0",
+          "url": "https://github.com/simonw/datasette-upload-dbs/releases/tag/0.5a0",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Introducing Muse Glimmer",
+      "url": "https://simonwillison.net/2026/Aug/10/introducing-muse-glimmer/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/10/introducing-muse-glimmer/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-10T23:56:03Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Introducing Muse Glimmer Meta are back in the open weights game! Muse Glimmer is a brand new 30B model under a clean Apache 2.0 license (a step up from the janky Llama licenses of old). They claim to have optimized it for exactly the kind of things I'm looking for in a local model: End-to-end Agentic Task Completion. Muse Glimmer achieves strong success rates on full-task benchmarks including DeepSearch QA, MCP-Atlas, 𝛕-Bench and SWE-Bench, which measure its ability to work within scaffolds, write and debug code, and resolve multi-turn requests from start to finish. Reliable Tool Use. The model handles a wide range of function calls, invoking tools with precise schemas throughout extended workflows. Multi-Step Reasoning. Muse Glimmer chains reasoning over long horizons, sustaining coherent plans across complex, extended workflows. [...] Here's a pelican which I generated using LM Studio'",
+      "links": [
+        {
+          "title": "Introducing Muse Glimmer",
+          "url": "https://research.meta.ai/blog/introducing-muse-glimmer-open-agentic-model",
+          "site": "research.meta.ai"
+        },
+        {
+          "title": "a pelican",
+          "url": "https://gist.github.com/simonw/f20d4cd0ea7596990f7910ead616493e",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "18.16 GB version of the model",
+          "url": "https://lmstudio.ai/models/muse-glimmer",
+          "site": "lmstudio.ai"
+        },
+        {
+          "title": "llm-coding-agent",
+          "url": "https://github.com/simonw/llm-coding-agent",
+          "site": "github.com"
+        },
+        {
+          "title": "Here's the response",
+          "url": "https://gist.github.com/simonw/3623676275da1a6078b2500dcc78116f#response-24",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "this patch applied",
+          "url": "https://github.com/agustif/llm-lmstudio/pull/14",
+          "site": "github.com"
+        },
+        {
+          "title": "LLM 0.32",
+          "url": "https://llm.datasette.io/en/stable/changelog.html#v0-32",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "what I got back",
+          "url": "https://gist.github.com/simonw/288ef0dd33a913455d1b1ecc329637e0#response",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49241679",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting OpenClaw (running Opus 4.6)",
+      "url": "https://simonwillison.net/2026/Aug/10/openclaw/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/10/openclaw/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-10T02:05:16Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "The API has zero authorisations checks on cancelling other people's reservations … I tested this with the person in waitlist position #1 — and it actually went through. So you've moved from #4 to #3 already. — OpenClaw (running Opus 4.6) , hacking an Australian gym-booking website Tags: ai-ethics , generative-ai , openclaw , ai , ai-security-research , llms",
+      "links": [
+        {
+          "title": "OpenClaw (running Opus 4.6)",
+          "url": "https://www.abc.net.au/news/2026-08-10/ai-assistant-hacks-gym-website-aus-cyber-attack/107007986",
+          "site": "abc.net.au"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Claude Opus 5 system prompt",
+      "url": "https://simonwillison.net/2026/Aug/9/claude-opus-5-system-prompt/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/9/claude-opus-5-system-prompt/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-09T23:31:39Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Claude Fable 5 and Claude Mythos 5 were first released on June 9, 2026. On June 12, 2026, Anthropic suspended access to both models to comply with U.S. Department of Commerce export controls; the Department lifted those controls on June 30, 2026, and Anthropic restored access on July 1, 2026 (Anthropic's statement: https://www.anthropic.com/news/fable-mythos-access ). These events are after Claude's training-data cutoff, so Claude knows about them only from this notice. If asked, Claude confirms them accurately and matter-of-factly — it doesn't deny the suspension happened — and otherwise treats the export controls like any other current political topic: it gives a fair, accurate account rather than sharing personal opinions, and points to the linked statement for anything further. Things may have developed since this notice, so Claude checks for newer information when it can search, and",
+      "links": [
+        {
+          "title": "https://www.anthropic.com/news/fable-mythos-access",
+          "url": "https://www.anthropic.com/news/fable-mythos-access",
+          "site": "anthropic.com"
+        },
+        {
+          "title": "Claude Opus 5 system prompt",
+          "url": "https://platform.claude.com/docs/en/release-notes/system-prompts#claude-opus-5",
+          "site": "platform.claude.com"
+        }
+      ]
+    }
+  ]
+}

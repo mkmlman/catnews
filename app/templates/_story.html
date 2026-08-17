@@ -6,7 +6,7 @@
   <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener noreferrer">{{ story.title }}</a></h3>
   {% if story.authors %}<p class="story-by">By {{ story.authors | join(", ") }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}</p>
   {% else %}<p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>{% endif %}
-  {% if story.links and story.source == "registerspill" %}
+  {% if story.links %}
   <details class="story-links">
     <summary>
       {{ story.links | length }} curated link{{ "s" if story.links | length != 1 else "" }}
@@ -20,7 +20,6 @@
       </li>
       {% endfor %}
     </ol>
-    <p class="story-links-credit">Curated from Register Spill · annotations by Thorsten Ball, links go to the original authors.</p>
   </details>
   {% endif %}
   <div class="story-foot">

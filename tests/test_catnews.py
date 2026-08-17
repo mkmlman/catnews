@@ -166,6 +166,18 @@ def test_rss_parse_entry_skips_missing_link():
     assert parse_rss_entry({"title": "No link"}, "escflat") is None
 
 
+def test_rss_parse_entry_falls_back_to_feed_author():
+    # Atom feeds (Simon Willison) declare the author once at the feed level.
+    entry = {"title": "A post", "link": "https://simonwillison.net/2026/Aug/17/a-post/"}
+    story = parse_rss_entry(entry, "simonw")
+    assert story is not None
+    assert story.author is None
+    story_with_author = parse_rss_entry(entry, "simonw", feed_author="Simon Willison")
+    assert story_with_author is not None
+    assert story_with_author.author == "Simon Willison"
+    assert story_with_author.byline == "Simon Willison"
+
+
 def test_rss_strip_html():
     assert strip_html("<p>Hello &amp; <b>world</b></p>") == "Hello & world"
     assert strip_html("") == ""
@@ -209,6 +221,48 @@ def test_fetch_rss_extracts_links_when_requested():
     assert [s.title for s in stories] == ["Joy & Curiosity #93"]
     assert stories[0].source == "registerspill"
     assert [l.title for l in stories[0].links] == ["gwern"]
+
+
+def test_fetch_rss_extracts_links_and_author_from_atom_summary():
+    import asyncio
+
+    from app.fetchers.rss import fetch_rss
+
+    feed_xml = (
+        "<?xml version='1.0' encoding='utf-8'?>"
+        "<feed xmlns='http://www.w3.org/2005/Atom'>"
+        "<title>simonwillison</title>"
+        "<author><name>Simon Willison</name></author>"
+        "<entry><title>Links worth reading</title>"
+        "<link href='https://simonwillison.net/2026/Aug/17/links-worth-reading/'/>"
+        "<summary type='html'><![CDATA[<p>Start with "
+        "<a href='https://gwern.net/'>gwern</a>, "
+        "<a href='https://arxiv.org/'>arXiv</a>, and my "
+        "<a href='https://simonwillison.net/tags/ai/'>own tag</a>.</p>]]></summary>"
+        "</entry>"
+        "</feed>"
+    )
+
+    class FakeClient:
+        async def get(self, url, timeout=None):
+            response = SimpleNamespace(content=feed_xml.encode())
+            response.raise_for_status = lambda: None
+            return response
+
+    async def run():
+        return await fetch_rss(
+            FakeClient(),
+            "https://simonwillison.net/atom/everything/",
+            "simonw",
+            extract_links=True,
+        )
+
+    stories = asyncio.run(run())
+    assert [s.title for s in stories] == ["Links worth reading"]
+    assert stories[0].author == "Simon Willison"  # feed-level author fallback
+    assert [l.title for l in stories[0].links] == ["gwern", "arXiv"]
+    assert stories[0].links[0].site == "gwern.net"
+    assert stories[0].links[1].site == "arxiv.org"
 
 
 def test_story_markdown_and_why_read():
@@ -1205,7 +1259,8 @@ def test_fetch_health_compares_actual_to_expected(tmp_path):
     assert by_source["hn"]["rate"] == 100.0
     assert by_source["hn"]["last_fetched"] == date(2026, 8, 4)
     assert all(
-        row["source"] in {"hn", "arxiv", "github", "registerspill"} for row in health
+        row["source"] in {"hn", "arxiv", "github", "registerspill", "simonw"}
+        for row in health
     )
 
 

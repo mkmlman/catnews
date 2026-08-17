@@ -1,23 +1,28 @@
 {
   "date": "2026-08-17",
   "sources": {
-    "hn": {
+    "simonw": {
       "state": "ok",
+      "snapshot_date": "2026-08-17",
+      "stories": 20
+    },
+    "hn": {
+      "state": "skipped",
       "snapshot_date": "2026-08-17",
       "stories": 25
     },
     "arxiv": {
-      "state": "ok",
+      "state": "skipped",
       "snapshot_date": "2026-08-17",
       "stories": 15
     },
     "github": {
-      "state": "ok",
+      "state": "skipped",
       "snapshot_date": "2026-08-17",
       "stories": 15
     },
     "registerspill": {
-      "state": "ok",
+      "state": "skipped",
       "snapshot_date": "2026-08-17",
       "stories": 10
     }

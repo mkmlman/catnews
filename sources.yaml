@@ -57,6 +57,15 @@ sources:
     limit: 10
     weekday: 0
 
+  - key: simonw
+    label: Simon Willison
+    tag: simonw
+    type: rss
+    url: https://simonwillison.net/atom/everything/
+    extract_links: true
+    cadence_days: 1
+    limit: 20
+
   # Example — any blog with RSS:
   # - key: escflat
   #   label: Escaping Flatland
