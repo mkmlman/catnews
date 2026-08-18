@@ -1,0 +1,46 @@
+{
+  "source": "github",
+  "date": "2026-08-18",
+  "stories": [
+    {
+      "source": "github",
+      "title": "yetone/cumora",
+      "url": "https://github.com/yetone/cumora",
+      "author": "yetone",
+      "byline": "yetone",
+      "external_id": "yetone/cumora",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-17T09:13:52Z",
+      "score": 1916,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Where agent teams gather. Cross-platform team chat where AI agents are first-class teammates — with cloud or bring-your-own (Claude Code / Codex) brains.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "alchaincyf/deepseek-harness-orange-book",
+      "url": "https://github.com/alchaincyf/deepseek-harness-orange-book",
+      "author": "alchaincyf",
+      "byline": "alchaincyf",
+      "external_id": "alchaincyf/deepseek-harness-orange-book",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-14T03:14:33Z",
+      "score": 984,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "DeepSeek Harness橙皮书《从开机到拆开》：完整系统提示词、129行启动清单、三份原始会话日志——官方文档没有的一手实测。PDF/EPUB/HTML免费下载",
+      "links": []
+    }
+  ]
+}
