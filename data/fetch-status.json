@@ -1,17 +1,22 @@
 {
-  "date": "2026-08-17",
+  "date": "2026-08-18",
   "sources": {
     "hn": {
-      "state": "skipped",
-      "snapshot_date": "2026-08-17",
+      "state": "ok",
+      "snapshot_date": "2026-08-18",
       "stories": 25
     },
-    "arxiv": {
-      "state": "skipped",
-      "snapshot_date": "2026-08-17",
+    "github": {
+      "state": "ok",
+      "snapshot_date": "2026-08-18",
       "stories": 15
     },
-    "github": {
+    "simonw": {
+      "state": "ok",
+      "snapshot_date": "2026-08-18",
+      "stories": 20
+    },
+    "arxiv": {
       "state": "skipped",
       "snapshot_date": "2026-08-17",
       "stories": 15
@@ -20,11 +25,6 @@
       "state": "skipped",
       "snapshot_date": "2026-08-17",
       "stories": 10
-    },
-    "simonw": {
-      "state": "skipped",
-      "snapshot_date": "2026-08-17",
-      "stories": 20
     }
   }
 }
