@@ -11,7 +11,7 @@
   {% endfor %}
 </nav>
 {% endmacro %}
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -47,6 +47,8 @@
   <style>{{ badge_css | safe }}</style>
   <script>
     (function () {
+      document.documentElement.classList.remove("no-js");
+      document.documentElement.classList.add("js");
       var key = "catnews-theme";
       var stored = null;
       try { stored = localStorage.getItem(key); } catch (e) {}
@@ -125,7 +127,7 @@
           <span class="nav-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
         </button>
         <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
-        <a class="repo-link" href="https://github.com/mkmlman/catnews" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
+        <a class="repo-link" href="{{ repo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
         <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch to dark theme"><span id="theme-toggle-icon">{% include "theme-icon-sun.html" %}</span></button>
       </div>
     </header>

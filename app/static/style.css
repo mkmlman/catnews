@@ -2470,7 +2470,18 @@ select {
   }
   .wordmark { grid-area: wordmark; }
   .header-actions { grid-area: actions; }
-  .site-nav {
+  /* The nav is only collapsed when JS is available to expand it. Without JS
+     (or before the app script runs) the links stay visible and flow onto a
+     second row, and the toggle button is hidden. */
+  .no-js .site-header { grid-template-areas: "wordmark actions" "nav nav" "search search"; }
+  .no-js .site-nav {
+    display: flex;
+    margin: 0;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .no-js .nav-toggle { display: none; }
+  .js .site-nav {
     grid-area: nav;
     display: none;
     margin-left: 0;

@@ -19,6 +19,10 @@ BASE_URL = os.environ.get("CATNEWS_BASE_URL", "http://localhost:8000")
 # project site. Empty string means the site is served from the domain root.
 BASE_PATH = os.environ.get("CATNEWS_BASE_PATH", "").rstrip("/")
 
+# Source-code link shown in the header/footer; override so a fork points at
+# its own repository instead of the original.
+REPO_URL = os.environ.get("CATNEWS_REPO_URL", "https://github.com/mkmlman/catnews")
+
 DATA_DIR = Path(
     os.environ.get("CATNEWS_DATA_DIR", Path(__file__).resolve().parent.parent / "data")
 )

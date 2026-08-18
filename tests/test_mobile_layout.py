@@ -33,10 +33,21 @@ def test_mobile_media_query_exists():
 
 
 def test_header_nav_wraps_on_mobile(mobile):
-    # The full nav is collapsed on phones and only expands when requested.
+    # With JS available the full nav is collapsed on phones and only expands
+    # when requested; without JS it stays visible and flows onto a second row.
     assert ".site-nav" in mobile
+    assert ".js .site-nav" in mobile
     assert "display: none" in mobile
+    assert ".no-js .site-nav" in mobile
+    assert ".no-js .nav-toggle { display: none; }" in mobile
     assert ".nav-toggle" in mobile
+
+
+def test_html_starts_with_no_js_class_swapped_by_app_script():
+    base = (APP_DIR / "templates" / "base.html").read_text()
+    assert '<html lang="en" class="no-js">' in base
+    assert 'classList.remove("no-js")' in base
+    assert 'classList.add("js")' in base
 
 
 def test_icons_in_fixed_non_wrapping_slot(mobile):
@@ -176,3 +187,22 @@ def test_stats_has_accessible_trends_table():
     assert "stat-table--trends" in stats
     assert 'scope="col"' in stats
     assert 'scope="row"' in stats
+
+
+def test_story_save_button_handles_missing_story_top():
+    # Regression: an unguarded `.story-top` lookup would throw and disable
+    # every other feature if a future card template drops the element.
+    app_js = (APP_DIR / "static" / "app.js").read_text()
+    assert 'var top = card.querySelector(".story-top");' in app_js
+    assert "if (top) top.appendChild(btn);" in app_js
+
+
+def test_search_reports_unavailability_not_blank():
+    # Regression: a failed /api/search.json fetch used to render "No matches."
+    # as if the archive were empty; it must distinguish "unavailable".
+    app_js = (APP_DIR / "static" / "app.js").read_text()
+    assert "var searchUnavailable = false;" in app_js
+    assert "searchUnavailable = true;" in app_js
+    assert "Search unavailable" in app_js
+    assert ': "No matches."' in app_js
+    assert 'searchUnavailable\n        ? "Search unavailable' in app_js

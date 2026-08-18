@@ -1534,3 +1534,64 @@ def test_404_page_served_and_home_has_social_meta(client, tmp_path):
     assert '<link rel="canonical"' in home
     assert "/static/og.png" in home
     assert 'rel="noopener noreferrer"' in home
+
+
+def test_repo_link_uses_config_repo_url(client, monkeypatch):
+    from app import render
+
+    home = client.get("/").text
+    assert 'class="repo-link" href="https://github.com/mkmlman/catnews"' in home
+
+    monkeypatch.setattr(render, "REPO_URL", "https://github.com/forker/forked")
+    page = client.get("/").text
+    assert 'class="repo-link" href="https://github.com/forker/forked"' in page
+    assert "mkmlman/catnews" not in page
+
+
+def test_stats_sparkline_has_role_img_not_aria_hidden(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 3),
+            stories=[Story(source="hn", title="HN story", url="https://a")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 10),
+            stories=[Story(source="hn", title="HN story 2", url="https://b")],
+        ),
+        tmp_path,
+    )
+    page = client.get("/stats/").text
+    spark = 'class="stat-spark"'
+    assert spark in page
+    assert 'role="img" aria-label="Weekly story trend"' in page
+    assert (
+        'class="stat-spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"'
+        not in page
+    )
+
+
+def test_api_page_gives_every_endpoint_copy_affordances(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="HN story", url="https://a")],
+        ),
+        tmp_path,
+    )
+    page = client.get("/api/").text
+    # The per-source and per-date endpoints previously had no tools at all.
+    assert 'data-run="/api/sources/hn.json"' in page
+    assert 'data-copy="curl http://localhost:8000/api/sources/hn.json"' in page
+    assert "api/sources/&lt;source&gt;/&lt;date&gt;" in page
+    assert (
+        'data-copy="curl http://localhost:8000/api/sources/&lt;source&gt;/&lt;date&gt;"'
+        in page
+    )
+    # The description lists human tags, not internal keys.
+    assert "— HN, arXiv, GitHub, Register Spill, simonw." in page

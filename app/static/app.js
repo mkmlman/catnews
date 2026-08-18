@@ -447,6 +447,7 @@
   });
 
   function paintCard(card, url) {
+    if (!card) return;
     card.classList.toggle("is-read", read.has(url));
     card.classList.toggle("is-saved", saved.has(url));
     var btn = card.querySelector(".save-toggle");
@@ -511,7 +512,8 @@
       e.stopPropagation();
       toggleSaved(url);
     });
-    card.querySelector(".story-top").appendChild(btn);
+    var top = card.querySelector(".story-top");
+    if (top) top.appendChild(btn);
 
     var link = card.querySelector(".story-title a, .story-link");
     if (link) {
@@ -795,6 +797,7 @@
   var searchInput = document.getElementById("search-input");
   var searchResults = document.getElementById("search-results");
   var storiesCache = null;
+  var searchUnavailable = false;
 
   function normalize(s) {
     return (s || "").toLowerCase();
@@ -822,9 +825,11 @@
       })
       .then(function (stories) {
         storiesCache = stories;
+        searchUnavailable = false;
         cb(storiesCache);
       })
       .catch(function () {
+        searchUnavailable = true;
         cb([]);
       });
   }
@@ -939,7 +944,9 @@
     if (!hits.length) {
       var none = document.createElement("div");
       none.className = "search-result search-result--none";
-      none.textContent = "No matches.";
+      none.textContent = searchUnavailable
+        ? "Search unavailable — try again later."
+        : "No matches.";
       none.id = "search-result-" + 0;
       none.style.setProperty("--i", 0);
       searchResults.appendChild(none);

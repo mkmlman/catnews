@@ -267,6 +267,7 @@ env vars remain available:
 | `CATNEWS_CADENCE_<KEY>` | per-source | Min days between fetches per source (uppercase key) |
 | `CATNEWS_LIMIT_<KEY>` | per-source | Per-source story caps (uppercase key) |
 | `CATNEWS_BASE_PATH` | `` (root) | URL prefix for the dev server (`` for localhost, `/catnews` for Pages) |
+| `CATNEWS_REPO_URL` | `https://github.com/mkmlman/catnews` | Source link shown in the header/footer; set it so a fork points at its own repository |
 | `CATNEWS_FETCH_ATTEMPTS` | `3` | Attempts for transient fetch failures |
 | `CATNEWS_FETCH_BACKOFF_SECONDS` | `1.0` | Initial exponential retry delay |
 

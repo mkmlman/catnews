@@ -10,6 +10,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .config import (
     APP_NAME,
+    REPO_URL,
     SOURCE_LABELS,
     SOURCE_TAGS,
     badge_css,
@@ -79,6 +80,7 @@ def render_page(
         base_url=base_url,
         page_path=page_path,
         og_url=f"{base_url}{page_path}",
+        repo_url=REPO_URL,
         asset_version=static_asset_version(),
         **context,
     )

@@ -22,11 +22,23 @@
       <p class="endpoint-desc">All snapshots, each with its stories.</p>
     </li>
     <li>
-      <code class="endpoint-code"><span class="method">GET</span> {{ base_path }}/api/sources/&lt;source&gt;.json</code>
-      <p class="endpoint-desc">The latest snapshot for any source — {{ source_tags | join(", ") }}.</p>
+      <div class="endpoint-row">
+        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/sources/{{ source_tags.keys() | list | first }}.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/sources/{{ source_tags.keys() | list | first }}.json">{{ base_path }}/api/sources/&lt;source&gt;.json</a></code>
+        <div class="endpoint-tools">
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/sources/{{ source_tags.keys() | list | first }}.json" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+        </div>
+      </div>
+      <pre class="endpoint-output" hidden></pre>
+      <p class="endpoint-desc">The latest snapshot for any source — {{ source_tags.values() | join(", ") }}.</p>
     </li>
     <li>
-      <code class="endpoint-code"><span class="method">GET</span> {{ base_path }}/api/sources/&lt;source&gt;/&lt;date&gt;<span class="endpoint-tag">dev server only</span></code>
+      <div class="endpoint-row">
+        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/sources/&lt;source&gt;/&lt;date&gt;" title="Copy command"><span class="method">GET</span> {{ base_path }}/api/sources/&lt;source&gt;/&lt;date&gt;<span class="endpoint-tag">dev server only</span></code>
+        <div class="endpoint-tools">
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+        </div>
+      </div>
       <p class="endpoint-desc">A specific day's snapshot for a source (YYYY-MM-DD).</p>
     </li>
   </ul>
