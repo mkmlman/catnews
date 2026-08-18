@@ -4,31 +4,26 @@
 <section class="page-header">
   {{ crumbs([("Home", base_path ~ "/"), ("Archive", None)]) }}
   <h1>Archive</h1>
-  <p class="muted">{{ snapshots | length }} snapshots</p>
+  <p class="muted">{{ snapshots | length }} snapshot{{ "s" if snapshots | length != 1 else "" }} · {{ days | length }} day{{ "s" if days | length != 1 else "" }}</p>
 </section>
 
-{% set sources = snapshots | map(attribute="source") | unique | list %}
-{% for source in sources %}
-{% set snaps = snapshots | selectattr("source", "equalto", source) | list %}
-{% set story_total = namespace(n=0) %}
-{% for s in snaps %}{% set story_total.n = story_total.n + s.stories | length %}{% endfor %}
-<section class="archive-source">
-  <div class="source-head">
-    <h2>{{ source_labels[source] }}</h2>
-    <span class="badge badge-{{ source }}">{{ source_tags[source] }}</span>
-  </div>
-  <p class="archive-summary">{{ snaps | length }} snapshot{{ "s" if snaps | length != 1 else "" }} · {{ story_total.n }} stor{{ "y" if story_total.n == 1 else "ies" }}</p>
-  <ul class="archive-list">
-    {% for snap in snaps %}
-    <li style="--i: {{ loop.index0 }}">
-      <a href="{{ base_path }}/archive/{{ snap.source }}/{{ snap.date.isoformat() }}/">
-        <span class="archive-date">{{ snap.date.strftime("%B %d, %Y") }}</span>
-        <span class="archive-day">{{ snap.date.strftime("%A") }}</span>
+{% for day in days %}
+<details class="archive-day"{% if loop.first %} open{% endif %}>
+  <summary class="archive-day-head">
+    <span class="archive-day-date">{{ day.date.strftime("%A") }} &middot; {{ day.date.strftime("%B %d, %Y") }}</span>
+    <span class="archive-day-count">{{ day.snapshots | length }} snapshot{{ "s" if day.snapshots | length != 1 else "" }} · {{ day.stories }} stor{{ "y" if day.stories == 1 else "ies" }}</span>
+  </summary>
+  <ul class="archive-day-list">
+    {% for snap in day.snapshots %}
+    <li class="archive-day-item" style="--i: {{ loop.index0 }}">
+      <a href="{{ base_path }}/archive/{{ snap.source }}/{{ snap.date.isoformat() }}/" class="archive-day-link">
+        <span class="badge badge-{{ snap.source }}">{{ source_tags[snap.source] }}</span>
+        <span class="archive-day-source">{{ source_labels[snap.source] }}</span>
+        <span class="archive-day-stories">{{ snap.stories | length }} stor{{ "y" if snap.stories | length == 1 else "ies" }}</span>
       </a>
-      <span class="archive-count">{{ snap.stories | length }} stor{{ "y" if snap.stories | length == 1 else "ies" }}</span>
     </li>
     {% endfor %}
   </ul>
-</section>
+</details>
 {% endfor %}
 {% endblock %}

@@ -239,16 +239,22 @@ def combined_digest(data_dir: Path, day: date | None = None) -> Digest | None:
 
     Sources are interleaved round-robin so one source (e.g. a large HN pull)
     doesn't dominate the top of the feed.
+
+    The digest is dated from the newest snapshot actually archived, so a
+    published page never claims a later date than its own data.
     """
     per_source: list[list[Story]] = []
+    latest: date | None = None
     for source in SOURCES:
         snap = load_latest_snapshot(source, data_dir)
         if snap:
             per_source.append(snap.stories)
+            if latest is None or snap.date > latest:
+                latest = snap.date
     stories = interleave(per_source)
     if not stories:
         return None
-    return Digest(date=day or today_utc(), stories=stories)
+    return Digest(date=day or latest or today_utc(), stories=stories)
 
 
 def interleave(groups: list[list[Story]]) -> list[Story]:

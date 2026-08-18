@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 from feedgen.feed import FeedGenerator
@@ -98,6 +98,26 @@ def snapshot_nav(
             next_snap = same[i + 1] if i < len(same) - 1 else None
             return prev, next_snap
     return None, None
+
+
+def archive_days(snapshots: list[SourceSnapshot]) -> list[dict]:
+    """Group snapshots by calendar day for the archive index, newest first.
+
+    Returns one dict per day::
+
+        {"date": date, "snapshots": [...], "stories": int}
+    """
+    days: dict[date, list[SourceSnapshot]] = {}
+    for snap in snapshots:
+        days.setdefault(snap.date, []).append(snap)
+    return [
+        {
+            "date": day,
+            "snapshots": sorted(bucket, key=lambda s: s.source),
+            "stories": sum(len(s.stories) for s in bucket),
+        }
+        for day, bucket in sorted(days.items(), key=lambda kv: kv[0], reverse=True)
+    ]
 
 
 def sparkline_points(

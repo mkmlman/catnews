@@ -433,6 +433,43 @@ def test_unseen_stories_filters_prior_snapshots(tmp_path):
     assert [s.title for s in unseen_stories(other, tmp_path)] == ["HN"]
 
 
+def test_archive_days_groups_newest_first():
+    from app.render import archive_days
+
+    snapshots = [
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(source="arxiv", title="P", url="https://b"),
+                Story(source="arxiv", title="Q", url="https://c"),
+            ],
+        ),
+        SourceSnapshot(
+            source="github",
+            date=date(2026, 8, 3),
+            stories=[Story(source="github", title="R", url="https://d")],
+        ),
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 3),
+            stories=[Story(source="hn", title="B", url="https://e")],
+        ),
+    ]
+    days = archive_days(snapshots)
+    assert [d["date"] for d in days] == [date(2026, 8, 3), date(2026, 8, 2)]
+    assert days[0]["stories"] == 2
+    # same-day snapshots are sorted by source
+    assert [s.source for s in days[0]["snapshots"]] == ["github", "hn"]
+    assert [s.source for s in days[1]["snapshots"]] == ["arxiv", "hn"]
+    assert days[1]["stories"] == 3
+
+
 def test_combined_digest_merges_latest_per_source(tmp_path):
     save_snapshot(
         SourceSnapshot(
@@ -494,6 +531,35 @@ def test_combined_digest_interleaves_sources(tmp_path):
     digest = combined_digest(tmp_path)
     assert digest is not None
     assert [s.source for s in digest.stories] == ["hn", "arxiv", "github", "hn"]
+
+
+def test_combined_digest_is_dated_from_newest_snapshot_not_today(tmp_path):
+    # A built site must never claim a later date than its own data: when the
+    # newest snapshot is Aug 2 but "today" is later, the digest reads Aug 2.
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="HN", url="https://a")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 1),
+            stories=[Story(source="arxiv", title="PAPER", url="https://b")],
+        ),
+        tmp_path,
+    )
+    digest = combined_digest(tmp_path)
+    assert digest is not None
+    assert digest.date == date(2026, 8, 2)
+
+    # An explicit day still wins (used by tests and the live API).
+    explicit = combined_digest(tmp_path, day=date(2026, 8, 5))
+    assert explicit is not None
+    assert explicit.date == date(2026, 8, 5)
 
 
 def test_search_index_deduplicates_historical_stories():

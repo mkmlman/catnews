@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.config import SOURCES
 from app.render import (
+    archive_days,
     render_fetch_status,
     render_heatmap_svg,
     render_json,
@@ -91,7 +92,6 @@ def build_site(
             base_url=base_url,
             page_path="/",
             digest=digest,
-            editions=len(snapshots),
             freshness=fetch_status(data_dir),
         ),
     )
@@ -103,6 +103,7 @@ def build_site(
             base_url=base_url,
             page_path="/archive/",
             snapshots=snapshots,
+            days=archive_days(snapshots),
         ),
     )
     for snap in snapshots:

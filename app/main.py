@@ -17,6 +17,7 @@ from .config import BASE_PATH, BASE_URL, DATA_DIR, SOURCES, today_utc
 from .models import Digest, SourceSnapshot, Story
 from .render import (
     app_version,
+    archive_days,
     live_site_urls,
     render_heatmap_svg,
     render_manifest,
@@ -72,13 +73,11 @@ def index(request: Request) -> HTMLResponse:
     digest = combined_digest(DATA_DIR)
     if digest is None:
         digest = Digest(date=today_utc(), stories=[])
-    editions = len(load_all_snapshots(DATA_DIR))
     return page(
         request,
         "index.html",
         "/",
         digest=digest,
-        editions=editions,
         freshness=fetch_status(DATA_DIR),
     )
 
@@ -86,7 +85,13 @@ def index(request: Request) -> HTMLResponse:
 @app.get("/archive/", response_class=HTMLResponse)
 def archive(request: Request) -> HTMLResponse:
     snapshots = load_all_snapshots(DATA_DIR)
-    return page(request, "archive.html", "/archive/", snapshots=snapshots)
+    return page(
+        request,
+        "archive.html",
+        "/archive/",
+        snapshots=snapshots,
+        days=archive_days(snapshots),
+    )
 
 
 @app.get("/sources/", response_class=HTMLResponse)
