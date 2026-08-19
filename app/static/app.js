@@ -534,6 +534,8 @@
      ------------------------------------------------------------- */
   var filtersEl = document.getElementById("filters");
   var noMatches = document.getElementById("no-matches");
+  var filterStatus = document.getElementById("filter-status");
+  var filtersTouched = false;
   var hideRead = document.getElementById("hide-read");
   var loadMoreBtn = document.getElementById("load-more");
   var loadMoreCount = document.getElementById("load-more-count");
@@ -591,6 +593,16 @@
         if (hasMore) loadMoreCount.textContent = visible + " of " + matched;
       }
     }
+    announceFilterCount(matched, visible);
+  }
+
+  function announceFilterCount(matched, visible) {
+    if (!filterStatus || !filtersTouched || matched === 0) return;
+    filterStatus.textContent = "";
+    (window.requestAnimationFrame || function (cb) { cb(); })(function () {
+      filterStatus.textContent =
+        "Showing " + visible + " of " + matched + (matched === 1 ? " story." : " stories.");
+    });
   }
 
   function setActiveChips() {
@@ -646,10 +658,12 @@
       var chip = event.target.closest(".chip");
       if (!chip) return;
       if (chip.dataset.source !== undefined) {
+        filtersTouched = true;
         state.source = chip.dataset.source;
         if (state.source !== "All") state.savedOnly = false;
         state.loaded = PAGE_SIZE;
       } else if (chip.dataset.saved !== undefined) {
+        filtersTouched = true;
         state.savedOnly = !state.savedOnly;
         if (state.savedOnly) state.source = "All";
         state.loaded = PAGE_SIZE;
@@ -666,6 +680,7 @@
     });
     if (hideRead) {
       hideRead.addEventListener("change", function () {
+        filtersTouched = true;
         state.loaded = PAGE_SIZE;
         persistFilterState();
         applyFilters();
@@ -673,6 +688,7 @@
     }
     if (loadMoreBtn) {
       loadMoreBtn.addEventListener("click", function () {
+        filtersTouched = true;
         var previouslyHidden = [];
         cards.forEach(function (card) {
           if (card.hidden || card.hasAttribute("hidden")) previouslyHidden.push(card);

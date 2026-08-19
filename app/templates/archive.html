@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+{% from "_json_ld.html" import breadcrumbs with context %}
 {% block title %}{{ app_name }} | Archive{% endblock %}
+{% block json_ld %}
+{{ breadcrumbs([("Home", base_path ~ "/"), ("Archive", None)]) }}
+{% endblock %}
 {% block content %}
 <section class="page-header">
   {{ crumbs([("Home", base_path ~ "/"), ("Archive", None)]) }}

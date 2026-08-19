@@ -1595,3 +1595,120 @@ def test_api_page_gives_every_endpoint_copy_affordances(client, tmp_path):
     )
     # The description lists human tags, not internal keys.
     assert "— HN, arXiv, GitHub, Register Spill, simonw." in page
+
+
+def test_story_cards_render_why_read_notes(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(
+                    source="hn",
+                    title="HN story",
+                    url="https://a",
+                    why_read="Read this before your next one.",
+                )
+            ],
+        ),
+        tmp_path,
+    )
+    home = client.get("/").text
+    assert (
+        '<p class="story-why-read"><strong>Why read:</strong> Read this before your next one.</p>'
+        in home
+    )
+    page = client.get("/archive/hn/2026-08-02/").text
+    assert "Why read:" in page
+    assert "Read this before your next one." in page
+
+
+def test_json_ld_structured_data_on_pages(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="HN story", url="https://a")],
+        ),
+        tmp_path,
+    )
+    home = client.get("/").text
+    assert '<script type="application/ld+json">' in home
+    assert '"@type": "WebSite"' in home
+    assert '"@type": "SearchAction"' in home
+    assert '"@type": "ItemList"' in home
+    assert '"name": "HN story"' in home
+    # Escaping: a crafted title must not break out of the JSON-LD payload.
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(source="arxiv", title='A "quoted" <title>', url="https://b")
+            ],
+        ),
+        tmp_path,
+    )
+    arxiv_page = client.get("/archive/arxiv/2026-08-02/").text
+    assert '"@type": "BreadcrumbList"' in arxiv_page
+    assert '"@type": "ItemList"' in arxiv_page
+    archive = client.get("/archive/").text
+    assert '"@type": "BreadcrumbList"' in archive
+
+
+def test_index_has_filter_status_announce_region(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="HN story", url="https://a")],
+        ),
+        tmp_path,
+    )
+    page = client.get("/").text
+    assert '<p class="sr-only" id="filter-status" aria-live="polite"></p>' in page
+
+
+def test_sitemap_includes_lastmod(tmp_path):
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+    sitemap = (out / "sitemap.xml").read_text()
+    assert sitemap.count("<lastmod>") == 6  # 5 shared pages + 1 snapshot
+    assert "<lastmod>2026-08-02</lastmod>" in sitemap
+
+
+def test_manifest_theme_color_matches_page_background():
+    import json
+
+    from app.render import render_manifest
+
+    data = json.loads(render_manifest())
+    assert data["theme_color"] == data["background_color"] == "#f5f4ed"
+
+
+def test_design_page_stat_cards_use_real_data(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(source="hn", title="A", url="https://a"),
+                Story(source="hn", title="B", url="https://b"),
+            ],
+        ),
+        tmp_path,
+    )
+    page = client.get("/design/").text
+    assert 'stat-label">Stories curated</span>' in page
+    assert '<span class="stat-value">2</span>' in page
+    assert '<span class="stat-value">1</span>' in page

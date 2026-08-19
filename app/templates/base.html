@@ -41,6 +41,7 @@
   <meta name="twitter:title" content="{% block twitter_title %}{{ self.og_title() }}{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}{{ self.og_description() }}{% endblock %}">
   <meta name="twitter:image" content="{{ base_url }}/static/og.png">
+  {% block json_ld %}{% endblock %}
   <link rel="stylesheet" href="{{ base_path }}/static/style.css?v={{ asset_version }}">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/fraunces-latin-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/sourceserif4-latin-normal.woff2">

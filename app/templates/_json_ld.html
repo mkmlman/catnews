@@ -1,0 +1,38 @@
+{% macro item_list(stories, name) %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": {{ name | tojson }},
+  "itemListElement": [
+    {% for story in stories %}
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index }},
+      "name": {{ story.title | tojson }},
+      "url": {{ story.url | tojson }}
+    }{{ "," if not loop.last }}
+    {% endfor %}
+  ]
+}
+</script>
+{% endmacro %}
+
+{% macro breadcrumbs(items) %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {% for label, href in items %}
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index }},
+      "name": {{ label | tojson }}{% if href %},
+      "item": {{ (base_url ~ href) | tojson }}{% endif %}
+    }{{ "," if not loop.last }}
+    {% endfor %}
+  ]
+}
+</script>
+{% endmacro %}

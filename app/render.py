@@ -336,7 +336,7 @@ def render_manifest() -> str:
         "scope": "./",
         "display": "standalone",
         "background_color": "#f5f4ed",
-        "theme_color": "#1B365D",
+        "theme_color": "#f5f4ed",
         "icons": [
             {"src": "./static/favicon.svg", "sizes": "any", "type": "image/svg+xml"},
             {
@@ -451,17 +451,32 @@ def render_robots(base_url: str) -> str:
 
 
 def render_sitemap(base_url: str, snapshots: list) -> str:
-    """XML sitemap listing every public page (home, sections, snapshots)."""
-    urls = [f"{base_url}/", f"{base_url}/archive/", f"{base_url}/stats/"]
-    urls += [f"{base_url}/sources/", f"{base_url}/api/"]
-    for snap in snapshots:
-        urls.append(f"{base_url}/archive/{snap.source}/{snap.date.isoformat()}/")
-    entries = "\n".join(f"  <url><loc>{u}</loc></url>" for u in dict.fromkeys(urls))
+    """XML sitemap listing every public page (home, sections, snapshots).
+
+    Each URL carries a `<lastmod>` derived from the data it shows: snapshot
+    pages use their own date, the shared pages the newest snapshot date.
+    """
+    newest = max((s.date for s in snapshots), default=date(1970, 1, 1))
+    shared = [
+        f"{base_url}/",
+        f"{base_url}/archive/",
+        f"{base_url}/stats/",
+        f"{base_url}/sources/",
+        f"{base_url}/api/",
+    ]
+    entries = [
+        f"  <url><loc>{u}</loc><lastmod>{newest}</lastmod></url>" for u in shared
+    ]
+    entries += [
+        f"  <url><loc>{base_url}/archive/{snap.source}/{snap.date.isoformat()}/</loc>"
+        f"<lastmod>{snap.date}</lastmod></url>"
+        for snap in snapshots
+    ]
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        f"{entries}\n"
-        "</urlset>\n"
+        + "\n".join(entries)
+        + "\n</urlset>\n"
     )
 
 

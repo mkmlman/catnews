@@ -6,6 +6,7 @@
   <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener noreferrer">{{ story.title }}</a></h3>
   {% if story.authors %}<p class="story-by">By {{ story.authors | join(", ") }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}</p>
   {% else %}<p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>{% endif %}
+  {% if story.why_read %}<p class="story-why-read"><strong>Why read:</strong> {{ story.why_read }}</p>{% endif %}
   {% if story.links %}
   <details class="story-links">
     <summary>

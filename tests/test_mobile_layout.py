@@ -206,3 +206,41 @@ def test_search_reports_unavailability_not_blank():
     assert "Search unavailable" in app_js
     assert ': "No matches."' in app_js
     assert 'searchUnavailable\n        ? "Search unavailable' in app_js
+
+
+def test_filter_changes_announce_to_screen_readers():
+    # Regression: switching source/saved filters changed the visible story set
+    # silently; a visually-hidden aria-live region must announce the count,
+    # but only after the user has actually touched a filter (not on load).
+    app_js = (APP_DIR / "static" / "app.js").read_text()
+    index = (APP_DIR / "templates" / "index.html").read_text()
+    assert 'id="filter-status" aria-live="polite"' in index
+    assert "var filterStatus = document.getElementById" in app_js
+    assert "var filtersTouched = false;" in app_js
+    assert "filtersTouched = true;" in app_js
+    assert "announceFilterCount(matched, visible);" in app_js
+    assert "Showing " in app_js
+
+
+def test_why_read_note_styled_and_present_on_cards():
+    story = (APP_DIR / "templates" / "_story.html").read_text()
+    css = (APP_DIR / "static" / "style.css").read_text()
+    assert '{% if story.why_read %}<p class="story-why-read">' in story
+    assert ".story-why-read" in css
+    assert "var(--accent-soft)" in css
+
+
+def test_json_ld_macros_and_block_wired():
+    base = (APP_DIR / "templates" / "base.html").read_text()
+    index = (APP_DIR / "templates" / "index.html").read_text()
+    snapshot = (APP_DIR / "templates" / "snapshot.html").read_text()
+    assert "{% block json_ld %}{% endblock %}" in base
+    assert '"@type": "WebSite"' in index
+    assert '"@type": "SearchAction"' in index
+    json_ld = (APP_DIR / "templates" / "_json_ld.html").read_text()
+    assert '"@type": "ListItem"' in json_ld
+    assert "application/ld+json" in json_ld
+    assert (
+        '{% from "_json_ld.html" import breadcrumbs, item_list with context %}'
+        in snapshot
+    )

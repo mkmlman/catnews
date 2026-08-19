@@ -1,5 +1,22 @@
 {% extends "base.html" %}
+{% from "_json_ld.html" import item_list with context %}
 {% block title %}{{ app_name }}{% endblock %}
+{% block json_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": {{ app_name | tojson }},
+  "url": {{ og_url | tojson }},
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {{ (og_url ~ "#q={search_term_string}") | tojson }},
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+{{ item_list(digest.stories, app_name ~ " — " ~ digest.date.strftime("%B %d, %Y")) }}
+{% endblock %}
 {% block content %}
 {% set ns = namespace(counts={}) %}
 {% for story in digest.stories %}
@@ -72,4 +89,5 @@
   <button class="load-more" id="load-more" type="button" hidden>Load more</button>
   <p class="load-more-count" id="load-more-count" hidden aria-live="polite"></p>
 </div>
+<p class="sr-only" id="filter-status" aria-live="polite"></p>
 {% endblock %}

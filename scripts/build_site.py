@@ -175,6 +175,7 @@ def build_site(
             base_path=base_path,
             base_url=base_url,
             page_path="/design/",
+            stats=site_stats(data_dir, snapshots),
         ),
     )
 

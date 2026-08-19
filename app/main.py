@@ -151,7 +151,7 @@ def api_docs(request: Request) -> HTMLResponse:
 
 @app.get("/design/", response_class=HTMLResponse)
 def design_system(request: Request) -> HTMLResponse:
-    return page(request, "design.html", "/design/")
+    return page(request, "design.html", "/design/", stats=site_stats(DATA_DIR))
 
 
 @app.get("/404.html", response_class=HTMLResponse)

@@ -266,11 +266,11 @@
         <div class="ds-statgrid">
           <div class="stat-card">
             <span class="stat-label">Stories curated</span>
-            <span class="stat-value">1,284</span>
+            <span class="stat-value">{{ "{:,}".format(stats.total_stories) }}</span>
           </div>
           <div class="stat-card">
             <span class="stat-label">Snapshots</span>
-            <span class="stat-value">26</span>
+            <span class="stat-value">{{ "{:,}".format(stats.editions) }}</span>
           </div>
         </div>
       </div>
@@ -280,7 +280,7 @@
       <h3 class="ds-comp-title">Code block</h3>
       <p class="ds-hint">card surface · hairline border · 12px radius · mono 0.82rem</p>
       <div class="ds-demo">
-        <pre class="code-block">$ uv run python scripts/build_site.py --base-path /catnews
+        <pre class="code-block">$ uv run python scripts/build_site.py --base-path {{ base_path or "/catnews" }}
 [catnews] built 4 snapshots (65 stories) -> site/</pre>
       </div>
     </div>
