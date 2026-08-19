@@ -1117,6 +1117,22 @@ def test_live_app_serves_pwa(client, tmp_path):
     )
 
 
+def test_service_worker_serves_api_data_network_first(client, tmp_path):
+    # Regression: cached search.json used to be served stale-first, so the
+    # first search after a fresh digest published returned yesterday's results.
+    # API reads must behave like navigations: fresh when online, cached offline.
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    sw = client.get("/sw.js").text
+    assert 'request.mode === "navigate" || url.pathname.indexOf("/api/") !== -1' in sw
+
+
 def test_api_json_aliases_match_static_build(client, tmp_path):
     # The client-side search fetches /api/search.json; the live app must
     # expose the same .json endpoints the static build emits.
@@ -1161,9 +1177,12 @@ def test_seo_meta_tags_on_pages(client, tmp_path):
     assert 'property="og:url"' in page
     assert 'property="og:image"' in page
     # Twitter card
-    assert 'name="twitter:card" content="summary"' in page
+    assert 'name="twitter:card" content="summary_large_image"' in page
     assert 'name="twitter:title"' in page
     assert 'name="twitter:image"' in page
+    # Meta description follows the page's og:description (per-page, not generic)
+    assert 'property="og:description"' in page
+    assert '<meta name="description" content="' in page
     # RSS autodiscovery link
     assert 'rel="alternate" type="application/rss+xml"' in page
     assert 'href="http://localhost:8000/feed.rss"' in page
@@ -1185,6 +1204,20 @@ def test_home_title_includes_edition_date(client, tmp_path):
     )
     page = client.get("/").text
     assert "<title>catnews — August 02, 2026</title>" in page
+
+
+def test_snapshot_title_and_description_include_date(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="HN story", url="https://a")],
+        ),
+        tmp_path,
+    )
+    page = client.get("/archive/hn/2026-08-02/").text
+    assert "<title>catnews | Hacker News · August 02, 2026</title>" in page
+    assert "hand-curated stories from Hacker News on August 02, 2026" in page
 
 
 def test_story_cards_have_stable_deep_link_anchors(client, tmp_path):

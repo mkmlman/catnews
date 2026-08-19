@@ -373,8 +373,9 @@ def render_service_worker(urls: list[str], version: str) -> str:
     "./archive/", "./static/style.css") so the same worker works under any
     base_path. Only stable app-shell files belong here (see ``_sw_stable``);
     daily-changing pages and data revalidate via the fetch handler instead.
-    Navigation requests are network-first (fresh daily digest when online,
-    cached copy when offline); everything else is cache-first.
+    Navigation requests and API data are network-first (fresh daily digest and
+    search results when online, cached copy when offline); everything else is
+    cache-first.
     """
     precache = ",\n    ".join(json.dumps(u) for u in urls)
     return f"""// catnews service worker — build {version}
@@ -405,8 +406,10 @@ self.addEventListener("fetch", (event) => {{
     const url = new URL(request.url);
     if (url.origin !== location.origin) return;
 
-    if (request.mode === "navigate") {{
-        // Fresh digest when online; cached page when offline.
+    // Fresh responses when online — the daily digest, snapshot pages, and API
+    // data all change day to day, so serve the network and refresh the cache;
+    // only fall back to the cache when offline. Everything else is cache-first.
+    if (request.mode === "navigate" || url.pathname.indexOf("/api/") !== -1) {{
         event.respondWith(
             fetch(request)
                 .then((response) => {{
@@ -415,7 +418,9 @@ self.addEventListener("fetch", (event) => {{
                     return response;
                 }})
                 .catch(() =>
-                    caches.match(request).then((match) => match || caches.match("./index.html"))
+                    caches.match(request).then((match) =>
+                        match || (request.mode === "navigate" ? caches.match("./index.html") : null)
+                    )
                 )
         );
         return;

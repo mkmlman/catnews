@@ -29,7 +29,7 @@
   <meta name="apple-mobile-web-app-title" content="catnews">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>{% block title %}{{ app_name }}{% endblock %}</title>
-  <meta name="description" content="catnews — a curated daily digest of Hacker News, arXiv, GitHub, and Register Spill stories. What's worth reading.">
+  <meta name="description" content="{% block description %}{{ self.og_description() }}{% endblock %}">
   <link rel="canonical" href="{{ og_url }}">
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ base_url }}/feed.rss">
 
@@ -42,7 +42,7 @@
   <meta property="og:image" content="{{ base_url }}/static/og.png">
 
   <!-- Twitter card -->
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{% block twitter_title %}{{ self.og_title() }}{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}{{ self.og_description() }}{% endblock %}">
   <meta name="twitter:image" content="{{ base_url }}/static/og.png">
