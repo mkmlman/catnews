@@ -51,6 +51,15 @@ def _sw_stable(rel: str) -> bool:
     return not (rel.startswith("api/") and rel != "api/index.html")
 
 
+def story_anchor(story) -> str:
+    """Stable DOM id for a story card — the target of shareable #story-… links.
+
+    Derived from the story URL so the same story shares an anchor across the
+    home and snapshot pages.
+    """
+    return "story-" + hashlib.sha1((story.url or "").encode("utf-8")).hexdigest()[:10]
+
+
 _env = Environment(
     loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html"])
 )
@@ -82,6 +91,7 @@ def render_page(
         og_url=f"{base_url}{page_path}",
         repo_url=REPO_URL,
         asset_version=static_asset_version(),
+        story_anchor=story_anchor,
         **context,
     )
 
@@ -335,14 +345,21 @@ def render_manifest() -> str:
         "start_url": "./",
         "scope": "./",
         "display": "standalone",
+        "id": "./",
         "background_color": "#f5f4ed",
         "theme_color": "#f5f4ed",
         "icons": [
-            {"src": "./static/favicon.svg", "sizes": "any", "type": "image/svg+xml"},
+            {
+                "src": "./static/favicon.svg",
+                "sizes": "any",
+                "type": "image/svg+xml",
+                "purpose": "any",
+            },
             {
                 "src": "./static/favicon-180.png",
                 "sizes": "180x180",
                 "type": "image/png",
+                "purpose": "any",
             },
         ],
     }
@@ -442,6 +459,10 @@ def walk_site_urls(out_dir: Path, max_bytes: int = 0) -> list[str]:
         urls.append("./" + rel)
         if rel.endswith("/index.html"):
             urls.append("./" + rel[: -len("index.html")])
+    # Search data is precached too (matching live mode) so full-archive search
+    # works offline; it is not fingerprinted (see _sw_stable) and revalidates
+    # cache-first on each online fetch, so the cache name still stays stable.
+    urls += ["./api/search.json", "./api/fetch-status.json"]
     return list(dict.fromkeys(urls))
 
 
@@ -460,6 +481,7 @@ def render_sitemap(base_url: str, snapshots: list) -> str:
     shared = [
         f"{base_url}/",
         f"{base_url}/archive/",
+        f"{base_url}/design/",
         f"{base_url}/stats/",
         f"{base_url}/sources/",
         f"{base_url}/api/",

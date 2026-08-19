@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% from "_json_ld.html" import item_list with context %}
-{% block title %}{{ app_name }}{% endblock %}
+{% block title %}{{ app_name }} — {{ digest.date.strftime("%B %d, %Y") }}{% endblock %}
 {% block json_ld %}
 <script type="application/ld+json">
 {

@@ -194,7 +194,8 @@ def test_story_save_button_handles_missing_story_top():
     # every other feature if a future card template drops the element.
     app_js = (APP_DIR / "static" / "app.js").read_text()
     assert 'var top = card.querySelector(".story-top");' in app_js
-    assert "if (top) top.appendChild(btn);" in app_js
+    assert "if (top) {" in app_js
+    assert "top.insertBefore(copyBtn, btn);" in app_js
 
 
 def test_search_reports_unavailability_not_blank():

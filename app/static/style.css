@@ -987,8 +987,8 @@ select {
 /* --------------------------------------------------------------------------
    Save-for-later, read state, search
    -------------------------------------------------------------------------- */
-.story:not(.has-score) .save-toggle { margin-left: auto; }
-.save-toggle {
+.story:not(.has-score) .copy-toggle { margin-left: auto; }
+.save-toggle, .copy-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1000,8 +1000,8 @@ select {
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s, background-color 0.15s;
 }
-.save-toggle svg { display: block; fill: none; }
-.save-toggle:hover {
+.save-toggle svg, .copy-toggle svg { display: block; fill: none; }
+.save-toggle:hover, .copy-toggle:hover {
   color: var(--accent);
   border-color: var(--accent);
 }
@@ -1015,7 +1015,7 @@ select {
 .story.is-read { opacity: 0.55; }
 .story.is-read .story-title a { color: var(--muted); }
 .story.is-read .story-title a:hover { color: var(--accent); background-color: transparent; }
-.story.is-read .save-toggle { opacity: 0.9; }
+.story.is-read .save-toggle, .story.is-read .copy-toggle { opacity: 0.9; }
 
 .story.is-selected {
   background: color-mix(in srgb, var(--accent) 10%, transparent);
@@ -1025,6 +1025,21 @@ select {
   background: color-mix(in srgb, var(--accent) 5%, transparent);
   border-top-color: color-mix(in srgb, var(--accent) 55%, var(--line));
   box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* Deep-link target: briefly tint a story card reached via #story-… */
+.story.is-link-target {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: var(--accent);
+  animation: story-focus-fade 3s ease forwards;
+}
+.stories.view-list .story.is-link-target {
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+@keyframes story-focus-fade {
+  0% { background: color-mix(in srgb, var(--accent) 26%, transparent); }
+  100% { background: color-mix(in srgb, var(--accent) 6%, transparent); }
 }
 
 .hide-read {

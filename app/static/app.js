@@ -513,7 +513,33 @@
       toggleSaved(url);
     });
     var top = card.querySelector(".story-top");
-    if (top) top.appendChild(btn);
+    if (top) {
+      top.appendChild(btn);
+
+      var copyBtn = document.createElement("button");
+      copyBtn.type = "button";
+      copyBtn.className = "copy-toggle";
+      copyBtn.title = "Copy link to this story";
+      copyBtn.setAttribute("aria-label", "Copy link to this story");
+      copyBtn.innerHTML =
+        '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="8" height="8" rx="1.5"/><path d="M5.5 5.5h6a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-6A1.5 1.5 0 0 1 4 13.5v-6"/></svg>';
+      copyBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var link = window.location.origin + (BASE || "/") + "#" + card.id;
+        var done = function () { showCopyToast("Copied link to story"); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(link).then(done, function () {
+            fallbackCopy(link);
+            done();
+          });
+        } else {
+          fallbackCopy(link);
+          done();
+        }
+      });
+      top.insertBefore(copyBtn, btn);
+    }
 
     var link = card.querySelector(".story-title a, .story-link");
     if (link) {
@@ -722,6 +748,56 @@
     window.addEventListener("resize", updateFilterScrollCue);
     updateFilterScrollCue();
   }
+
+  /* -------------------------------------------------------------
+     Deep links: #story-… anchors scroll to and highlight a story card
+     ------------------------------------------------------------- */
+  function resetFiltersForTarget() {
+    if (hideRead) hideRead.checked = false;
+    state.source = "All";
+    state.savedOnly = false;
+    state.loaded = PAGE_SIZE;
+    setActiveChips();
+    persistFilterState();
+    applyFilters();
+  }
+
+  function focusStoryHash() {
+    var id = (window.location.hash || "").replace(/^#/, "");
+    if (id.indexOf("story-") !== 0) return;
+    var target = document.getElementById(id);
+    if (!target) return;
+    if (target.hidden || target.hasAttribute("hidden")) {
+      resetFiltersForTarget();
+    }
+    target.classList.remove("is-link-target");
+    void target.offsetWidth;
+    target.classList.add("is-link-target");
+    var headerOffset = 0;
+    var hProp = getComputedStyle(document.documentElement).getPropertyValue("--header-h");
+    if (hProp) headerOffset = parseFloat(hProp) || 0;
+    window.scrollTo({
+      top: target.getBoundingClientRect().top + window.scrollY - headerOffset - 12,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  }
+
+  function initDeepLinks() {
+    if (window.location.hash.indexOf("#story-") === 0) {
+      var run = function () { window.setTimeout(focusStoryHash, 0); };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", run);
+      } else {
+        run();
+      }
+    }
+    window.addEventListener("hashchange", function () {
+      if (window.location.hash.indexOf("#story-") === 0) focusStoryHash();
+    });
+  }
+  initDeepLinks();
 
   /* -------------------------------------------------------------
      Keyboard shortcuts: j/k move, o/Enter open, s save, m read, / search

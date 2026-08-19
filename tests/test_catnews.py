@@ -905,16 +905,16 @@ def test_build_site_emits_pwa_files(tmp_path):
     match = re.search(r"PRECACHE = \[(.*?)\];", sw, re.DOTALL)
     assert match
     precache = match.group(1)
-    # stable app shell is precached
+    # stable app shell + search data is precached (offline search works)
     for rel in ('"./"', '"./static/style.css"', '"./404.html"', '"./archive/"'):
         assert rel in precache, f"missing {rel} in precache"
-    # mutable digest/feed/API data is NOT precached (cache-name stability)
+    for rel in ('"./api/search.json"', '"./api/fetch-status.json"'):
+        assert rel in precache, f"missing {rel} in precache"
+    # mutable digest/feed/other API data is NOT precached (cache-name stability)
     for rel in (
         '"./index.html"',
         '"./feed.rss"',
         '"./api/stories.json"',
-        '"./api/search.json"',
-        '"./api/fetch-status.json"',
         '"./archive/hn/2026-08-02/"',
     ):
         assert rel not in precache, f"did not expect {rel} in precache"
@@ -1167,6 +1167,45 @@ def test_seo_meta_tags_on_pages(client, tmp_path):
     # RSS autodiscovery link
     assert 'rel="alternate" type="application/rss+xml"' in page
     assert 'href="http://localhost:8000/feed.rss"' in page
+    # iOS home-screen install support (matches the install dialog's iOS steps)
+    assert '<link rel="apple-touch-icon"' in page
+    assert '<meta name="mobile-web-app-capable" content="yes">' in page
+    assert '<meta name="apple-mobile-web-app-capable" content="yes">' in page
+    assert '<meta name="apple-mobile-web-app-title" content="catnews">' in page
+
+
+def test_home_title_includes_edition_date(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="HN story", url="https://a")],
+        ),
+        tmp_path,
+    )
+    page = client.get("/").text
+    assert "<title>catnews — August 02, 2026</title>" in page
+
+
+def test_story_cards_have_stable_deep_link_anchors(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="Anchored story", url="https://a/thing")],
+        ),
+        tmp_path,
+    )
+    home = client.get("/").text
+    snapshot = client.get("/archive/hn/2026-08-02/").text
+    import re as _re
+
+    home_ids = _re.findall(r'id="(story-[0-9a-f]{10})"', home)
+    assert len(home_ids) == 1
+    snap_ids = _re.findall(r'id="(story-[0-9a-f]{10})"', snapshot)
+    assert home_ids == snap_ids
+    assert 'class="story"' in home
+    assert "copy-toggle" in (client.get("/static/app.js").text)
 
 
 def test_weekly_trends_buckets_by_iso_week(tmp_path):
@@ -1474,6 +1513,8 @@ def test_walk_site_urls_precaches_only_stable_files(tmp_path):
     (tmp_path / "404.html").write_text("<h1>nf</h1>")
     (tmp_path / "api").mkdir()
     (tmp_path / "api" / "stories.json").write_text("[]")
+    (tmp_path / "api" / "search.json").write_text("[]")
+    (tmp_path / "api" / "fetch-status.json").write_text("{}")
     (tmp_path / "archive" / "hn" / "2026-08-02").mkdir(parents=True)
     (tmp_path / "archive" / "hn" / "2026-08-02" / "index.html").write_text(
         "<h1>snap</h1>"
@@ -1486,6 +1527,8 @@ def test_walk_site_urls_precaches_only_stable_files(tmp_path):
     assert "./feed.rss" not in urls
     assert "./sitemap.xml" not in urls
     assert "./api/stories.json" not in urls
+    assert "./api/search.json" in urls
+    assert "./api/fetch-status.json" in urls
     assert "./archive/hn/2026-08-02/" not in urls
 
 
@@ -1683,7 +1726,7 @@ def test_sitemap_includes_lastmod(tmp_path):
     out = tmp_path / "site"
     build_site(tmp_path, out, "/catnews", "https://example.com")
     sitemap = (out / "sitemap.xml").read_text()
-    assert sitemap.count("<lastmod>") == 6  # 5 shared pages + 1 snapshot
+    assert sitemap.count("<lastmod>") == 7  # 6 shared pages + 1 snapshot
     assert "<lastmod>2026-08-02</lastmod>" in sitemap
 
 
@@ -1694,6 +1737,8 @@ def test_manifest_theme_color_matches_page_background():
 
     data = json.loads(render_manifest())
     assert data["theme_color"] == data["background_color"] == "#f5f4ed"
+    assert data["id"] == "./"
+    assert all(icon.get("purpose") == "any" for icon in data["icons"])
 
 
 def test_design_page_stat_cards_use_real_data(client, tmp_path):

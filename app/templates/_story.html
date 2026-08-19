@@ -1,4 +1,4 @@
-<article class="story{% if story.score is not none %} has-score{% endif %}" style="--i: {{ outer_loop_index | default(0) }}" data-source="{{ story.source }}" data-url="{{ story.url }}">
+<article class="story{% if story.score is not none %} has-score{% endif %}" id="{{ story_anchor(story) }}" style="--i: {{ outer_loop_index | default(0) }}" data-source="{{ story.source }}" data-url="{{ story.url }}">
   <div class="story-top">
     <span class="badge badge-{{ story.source }}">{{ source_tags[story.source] }}</span>
     {% if story.score is not none %}<span class="story-score">{% if story.source == "github" %}★{% else %}▲{% endif %} {{ story.score }}</span>{% endif %}
