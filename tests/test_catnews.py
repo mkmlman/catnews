@@ -1172,6 +1172,7 @@ def test_seo_meta_tags_on_pages(client, tmp_path):
     page = client.get("/").text
     # Open Graph
     assert 'property="og:site_name" content="catnews"' in page
+    assert 'property="og:locale" content="en_US"' in page
     assert 'property="og:type" content="website"' in page
     assert 'property="og:title"' in page
     assert 'property="og:url"' in page
@@ -1238,7 +1239,11 @@ def test_story_cards_have_stable_deep_link_anchors(client, tmp_path):
     snap_ids = _re.findall(r'id="(story-[0-9a-f]{10})"', snapshot)
     assert home_ids == snap_ids
     assert 'class="story"' in home
-    assert "copy-toggle" in (client.get("/static/app.js").text)
+    app_js = client.get("/static/app.js").text
+    assert "copy-toggle" in app_js
+    # Regression: deep links must reveal the whole edition, not just the first
+    # PAGE_SIZE stories, or links to cards past the load-more cutoff do nothing.
+    assert "state.loaded = cards.length" in app_js
 
 
 def test_weekly_trends_buckets_by_iso_week(tmp_path):
@@ -1771,6 +1776,7 @@ def test_manifest_theme_color_matches_page_background():
     data = json.loads(render_manifest())
     assert data["theme_color"] == data["background_color"] == "#f5f4ed"
     assert data["id"] == "./"
+    assert data["display_override"] == ["standalone", "minimal-ui"]
     assert all(icon.get("purpose") == "any" for icon in data["icons"])
 
 

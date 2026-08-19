@@ -345,6 +345,7 @@ def render_manifest() -> str:
         "start_url": "./",
         "scope": "./",
         "display": "standalone",
+        "display_override": ["standalone", "minimal-ui"],
         "id": "./",
         "background_color": "#f5f4ed",
         "theme_color": "#f5f4ed",

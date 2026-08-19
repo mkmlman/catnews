@@ -756,7 +756,9 @@
     if (hideRead) hideRead.checked = false;
     state.source = "All";
     state.savedOnly = false;
-    state.loaded = PAGE_SIZE;
+    // Reveal the whole edition so a deep-linked story is never hidden by the
+    // load-more cutoff, no matter where it sits in the digest.
+    state.loaded = cards.length;
     setActiveChips();
     persistFilterState();
     applyFilters();
