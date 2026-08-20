@@ -526,7 +526,11 @@
       copyBtn.addEventListener("click", function (e) {
         e.preventDefault();
         e.stopPropagation();
-        var link = window.location.origin + (BASE || "/") + "#" + card.id;
+        var link =
+          window.location.origin +
+          window.location.pathname +
+          "#" +
+          card.id;
         var done = function () { showCopyToast("Copied link to story"); };
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(link).then(done, function () {
@@ -970,7 +974,7 @@
   });
 
   /* -------------------------------------------------------------
-     Full-archive search over /api/stories.json
+     Full-archive search over /api/search.json
      ------------------------------------------------------------- */
   var searchEl = document.getElementById("search");
   var searchInput = document.getElementById("search-input");
