@@ -26,6 +26,7 @@ from app.render import (
     site_version,
     snapshot_nav,
     sparkline_points,
+    story_editions,
     walk_site_urls,
 )
 from app.store import (
@@ -82,9 +83,6 @@ def build_site(
     digest = combined_digest(data_dir)
     assert digest is not None  # guaranteed: snapshots exist above
 
-    # Static assets (style.css, fonts, favicon)
-    shutil.copytree(STATIC_DIR, out_dir / "static", dirs_exist_ok=True)
-
     # Per-edition Open Graph cards for every snapshot page (content-addressed
     # by source + date so each day shares a unique card).
     for snap in snapshots:
@@ -99,6 +97,20 @@ def build_site(
             ),
         )
 
+    # The home page's own share card is stamped with the edition being shown.
+    home_og_rel = f"static/og/home/{digest.date.isoformat()}.png"
+    write(
+        out_dir / home_og_rel,
+        render_og_image(
+            date_line=digest.date.strftime("%m.%d.%Y"),
+            count_line=f"{len(digest.stories)} STORIES",
+            accent=(27, 54, 93),
+        ),
+    )
+
+    # Static assets (style.css, fonts, favicon)
+    shutil.copytree(STATIC_DIR, out_dir / "static", dirs_exist_ok=True)
+
     # Pages
     write(
         out_dir / "index.html",
@@ -107,8 +119,10 @@ def build_site(
             base_path=base_path,
             base_url=base_url,
             page_path="/",
+            og_image=f"{base_url}/static/og/home/{digest.date.isoformat()}.png",
             digest=digest,
             freshness=fetch_status(data_dir),
+            story_editions=story_editions(snapshots),
         ),
     )
     write(
@@ -136,6 +150,7 @@ def build_site(
                 label=SOURCES[snap.source]["label"],
                 prev_snapshot=prev_snap,
                 next_snapshot=next_snap,
+                story_editions={story.url: snap.date.isoformat() for story in snap.stories},
             ),
         )
     trends = weekly_trends(data_dir, snapshots)

@@ -311,6 +311,7 @@ def search_index(snapshots: list[SourceSnapshot]) -> list[dict[str, str]]:
                 "source": story.source,
                 "title": story.title,
                 "url": story.url,
+                "date": snapshot.date.isoformat(),
             }
             for field in ("author", "byline", "summary", "snippet", "why_read"):
                 value = getattr(story, field)
@@ -325,6 +326,23 @@ def render_search_index(snapshots: list[SourceSnapshot]) -> str:
     return json.dumps(
         search_index(snapshots), ensure_ascii=False, separators=(",", ":")
     )
+
+
+def story_editions(snapshots: list[SourceSnapshot]) -> dict[str, str]:
+    """Map story URL → the ISO date of the edition it appears in (newest copy).
+
+    Used by the client to know which cards are newer than the reader's last
+    visit. Snapshots are ordered ascending by date, so the last seen per source
+    is the one that contributed the digest's copy of each story.
+    """
+    latest: dict[str, SourceSnapshot] = {}
+    for snap in snapshots:
+        latest[snap.source] = snap
+    return {
+        story.url: snap.date.isoformat()
+        for snap in latest.values()
+        for story in snap.stories
+    }
 
 
 def render_json(data: object) -> str:

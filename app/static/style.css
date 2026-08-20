@@ -559,6 +559,48 @@ select {
 }
 .copy-toast.is-visible { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
 
+/* “A new edition is live” toast (shown when a returning tab finds a newer digest) */
+.edition-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translate(-50%, 8px);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: var(--label-sm);
+  letter-spacing: 0.03em;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.edition-toast.is-visible { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.edition-toast button {
+  font: inherit;
+  font-family: var(--mono);
+  font-size: var(--label-sm);
+  color: var(--paper);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  padding: 2px 10px;
+  cursor: pointer;
+}
+.edition-toast button:hover { background: rgba(255, 255, 255, 0.28); }
+.edition-toast-close {
+  background: transparent !important;
+  border-color: transparent !important;
+  padding: 2px 6px !important;
+  opacity: 0.8;
+}
+
 /* --------------------------------------------------------------------------
    Back to top
    -------------------------------------------------------------------------- */
@@ -654,6 +696,40 @@ select {
 .source-alert a { font-family: var(--mono); font-size: var(--label-sm); white-space: nowrap; }
 .source-alert ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; }
 .source-alert li { display: inline-flex; align-items: center; gap: 6px; }
+
+/* “N new since your last visit” pill (home page, client-side only) */
+.new-edition {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+.new-edition-text { flex: 1; }
+.new-edition button {
+  font: inherit;
+  font-size: var(--label-sm);
+  font-family: var(--mono);
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 3px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.new-edition-toggle[aria-pressed="true"] {
+  color: var(--paper);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.new-edition-dismiss { padding: 3px 8px !important; line-height: 1; }
 
 /* --------------------------------------------------------------------------
    Filters
@@ -1210,6 +1286,44 @@ select {
   background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 .search-result .badge { justify-self: start; }
+
+/* Source + recency facets pinned above the search result list */
+.search-facets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  padding: 2px 4px 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4px;
+}
+.facet-chip {
+  font: inherit;
+  font-family: var(--mono);
+  font-size: var(--label-sm);
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 2px 9px;
+  cursor: pointer;
+}
+.facet-chip.is-active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.facet-select {
+  font: inherit;
+  font-family: var(--mono);
+  font-size: var(--label-sm);
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 2px 6px;
+  cursor: pointer;
+}
 .search-result-title {
   font-family: var(--serif);
   font-weight: 600;

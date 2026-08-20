@@ -31,6 +31,7 @@ from .render import (
     search_index,
     snapshot_nav,
     sparkline_points,
+    story_editions,
 )
 from .store import (
     arxiv_category_counts,
@@ -63,6 +64,30 @@ def _edition_card(source: str, day: str, count: int) -> bytes:
         date_line=f"{day[5:7]}.{day[8:10]}.{day[0:4]}",
         count_line=f"{count} STORIES",
         accent=accent,
+    )
+
+
+@functools.lru_cache(maxsize=64)
+def _home_card(day: str, count: int) -> bytes:
+    """Home page edition card: ink-blue rule, date, total story count."""
+    return render_og_image(
+        date_line=f"{day[5:7]}.{day[8:10]}.{day[0:4]}",
+        count_line=f"{count} STORIES",
+        accent=(27, 54, 93),
+    )
+
+
+@app.get("/static/og/home/{day}.png")
+def og_home_image(day: date) -> Response:
+    """Share card for the combined edition shown on the home page."""
+    digest = combined_digest(DATA_DIR)
+    if digest is None:
+        raise HTTPException(status_code=404, detail="No edition published yet.")
+    png = _home_card(day.isoformat(), len(digest.stories))
+    return Response(
+        content=png,
+        media_type="image/png",
+        headers={"Cache-Control": "public, max-age=86400, immutable"},
     )
 
 
@@ -110,12 +135,15 @@ def index(request: Request) -> HTMLResponse:
     digest = combined_digest(DATA_DIR)
     if digest is None:
         digest = Digest(date=today_utc(), stories=[])
+    snapshots = load_all_snapshots(DATA_DIR)
     return page(
         request,
         "index.html",
         "/",
+        og_image=f"{BASE_URL}/static/og/home/{digest.date.isoformat()}.png",
         digest=digest,
         freshness=fetch_status(DATA_DIR),
+        story_editions=story_editions(snapshots),
     )
 
 
@@ -161,6 +189,7 @@ def archive_snapshot(request: Request, source: str, day: date) -> HTMLResponse:
         label=SOURCES[source]["label"],
         prev_snapshot=prev_snap,
         next_snapshot=next_snap,
+        story_editions={story.url: snap.date.isoformat() for story in snap.stories},
     )
 
 

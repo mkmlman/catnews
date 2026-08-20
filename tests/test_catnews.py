@@ -1619,7 +1619,7 @@ def test_404_page_served_and_home_has_social_meta(client, tmp_path):
 
     home = client.get("/").text
     assert '<link rel="canonical"' in home
-    assert "/static/og.png" in home
+    assert "/static/og/home/2026-08-02.png" in home
     assert 'rel="noopener noreferrer"' in home
 
 
@@ -1847,7 +1847,7 @@ def test_build_site_emits_per_edition_og_cards(tmp_path):
     html = snapshot_page.read_text()
     assert "https://example.com/static/og/hn/2026-08-02.png" in html
     home = (out / "index.html").read_text()
-    assert "https://example.com/static/og.png" in home
+    assert "https://example.com/static/og/home/2026-08-02.png" in home
 
 
 def test_og_cards_stay_out_of_service_worker_precache(tmp_path):
@@ -2030,3 +2030,113 @@ def test_render_markdown_report_lists_dead_links():
     assert "https://gone.example" in report
     assert "ConnectTimeout" in report
     assert "https://ok.example" not in report
+
+
+# --- Home edition card + "new since last visit" edition dates ---------------
+
+
+def test_home_edition_card_rendered_and_served(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    home = client.get("/").text
+    assert "/static/og/home/2026-08-02.png" in home
+    assert 'data-digest-date="2026-08-02"' in home
+
+    card = client.get("/static/og/home/2026-08-02.png")
+    assert card.status_code == 200
+    assert card.headers["content-type"] == "image/png"
+    assert card.content.startswith(b"\x89PNG\r\n\x1a\n")
+
+
+def test_story_cards_carry_edition_dates(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 9),
+            stories=[Story(source="arxiv", title="B", url="https://b")],
+        ),
+        tmp_path,
+    )
+    home = client.get("/").text
+    assert 'data-edition="2026-08-02"' in home
+    assert 'data-edition="2026-08-09"' in home
+
+    page = client.get("/archive/arxiv/2026-08-09/").text
+    assert 'data-edition="2026-08-09"' in page
+
+
+def test_story_editions_maps_url_to_newest_snapshot_date():
+    from app.render import story_editions
+
+    snapshots = [
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 1),
+            stories=[Story(source="hn", url="https://a", title="A")],
+        ),
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", url="https://a", title="A2")],
+        ),
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 9),
+            stories=[Story(source="arxiv", url="https://b", title="B")],
+        ),
+    ]
+    editions = story_editions(snapshots)
+    assert editions == {
+        "https://a": "2026-08-02",
+        "https://b": "2026-08-09",
+    }
+
+
+def test_search_index_records_carry_edition_date():
+    from app.render import search_index
+
+    snapshots = [
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", url="https://a", title="A")],
+        )
+    ]
+    record = search_index(snapshots)[0]
+    assert record["date"] == "2026-08-02"
+
+
+def test_build_site_emits_home_edition_card(tmp_path):
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site_home"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+
+    card = out / "static" / "og" / "home" / "2026-08-02.png"
+    assert card.is_file()
+    assert card.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+    assert "https://example.com/static/og/home/2026-08-02.png" in (
+        out / "index.html"
+    ).read_text()

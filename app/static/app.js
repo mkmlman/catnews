@@ -580,6 +580,7 @@
   var state = {
     source: preferredSource === "All" || CFG.sourceTags[preferredSource] ? preferredSource : "All",
     savedOnly: filterPrefs.savedOnly === true,
+    newOnly: false,
     loaded: PAGE_SIZE,
     view: viewPref === "list" ? "list" : "grid",
   };
@@ -604,7 +605,8 @@
         state.source === "All" || card.getAttribute("data-source") === state.source;
       var savedMatch = !state.savedOnly || (url && saved.has(url));
       var readMatch = !hideRead || !hideRead.checked || !url || !read.has(url);
-      var match = sourceMatch && savedMatch && readMatch;
+      var newMatch = !state.newOnly || (url && newCards.has(url));
+      var match = sourceMatch && savedMatch && readMatch && newMatch;
       if (match) matched++;
       var show = match && matched <= state.loaded;
       card.hidden = !show;
@@ -736,6 +738,87 @@
     paintView();
   }
 
+  /* -------------------------------------------------------------
+     “New since your last visit” (client-side only: edition dates on cards)
+     ------------------------------------------------------------- */
+  var LAST_SEEN_KEY = "catnews:last-seen";
+  var newCards = new Set();
+  var storiesEl = document.getElementById("stories");
+  var digestEdition = storiesEl ? storiesEl.getAttribute("data-digest-date") : "";
+  var newEditionEl = document.getElementById("new-edition");
+  var newEditionText = document.getElementById("new-edition-text");
+  var newEditionToggle = document.getElementById("new-edition-toggle");
+  var newEditionDismiss = document.getElementById("new-edition-dismiss");
+
+  var SHORT_MONTHS = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  function formatShortDate(iso) {
+    if (!iso) return "";
+    var parts = iso.split("-");
+    var m = Number(parts[1]) - 1;
+    return SHORT_MONTHS[m] + " " + Number(parts[2]) + ", " + parts[0];
+  }
+  function readRaw(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function writeRaw(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) {}
+  }
+
+  function initNewSince() {
+    if (!digestEdition || !cards.length) return;
+    var lastSeen = readRaw(LAST_SEEN_KEY);
+    if (!lastSeen) {
+      writeRaw(LAST_SEEN_KEY, digestEdition);
+      return;
+    }
+    if (digestEdition <= lastSeen) return;
+    cards.forEach(function (card) {
+      var edition = card.getAttribute("data-edition");
+      if (edition && edition > lastSeen && card.getAttribute("data-url")) {
+        newCards.add(card.getAttribute("data-url"));
+      }
+    });
+    if (!newCards.size || !newEditionEl) return;
+    newEditionText.textContent =
+      newCards.size + " new since your last visit (" + formatShortDate(lastSeen) + ")";
+    newEditionEl.hidden = false;
+  }
+
+  function repaintNewToggle() {
+    if (!newEditionToggle) return;
+    var on = state.newOnly;
+    newEditionToggle.setAttribute("aria-pressed", on ? "true" : "false");
+    newEditionToggle.textContent = on ? "Show all" : "Show new";
+  }
+
+  if (newEditionToggle) {
+    newEditionToggle.addEventListener("click", function () {
+      filtersTouched = true;
+      state.newOnly = !state.newOnly;
+      state.loaded = PAGE_SIZE;
+      repaintNewToggle();
+      applyFilters();
+    });
+  }
+  if (newEditionDismiss) {
+    newEditionDismiss.addEventListener("click", function () {
+      state.newOnly = false;
+      repaintNewToggle();
+      if (newEditionEl) newEditionEl.hidden = true;
+      writeRaw(LAST_SEEN_KEY, digestEdition);
+      applyFilters();
+    });
+  }
+  if (newEditionEl) {
+    newEditionEl.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && newEditionDismiss) newEditionDismiss.click();
+    });
+  }
+  initNewSince();
+
   function updateFilterScrollCue() {
     if (!sourceFilterRow || !filterScrollCue) return;
     var atEnd = sourceFilterRow.scrollLeft + sourceFilterRow.clientWidth >= sourceFilterRow.scrollWidth - 4;
@@ -756,6 +839,8 @@
     if (hideRead) hideRead.checked = false;
     state.source = "All";
     state.savedOnly = false;
+    state.newOnly = false;
+    if (newEditionToggle) repaintNewToggle();
     // Reveal the whole edition so a deep-linked story is never hidden by the
     // load-more cutoff, no matter where it sits in the digest.
     state.loaded = cards.length;
@@ -933,8 +1018,18 @@
       .split(/\s+/)
       .filter(Boolean);
     if (!tokens.length) return [];
+    var cutOff = "";
+    if (searchDays) {
+      var t = new Date();
+      t.setDate(t.getDate() - searchDays);
+      cutOff = t.toISOString().slice(0, 10);
+    }
     var results = [];
     (storiesCache || []).forEach(function (story) {
+      if (searchSource !== "All" && story.source !== searchSource) return;
+      if (cutOff) {
+        if (!story.date || story.date < cutOff) return;
+      }
       var haystack = [
         story.title,
         story.byline,
@@ -989,6 +1084,58 @@
   }
 
   var activeSearchIndex = -1;
+  var searchSource = "All";
+  var searchDays = 0;
+
+  function paintFacets() {
+    if (!searchResults || !storiesCache) return;
+    var old = searchResults.querySelector(".search-facets");
+    if (old) old.remove();
+
+    var bar = document.createElement("div");
+    bar.className = "search-facets";
+
+    var sources = ["All"];
+    (storiesCache || []).forEach(function (story) {
+      if (sources.indexOf(story.source) === -1) sources.push(story.source);
+    });
+    sources.forEach(function (key) {
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "facet-chip" + (searchSource === key ? " is-active" : "");
+      chip.setAttribute("aria-pressed", searchSource === key ? "true" : "false");
+      chip.textContent = key === "All" ? "All" : (CFG.sourceTags[key] || key);
+      chip.addEventListener("click", function () {
+        searchSource = key;
+        paintFacets();
+        renderResults();
+        searchInput.focus();
+      });
+      bar.appendChild(chip);
+    });
+
+    var select = document.createElement("select");
+    select.className = "facet-select";
+    select.setAttribute("aria-label", "Limit results by date");
+    [["All time", 0], ["Last 30 days", 30], ["Last 7 days", 7]].forEach(function (opt) {
+      var option = document.createElement("option");
+      option.value = String(opt[1]);
+      option.textContent = opt[0];
+      select.appendChild(option);
+    });
+    select.value = String(searchDays);
+    select.addEventListener("change", function () {
+      searchDays = Number(select.value) || 0;
+      renderResults();
+    });
+    bar.appendChild(select);
+
+    if (searchResults.children.length) {
+      searchResults.insertBefore(bar, searchResults.firstChild);
+    } else {
+      searchResults.appendChild(bar);
+    }
+  }
 
   function paintActiveResult() {
     var items = searchResults.querySelectorAll("a.search-result");
@@ -1035,6 +1182,7 @@
     var hits = searchStories(query);
     searchResults.innerHTML = "";
     activeSearchIndex = -1;
+    paintFacets();
     if (!hits.length) {
       var none = document.createElement("div");
       none.className = "search-result search-result--none";
@@ -1068,7 +1216,7 @@
         a.appendChild(sub);
         a.addEventListener("mouseover", function () {
           activeSearchIndex = Array.prototype.indexOf.call(
-            searchResults.children,
+            searchResults.querySelectorAll("a.search-result"),
             a
           );
           paintActiveResult();
@@ -1103,8 +1251,9 @@
         activeSearchIndex = activeSearchIndex > 0 ? activeSearchIndex - 1 : count2 - 1;
         paintActiveResult();
       } else if (event.key === "Enter") {
+        var anchors = searchResults.querySelectorAll("a.search-result");
         var active = activeSearchIndex >= 0
-          ? searchResults.children[activeSearchIndex]
+          ? anchors[activeSearchIndex]
           : searchResults.querySelector("a.search-result");
         if (active && active.tagName === "A") {
           event.preventDefault();
@@ -1309,6 +1458,83 @@
         { threshold: 0.2 }
       );
       io.observe(bar);
+    });
+  }
+
+  /* -------------------------------------------------------------
+     “A new edition is live” toast — a returning tab notices a newer
+     digest.json (served network-first by the service worker) and offers
+     to refresh instead of silently showing stale content.
+     ------------------------------------------------------------- */
+  var editionToast = document.getElementById("edition-toast");
+  var editionToastText = document.getElementById("edition-toast-text");
+  var editionToastRefresh = document.getElementById("edition-toast-refresh");
+  var editionToastClose = document.getElementById("edition-toast-close");
+  var TOAST_KEY = "catnews:toast-dismissed";
+  var toastTimer = null;
+
+  function showEditionToast() {
+    if (!editionToast) return;
+    editionToast.classList.add("is-visible");
+    editionToast.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      editionToast.classList.remove("is-visible");
+      setTimeout(function () { editionToast.hidden = true; }, 180);
+    }, 12000);
+  }
+
+  function hideEditionToast() {
+    clearTimeout(toastTimer);
+    if (editionToast) {
+      editionToast.classList.remove("is-visible");
+      editionToast.hidden = true;
+    }
+  }
+
+  function checkForNewEdition() {
+    if (!digestEdition) return;
+    fetch(BASE + "/api/digest.json")
+      .then(function (res) {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then(function (data) {
+        if (!data || !data.date) return;
+        var latest = String(data.date);
+        if (latest <= digestEdition) {
+          hideEditionToast();
+          return;
+        }
+        if (readRaw(TOAST_KEY) === latest) return;
+        if (editionToastText) {
+          editionToastText.textContent = "New edition " + formatShortDate(latest) + " is live";
+        }
+        showEditionToast();
+      })
+      .catch(function () {});
+  }
+
+  if (editionToastRefresh) {
+    editionToastRefresh.addEventListener("click", function () {
+      window.location.reload();
+    });
+  }
+  if (editionToastClose) {
+    editionToastClose.addEventListener("click", function () {
+      hideEditionToast();
+      if (digestEdition) writeRaw(TOAST_KEY, digestEdition);
+    });
+  }
+  if (editionToast) {
+    window.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") checkForNewEdition();
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) checkForNewEdition();
+    });
+    window.addEventListener("pageshow", function () {
+      window.setTimeout(checkForNewEdition, 1500);
     });
   }
 })();
