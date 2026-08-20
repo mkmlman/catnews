@@ -150,7 +150,9 @@ def build_site(
                 label=SOURCES[snap.source]["label"],
                 prev_snapshot=prev_snap,
                 next_snapshot=next_snap,
-                story_editions={story.url: snap.date.isoformat() for story in snap.stories},
+                story_editions={
+                    story.url: snap.date.isoformat() for story in snap.stories
+                },
             ),
         )
     trends = weekly_trends(data_dir, snapshots)

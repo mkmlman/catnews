@@ -2137,6 +2137,7 @@ def test_build_site_emits_home_edition_card(tmp_path):
     card = out / "static" / "og" / "home" / "2026-08-02.png"
     assert card.is_file()
     assert card.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
-    assert "https://example.com/static/og/home/2026-08-02.png" in (
-        out / "index.html"
-    ).read_text()
+    assert (
+        "https://example.com/static/og/home/2026-08-02.png"
+        in (out / "index.html").read_text()
+    )
