@@ -2120,6 +2120,27 @@ def test_search_index_records_carry_edition_date():
     assert record["date"] == "2026-08-02"
 
 
+def test_search_index_includes_why_read():
+    from app.render import search_index
+
+    snapshots = [
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(
+                    source="hn",
+                    url="https://a",
+                    title="A",
+                    why_read="A systematic approach to docs.",
+                )
+            ],
+        )
+    ]
+    record = search_index(snapshots)[0]
+    assert record["why_read"] == "A systematic approach to docs."
+
+
 def test_build_site_emits_home_edition_card(tmp_path):
     from scripts.build_site import build_site
 

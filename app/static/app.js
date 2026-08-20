@@ -1034,6 +1034,7 @@
         story.title,
         story.byline,
         story.author,
+        story.why_read,
         story.summary,
         story.snippet,
       ]

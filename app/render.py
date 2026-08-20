@@ -328,6 +328,11 @@ def search_index(snapshots: list[SourceSnapshot]) -> list[dict[str, str]]:
     The full stories API intentionally preserves every historical snapshot. The
     browser search only needs searchable text and one current copy of each
     story, so it gets a much smaller artifact instead.
+
+    Note: this index grows ~50 records/day and is fetched whole on the first
+    search. When api/search.json crosses ~1 MB, shard it by year (or "recent +
+    older") and lazy-load shards from the client's searchStories() before
+    adding more fields here (fuller text inflates every shard at once).
     """
     records: dict[str, dict[str, str]] = {}
     for snapshot in snapshots:

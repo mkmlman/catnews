@@ -213,6 +213,11 @@ build-time source health report). Each deployment job has only the GitHub permis
 needs: archive can write digests and PRs, lint can read the repository, and deploy can
 publish Pages.
 
+**Search index scaling:** `api/search.json` grows ~50 records/day and is fetched whole
+when a search is first opened. Plan to shard it by year (or recent + older) and lazy-load
+shards once it crosses ~1 MB — the sharding hook is documented at `search_index()` in
+`app/render.py`.
+
 ## Curation
 
 To curate a day, create `data/curation_YYYY-MM-DD.json`:
