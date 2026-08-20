@@ -38,10 +38,11 @@
   {% if src.status_detail %}<p class="source-status-detail">{{ src.status_detail }}</p>{% endif %}
   <p class="source-links">
     {% if src.last_fetched %}
+    <a href="{{ base_path }}/feed-{{ src.key }}.rss">RSS feed</a><span class="sep"> · </span>
     <a href="{{ base_path }}/archive/{{ src.key }}/{{ src.last_fetched.isoformat() }}/">latest snapshot</a><span class="sep"> · </span>
     <a href="{{ base_path }}/api/sources/{{ src.key }}.json">source API</a>
     {% else %}
-    <span class="muted">source API pending first snapshot</span>
+    <span class="muted">feed &amp; source API pending first snapshot</span>
     {% endif %}
   </p>
 </section>

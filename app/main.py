@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import re
 from datetime import date
 from pathlib import Path
@@ -13,8 +14,9 @@ from fastapi.responses import (
 )
 from fastapi.staticfiles import StaticFiles
 
-from .config import BASE_PATH, BASE_URL, DATA_DIR, SOURCES, today_utc
+from .config import BASE_PATH, BASE_URL, DATA_DIR, SOURCES, badge_color, today_utc
 from .models import Digest, SourceSnapshot, Story
+from .og_image import hex_rgb, render_og_image
 from .render import (
     app_version,
     archive_days,
@@ -25,6 +27,7 @@ from .render import (
     render_page,
     render_rss,
     render_service_worker,
+    render_source_rss,
     search_index,
     snapshot_nav,
     sparkline_points,
@@ -46,6 +49,40 @@ from .store import (
 )
 
 app = FastAPI(title="catnews", description="catnews — a curated digest.")
+
+
+@functools.lru_cache(maxsize=512)
+def _edition_card(source: str, day: str, count: int) -> bytes:
+    """Per-snapshot Open Graph card, cached by (source, date, story count).
+
+    `day` is an ISO date string so the cache key is hashable; a source that
+    changes its snapshot count re-renders the card.
+    """
+    accent = hex_rgb(str(badge_color(source)[0]))
+    return render_og_image(
+        date_line=f"{day[5:7]}.{day[8:10]}.{day[0:4]}",
+        count_line=f"{count} STORIES",
+        accent=accent,
+    )
+
+
+@app.get("/static/og/{source}/{day}.png")
+def og_edition_image(source: str, day: date) -> Response:
+    """Per-edition share card for a snapshot page (see scripts/build_site.py).
+
+    Registered before the /static mount so it is matched first; the source
+    static dir never contains these generated cards.
+    """
+    snap = load_snapshot(source, day, DATA_DIR)
+    if snap is None:
+        raise HTTPException(status_code=404, detail="No such edition.")
+    png = _edition_card(source, day.isoformat(), len(snap.stories))
+    return Response(
+        content=png,
+        media_type="image/png",
+        headers={"Cache-Control": "public, max-age=86400, immutable"},
+    )
+
 
 app.mount(
     "/static",
@@ -119,6 +156,7 @@ def archive_snapshot(request: Request, source: str, day: date) -> HTMLResponse:
         request,
         "snapshot.html",
         f"/archive/{source}/{day.isoformat()}/",
+        og_image=f"{BASE_URL}/static/og/{source}/{day.isoformat()}.png",
         snapshot=snap,
         label=SOURCES[source]["label"],
         prev_snapshot=prev_snap,
@@ -282,6 +320,20 @@ def rss() -> Response:
 @app.get("/feed")
 def feed_redirect() -> RedirectResponse:
     return RedirectResponse("/feed.rss")
+
+
+@app.get("/feed-{source}.rss")
+def source_rss(source: str) -> Response:
+    """Per-source RSS feed (e.g. /feed-hn.rss), mirroring the static build."""
+    if source not in SOURCES:
+        raise HTTPException(status_code=404, detail=f"Unknown source {source!r}.")
+    snap = load_latest_snapshot(source, DATA_DIR)
+    if snap is None:
+        raise HTTPException(status_code=404, detail=f"No snapshot for {source}.")
+    xml = render_source_rss(
+        source, snap, f"{BASE_URL}/", f"{BASE_URL}/feed-{source}.rss"
+    )
+    return Response(content=xml, media_type="application/rss+xml; charset=utf-8")
 
 
 # --- PWA (install + offline) -------------------------------------------------

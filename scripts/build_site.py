@@ -7,7 +7,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.config import SOURCES
+from app.config import SOURCES, badge_color
+from app.og_image import hex_rgb, render_og_image
 from app.render import (
     archive_days,
     render_fetch_status,
@@ -21,6 +22,7 @@ from app.render import (
     render_search_index,
     render_service_worker,
     render_sitemap,
+    render_source_rss,
     site_version,
     snapshot_nav,
     sparkline_points,
@@ -83,6 +85,20 @@ def build_site(
     # Static assets (style.css, fonts, favicon)
     shutil.copytree(STATIC_DIR, out_dir / "static", dirs_exist_ok=True)
 
+    # Per-edition Open Graph cards for every snapshot page (content-addressed
+    # by source + date so each day shares a unique card).
+    for snap in snapshots:
+        og_rel = f"static/og/{snap.source}/{snap.date.isoformat()}.png"
+        accent = hex_rgb(str(badge_color(snap.source)[0]))
+        write(
+            out_dir / og_rel,
+            render_og_image(
+                date_line=snap.date.strftime("%m.%d.%Y"),
+                count_line=f"{len(snap.stories)} STORIES",
+                accent=accent,
+            ),
+        )
+
     # Pages
     write(
         out_dir / "index.html",
@@ -115,6 +131,7 @@ def build_site(
                 base_path=base_path,
                 base_url=base_url,
                 page_path=f"/archive/{snap.source}/{snap.date.isoformat()}/",
+                og_image=f"{base_url}/static/og/{snap.source}/{snap.date.isoformat()}.png",
                 snapshot=snap,
                 label=SOURCES[snap.source]["label"],
                 prev_snapshot=prev_snap,
@@ -185,6 +202,20 @@ def build_site(
         write(out_dir / "api" / "digest.json", digest.model_dump_json())
         write(out_dir / "api" / "stories.md", render_markdown(digest))
 
+    # Per-source feeds: one stream per source with a snapshot, e.g. /feed-hn.rss.
+    # snapshots are ordered ascending by date, so the last per source is newest.
+    latest_by_source = {snap.source: snap for snap in snapshots}
+    for source, snapshot in latest_by_source.items():
+        write(
+            out_dir / f"feed-{source}.rss",
+            render_source_rss(
+                source,
+                snapshot,
+                f"{base_url}/",
+                f"{base_url}/feed-{source}.rss",
+            ),
+        )
+
     api = out_dir / "api"
     write(
         api / "sources.json",
@@ -197,7 +228,6 @@ def build_site(
         ),
     )
     write(api / "search.json", render_search_index(snapshots))
-    latest_by_source = {snap.source: snap for snap in snapshots}
     for source, snapshot in latest_by_source.items():
         write(
             api / "sources" / f"{source}.json",

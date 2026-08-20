@@ -1802,3 +1802,231 @@ def test_design_page_stat_cards_use_real_data(client, tmp_path):
     assert 'stat-label">Stories curated</span>' in page
     assert '<span class="stat-value">2</span>' in page
     assert '<span class="stat-value">1</span>' in page
+
+
+# --- Per-edition Open Graph cards -------------------------------------------
+
+
+def test_og_image_caption_card_renders_valid_png():
+    import struct
+
+    from app.og_image import render_og_image
+
+    plain = render_og_image()
+    card = render_og_image(
+        date_line="08.19.2026",
+        count_line="25 STORIES",
+        accent=(156, 77, 20),
+    )
+    for png in (plain, card):
+        assert png.startswith(b"\x89PNG\r\n\x1a\n")
+        width, height = struct.unpack(">II", png[16:24])
+        assert (width, height) == (1200, 630)
+    assert card != plain
+
+
+def test_build_site_emits_per_edition_og_cards(tmp_path):
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site2"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+
+    card = out / "static" / "og" / "hn" / "2026-08-02.png"
+    assert card.is_file()
+    assert card.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+
+    snapshot_page = out / "archive" / "hn" / "2026-08-02" / "index.html"
+    html = snapshot_page.read_text()
+    assert "https://example.com/static/og/hn/2026-08-02.png" in html
+    home = (out / "index.html").read_text()
+    assert "https://example.com/static/og.png" in home
+
+
+def test_og_cards_stay_out_of_service_worker_precache(tmp_path):
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site3"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+
+    sw = (out / "sw.js").read_text()
+    assert "./static/og/" not in sw
+    assert "./feed-hn.rss" not in sw
+
+    # Per-edition cards are stable once written; they must not churn the cache
+    # fingerprint that names the service worker cache.
+
+    v1 = site_version(out)
+    (out / "static" / "og" / "hn" / "2026-08-02.png").write_bytes(b"x")
+    assert site_version(out) == v1
+
+
+def test_live_app_serves_edition_cards_and_source_feeds(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    card = client.get("/static/og/hn/2026-08-02.png")
+    assert card.status_code == 200
+    assert card.headers["content-type"] == "image/png"
+    assert card.content.startswith(b"\x89PNG\r\n\x1a\n")
+    assert client.get("/static/og/hn/2026-08-03.png").status_code == 404
+
+    feed = client.get("/feed-hn.rss")
+    assert feed.status_code == 200
+    assert "application/rss" in feed.headers["content-type"]
+    assert client.get("/feed-nope.rss").status_code == 404
+
+    page = client.get("/archive/hn/2026-08-02/").text
+    assert "http://localhost:8000/static/og/hn/2026-08-02.png" in page
+    # Referenced by both og:image and twitter:image.
+    assert page.count("/static/og/hn/2026-08-02.png") == 2
+
+
+def test_sources_page_lists_feed_links(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    page = client.get("/sources/").text
+    assert 'href="/feed-hn.rss"' in page
+
+
+# --- Per-source RSS feeds ----------------------------------------------------
+
+
+def test_build_site_emits_per_source_feeds(tmp_path):
+    import xml.etree.ElementTree as ET
+
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(source="hn", title="A", url="https://a"),
+                Story(source="hn", title="B", url="https://b"),
+            ],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 9),
+            stories=[Story(source="arxiv", title="Paper", url="https://p")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site4"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+
+    hn_feed = out / "feed-hn.rss"
+    arxiv_feed = out / "feed-arxiv.rss"
+    assert hn_feed.is_file() and arxiv_feed.is_file()
+    ET.fromstring(hn_feed.read_bytes())
+    ET.fromstring(arxiv_feed.read_bytes())
+    # The feed carries its own stable id + a channel link to the snapshot page.
+    text = hn_feed.read_text()
+    assert "https://example.com/feed-hn.rss" in text
+    assert "https://example.com/archive/hn/2026-08-02/" in text
+
+
+# --- Link-rot checker --------------------------------------------------------
+
+
+def test_collect_story_urls_dedupes_and_filters():
+    from scripts.check_links import collect_story_urls
+
+    stories = [
+        {
+            "source": "hn",
+            "title": "A",
+            "url": "https://example.com/x",
+            "hn_url": "https://news.ycombinator.com/item?id=1",
+            "links": [{"url": "https://example.com/x"}],
+        },
+        {
+            "source": "github",
+            "title": "B",
+            "url": "mailto:a@b.com",  # ignored
+        },
+        {"source": "arxiv", "title": "C", "url": "https://arxiv.org/abs/1"},
+    ]
+    urls = [r["url"] for r in collect_story_urls(stories)]
+    assert urls == [
+        "https://example.com/x",
+        "https://news.ycombinator.com/item?id=1",
+        "https://arxiv.org/abs/1",
+    ]
+
+
+def test_classify_status():
+    from scripts.check_links import classify_status
+
+    assert classify_status(200) == "good"
+    assert classify_status(304) == "good"
+    assert classify_status(404) == "dead"
+    assert classify_status(410) == "dead"
+    assert classify_status(403) == "dead"
+    assert classify_status(503) == "error"
+    assert classify_status(None) == "error"
+
+
+def test_render_markdown_report_lists_dead_links():
+    from scripts.check_links import render_markdown_report
+
+    report = render_markdown_report(
+        [
+            {
+                "url": "https://gone.example",
+                "title": "Gone",
+                "source": "hn",
+                "state": "dead",
+                "status": 404,
+            },
+            {
+                "url": "https://ok.example",
+                "title": "Ok",
+                "source": "arxiv",
+                "state": "good",
+                "status": 200,
+            },
+            {
+                "url": "https://maybe.example",
+                "title": "Maybe",
+                "source": "hn",
+                "state": "error",
+                "status": None,
+                "error": "ConnectTimeout",
+            },
+        ]
+    )
+    assert "## Dead links (1)" in report
+    assert "https://gone.example" in report
+    assert "ConnectTimeout" in report
+    assert "https://ok.example" not in report

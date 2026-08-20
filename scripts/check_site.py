@@ -121,6 +121,11 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
             ElementTree.fromstring(feed.read_bytes())
         except (OSError, ElementTree.ParseError) as exc:
             errors.append(f"invalid RSS feed: {exc}")
+    for source_feed in sorted(site_dir.glob("feed-*.rss")):
+        try:
+            ElementTree.fromstring(source_feed.read_bytes())
+        except (OSError, ElementTree.ParseError):
+            errors.append(f"invalid RSS feed: {source_feed.name}")
 
     sitemap = site_dir / "sitemap.xml"
     if sitemap.is_file():

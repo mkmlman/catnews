@@ -42,11 +42,15 @@ def _sw_stable(rel: str) -> bool:
     cache every single day. Those resources still work offline because the SW
     fetch handler caches them on first visit (network-first for navigations).
     """
-    if rel.endswith((".json", ".md")):
+    if rel.endswith((".json", ".md", ".rss")):
         return False
-    if rel in ("index.html", "feed.rss", "sitemap.xml"):
+    if rel in ("index.html", "sitemap.xml"):
         return False
     if rel.startswith("archive/") and rel != "archive/index.html":
+        return False
+    # Per-edition OG cards are content-addressed by date and grow daily; like
+    # the digest they must not churn the stable precache / cache fingerprint.
+    if rel.startswith("static/og/"):
         return False
     return not (rel.startswith("api/") and rel != "api/index.html")
 
@@ -71,12 +75,15 @@ def render_page(
     base_path: str,
     base_url: str,
     page_path: str = "/",
+    og_image: str | None = None,
     **context,
 ) -> str:
     """Render a template to a full HTML string. Works for the live app and static builds.
 
     `page_path` is the URL path (including base_path) used for the canonical
     og:url, e.g. "/catnews/archive/" or "/archive/hn/2026-08-02/".
+    `og_image` is an absolute social-card URL; it falls back to the classic
+    brand card when omitted.
     """
     template = _env.get_template(name)
     return template.render(
@@ -89,6 +96,7 @@ def render_page(
         base_url=base_url,
         page_path=page_path,
         og_url=f"{base_url}{page_path}",
+        og_image=og_image or f"{base_url}/static/og.png",
         repo_url=REPO_URL,
         asset_version=static_asset_version(),
         story_anchor=story_anchor,
@@ -585,6 +593,56 @@ def render_rss(digest: Digest, base_url: str) -> str:
     # feed by published date (newest first); undated items sink to the end.
     stories = sorted(
         digest.stories,
+        key=lambda s: (
+            s.published is not None,
+            s.published or datetime.min.replace(tzinfo=UTC),
+        ),
+        reverse=True,
+    )
+
+    for story in stories:
+        entry = fg.add_entry(order="append")
+        entry.id(story.url)
+        entry.title(story.title)
+        entry.link(href=story.url)
+        entry.author({"name": story.byline or story.author or "unknown"})
+        if story.published:
+            entry.published(_aware(story.published))
+        parts = []
+        if story.why_read:
+            parts.append(f"<p><strong>Why read:</strong> {story.why_read}</p>")
+        if story.summary:
+            parts.append(f"<p>{story.summary}</p>")
+        if story.hn_url:
+            parts.append(f'<p>Discuss on <a href="{story.hn_url}">Hacker News</a></p>')
+        entry.content("".join(parts), type="html")
+
+    return fg.rss_str(pretty=True).decode("utf-8")
+
+
+def render_source_rss(source: str, snapshot, base_url: str, feed_url: str) -> str:
+    """Per-source RSS feed for a single snapshot (e.g. /feed-hn.rss).
+
+    Lets readers subscribe to just the sections they care about — the
+    combined feed is the default, but an arXiv-only or HN-only stream is one
+    URL away. `feed_url` is the feed's own absolute URL (used as its stable
+    id), and channel links point at the snapshot's archive page.
+    """
+    fg = FeedGenerator()
+    fg.id(feed_url)
+    fg.title(f"{APP_NAME} — {SOURCE_LABELS[source]}")
+    fg.link(href=feed_url, rel="self")
+    fg.link(
+        href=f"{base_url.rstrip('/')}/archive/{source}/{snapshot.date.isoformat()}/",
+        rel="alternate",
+    )
+    fg.subtitle(
+        f"{SOURCE_LABELS[source]} — latest {SOURCE_TAGS[source]} stories on {APP_NAME}."
+    )
+    fg.language("en")
+
+    stories = sorted(
+        snapshot.stories,
         key=lambda s: (
             s.published is not None,
             s.published or datetime.min.replace(tzinfo=UTC),

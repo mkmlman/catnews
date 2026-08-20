@@ -32,7 +32,14 @@ quotes from it. See the [Sources](/sources/) page for what we curate.
   source (Register Spill) stays readable all week.
 - **Archive** and **Stats** pages; the archive lists every snapshot and each
   date opens as a page (`/archive/<source>/<date>/`) in the same card layout as the home feed.
+- **Per-edition share cards** — every snapshot page has its own Open Graph image
+  (`/static/og/<source>/<date>.png`) stamping the source color, date, and story count,
+  generated at build time with no image dependencies.
+- **Per-source RSS feeds** — `feed-<source>.rss` (e.g. `feed-hn.rss`, `feed-arxiv.rss`)
+  in addition to the combined `feed.rss`, so readers can subscribe to just one section.
 - **APIs**: JSON (`/api/sources`, `/api/sources/<source>`, `/api/sources/<source>/<date>`, `/api/digest`, `/api/stories`, `/api/search.json`, `/api/stats`), **Markdown** (`/api/stories.md`), and **RSS** (`/feed.rss`).
+- **Link-rot checks** — `scripts/check_links.py` HEAD-checks every external story URL
+  and a weekly workflow files a report issue when links have died.
 - **Curation** hooks to add *"Why read"* notes to stories.
 
 ## Quickstart
@@ -153,10 +160,11 @@ The CI workflow derives `base-path` and `base-url` from the repository
 Pages URL without editing the workflow.
 
 This renders `site/` with plain HTML pages (home, archive, per-snapshot archive pages,
-stats), `feed.rss`, and static JSON/Markdown API files (`api/sources.json`,
-`api/stories.json`, `api/digest.json`, `api/stats.json`, `api/fetch-status.json`,
-`api/stories.md`). The fetch-status artifact records whether each source was current,
-stale, unavailable, or skipped on the last fetch run.
+stats), `feed.rss` plus per-source `feed-<source>.rss` feeds, per-edition Open Graph
+cards under `static/og/<source>/<date>.png`, and static JSON/Markdown API files
+(`api/sources.json`, `api/stories.json`, `api/digest.json`, `api/stats.json`,
+`api/fetch-status.json`, `api/stories.md`). The fetch-status artifact records whether
+each source was current, stale, unavailable, or skipped on the last fetch run.
 
 For the shortest local feedback loop, use the build/validate/preview command:
 
@@ -273,6 +281,23 @@ env vars remain available:
 
 Register Spill is pinned to Mondays (`weekday: 0` in `sources.yaml`): it is only fetched
 when at least 7 days have elapsed *and* it is Monday.
+
+## Link rot
+
+An archive outlives its links: HN threads vanish, arXiv papers are withdrawn, and
+repos are deleted. `scripts/check_links.py` HEAD-checks every external story URL in
+the committed snapshots and reports which are dead:
+
+```sh
+uv run python scripts/check_links.py                      # summary on stdout
+uv run python scripts/check_links.py --json linkcheck.json --report linkcheck.md
+uv run python scripts/check_links.py --fail               # exit 1 if links are dead
+```
+
+It never fails a daily deploy on its own — a separate weekly workflow
+(`.github/workflows/linkcheck.yml`) runs it, uploads the report as an artifact, and
+opens a single "Link rot report" issue when dead links are found (so you prune a
+retreating source without the site breaking silently).
 
 ## Repo ops (how GitHub is configured)
 

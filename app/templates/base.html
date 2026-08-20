@@ -31,7 +31,7 @@
   <title>{% block title %}{{ app_name }}{% endblock %}</title>
   <meta name="description" content="{% block description %}{{ self.og_description() }}{% endblock %}">
   <link rel="canonical" href="{{ og_url }}">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ base_url }}/feed.rss">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="{% block feed_alt %}{{ base_url }}/feed.rss{% endblock %}">
 
   <!-- Open Graph -->
   <meta property="og:site_name" content="catnews">
@@ -40,7 +40,7 @@
   <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
   <meta property="og:description" content="{% block og_description %}catnews — a curated daily digest of HN, arXiv, GitHub, and Register Spill stories. What's worth reading.{% endblock %}">
   <meta property="og:url" content="{{ og_url }}">
-  <meta property="og:image" content="{{ base_url }}/static/og.png">
+  <meta property="og:image" content="{{ og_image }}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
 
@@ -48,7 +48,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{% block twitter_title %}{{ self.og_title() }}{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}{{ self.og_description() }}{% endblock %}">
-  <meta name="twitter:image" content="{{ base_url }}/static/og.png">
+  <meta name="twitter:image" content="{{ og_image }}">
   {% block json_ld %}{% endblock %}
   <link rel="stylesheet" href="{{ base_path }}/static/style.css?v={{ asset_version }}">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/fraunces-latin-normal.woff2">

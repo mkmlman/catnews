@@ -1,0 +1,54 @@
+name: Link Rot Check
+
+on:
+  schedule:
+    # Weekly on Sunday 05:00 UTC — the archive outlives its links, so surface
+    # dead URLs behind a report instead of failing a daily deploy on them.
+    - cron: "0 5 * * 0"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  linkcheck:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@0c5e2b8115b80b4c7c5ddf6ffdd634974642d182 # v5.4.1
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Check external links
+        id: check
+        run: |
+          uv run python scripts/check_links.py --json linkcheck.json --report linkcheck.md || true
+          dead=$(python -c "import json;print(json.load(open('linkcheck.json'))['summary'].get('dead', 0))")
+          echo "dead=$dead" >> "$GITHUB_OUTPUT"
+
+      - name: Upload link check report
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: linkcheck
+          path: |
+            linkcheck.json
+            linkcheck.md
+          if-no-files-found: ignore
+
+      - name: Open an issue when links have rotted
+        if: steps.check.outputs.dead != '0' && steps.check.outputs.dead != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Link rot report"
+          if gh issue list --state open --json title --jq '.[].title' | grep -qxF "$title"; then
+            echo "An open Link rot report issue already exists; not creating another."
+          else
+            gh issue create --title "$title" --body-file linkcheck.md
+          fi
