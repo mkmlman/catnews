@@ -13,8 +13,8 @@
   --card: #fdfcf7;           /* white-paper variant for cards */
   --ink: #23241f;            /* primary text — warm near-black */
   --ink-soft: #3f413a;
-  --muted: #84867a;          /* tertiary text */
-  --faint: #b3b4a9;
+  --muted: #66685c;          /* tertiary text (>=4.5:1 on paper/card) */
+  --faint: #7f8174;          /* placeholder / chart labels (>=3:1) */
   --accent: #1B365D;         /* Kami ink-blue */
   --accent-deep: #14263f;
   --danger: #8a1f18;         /* dead/link-rot warnings */
@@ -1089,6 +1089,25 @@ a.is-dead,
 .discuss.is-dead { color: var(--muted); text-decoration: line-through; }
 .discuss.is-dead:hover { color: var(--muted); }
 .story-links-site.is-dead { color: var(--danger); }
+
+/* Wayback Machine rescue for confirmed-gone links */
+.story-archived {
+  font-family: var(--mono);
+  font-size: var(--label-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--danger);
+  margin-left: 12px;
+}
+.story-archived:hover { text-decoration: underline; }
+.story-archived-link {
+  font-family: var(--mono);
+  font-size: var(--label-xs);
+  margin-left: 6px;
+  color: var(--danger);
+  border-bottom: 1px solid transparent;
+}
+.story-archived-link:hover { border-bottom-color: var(--danger); }
 
 /* --------------------------------------------------------------------------
    Save-for-later, read state, search

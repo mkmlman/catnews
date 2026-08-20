@@ -2295,7 +2295,15 @@ def test_build_site_stamps_dead_link_badges(tmp_path):
     assert 'href="https://gone-story"' in home and 'class="is-dead"' in home
     assert 'class="discuss is-dead" href="https://gone-discussion"' in home
     assert 'rel="noopener noreferrer" class="is-dead"' in home
-
+    # Confirmed-gone links get a Wayback Machine rescue link.
+    assert (
+        'class="story-archived" href="https://web.archive.org/web/2/https://gone-story"'
+        in home
+    )
+    assert (
+        'class="story-archived-link" href="https://web.archive.org/web/2/https://gone-inner"'
+        in home
+    )
     dead_api = json.loads((out / "api" / "dead-links.json").read_text())
     assert {r["url"] for r in dead_api} == {
         "https://gone-story",
@@ -2306,6 +2314,7 @@ def test_build_site_stamps_dead_link_badges(tmp_path):
     ok_anchor = 'data-url="https://ok-story"'
     ok_card = home[home.index(ok_anchor) : home.index(ok_anchor) + 1600]
     assert "is-dead" not in ok_card and "Dead link" not in ok_card
+    assert "web.archive.org" not in ok_card
 
     snap_page = (out / "archive" / "hn" / "2026-08-02" / "index.html").read_text()
     assert snap_page.count('class="story-dead">Dead link</span>') == 1
@@ -2354,3 +2363,34 @@ def test_dev_server_exposes_dead_links(client, tmp_path):
         }
     ]
     assert client.get("/api/dead-links").json() == dead.json()
+
+
+def test_light_theme_text_tokens_meet_contrast():
+    import re
+    from pathlib import Path
+
+    css_path = Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    css = css_path.read_text()
+    match = re.search(r":root\s*\{([^}]*)\}", css, re.DOTALL)
+    assert match is not None
+    root = match.group(1)
+    tokens = dict(re.findall(r"(--[\w-]+):\s*(#[0-9a-fA-F]{6})\s*;", root))
+    paper, card = tokens["--paper"], tokens["--card"]
+    muted, faint = tokens["--muted"], tokens["--faint"]
+
+    def lum(hex_color: str) -> float:
+        def f(c: float) -> float:
+            return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+        hex_color = hex_color.lstrip("#")
+        r, g, b = [int(hex_color[i : i + 2], 16) / 255 for i in (0, 2, 4)]
+        r, g, b = map(f, (r, g, b))
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+    def contrast(a: str, b: str) -> float:
+        l1, l2 = sorted((lum(a), lum(b)), reverse=True)
+        return (l1 + 0.05) / (l2 + 0.05)
+
+    assert contrast(muted, paper) >= 4.5
+    assert contrast(muted, card) >= 4.5
+    assert contrast(faint, paper) >= 3.0

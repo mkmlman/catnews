@@ -18,7 +18,7 @@
       {% for link in story.links %}
       <li>
         <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer"{% if dl.get(link.url) %} class="is-dead" title="This link was unreachable when last checked (HTTP {{ dl.get(link.url).status }})"{% endif %}>{{ link.title }}</a>
-        {% if dl.get(link.url) %}<span class="story-links-site is-dead">dead</span>{% elif link.site %}<span class="story-links-site">{{ link.site }}</span>{% endif %}
+        {% if dl.get(link.url) %}<a class="story-archived-link" href="https://web.archive.org/web/2/{{ link.url }}" target="_blank" rel="noopener noreferrer" title="Open an archived copy on the Wayback Machine">archive ↗</a><span class="story-links-site is-dead">dead</span>{% elif link.site %}<span class="story-links-site">{{ link.site }}</span>{% endif %}
       </li>
       {% endfor %}
     </ol>
@@ -27,6 +27,7 @@
   <div class="story-foot">
     <a class="story-link" href="{{ story.url }}" target="_blank" rel="noopener noreferrer">Read</a>
     {% if story.hn_url %}<a class="discuss{% if dl.get(story.hn_url) %} is-dead{% endif %}" href="{{ story.hn_url }}" target="_blank" rel="noopener noreferrer"{% if dl.get(story.hn_url) %} title="This discussion link was unreachable when last checked (HTTP {{ dl.get(story.hn_url).status }})"{% endif %}>Discuss ›</a>{% endif %}
+    {% if dl.get(story.url) %}<a class="story-archived" href="https://web.archive.org/web/2/{{ story.url }}" target="_blank" rel="noopener noreferrer" title="Open an archived copy on the Wayback Machine">Archived ↗</a>{% endif %}
     {% if dl.get(story.url) %}<span class="story-dead">Dead link</span>{% endif %}
   </div>
 </article>
