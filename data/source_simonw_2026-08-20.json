@@ -1,0 +1,119 @@
+{
+  "source": "simonw",
+  "date": "2026-08-20",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "smolmachines / smolvm as a sandbox for untrusted Python & JavaScript",
+      "url": "https://simonwillison.net/2026/Aug/19/smolmachines-untrusted-sandbox/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/19/smolmachines-untrusted-sandbox/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-19T23:16:00Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Research: smolmachines / smolvm as a sandbox for untrusted Python & JavaScript I tasked Claude Fable 5 running in Claude Code for web with the following research task: Put https://smolmachines.com through its paces as a fast secure sandbox. Explore what it would take to use this to run untrusted Python and JavaScript code in a way that is limited in what RAM and CPU time it can take up (protection against \"while true\") with no network access and filesystem access only to designated files Goal is to be able to use this to execute user-provided tasks for things like data transformations It quickly ran into a problem: the Claude Code for web environment can't run smol machines . Quoting the notes it wrote : This Claude Code container: Linux 6.18.5-fc-v20 (itself a Firecracker guest), 4 vCPU, 15GB RAM. No /dev/kvm, no vmx/svm CPU flags → no nested virt. smolvm machine run fails as expected: ",
+      "links": [
+        {
+          "title": "smolmachines / smolvm as a sandbox for untrusted Python & JavaSc",
+          "url": "https://github.com/simonw/research/tree/main/smolmachines-untrusted-sandbox#readme",
+          "site": "github.com"
+        },
+        {
+          "title": "smol machines",
+          "url": "https://smolmachines.com",
+          "site": "smolmachines.com"
+        },
+        {
+          "title": "notes it wrote",
+          "url": "https://github.com/simonw/research/blob/5e6861e54441472d194de96b49b901fd99ebc153/smolmachines-untrusted-sandbox/notes.md#environment-check",
+          "site": "github.com"
+        },
+        {
+          "title": "what it did",
+          "url": "https://github.com/simonw/research/blob/5e6861e54441472d194de96b49b901fd99ebc153/.github/workflows/smolvm-sandbox-test.yml",
+          "site": "github.com"
+        },
+        {
+          "title": "these tests",
+          "url": "https://github.com/simonw/research/blob/5e6861e54441472d194de96b49b901fd99ebc153/smolmachines-untrusted-sandbox/run-tests.sh",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Jeremy Morrell",
+      "url": "https://simonwillison.net/2026/Aug/19/jeremy-morrell/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/19/jeremy-morrell/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-19T22:56:31Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "My hypothesis is that there is a new opportunity for Extensible Software on the web . LLMs radically lower the cost of authoring extensions, and modern sandbox primitives lower the deployment cost and provide good security boundaries. We can build our app as a solid, accountable core, and allow users to safely extend it in many directions by having LLMs fill in the missing pieces. We can give our users super powers. — Jeremy Morrell , Extensible Software in the age of LLMs Tags: sandboxing , llms , ai , generative-ai",
+      "links": [
+        {
+          "title": "Jeremy Morrell",
+          "url": "https://jeremymorrell.dev/blog/extensible-software-in-the-age-of-llms/",
+          "site": "jeremymorrell.dev"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Conceptual integrity and counting lines of code",
+      "url": "https://simonwillison.net/2026/Aug/19/conceptual-integrity-and-counting-lines-of-code/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/19/conceptual-integrity-and-counting-lines-of-code/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-19T22:46:07Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Last week I recorded an episode of the Talking Postgres podcast with Claire Giordano on the subject of \"How AI is changing software development\". We had a really great conversation. Here are a couple of my highlights from a lightly edited transcript (prompt to Claude: \"very minor edits to remove disfluencies\"). This is the latest version of an argument I've been trying to build about why sometimes it does make sense to talk about lines of code as an indicator of productivity with coding agents, at 35:01 : A lot of people will tell you it makes no sense to measure productivity in lines of code. I’d actually disagree, because there’s a hard limit. In the before-times, a software engineer could produce a few hundred lines of production-ready code per day — and 200 lines of working, debugged, production-level code is an incredibly good day. Most days you’d produce 50 or 60. If agents let you",
+      "links": [
+        {
+          "title": "an episode of the Talking Postgres podcast",
+          "url": "https://talkingpostgres.com/episodes/how-ai-is-changing-software-development-with-simon-willison",
+          "site": "talkingpostgres.com"
+        },
+        {
+          "title": "35:01",
+          "url": "https://talkingpostgres.com/episodes/how-ai-is-changing-software-development-with-simon-willison#t=35m1s",
+          "site": "talkingpostgres.com"
+        },
+        {
+          "title": "46:03",
+          "url": "https://talkingpostgres.com/episodes/how-ai-is-changing-software-development-with-simon-willison#t=46m3s",
+          "site": "talkingpostgres.com"
+        },
+        {
+          "title": "Winchester Mystery House",
+          "url": "https://en.wikipedia.org/wiki/Winchester_Mystery_House",
+          "site": "en.wikipedia.org"
+        }
+      ]
+    }
+  ]
+}
