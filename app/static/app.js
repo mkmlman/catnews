@@ -1125,6 +1125,40 @@
   }
 
   /* -------------------------------------------------------------
+     Search deep links: #q=… runs a search on load (the SearchAction target
+     the site advertises in its structured data)
+     ------------------------------------------------------------- */
+  function runSearchHash() {
+    var hash = window.location.hash || "";
+    if (hash.indexOf("#q=") !== 0) return;
+    var q;
+    try {
+      q = decodeURIComponent(hash.slice(3).replace(/\+/g, " ")).trim();
+    } catch (e) {
+      return;
+    }
+    if (!q || !searchInput) return;
+    searchInput.value = q;
+    searchInput.focus();
+    loadStories(function () {
+      renderResults();
+    });
+  }
+
+  function initSearchHash() {
+    var run = function () { window.setTimeout(runSearchHash, 0); };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", run);
+    } else {
+      run();
+    }
+    window.addEventListener("hashchange", function () {
+      if ((window.location.hash || "").indexOf("#q=") === 0) runSearchHash();
+    });
+  }
+  initSearchHash();
+
+  /* -------------------------------------------------------------
      Export saved stories as Markdown (personal digest)
      ------------------------------------------------------------- */
   function storyToMarkdown(story, index) {

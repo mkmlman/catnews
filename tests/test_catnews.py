@@ -1177,6 +1177,8 @@ def test_seo_meta_tags_on_pages(client, tmp_path):
     assert 'property="og:title"' in page
     assert 'property="og:url"' in page
     assert 'property="og:image"' in page
+    assert 'property="og:image:width" content="1200"' in page
+    assert 'property="og:image:height" content="630"' in page
     # Twitter card
     assert 'name="twitter:card" content="summary_large_image"' in page
     assert 'name="twitter:title"' in page
@@ -1244,6 +1246,10 @@ def test_story_cards_have_stable_deep_link_anchors(client, tmp_path):
     # Regression: deep links must reveal the whole edition, not just the first
     # PAGE_SIZE stories, or links to cards past the load-more cutoff do nothing.
     assert "state.loaded = cards.length" in app_js
+    # Regression: the SearchAction structured data advertises #q=… links; the
+    # client must honor them or the advertised search deep link does nothing.
+    assert "function runSearchHash()" in app_js
+    assert "decodeURIComponent" in app_js
 
 
 def test_weekly_trends_buckets_by_iso_week(tmp_path):
