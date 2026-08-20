@@ -17,6 +17,7 @@
   --faint: #b3b4a9;
   --accent: #1B365D;         /* Kami ink-blue */
   --accent-deep: #14263f;
+  --danger: #8a1f18;         /* dead/link-rot warnings */
   --line: #e2e0d4;           /* hairlines */
   --line-strong: #cfcdc0;
 
@@ -64,6 +65,7 @@
   --faint: #6d695e;
   --accent: #9db9db;
   --accent-deep: #b8cde8;
+  --danger: #e08d7f;
   --line: #33312a;
   --line-strong: #48453c;
 
@@ -83,6 +85,7 @@
   --faint: #74705f;
   --accent: #aec6e4;
   --accent-deep: #c6d9ef;
+  --danger: #e59588;
   --line: #23221d;
   --line-strong: #34322a;
 
@@ -1059,6 +1062,33 @@ select {
   color: var(--muted);
 }
 .discuss:hover { color: var(--accent); }
+
+/* Dead-link rot: weekly check_links.py report, stamped at build/dev time */
+.story-dead {
+  font-family: var(--mono);
+  font-size: var(--label-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 55%, transparent);
+  border-radius: 999px;
+  padding: 3px 9px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+a.is-dead,
+.story-links-list a.is-dead {
+  color: var(--muted);
+  text-decoration: line-through;
+  border-bottom-color: transparent;
+}
+.story-links-list a.is-dead:hover {
+  color: var(--muted);
+  border-bottom-color: transparent;
+}
+.discuss.is-dead { color: var(--muted); text-decoration: line-through; }
+.discuss.is-dead:hover { color: var(--muted); }
+.story-links-site.is-dead { color: var(--danger); }
 
 /* --------------------------------------------------------------------------
    Save-for-later, read state, search

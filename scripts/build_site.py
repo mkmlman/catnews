@@ -11,6 +11,7 @@ from app.config import SOURCES, badge_color
 from app.og_image import hex_rgb, render_og_image
 from app.render import (
     archive_days,
+    load_dead_links,
     render_fetch_status,
     render_heatmap_svg,
     render_json,
@@ -70,6 +71,7 @@ def build_site(
     out_dir: Path,
     base_path: str,
     base_url: str,
+    linkcheck: Path | None = None,
 ) -> None:
     snapshots = load_all_snapshots(data_dir)
     if not snapshots:
@@ -79,6 +81,10 @@ def build_site(
 
     clean_output_dir(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Dead links from the latest weekly link-rot report: a {url -> record}
+    # map used to badge rotted story cards. Absent until the first report.
+    dead_urls = load_dead_links(linkcheck or (data_dir / "linkcheck.json"))
 
     digest = combined_digest(data_dir)
     assert digest is not None  # guaranteed: snapshots exist above
@@ -123,6 +129,7 @@ def build_site(
             digest=digest,
             freshness=fetch_status(data_dir),
             story_editions=story_editions(snapshots),
+            dead_links=dead_urls,
         ),
     )
     write(
@@ -153,6 +160,7 @@ def build_site(
                 story_editions={
                     story.url: snap.date.isoformat() for story in snap.stories
                 },
+                dead_links=dead_urls,
             ),
         )
     trends = weekly_trends(data_dir, snapshots)
@@ -245,6 +253,10 @@ def build_site(
         ),
     )
     write(api / "search.json", render_search_index(snapshots))
+    write(
+        api / "dead-links.json",
+        render_json(sorted(dead_urls.values(), key=lambda r: r["url"])),
+    )
     for source, snapshot in latest_by_source.items():
         write(
             api / "sources" / f"{source}.json",
@@ -305,10 +317,16 @@ def main() -> None:
         default="https://mkmlman.github.io/catnews",
         help="Canonical site URL (used in RSS links)",
     )
+    parser.add_argument(
+        "--linkcheck",
+        type=Path,
+        default=None,
+        help="Path to a check_links.py JSON report (default: <data-dir>/linkcheck.json)",
+    )
     args = parser.parse_args()
 
     data_dir = args.data_dir or (Path(__file__).resolve().parent.parent / "data")
-    build_site(data_dir, args.out, args.base_path, args.base_url)
+    build_site(data_dir, args.out, args.base_path, args.base_url, args.linkcheck)
 
 
 if __name__ == "__main__":

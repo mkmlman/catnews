@@ -39,7 +39,10 @@ quotes from it. See the [Sources](/sources/) page for what we curate.
   in addition to the combined `feed.rss`, so readers can subscribe to just one section.
 - **APIs**: JSON (`/api/sources`, `/api/sources/<source>`, `/api/sources/<source>/<date>`, `/api/digest`, `/api/stories`, `/api/search.json`, `/api/stats`), **Markdown** (`/api/stories.md`), and **RSS** (`/feed.rss`).
 - **Link-rot checks** — `scripts/check_links.py` HEAD-checks every external story URL
-  and a weekly workflow files a report issue when links have died.
+  and a weekly workflow files a report issue when links have died. The same report
+  is committed to `main`, and the site styles cards whose links are confirmed gone
+  with a **"Dead link"** badge (so a rotted HN thread or withdrawn paper is obvious
+  before you click it).
 - **Curation** hooks to add *"Why read"* notes to stories.
 
 ## Quickstart
@@ -163,8 +166,10 @@ This renders `site/` with plain HTML pages (home, archive, per-snapshot archive 
 stats), `feed.rss` plus per-source `feed-<source>.rss` feeds, per-edition Open Graph
 cards under `static/og/<source>/<date>.png`, and static JSON/Markdown API files
 (`api/sources.json`, `api/stories.json`, `api/digest.json`, `api/stats.json`,
-`api/fetch-status.json`, `api/stories.md`). The fetch-status artifact records whether
-each source was current, stale, unavailable, or skipped on the last fetch run.
+`api/fetch-status.json`, `api/dead-links.json`, `api/stories.md`). The fetch-status
+artifact records whether each source was current, stale, unavailable, or skipped on
+the last fetch run; the dead-links artifact feeds the "Dead link" badges whenever
+the weekly link-rot report is present under `data/linkcheck.json`.
 
 For the shortest local feedback loop, use the build/validate/preview command:
 
@@ -297,7 +302,10 @@ uv run python scripts/check_links.py --fail               # exit 1 if links are 
 It never fails a daily deploy on its own — a separate weekly workflow
 (`.github/workflows/linkcheck.yml`) runs it, uploads the report as an artifact, and
 opens a single "Link rot report" issue when dead links are found (so you prune a
-retreating source without the site breaking silently).
+retreating source without the site breaking silently). The workflow also commits the
+machine-readable report to `data/linkcheck.json` (via a PR, like the digests), which
+the next build turns into "Dead link" badges — 404/410/451 responses only, so a 403
+bot-block is never branded dead while it is still serving people.
 
 ## Repo ops (how GitHub is configured)
 

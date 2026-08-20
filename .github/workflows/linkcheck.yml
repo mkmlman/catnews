@@ -13,7 +13,8 @@ jobs:
   linkcheck:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
+      pull-requests: write
       issues: write
     steps:
       - name: Checkout
@@ -28,16 +29,39 @@ jobs:
       - name: Check external links
         id: check
         run: |
-          uv run python scripts/check_links.py --json linkcheck.json --report linkcheck.md || true
-          dead=$(python -c "import json;print(json.load(open('linkcheck.json'))['summary'].get('dead', 0))")
+          uv run python scripts/check_links.py --json data/linkcheck.json --report linkcheck.md || true
+          dead=$(python -c "import json;print(json.load(open('data/linkcheck.json'))['summary'].get('dead', 0))")
           echo "dead=$dead" >> "$GITHUB_OUTPUT"
+
+      - name: Commit link-rot report via PR
+        # The next deploy stale-styles cards whose links have rotted, so the
+        # report must reach main. main is PR-protected, so it lands the same
+        # way the digest does: push a branch, merge it via PR.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "catnews bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/linkcheck.json
+          if git diff --cached --quiet; then
+            echo "Link-rot report unchanged; nothing to commit."
+            exit 0
+          fi
+          git commit -m "linkcheck: $(date +%Y-%m-%d)"
+          branch="linkcheck-${GITHUB_RUN_NUMBER}"
+          git push origin "HEAD:refs/heads/${branch}"
+          pr_url=$(gh pr create --base main --head "${branch}" \
+            --title "linkcheck: $(date +%Y-%m-%d)" \
+            --body "Automated link-rot report commit. Merged by CI.")
+          echo "PR: ${pr_url}"
+          gh pr merge "${branch}" --squash --delete-branch
 
       - name: Upload link check report
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: linkcheck
           path: |
-            linkcheck.json
+            data/linkcheck.json
             linkcheck.md
           if-no-files-found: ignore
 

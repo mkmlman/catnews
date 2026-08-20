@@ -64,6 +64,33 @@ def story_anchor(story) -> str:
     return "story-" + hashlib.sha1((story.url or "").encode("utf-8")).hexdigest()[:10]
 
 
+def load_dead_links(path: Path) -> dict[str, dict]:
+    """Read a check_links.py report into a {url -> dead-record} map.
+
+    Only records the link-rot check confirmed gone (HTTP 404/410/451) are
+    kept — 4xx bot-blocks like 403 are excluded so a live page that merely
+    refuses non-browser clients is never badged "Dead link". Returns an empty
+    dict when the report is absent or malformed, so the site is unaffected
+    before the weekly link-rot check has run.
+    """
+    if not path.is_file():
+        return {}
+    try:
+        report = json.loads(path.read_text(encoding="utf-8"))
+        results = report.get("results", [])
+    except (ValueError, OSError, AttributeError):
+        return {}
+    return {
+        record["url"]: record
+        for record in results
+        if (
+            isinstance(record, dict)
+            and record.get("state") == "dead"
+            and record.get("status") in (404, 410, 451)
+        )
+    }
+
+
 _env = Environment(
     loader=FileSystemLoader(str(TEMPLATES_DIR)), autoescape=select_autoescape(["html"])
 )

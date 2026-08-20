@@ -2141,3 +2141,195 @@ def test_build_site_emits_home_edition_card(tmp_path):
         "https://example.com/static/og/home/2026-08-02.png"
         in (out / "index.html").read_text()
     )
+
+
+# --- Dead-link badges (consumed from the weekly check_links.py report) -------
+
+
+def test_load_dead_links_parses_report(tmp_path):
+    import json
+
+    from app.render import load_dead_links
+
+    report = tmp_path / "linkcheck.json"
+    report.write_text(
+        json.dumps(
+            {
+                "generated": "2026-08-16T05:00:00Z",
+                "summary": {"good": 1, "dead": 2, "error": 1},
+                "results": [
+                    {
+                        "url": "https://gone-a",
+                        "source": "hn",
+                        "title": "Gone A",
+                        "domain": "gone-a",
+                        "status": 404,
+                        "state": "dead",
+                        "error": None,
+                    },
+                    {
+                        "url": "https://gone-b",
+                        "source": "arxiv",
+                        "title": "Gone B",
+                        "domain": "gone-b",
+                        "status": 410,
+                        "state": "dead",
+                        "error": None,
+                    },
+                    {
+                        "url": "https://blocked",
+                        "source": "hn",
+                        "title": "Bot-blocked",
+                        "domain": "blocked",
+                        "status": 403,
+                        "state": "dead",
+                        "error": None,
+                    },
+                    {
+                        "url": "https://ok",
+                        "source": "hn",
+                        "title": "Ok",
+                        "domain": "ok",
+                        "status": 200,
+                        "state": "good",
+                        "error": None,
+                    },
+                    {
+                        "url": "https://unverifiable",
+                        "source": "hn",
+                        "title": "Uh",
+                        "domain": "unverifiable",
+                        "status": None,
+                        "state": "error",
+                        "error": "ConnectTimeout",
+                    },
+                ],
+            }
+        )
+    )
+    dead = load_dead_links(report)
+    assert set(dead) == {"https://gone-a", "https://gone-b"}
+    assert dead["https://gone-a"]["status"] == 404
+    assert "https://blocked" not in dead
+    report.write_text("not json")
+    assert load_dead_links(report) == {}
+
+
+def test_build_site_stamps_dead_link_badges(tmp_path):
+    import json
+
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(
+                    source="hn",
+                    title="Rotted story",
+                    url="https://gone-story",
+                    hn_url="https://gone-discussion",
+                    links=[CuratedLink(title="Inner", url="https://gone-inner")],
+                ),
+                Story(source="hn", title="Still live", url="https://ok-story"),
+            ],
+        ),
+        tmp_path,
+    )
+    (tmp_path / "linkcheck.json").write_text(
+        json.dumps(
+            {
+                "results": [
+                    {
+                        "url": "https://gone-story",
+                        "state": "dead",
+                        "status": 404,
+                        "title": "Rotted story",
+                        "source": "hn",
+                    },
+                    {
+                        "url": "https://gone-discussion",
+                        "state": "dead",
+                        "status": 404,
+                        "title": "Rotted story",
+                        "source": "hn",
+                    },
+                    {
+                        "url": "https://gone-inner",
+                        "state": "dead",
+                        "status": 410,
+                        "title": "Inner",
+                        "source": "hn",
+                    },
+                ]
+            }
+        )
+    )
+    out = tmp_path / "site_badges"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+
+    home = (out / "index.html").read_text()
+    assert home.count('class="story-dead">Dead link</span>') == 1
+    assert 'href="https://gone-story"' in home and 'class="is-dead"' in home
+    assert 'class="discuss is-dead" href="https://gone-discussion"' in home
+    assert 'rel="noopener noreferrer" class="is-dead"' in home
+
+    dead_api = json.loads((out / "api" / "dead-links.json").read_text())
+    assert {r["url"] for r in dead_api} == {
+        "https://gone-story",
+        "https://gone-discussion",
+        "https://gone-inner",
+    }
+
+    ok_anchor = 'data-url="https://ok-story"'
+    ok_card = home[home.index(ok_anchor) : home.index(ok_anchor) + 1600]
+    assert "is-dead" not in ok_card and "Dead link" not in ok_card
+
+    snap_page = (out / "archive" / "hn" / "2026-08-02" / "index.html").read_text()
+    assert snap_page.count('class="story-dead">Dead link</span>') == 1
+
+
+def test_dev_server_exposes_dead_links(client, tmp_path):
+    import json
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(source="hn", title="Rotted", url="https://gone-story"),
+                Story(source="hn", title="Live", url="https://ok-story"),
+            ],
+        ),
+        tmp_path,
+    )
+    (tmp_path / "linkcheck.json").write_text(
+        json.dumps(
+            {
+                "results": [
+                    {
+                        "url": "https://gone-story",
+                        "state": "dead",
+                        "status": 404,
+                        "title": "Rotted",
+                        "source": "hn",
+                    }
+                ]
+            }
+        )
+    )
+    home = client.get("/").text
+    assert 'class="story-dead">Dead link</span>' in home
+    dead = client.get("/api/dead-links.json")
+    assert dead.status_code == 200
+    assert dead.json() == [
+        {
+            "url": "https://gone-story",
+            "state": "dead",
+            "status": 404,
+            "title": "Rotted",
+            "source": "hn",
+        }
+    ]
+    assert client.get("/api/dead-links").json() == dead.json()

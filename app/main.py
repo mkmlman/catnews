@@ -21,6 +21,7 @@ from .render import (
     app_version,
     archive_days,
     live_site_urls,
+    load_dead_links,
     render_heatmap_svg,
     render_manifest,
     render_markdown,
@@ -144,6 +145,7 @@ def index(request: Request) -> HTMLResponse:
         digest=digest,
         freshness=fetch_status(DATA_DIR),
         story_editions=story_editions(snapshots),
+        dead_links=load_dead_links(DATA_DIR / "linkcheck.json"),
     )
 
 
@@ -190,6 +192,7 @@ def archive_snapshot(request: Request, source: str, day: date) -> HTMLResponse:
         prev_snapshot=prev_snap,
         next_snapshot=next_snap,
         story_editions={story.url: snap.date.isoformat() for story in snap.stories},
+        dead_links=load_dead_links(DATA_DIR / "linkcheck.json"),
     )
 
 
@@ -294,6 +297,16 @@ def api_stories_json(
 def api_search_json() -> list[dict[str, str]]:
     """Compact deduplicated search records for the client-side archive search."""
     return search_index(load_all_snapshots(DATA_DIR))
+
+
+@app.get("/api/dead-links")
+@app.get("/api/dead-links.json")
+def api_dead_links() -> list[dict]:
+    """Story URLs the weekly link-rot check found dead, for API consumers."""
+    return sorted(
+        load_dead_links(DATA_DIR / "linkcheck.json").values(),
+        key=lambda r: r["url"],
+    )
 
 
 @app.get("/api/stats")

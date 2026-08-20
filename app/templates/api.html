@@ -82,6 +82,17 @@
     </li>
     <li>
       <div class="endpoint-row">
+        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/dead-links.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/dead-links.json">{{ base_path }}/api/dead-links.json</a></code>
+        <div class="endpoint-tools">
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/dead-links.json" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+        </div>
+      </div>
+      <pre class="endpoint-output" hidden></pre>
+      <p class="endpoint-desc">Story URLs the weekly link-rot check confirmed gone (HTTP 404/410/451), used to badge rotted cards.</p>
+    </li>
+    <li>
+      <div class="endpoint-row">
         <code class="endpoint-code" data-copy="curl {{ base_url }}/api/stories.md" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/stories.md">{{ base_path }}/api/stories.md</a></code>
         <div class="endpoint-tools">
           <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
@@ -146,7 +157,7 @@
 
 <section class="api-section">
   <h2 class="api-section-title">Serving</h2>
-  <p class="prose">On <strong>GitHub Pages</strong> the API is a <em>static mirror</em> — <code>api/sources.json</code>, <code>api/sources/&lt;source&gt;.json</code>, <code>api/stories.json</code>, <code>api/search.json</code>, <code>api/digest.json</code>, <code>api/stats.json</code>, <code>api/trends.json</code>, <code>api/fetch-status.json</code>, <code>api/stories.md</code>, and <code>feed.rss</code> are written at build time, so the deployed site has no server.</p>
+  <p class="prose">On <strong>GitHub Pages</strong> the API is a <em>static mirror</em> — <code>api/sources.json</code>, <code>api/sources/&lt;source&gt;.json</code>, <code>api/stories.json</code>, <code>api/search.json</code>, <code>api/dead-links.json</code>, <code>api/digest.json</code>, <code>api/stats.json</code>, <code>api/trends.json</code>, <code>api/fetch-status.json</code>, <code>api/stories.md</code>, and <code>feed.rss</code> are written at build time, so the deployed site has no server.</p>
   <p class="prose">The <strong>dev server</strong> (<code>uvicorn app.main:app</code>) serves everything dynamically, including the per-source routes <code>/api/sources/&lt;source&gt;</code>, <code>/api/sources/&lt;source&gt;/&lt;date&gt;</code>, and the rendered archive pages <code>/archive/&lt;source&gt;/&lt;date&gt;/</code>.</p>
 </section>
 

@@ -1,9 +1,10 @@
 <article class="story{% if story.score is not none %} has-score{% endif %}" id="{{ story_anchor(story) }}" style="--i: {{ outer_loop_index | default(0) }}" data-source="{{ story.source }}" data-url="{{ story.url }}"{% if story_editions.get(story.url) %} data-edition="{{ story_editions.get(story.url) }}"{% endif %}>
+  {% set dl = dead_links | default({}) %}
   <div class="story-top">
     <span class="badge badge-{{ story.source }}">{{ source_tags[story.source] }}</span>
     {% if story.score is not none %}<span class="story-score">{% if story.source == "github" %}★{% else %}▲{% endif %} {{ story.score }}</span>{% endif %}
   </div>
-  <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener noreferrer">{{ story.title }}</a></h3>
+  <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener noreferrer"{% if dl.get(story.url) %} class="is-dead" title="This link was unreachable when last checked (HTTP {{ dl.get(story.url).status }})"{% endif %}>{{ story.title }}</a></h3>
   {% if story.authors %}<p class="story-by">By {{ story.authors | join(", ") }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}</p>
   {% else %}<p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>{% endif %}
   {% if story.why_read %}<p class="story-why-read"><strong>Why read:</strong> {{ story.why_read }}</p>{% endif %}
@@ -16,8 +17,8 @@
     <ol class="story-links-list">
       {% for link in story.links %}
       <li>
-        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.title }}</a>
-        {% if link.site %}<span class="story-links-site">{{ link.site }}</span>{% endif %}
+        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer"{% if dl.get(link.url) %} class="is-dead" title="This link was unreachable when last checked (HTTP {{ dl.get(link.url).status }})"{% endif %}>{{ link.title }}</a>
+        {% if dl.get(link.url) %}<span class="story-links-site is-dead">dead</span>{% elif link.site %}<span class="story-links-site">{{ link.site }}</span>{% endif %}
       </li>
       {% endfor %}
     </ol>
@@ -25,6 +26,7 @@
   {% endif %}
   <div class="story-foot">
     <a class="story-link" href="{{ story.url }}" target="_blank" rel="noopener noreferrer">Read</a>
-    {% if story.hn_url %}<a class="discuss" href="{{ story.hn_url }}" target="_blank" rel="noopener noreferrer">Discuss ›</a>{% endif %}
+    {% if story.hn_url %}<a class="discuss{% if dl.get(story.hn_url) %} is-dead{% endif %}" href="{{ story.hn_url }}" target="_blank" rel="noopener noreferrer"{% if dl.get(story.hn_url) %} title="This discussion link was unreachable when last checked (HTTP {{ dl.get(story.hn_url).status }})"{% endif %}>Discuss ›</a>{% endif %}
+    {% if dl.get(story.url) %}<span class="story-dead">Dead link</span>{% endif %}
   </div>
 </article>
