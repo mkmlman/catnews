@@ -90,7 +90,7 @@ def test_arxiv_parse_entry():
     assert story.source == "arxiv"
     assert story.external_id == "2607.28628v1"
     assert story.authors == ["Jonathan J. Heckman", "Shani Meynet"]
-    assert story.url == "http://arxiv.org/abs/2607.28628v1"
+    assert story.url == "https://arxiv.org/abs/2607.28628v1"
     assert story.category == "hep-th"
 
 
@@ -1528,6 +1528,26 @@ def test_safe_http_url_guards_schemes():
     assert safe_http_url("/relative/path") is None
     assert safe_http_url(None, fallback="fb") == "fb"
     assert safe_http_url("javascript:alert(1)", fallback="fb") == "fb"
+
+
+def test_safe_http_url_upgrades_https_only_hosts():
+    from app.fetchers.sanitize import safe_http_url
+
+    assert (
+        safe_http_url("http://arxiv.org/abs/2607.28628v1")
+        == "https://arxiv.org/abs/2607.28628v1"
+    )
+    assert (
+        safe_http_url("http://www.arxiv.org/abs/2607.28628v1")
+        == "https://www.arxiv.org/abs/2607.28628v1"
+    )
+    assert safe_http_url("https://arxiv.org/abs/x") == "https://arxiv.org/abs/x"
+    # Subdomains other than www keep their scheme (only known-good hosts upgrade).
+    assert safe_http_url("http://export.arxiv.org/api/query") == (
+        "http://export.arxiv.org/api/query"
+    )
+    # Unrelated http URLs are untouched.
+    assert safe_http_url("http://example.com/a") == "http://example.com/a"
 
 
 def test_hn_unsafe_url_falls_back_to_item():

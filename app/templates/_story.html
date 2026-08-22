@@ -4,7 +4,7 @@
     <span class="badge badge-{{ story.source }}">{{ source_tags.get(story.source, story.source) }}</span>
     {% if story.score is not none %}<span class="story-score">{% if story.source == "github" %}★{% else %}▲{% endif %} {{ story.score }}</span>{% endif %}
   </div>
-  <h3 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener noreferrer"{% if dl.get(story.url) %} class="is-dead" title="This link was unreachable when last checked (HTTP {{ dl.get(story.url).status }})"{% endif %}>{{ story.title }}</a></h3>
+  <h2 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener noreferrer"{% if dl.get(story.url) %} class="is-dead" title="This link was unreachable when last checked (HTTP {{ dl.get(story.url).status }})"{% endif %}>{{ story.title }}</a></h2>
   {% if story.authors %}<p class="story-by">By {{ story.authors | join(", ") }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}</p>
   {% else %}<p class="story-by">by {{ story.byline or story.author or "unknown" }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>{% endif %}
   {% if story.why_read %}<p class="story-why-read"><strong>Why read:</strong> {{ story.why_read }}</p>{% endif %}

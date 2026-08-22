@@ -3455,7 +3455,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28627v1",
+      "url": "https://arxiv.org/abs/2607.28627v1",
       "source": "arxiv",
       "title": "ReToken: One Token to Improve Vision-Language Models for Visual Retrieval",
       "domain": "arxiv.org",
@@ -3464,7 +3464,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28618v1",
+      "url": "https://arxiv.org/abs/2607.28618v1",
       "source": "arxiv",
       "title": "AskChem: Claim-Centered Infrastructure for Chemistry Literature Synthesis",
       "domain": "arxiv.org",
@@ -3473,7 +3473,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28609v1",
+      "url": "https://arxiv.org/abs/2607.28609v1",
       "source": "arxiv",
       "title": "OSReward: Instituting Standardized Evaluation for Cross-Platform Computer-Use Reward Models",
       "domain": "arxiv.org",
@@ -3482,7 +3482,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28617v1",
+      "url": "https://arxiv.org/abs/2607.28617v1",
       "source": "arxiv",
       "title": "AISPA: User-Centric System Prompt Auditing for Large Language Model Applications",
       "domain": "arxiv.org",
@@ -3491,7 +3491,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28608v1",
+      "url": "https://arxiv.org/abs/2607.28608v1",
       "source": "arxiv",
       "title": "KAISEN: Reproducible Subgroup Fairness Auditing for Clinical Risk Models",
       "domain": "arxiv.org",
@@ -3500,7 +3500,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28607v1",
+      "url": "https://arxiv.org/abs/2607.28607v1",
       "source": "arxiv",
       "title": "Inducing language models to assert their own consciousness restores human beliefs and values",
       "domain": "arxiv.org",
@@ -3509,7 +3509,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28628v1",
+      "url": "https://arxiv.org/abs/2607.28628v1",
       "source": "arxiv",
       "title": "Learning to Trace Seiberg Dualities",
       "domain": "arxiv.org",
@@ -3518,7 +3518,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28623v1",
+      "url": "https://arxiv.org/abs/2607.28623v1",
       "source": "arxiv",
       "title": "PAC-MAN: Perception-Aware CBF-RL for Whole-Body Safety in Humanoid Dodgeball",
       "domain": "arxiv.org",
@@ -3527,7 +3527,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28591v1",
+      "url": "https://arxiv.org/abs/2607.28591v1",
       "source": "arxiv",
       "title": "Change2Task: From Repository Changes to Executable Coding Agent Tasks and Environments",
       "domain": "arxiv.org",
@@ -3536,7 +3536,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29678v1",
+      "url": "https://arxiv.org/abs/2607.29678v1",
       "source": "arxiv",
       "title": "TokTier: Exact Stateful Tokenization for Agentic LLM Serving",
       "domain": "arxiv.org",
@@ -3545,7 +3545,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28587v1",
+      "url": "https://arxiv.org/abs/2607.28587v1",
       "source": "arxiv",
       "title": "PAIChecker: Uncovering and Checking PR-Issue Misalignment in SWE-Bench-Like Benchmarks",
       "domain": "arxiv.org",
@@ -3554,7 +3554,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28590v1",
+      "url": "https://arxiv.org/abs/2607.28590v1",
       "source": "arxiv",
       "title": "VAD: Attributing Visual Evidence for Target Reconstruction in Multimodal On-Policy Distillation",
       "domain": "arxiv.org",
@@ -3563,7 +3563,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28576v1",
+      "url": "https://arxiv.org/abs/2607.28576v1",
       "source": "arxiv",
       "title": "Sample More, Reflect Less: Self-Refine and Reflexion Lose to Repeated Sampling at Equal Token Cost, from 1.5B to 7B",
       "domain": "arxiv.org",
@@ -3572,7 +3572,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28582v1",
+      "url": "https://arxiv.org/abs/2607.28582v1",
       "source": "arxiv",
       "title": "$\u03b2$-OPSD: Deriving with Policy Optimization, Training with Self-Distillation",
       "domain": "arxiv.org",
@@ -3581,7 +3581,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28589v1",
+      "url": "https://arxiv.org/abs/2607.28589v1",
       "source": "arxiv",
       "title": "MixFrag: Fragility-Guided Mixed-Precision Post-Training Quantization for Vision Transformers",
       "domain": "arxiv.org",
@@ -3590,7 +3590,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29677v1",
+      "url": "https://arxiv.org/abs/2607.29677v1",
       "source": "arxiv",
       "title": "ExtractBench: A Benchmark for Schema-Guided Enterprise Document Extraction",
       "domain": "arxiv.org",
@@ -3599,7 +3599,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29658v1",
+      "url": "https://arxiv.org/abs/2607.29658v1",
       "source": "arxiv",
       "title": "Reusing Past Repairs Through Hierarchical Trajectory Abstraction for Coding Agents",
       "domain": "arxiv.org",
@@ -3608,7 +3608,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29674v1",
+      "url": "https://arxiv.org/abs/2607.29674v1",
       "source": "arxiv",
       "title": "Sign compression for Muon: SignMuon, MuonSign, and the Limits of Error Feedback",
       "domain": "arxiv.org",
@@ -3617,7 +3617,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29675v1",
+      "url": "https://arxiv.org/abs/2607.29675v1",
       "source": "arxiv",
       "title": "Differentially Private Nonparametric Modal Learning with Applications to Regression and Clustering",
       "domain": "arxiv.org",
@@ -3626,7 +3626,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.28580v1",
+      "url": "https://arxiv.org/abs/2607.28580v1",
       "source": "arxiv",
       "title": "DualG-MRAG: Decoupling Macro-Reasoning and Micro-Matching for Multimodal Retrieval-Augmented Generation",
       "domain": "arxiv.org",
@@ -3635,7 +3635,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29665v1",
+      "url": "https://arxiv.org/abs/2607.29665v1",
       "source": "arxiv",
       "title": "Freeze, Then Select: Structured Field Adapters and Stability-Validated Weak Selection for PDE Discovery from Sparse Observations",
       "domain": "arxiv.org",
@@ -3644,7 +3644,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29642v1",
+      "url": "https://arxiv.org/abs/2607.29642v1",
       "source": "arxiv",
       "title": "Evolving language compositionality in a frequency-structured meaning space",
       "domain": "arxiv.org",
@@ -3653,7 +3653,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29657v1",
+      "url": "https://arxiv.org/abs/2607.29657v1",
       "source": "arxiv",
       "title": "Development of FDD-ON: an Ontology for VAV HVAC System Fault Detection and Diagnostics",
       "domain": "arxiv.org",
@@ -3662,7 +3662,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29659v1",
+      "url": "https://arxiv.org/abs/2607.29659v1",
       "source": "arxiv",
       "title": "GQ-FSL: Green Quantized Federated Split Learning",
       "domain": "arxiv.org",
@@ -3671,7 +3671,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29626v1",
+      "url": "https://arxiv.org/abs/2607.29626v1",
       "source": "arxiv",
       "title": "AgentHPOBench: A Benchmark For Evaluating LLM Agents as Sequential Hyperparameter Optimizers",
       "domain": "arxiv.org",
@@ -3680,7 +3680,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29624v1",
+      "url": "https://arxiv.org/abs/2607.29624v1",
       "source": "arxiv",
       "title": "The Theoretical Foundation of Socratic Tests: Dynamic, Multimodal, Conversational Examinations",
       "domain": "arxiv.org",
@@ -3689,7 +3689,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29617v1",
+      "url": "https://arxiv.org/abs/2607.29617v1",
       "source": "arxiv",
       "title": "When Does On-Policy Interaction Help? Representational Tradeoffs in Value-Based Imitation Learning",
       "domain": "arxiv.org",
@@ -3698,7 +3698,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29621v1",
+      "url": "https://arxiv.org/abs/2607.29621v1",
       "source": "arxiv",
       "title": "CENDRe: Concept Extraction with Natural Domain Representations",
       "domain": "arxiv.org",
@@ -3707,7 +3707,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29637v1",
+      "url": "https://arxiv.org/abs/2607.29637v1",
       "source": "arxiv",
       "title": "CodeShrink: Adaptive Visual Compression for Efficient Multimodal Code Understanding",
       "domain": "arxiv.org",
@@ -3716,7 +3716,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2607.29614v1",
+      "url": "https://arxiv.org/abs/2607.29614v1",
       "source": "arxiv",
       "title": "A Human-Centered Validation of the Explainability-Performance Coefficient",
       "domain": "arxiv.org",
@@ -3725,7 +3725,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07463v1",
+      "url": "https://arxiv.org/abs/2608.07463v1",
       "source": "arxiv",
       "title": "MirrorWorld: Taming Video Diffusion Models for Mirror Reflection Generation",
       "domain": "arxiv.org",
@@ -3734,7 +3734,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07458v1",
+      "url": "https://arxiv.org/abs/2608.07458v1",
       "source": "arxiv",
       "title": "CoinRAG: Contextualized Information Nugget KV Cache Reuse for Long-Context RAG",
       "domain": "arxiv.org",
@@ -3743,7 +3743,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07454v1",
+      "url": "https://arxiv.org/abs/2608.07454v1",
       "source": "arxiv",
       "title": "Strategy-first synthesis planning for complex natural products",
       "domain": "arxiv.org",
@@ -3752,7 +3752,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07451v1",
+      "url": "https://arxiv.org/abs/2608.07451v1",
       "source": "arxiv",
       "title": "An Analysis of Architectural and Operational Dynamics of Phishkits in the Wild",
       "domain": "arxiv.org",
@@ -3761,7 +3761,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07457v1",
+      "url": "https://arxiv.org/abs/2608.07457v1",
       "source": "arxiv",
       "title": "Interaction Creates Dynamical AI Behavior Absent in Isolation",
       "domain": "arxiv.org",
@@ -3770,7 +3770,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07449v1",
+      "url": "https://arxiv.org/abs/2608.07449v1",
       "source": "arxiv",
       "title": "SkillProx: Self-Evolving Agent Skills via Proximal Textual Gradient Descent",
       "domain": "arxiv.org",
@@ -3779,7 +3779,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07446v1",
+      "url": "https://arxiv.org/abs/2608.07446v1",
       "source": "arxiv",
       "title": "Taxonomy-Driven Analysis of Open-Source AI Risk Mitigation Tools",
       "domain": "arxiv.org",
@@ -3788,7 +3788,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07444v1",
+      "url": "https://arxiv.org/abs/2608.07444v1",
       "source": "arxiv",
       "title": "RIS-Aided mmWave Localization Under Cross-Link Interference via Beam-Domain ML Fingerprinting",
       "domain": "arxiv.org",
@@ -3797,7 +3797,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07438v1",
+      "url": "https://arxiv.org/abs/2608.07438v1",
       "source": "arxiv",
       "title": "PsychoAgent: An Affect-Sensitive Cognitive Architecture for Conflict-Aware Memory in LLM Agents",
       "domain": "arxiv.org",
@@ -3806,7 +3806,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07439v1",
+      "url": "https://arxiv.org/abs/2608.07439v1",
       "source": "arxiv",
       "title": "An Exploratory Evaluation of LLM-Assisted Rewriting of Moderate-Complexity Financial Sentences for DisCoCat-Based Sentiment Analysis",
       "domain": "arxiv.org",
@@ -3815,7 +3815,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07440v1",
+      "url": "https://arxiv.org/abs/2608.07440v1",
       "source": "arxiv",
       "title": "Blast Radius",
       "domain": "arxiv.org",
@@ -3824,7 +3824,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07436v1",
+      "url": "https://arxiv.org/abs/2608.07436v1",
       "source": "arxiv",
       "title": "Post-Grokking Collapse at the Representation-Readout Interface in Muon-Trained Transformers",
       "domain": "arxiv.org",
@@ -3833,7 +3833,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07437v1",
+      "url": "https://arxiv.org/abs/2608.07437v1",
       "source": "arxiv",
       "title": "Fisher-R1: Training LLM Agents for Reliable Hypothesis Testing",
       "domain": "arxiv.org",
@@ -3842,7 +3842,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14539v1",
+      "url": "https://arxiv.org/abs/2608.14539v1",
       "source": "arxiv",
       "title": "Decoding the Past: An Uncertainty-Aware Deep Learning Framework for Sex Attribution in Prehistoric Hand Stencils",
       "domain": "arxiv.org",
@@ -3851,7 +3851,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07435v1",
+      "url": "https://arxiv.org/abs/2608.07435v1",
       "source": "arxiv",
       "title": "SABRE: Scalable and Automated Benchmarking of VLMs under Stress",
       "domain": "arxiv.org",
@@ -3860,7 +3860,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14533v1",
+      "url": "https://arxiv.org/abs/2608.14533v1",
       "source": "arxiv",
       "title": "Finding Vulnerabilities via LLM-Augmented Semantics-Aware Type-Checking",
       "domain": "arxiv.org",
@@ -3869,7 +3869,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14522v1",
+      "url": "https://arxiv.org/abs/2608.14522v1",
       "source": "arxiv",
       "title": "Participatory Moral AI Is Not Neutral: The Invisible Hand of Developers",
       "domain": "arxiv.org",
@@ -3878,7 +3878,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14532v1",
+      "url": "https://arxiv.org/abs/2608.14532v1",
       "source": "arxiv",
       "title": "Trust Without Boundaries: An Architectural Analysis of Satellite Flight Software",
       "domain": "arxiv.org",
@@ -3887,7 +3887,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14530v1",
+      "url": "https://arxiv.org/abs/2608.14530v1",
       "source": "arxiv",
       "title": "Marionette: Predicting World States, Rendering Geometry, Painting Appearance",
       "domain": "arxiv.org",
@@ -3896,7 +3896,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14527v1",
+      "url": "https://arxiv.org/abs/2608.14527v1",
       "source": "arxiv",
       "title": "Validating LLM-Modernized Scientific Software Through Differential Fault Injection",
       "domain": "arxiv.org",
@@ -3905,7 +3905,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14528v1",
+      "url": "https://arxiv.org/abs/2608.14528v1",
       "source": "arxiv",
       "title": "Handover of In-Context Learning State Across Session Boundaries",
       "domain": "arxiv.org",
@@ -3914,7 +3914,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14511v1",
+      "url": "https://arxiv.org/abs/2608.14511v1",
       "source": "arxiv",
       "title": "Learning-to-Transition for Large-scale and High-Order MIMO Detection",
       "domain": "arxiv.org",
@@ -3923,7 +3923,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14501v1",
+      "url": "https://arxiv.org/abs/2608.14501v1",
       "source": "arxiv",
       "title": "Lower Bounds on Black-Box Constructions of Pseudorandom Functions",
       "domain": "arxiv.org",
@@ -3932,7 +3932,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14502v1",
+      "url": "https://arxiv.org/abs/2608.14502v1",
       "source": "arxiv",
       "title": "Universal Thermodynamic Interatomic Potentials for Crystalline Materials",
       "domain": "arxiv.org",
@@ -3941,7 +3941,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14505v1",
+      "url": "https://arxiv.org/abs/2608.14505v1",
       "source": "arxiv",
       "title": "RecipeNet: A Hierarchical Transformer for Recipe Data",
       "domain": "arxiv.org",
@@ -3950,7 +3950,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14509v1",
+      "url": "https://arxiv.org/abs/2608.14509v1",
       "source": "arxiv",
       "title": "Split the Labor: Separating Evidence Interpretation from Decision Aggregation",
       "domain": "arxiv.org",
@@ -3959,7 +3959,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14498v1",
+      "url": "https://arxiv.org/abs/2608.14498v1",
       "source": "arxiv",
       "title": "Rollplex: Cross-Phase GPU Spatial Sharing for Vision Language Model Post-Training",
       "domain": "arxiv.org",
@@ -3968,7 +3968,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14496v1",
+      "url": "https://arxiv.org/abs/2608.14496v1",
       "source": "arxiv",
       "title": "Generating Benchmark Health Data Using a Tabular Diffusion Transformer",
       "domain": "arxiv.org",
@@ -3977,7 +3977,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.14492v1",
+      "url": "https://arxiv.org/abs/2608.14492v1",
       "source": "arxiv",
       "title": "Approximate Muon with low-rank adapters",
       "domain": "arxiv.org",
@@ -3986,7 +3986,7 @@
       "state": "good"
     },
     {
-      "url": "http://arxiv.org/abs/2608.07460v1",
+      "url": "https://arxiv.org/abs/2608.07460v1",
       "source": "arxiv",
       "title": "CreativeInstruct: Scalably Teaching LLMs to Balance Quality, Creativity, and Diversity",
       "domain": "arxiv.org",
