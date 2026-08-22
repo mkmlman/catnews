@@ -1,0 +1,140 @@
+{
+  "source": "simonw",
+  "date": "2026-08-22",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "llm 0.32.1",
+      "url": "https://simonwillison.net/2026/Aug/21/llm/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/21/llm/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-21T17:16:13Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Release: llm 0.32.1 Fresh installs of LLM stopped working the other day because the OpenAI Python library dropped its usage of httpx , and it turned out LLM depended on that library but only installed it via a transitive openai dependency. This dot-release fixes that for the moment by pinning to openai<3 , and a soon-to-drop 0.33 release will switch from httpx to httpx2 . Tags: httpx , openai , llm",
+      "links": [
+        {
+          "title": "llm 0.32.1",
+          "url": "https://github.com/simonw/llm/releases/tag/0.32.1",
+          "site": "github.com"
+        },
+        {
+          "title": "httpx2",
+          "url": "https://github.com/pydantic/httpx2",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-openrouter 0.7",
+      "url": "https://simonwillison.net/2026/Aug/21/llm-openrouter/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/21/llm-openrouter/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-21T16:58:19Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Release: llm-openrouter 0.7 Now that this plugin is compatible with LLM 0.32 it can display the reasoning traces for LLMs available through OpenRouter. Updated for compatibility with LLM 0.32 . Models now use OpenRouter's implementation of the Responses API . Three new server-side tools: Shell , WebFetch , and WebSearch . Enable these with options like -T WebSearch . Tags: llm , openrouter",
+      "links": [
+        {
+          "title": "llm-openrouter 0.7",
+          "url": "https://github.com/simonw/llm-openrouter/releases/tag/0.7",
+          "site": "github.com"
+        },
+        {
+          "title": "LLM 0.32",
+          "url": "https://llm.datasette.io/en/stable/changelog.html#v0-32",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "Responses API",
+          "url": "https://openrouter.ai/docs/api_reference/responses/overview",
+          "site": "openrouter.ai"
+        },
+        {
+          "title": "Shell",
+          "url": "https://github.com/simonw/llm-openrouter#shell",
+          "site": "github.com"
+        },
+        {
+          "title": "WebFetch",
+          "url": "https://github.com/simonw/llm-openrouter#web-fetch",
+          "site": "github.com"
+        },
+        {
+          "title": "WebSearch",
+          "url": "https://github.com/simonw/llm-openrouter#web-search",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Stop Making TUIs",
+      "url": "https://simonwillison.net/2026/Aug/21/stop-making-tuis/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/21/stop-making-tuis/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-21T16:07:32Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Stop Making TUIs Thomas Ptacek advocates for building real native user interfaces for even the smallest of personal tools, because coding agents have reduced the cost of getting a usable-enough GUI up and running to almost nothing. I wrote about my vibe-coded bandwidth and GPU monitoring macOS task bar apps back in March , and I'm still using both of those on a daily basis. I'm not habitually knocking out real UIs for my other projects yet, but I'm running out of excuses! Thomas: If you haven’t tried your hand at turning one of your 500 throwaway CLIs into a native app, you’re doing yourself a disservice. Go build a native UI. It’ll probably change the way you think. Tags: thomas-ptacek , ai , generative-ai , llms , vibe-coding , coding-agents",
+      "links": [
+        {
+          "title": "Stop Making TUIs",
+          "url": "https://sockpuppet.org/blog/2026/08/20/stop-making-tuis/",
+          "site": "sockpuppet.org"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Matt Webb",
+      "url": "https://simonwillison.net/2026/Aug/21/matt-webb/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/21/matt-webb/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-21T15:06:26Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "After I released version 1.0, I figured I would have to do the rotations myself. So I sat down with ChatGPT and I didn’t get it to write the code, but I got it to educate me. With a patient, interactive tutor, I was able to finally do what I hadn’t by reading books and asking mathematician friends – I learnt how to use quaternions just enough to make the app work. So learning doesn’t stop just because I outsource a bunch of thinking to AI. It pushes me to learn more. I like that as an outcome. — Matt Webb , Galactic Compass 2: now with new augmented reality mode Tags: matt-webb , generative-ai , chatgpt , education , ai , llms",
+      "links": [
+        {
+          "title": "Matt Webb",
+          "url": "https://interconnected.org/home/2026/08/21/galactic",
+          "site": "interconnected.org"
+        }
+      ]
+    }
+  ]
+}
