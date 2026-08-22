@@ -151,8 +151,11 @@ def load_sources(path: Path | None = None) -> dict[str, dict]:
                 if not key:
                     continue
                 cfg = {**defaults, **entry, "key": key}
-                cfg["cadence_days"] = int(cfg.get("cadence_days", 1))
-                cfg["limit"] = int(cfg.get("limit", 20))
+                # An explicit YAML null must fall back to the default too.
+                cadence_days = cfg.get("cadence_days")
+                cfg["cadence_days"] = 1 if cadence_days is None else int(cadence_days)
+                limit = cfg.get("limit")
+                cfg["limit"] = 20 if limit is None else int(limit)
                 cfg["label"] = str(cfg.get("label") or key)
                 cfg["tag"] = str(cfg.get("tag") or key)
                 weekday = cfg.get("weekday")
