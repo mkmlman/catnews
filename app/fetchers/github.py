@@ -9,6 +9,21 @@ from .sanitize import safe_http_url
 GITHUB_SEARCH_URL = "https://api.github.com/search/repositories"
 
 MAX_DESC_CHARS = 900
+MAX_TITLE_CHARS = 140
+
+
+def display_title(full_name: str, desc: str | None) -> str:
+    """A readable card title: ``name — description`` instead of a bare repo path.
+
+    Falls back to ``owner/name`` when the API returns no description.
+    """
+    name = full_name.rsplit("/", 1)[-1]
+    if not desc:
+        return full_name
+    title = f"{name} — {desc}"
+    if len(title) <= MAX_TITLE_CHARS:
+        return title
+    return title[: MAX_TITLE_CHARS - 1].rstrip() + "…"
 
 
 async def fetch_github(client) -> list[Story]:
@@ -34,7 +49,7 @@ def parse_item(item: dict) -> Story:
     desc = (item.get("description") or "").strip() or None
     return Story(
         source="github",
-        title=full_name,
+        title=display_title(full_name, desc),
         url=safe_http_url(item.get("html_url")) or f"https://github.com/{full_name}",
         byline=item.get("owner", {}).get("login"),
         author=item.get("owner", {}).get("login"),

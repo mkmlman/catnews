@@ -4,7 +4,7 @@
   "stories": [
     {
       "source": "github",
-      "title": "deepseek-ai/deepseek-harness",
+      "title": "deepseek-harness — DeepSeek Harness: Everything is a Plugin.",
       "url": "https://github.com/deepseek-ai/deepseek-harness",
       "author": "deepseek-ai",
       "byline": "deepseek-ai",
@@ -24,7 +24,7 @@
     },
     {
       "source": "github",
-      "title": "guillaumemeyer/watermarks-remover",
+      "title": "watermarks-remover — Strip multi-vendor AI provenance marks: Unicode text hygiene, statistical rewrite hooks, and C2PA/metadata from PNG/JP…",
       "url": "https://github.com/guillaumemeyer/watermarks-remover",
       "author": "guillaumemeyer",
       "byline": "guillaumemeyer",
@@ -44,7 +44,7 @@
     },
     {
       "source": "github",
-      "title": "antirez/h3.c",
+      "title": "h3.c — MiniMax H3 inference engine for Mac computers",
       "url": "https://github.com/antirez/h3.c",
       "author": "antirez",
       "byline": "antirez",
@@ -84,7 +84,7 @@
     },
     {
       "source": "github",
-      "title": "zhu1090093659/dsh-web-ui",
+      "title": "dsh-web-ui — Plugin and skin collection for DeepSeek Harness (DSH) Web UI - task board, git graph, right-side panel, remote mobile UI, pet,…",
       "url": "https://github.com/zhu1090093659/dsh-web-ui",
       "author": "zhu1090093659",
       "byline": "zhu1090093659",
@@ -104,7 +104,7 @@
     },
     {
       "source": "github",
-      "title": "xoreaxeaxeax/skitter-creek-bath-salts",
+      "title": "skitter-creek-bath-salts — Unlocking _everything_ on the CPU with DRAM scrambling",
       "url": "https://github.com/xoreaxeaxeax/skitter-creek-bath-salts",
       "author": "xoreaxeaxeax",
       "byline": "xoreaxeaxeax",
@@ -124,7 +124,7 @@
     },
     {
       "source": "github",
-      "title": "Leutenegger/book-to-skill",
+      "title": "book-to-skill — Turn any technical book PDF into a Claude Code skill — ready to study, reference, and use while you work.",
       "url": "https://github.com/Leutenegger/book-to-skill",
       "author": "Leutenegger",
       "byline": "Leutenegger",
@@ -144,7 +144,7 @@
     },
     {
       "source": "github",
-      "title": "cordiverse/paper",
+      "title": "paper — A Programming Paradigm for Spatiotemporal Composability",
       "url": "https://github.com/cordiverse/paper",
       "author": "cordiverse",
       "byline": "cordiverse",
@@ -184,7 +184,7 @@
     },
     {
       "source": "github",
-      "title": "SaladDay/pi-from-scratch",
+      "title": "pi-from-scratch — 600 行 TypeScript 写成的超级迷你版 pi，让你轻松从 0 写出属于你的 pi-agent",
       "url": "https://github.com/SaladDay/pi-from-scratch",
       "author": "SaladDay",
       "byline": "SaladDay",
@@ -204,7 +204,7 @@
     },
     {
       "source": "github",
-      "title": "MengTo/kage",
+      "title": "kage — An interactive five-chapter night walk through a Kyoto mountain temple, rendered live in Three.js.",
       "url": "https://github.com/MengTo/kage",
       "author": "MengTo",
       "byline": "MengTo",
@@ -244,7 +244,7 @@
     },
     {
       "source": "github",
-      "title": "sohaibdevv/youtube-music",
+      "title": "youtube-music — A lightweight, ad‑free client for streaming music from YouTube Music. No subscription required. Supports background playbac…",
       "url": "https://github.com/sohaibdevv/youtube-music",
       "author": "sohaibdevv",
       "byline": "sohaibdevv",
@@ -264,7 +264,7 @@
     },
     {
       "source": "github",
-      "title": "shadcn-ui/chatbot-template",
+      "title": "chatbot-template — A minimal chatbot template built with Next.js, AI SDK, shadcn/ui, shadcn/react, shadcn/typeset. It runs on the Vercel AI…",
       "url": "https://github.com/shadcn-ui/chatbot-template",
       "author": "shadcn-ui",
       "byline": "shadcn-ui",
@@ -284,7 +284,7 @@
     },
     {
       "source": "github",
-      "title": "ccch1mneyyy/dsh-TUI",
+      "title": "dsh-TUI — 解决DSH 官方尚无终端 TUI 痛点的补位之作，献给偏爱cli的各位极客：Claude Code 风格全屏交互终端插件——像素鲸鱼顶栏、实时工作状态行、思考流式展开、双击 Esc 回滚、上下文进度条 + TPS 仪表。npm 一键安装。",
       "url": "https://github.com/ccch1mneyyy/dsh-TUI",
       "author": "ccch1mneyyy",
       "byline": "ccch1mneyyy",

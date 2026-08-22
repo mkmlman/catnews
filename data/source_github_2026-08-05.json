@@ -4,7 +4,7 @@
   "stories": [
     {
       "source": "github",
-      "title": "trycompai/crm",
+      "title": "crm — An open-source, agentic-first CRM.",
       "url": "https://github.com/trycompai/crm",
       "author": "trycompai",
       "byline": "trycompai",
@@ -42,7 +42,7 @@
     },
     {
       "source": "github",
-      "title": "xdash/FDE-the-Guidance-Book-of-Forward-Deployed-Engineer",
+      "title": "FDE-the-Guidance-Book-of-Forward-Deployed-Engineer — FDE（前沿部署工程师）从零入门指南（基于范冰《增长黑客》原书框架）",
       "url": "https://github.com/xdash/FDE-the-Guidance-Book-of-Forward-Deployed-Engineer",
       "author": "xdash",
       "byline": "xdash",
@@ -61,7 +61,7 @@
     },
     {
       "source": "github",
-      "title": "firecrawl/anydoc",
+      "title": "anydoc — Convert Word, PowerPoint, Excel, OpenDocument, RTF, EPUB, CSV, and PDF to clean Markdown. Built in Rust, with Node.js and Python b…",
       "url": "https://github.com/firecrawl/anydoc",
       "author": "firecrawl",
       "byline": "firecrawl",
@@ -80,7 +80,7 @@
     },
     {
       "source": "github",
-      "title": "FareedKhan-dev/kimi-k3-in-c",
+      "title": "kimi-k3-in-c — A 2.78-trillion-parameter Kimi K3 running inference on a single CPU in 8.24 GB of RAM. Portable C99: no BLAS, no framework,…",
       "url": "https://github.com/FareedKhan-dev/kimi-k3-in-c",
       "author": "FareedKhan-dev",
       "byline": "FareedKhan-dev",
@@ -99,7 +99,7 @@
     },
     {
       "source": "github",
-      "title": "imsai-sh/zhuzhiliao",
+      "title": "zhuzhiliao — 竹知了 —— 一转就哇哇叫的传统玩具，Web 模拟版。零依赖单文件，真实录音采样，移动端优先。",
       "url": "https://github.com/imsai-sh/zhuzhiliao",
       "author": "imsai-sh",
       "byline": "imsai-sh",
@@ -118,7 +118,7 @@
     },
     {
       "source": "github",
-      "title": "genspark-ai/genoffice",
+      "title": "genoffice — An AI-native office suite for macOS and Windows: word processor, spreadsheet, presentations, and PDF.",
       "url": "https://github.com/genspark-ai/genoffice",
       "author": "genspark-ai",
       "byline": "genspark-ai",
@@ -137,7 +137,7 @@
     },
     {
       "source": "github",
-      "title": "DannyMac180/sol-advisor",
+      "title": "sol-advisor — Codex-native architect orchestration with Luna and Terra implementation lanes and mandatory fresh Sol review.",
       "url": "https://github.com/DannyMac180/sol-advisor",
       "author": "DannyMac180",
       "byline": "DannyMac180",
@@ -156,7 +156,7 @@
     },
     {
       "source": "github",
-      "title": "thebuggeddev/anatomy",
+      "title": "anatomy — An interactive 3D human anatomy explorer built using threejs with GPT 5.6 Sol",
       "url": "https://github.com/thebuggeddev/anatomy",
       "author": "thebuggeddev",
       "byline": "thebuggeddev",
@@ -175,7 +175,7 @@
     },
     {
       "source": "github",
-      "title": "WilonityDev/WilonityLoader",
+      "title": "WilonityLoader — Wilonity Loader – cheat lib w/ spoofer, driver bypass, undetected injector for 20+ games (RUST, CS2, Valorant, Tarkov, War…",
       "url": "https://github.com/WilonityDev/WilonityLoader",
       "author": "WilonityDev",
       "byline": "WilonityDev",
@@ -213,7 +213,7 @@
     },
     {
       "source": "github",
-      "title": "0xwilliamortiz/humanizer-cli",
+      "title": "humanizer-cli — 33 ways to spot AI-written text, right in your terminal. Before/after examples, draft checker, zero dependencies.",
       "url": "https://github.com/0xwilliamortiz/humanizer-cli",
       "author": "0xwilliamortiz",
       "byline": "0xwilliamortiz",
@@ -232,7 +232,7 @@
     },
     {
       "source": "github",
-      "title": "brookfacehe2421/flashloan-scalper-bot",
+      "title": "flashloan-scalper-bot — Quick profit scalper using flashloan mechanics",
       "url": "https://github.com/brookfacehe2421/flashloan-scalper-bot",
       "author": "brookfacehe2421",
       "byline": "brookfacehe2421",
@@ -251,7 +251,7 @@
     },
     {
       "source": "github",
-      "title": "KKKKhazix/human-writing",
+      "title": "human-writing — 活人感写作 1.0.0｜通用中文创作与改稿 Skill",
       "url": "https://github.com/KKKKhazix/human-writing",
       "author": "KKKKhazix",
       "byline": "KKKKhazix",
@@ -270,7 +270,7 @@
     },
     {
       "source": "github",
-      "title": "guillermolg00/morphicons",
+      "title": "morphicons — Any icon morphs into any other — universal morphing for stroke-based icons with spring physics. Zero dependencies, ~7 KB gzip.",
       "url": "https://github.com/guillermolg00/morphicons",
       "author": "guillermolg00",
       "byline": "guillermolg00",

@@ -4,7 +4,7 @@
   "stories": [
     {
       "source": "github",
-      "title": "ShawnPana/phone-harness",
+      "title": "phone-harness — let your agent control your phone",
       "url": "https://github.com/ShawnPana/phone-harness",
       "author": "ShawnPana",
       "byline": "ShawnPana",
@@ -24,7 +24,7 @@
     },
     {
       "source": "github",
-      "title": "oil-oil/oil-motion",
+      "title": "oil-motion — Create smooth, responsive interactive web animations.",
       "url": "https://github.com/oil-oil/oil-motion",
       "author": "oil-oil",
       "byline": "oil-oil",
@@ -64,7 +64,7 @@
     },
     {
       "source": "github",
-      "title": "antirez/h3.c",
+      "title": "h3.c — MiniMax H3 inference engine for Mac computers",
       "url": "https://github.com/antirez/h3.c",
       "author": "antirez",
       "byline": "antirez",
@@ -84,7 +84,7 @@
     },
     {
       "source": "github",
-      "title": "eternityspring/shuohao-skills",
+      "title": "shuohao-skills — AI 短剧制作的 skill 集合：拆角色、出设定图、排大纲 | Agent skills for AI short-drama production — character bibles, model sheets, adaptation o…",
       "url": "https://github.com/eternityspring/shuohao-skills",
       "author": "eternityspring",
       "byline": "eternityspring",
@@ -104,7 +104,7 @@
     },
     {
       "source": "github",
-      "title": "sohaibdevv/youtube-music",
+      "title": "youtube-music — A lightweight, ad‑free client for streaming music from YouTube Music. No subscription required. Supports background playbac…",
       "url": "https://github.com/sohaibdevv/youtube-music",
       "author": "sohaibdevv",
       "byline": "sohaibdevv",
@@ -124,7 +124,7 @@
     },
     {
       "source": "github",
-      "title": "MengTo/kage",
+      "title": "kage — An interactive five-chapter night walk through a Kyoto mountain temple, rendered live in Three.js.",
       "url": "https://github.com/MengTo/kage",
       "author": "MengTo",
       "byline": "MengTo",
@@ -144,7 +144,7 @@
     },
     {
       "source": "github",
-      "title": "Flaminis/Dalaran",
+      "title": "Dalaran — Dalaran — Apache-2.0, robotics-first visualization and data infrastructure for multimodal time-series. ROS 2 native, reads existi…",
       "url": "https://github.com/Flaminis/Dalaran",
       "author": "Flaminis",
       "byline": "Flaminis",
@@ -164,7 +164,7 @@
     },
     {
       "source": "github",
-      "title": "xoreaxeaxeax/asm-hall-of-shame",
+      "title": "asm-hall-of-shame — Racing to the bottom of CPU performance",
       "url": "https://github.com/xoreaxeaxeax/asm-hall-of-shame",
       "author": "xoreaxeaxeax",
       "byline": "xoreaxeaxeax",
@@ -184,7 +184,7 @@
     },
     {
       "source": "github",
-      "title": "SaladDay/pi-from-scratch",
+      "title": "pi-from-scratch — 600 行 TypeScript 写成的超级迷你版 pi，让你轻松从 0 写出属于你的 pi-agent",
       "url": "https://github.com/SaladDay/pi-from-scratch",
       "author": "SaladDay",
       "byline": "SaladDay",
@@ -204,7 +204,7 @@
     },
     {
       "source": "github",
-      "title": "sv-number/mcp-server",
+      "title": "mcp-server — MCP server for AI agents that need a phone number: order a private number in 200+ countries, read the SMS verification code, h…",
       "url": "https://github.com/sv-number/mcp-server",
       "author": "sv-number",
       "byline": "sv-number",
@@ -224,7 +224,7 @@
     },
     {
       "source": "github",
-      "title": "shadcn-ui/chatbot-template",
+      "title": "chatbot-template — A minimal chatbot template built with Next.js, AI SDK, shadcn/ui, shadcn/react, shadcn/typeset. It runs on the Vercel AI…",
       "url": "https://github.com/shadcn-ui/chatbot-template",
       "author": "shadcn-ui",
       "byline": "shadcn-ui",
@@ -264,7 +264,7 @@
     },
     {
       "source": "github",
-      "title": "Appllama/top-welcome-screens",
+      "title": "top-welcome-screens — How top iOS apps say hello | 10 animated welcome screens inspired by top-earning apps. Rebuilt in React Native + Expo.",
       "url": "https://github.com/Appllama/top-welcome-screens",
       "author": "Appllama",
       "byline": "Appllama",
@@ -284,7 +284,7 @@
     },
     {
       "source": "github",
-      "title": "mewamew/my_ai_town",
+      "title": "my_ai_town — 我的AI小镇",
       "url": "https://github.com/mewamew/my_ai_town",
       "author": "mewamew",
       "byline": "mewamew",

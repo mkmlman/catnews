@@ -4,7 +4,7 @@
   "stories": [
     {
       "source": "github",
-      "title": "KKKKhazix/human-writing",
+      "title": "human-writing — 让 AI 写的中文读起来像一个具体的人在说话。通用创作与改稿 Skill，开箱即用。",
       "url": "https://github.com/KKKKhazix/human-writing",
       "author": "KKKKhazix",
       "byline": "KKKKhazix",
@@ -23,7 +23,7 @@
     },
     {
       "source": "github",
-      "title": "Binaryify/open-kimi-ppt-skill",
+      "title": "open-kimi-ppt-skill — 非官方 Kimi Slides Skill：让 AI Agent 生成可编辑 PPTD + PPTX，并附带本地浏览器编辑器 Unofficial Kimi Slides skill for AI agents — generate…",
       "url": "https://github.com/Binaryify/open-kimi-ppt-skill",
       "author": "Binaryify",
       "byline": "Binaryify",
@@ -42,7 +42,7 @@
     },
     {
       "source": "github",
-      "title": "ShawnPana/phone-harness",
+      "title": "phone-harness — let your agent control your phone",
       "url": "https://github.com/ShawnPana/phone-harness",
       "author": "ShawnPana",
       "byline": "ShawnPana",
@@ -61,7 +61,7 @@
     },
     {
       "source": "github",
-      "title": "oil-oil/oil-motion",
+      "title": "oil-motion — Create smooth, responsive interactive web animations.",
       "url": "https://github.com/oil-oil/oil-motion",
       "author": "oil-oil",
       "byline": "oil-oil",
@@ -99,7 +99,7 @@
     },
     {
       "source": "github",
-      "title": "MengTo/kage",
+      "title": "kage — An interactive five-chapter night walk through a Kyoto mountain temple, rendered live in Three.js.",
       "url": "https://github.com/MengTo/kage",
       "author": "MengTo",
       "byline": "MengTo",
@@ -118,7 +118,7 @@
     },
     {
       "source": "github",
-      "title": "xoreaxeaxeax/asm-hall-of-shame",
+      "title": "asm-hall-of-shame — Racing to the bottom of CPU performance",
       "url": "https://github.com/xoreaxeaxeax/asm-hall-of-shame",
       "author": "xoreaxeaxeax",
       "byline": "xoreaxeaxeax",
@@ -137,7 +137,7 @@
     },
     {
       "source": "github",
-      "title": "antirez/h3.c",
+      "title": "h3.c — MiniMax H3 inference engine for Mac computers",
       "url": "https://github.com/antirez/h3.c",
       "author": "antirez",
       "byline": "antirez",
@@ -156,7 +156,7 @@
     },
     {
       "source": "github",
-      "title": "eternityspring/shuohao-skills",
+      "title": "shuohao-skills — AI 短剧制作的 skill 集合：拆角色、出设定图、排大纲 | Agent skills for AI short-drama production — character bibles, model sheets, adaptation o…",
       "url": "https://github.com/eternityspring/shuohao-skills",
       "author": "eternityspring",
       "byline": "eternityspring",
@@ -194,7 +194,7 @@
     },
     {
       "source": "github",
-      "title": "sv-number/mcp-server",
+      "title": "mcp-server — MCP server for AI agents that need a phone number: order a private number in 200+ countries, read the SMS verification code, h…",
       "url": "https://github.com/sv-number/mcp-server",
       "author": "sv-number",
       "byline": "sv-number",
@@ -213,7 +213,7 @@
     },
     {
       "source": "github",
-      "title": "Appllama/top-welcome-screens",
+      "title": "top-welcome-screens — How top iOS apps say hello | 10 animated welcome screens inspired by top-earning apps. Rebuilt in React Native + Expo.",
       "url": "https://github.com/Appllama/top-welcome-screens",
       "author": "Appllama",
       "byline": "Appllama",
@@ -232,7 +232,7 @@
     },
     {
       "source": "github",
-      "title": "mewamew/my_ai_town",
+      "title": "my_ai_town — 我的AI小镇",
       "url": "https://github.com/mewamew/my_ai_town",
       "author": "mewamew",
       "byline": "mewamew",
@@ -270,7 +270,7 @@
     },
     {
       "source": "github",
-      "title": "Sateezg/codex-bridge",
+      "title": "codex-bridge — Image generation (gpt-image-2) and GPT-5 subagents for Claude Code — through the Codex CLI login you already have. No OpenAI…",
       "url": "https://github.com/Sateezg/codex-bridge",
       "author": "Sateezg",
       "byline": "Sateezg",

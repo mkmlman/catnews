@@ -4,7 +4,7 @@
   "stories": [
     {
       "source": "github",
-      "title": "deepseek-ai/deepseek-harness",
+      "title": "deepseek-harness — DeepSeek Harness: Everything is a Plugin.",
       "url": "https://github.com/deepseek-ai/deepseek-harness",
       "author": "deepseek-ai",
       "byline": "deepseek-ai",
@@ -24,7 +24,7 @@
     },
     {
       "source": "github",
-      "title": "guillaumemeyer/watermarks-remover",
+      "title": "watermarks-remover — Strip multi-vendor AI provenance marks: Unicode text hygiene, statistical rewrite hooks, and C2PA/metadata from PNG/JP…",
       "url": "https://github.com/guillaumemeyer/watermarks-remover",
       "author": "guillaumemeyer",
       "byline": "guillaumemeyer",
@@ -44,7 +44,7 @@
     },
     {
       "source": "github",
-      "title": "anywhere-labs/deepseek-harness-desktop",
+      "title": "deepseek-harness-desktop — 为 DeepSeek Harness (DSH) 插件生态打造的现代化桌面端解决方案。万物皆「插件」，桌面本身也是「插件」。",
       "url": "https://github.com/anywhere-labs/deepseek-harness-desktop",
       "author": "anywhere-labs",
       "byline": "anywhere-labs",
@@ -64,7 +64,7 @@
     },
     {
       "source": "github",
-      "title": "awesome-dsh-plugin/awesome-dsh-plugin",
+      "title": "awesome-dsh-plugin — A curated list of plugins for DeepSeek Harness (dsh) · DeepSeek Harness 插件精选列表",
       "url": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin",
       "author": "awesome-dsh-plugin",
       "byline": "awesome-dsh-plugin",
@@ -84,7 +84,7 @@
     },
     {
       "source": "github",
-      "title": "zhu1090093659/dsh-web-ui",
+      "title": "dsh-web-ui — Plugin and skin collection for DeepSeek Harness (DSH) Web UI - task board, git graph, right-side panel, remote mobile UI, pet,…",
       "url": "https://github.com/zhu1090093659/dsh-web-ui",
       "author": "zhu1090093659",
       "byline": "zhu1090093659",
@@ -104,7 +104,7 @@
     },
     {
       "source": "github",
-      "title": "xiaobright/dsh-anchored-standard",
+      "title": "dsh-anchored-standard — Two-phase DeepSeek Harness preset: Minimal-aligned bootstrap, then full Standard tools (Project2 98/99)",
       "url": "https://github.com/xiaobright/dsh-anchored-standard",
       "author": "xiaobright",
       "byline": "xiaobright",
@@ -124,7 +124,7 @@
     },
     {
       "source": "github",
-      "title": "yjh051108/dsh-routing-suite",
+      "title": "dsh-routing-suite — dsh-routing-suite — injector + router-standard kit: install the runtime injector first, then the task-aware reasoning-m…",
       "url": "https://github.com/yjh051108/dsh-routing-suite",
       "author": "yjh051108",
       "byline": "yjh051108",
@@ -144,7 +144,7 @@
     },
     {
       "source": "github",
-      "title": "cordiverse/paper",
+      "title": "paper — A Programming Paradigm for Spatiotemporal Composability",
       "url": "https://github.com/cordiverse/paper",
       "author": "cordiverse",
       "byline": "cordiverse",
@@ -164,7 +164,7 @@
     },
     {
       "source": "github",
-      "title": "dmmulroy/anti-slop",
+      "title": "anti-slop — Opinionated Oxlint rules for rejecting low-evidence TypeScript and JavaScript patterns",
       "url": "https://github.com/dmmulroy/anti-slop",
       "author": "dmmulroy",
       "byline": "dmmulroy",
@@ -184,7 +184,7 @@
     },
     {
       "source": "github",
-      "title": "xoreaxeaxeax/skitter-creek-bath-salts",
+      "title": "skitter-creek-bath-salts — Unlocking _everything_ on the CPU with DRAM scrambling",
       "url": "https://github.com/xoreaxeaxeax/skitter-creek-bath-salts",
       "author": "xoreaxeaxeax",
       "byline": "xoreaxeaxeax",
@@ -204,7 +204,7 @@
     },
     {
       "source": "github",
-      "title": "ccch1mneyyy/dsh-TUI",
+      "title": "dsh-TUI — DSH 官方公众号收录的 TUI 补位插件：Claude Code 风，鲸鱼顶栏/实时状态/流式思考/双击 Esc 回滚/上下文进度+TPS。npm 一键装。  DSH official WeChat featured TUI plugin — Claude…",
       "url": "https://github.com/ccch1mneyyy/dsh-TUI",
       "author": "ccch1mneyyy",
       "byline": "ccch1mneyyy",
@@ -224,7 +224,7 @@
     },
     {
       "source": "github",
-      "title": "Small-tailqwq/dsh-deep-whale",
+      "title": "dsh-deep-whale — DSH Web 鲸鱼娘皮肤系列(深海女仆工坊 maid-atelier)——CC BY-NC-SA 4.0",
       "url": "https://github.com/Small-tailqwq/dsh-deep-whale",
       "author": "Small-tailqwq",
       "byline": "Small-tailqwq",
@@ -244,7 +244,7 @@
     },
     {
       "source": "github",
-      "title": "Leutenegger/book-to-skill",
+      "title": "book-to-skill — Turn any technical book PDF into a Claude Code skill — ready to study, reference, and use while you work.",
       "url": "https://github.com/Leutenegger/book-to-skill",
       "author": "Leutenegger",
       "byline": "Leutenegger",
@@ -264,7 +264,7 @@
     },
     {
       "source": "github",
-      "title": "milind-soni/OpenMausBot",
+      "title": "OpenMausBot — Open Source Alternative to Grok Bot with a virtual machine that bots can use",
       "url": "https://github.com/milind-soni/OpenMausBot",
       "author": "milind-soni",
       "byline": "milind-soni",
@@ -284,7 +284,7 @@
     },
     {
       "source": "github",
-      "title": "Hisn00w/ASu-skills",
+      "title": "ASu-skills — 简历包装",
       "url": "https://github.com/Hisn00w/ASu-skills",
       "author": "Hisn00w",
       "byline": "Hisn00w",

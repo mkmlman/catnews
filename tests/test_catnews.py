@@ -105,8 +105,33 @@ def test_github_parse_item():
     }
     story = parse_item(item)
     assert story.source == "github"
-    assert story.title == "MoonshotAI/Kimi-K3"
+    assert story.title == "Kimi-K3 — A 2.78T parameter model."
     assert story.score == 9999
+
+
+def test_github_parse_item_title_fallback_and_truncation():
+    from app.fetchers.github import MAX_TITLE_CHARS
+
+    no_desc = parse_item(
+        {
+            "full_name": "MengTo/threeui",
+            "description": None,
+            "owner": {"login": "MengTo"},
+        }
+    )
+    assert no_desc.title == "MengTo/threeui"
+
+    long_desc = "x" * 300
+    truncated = parse_item(
+        {
+            "full_name": "a/repo",
+            "description": long_desc,
+            "owner": {"login": "a"},
+        }
+    )
+    assert len(truncated.title) == MAX_TITLE_CHARS
+    assert truncated.title.endswith("…")
+    assert truncated.title.startswith("repo — ")
 
 
 def test_registerspill_parse_links():

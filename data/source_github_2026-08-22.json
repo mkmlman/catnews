@@ -4,7 +4,7 @@
   "stories": [
     {
       "source": "github",
-      "title": "MengTo/threeui",
+      "title": "threeui — Open-source ThreeUI Community catalog with live interactive components and complete Community source.",
       "url": "https://github.com/MengTo/threeui",
       "author": "MengTo",
       "byline": "MengTo",
@@ -24,7 +24,7 @@
     },
     {
       "source": "github",
-      "title": "Spielewoy/autoprompt-skill",
+      "title": "autoprompt-skill — Autoprompt is a coding-agent skill that cuts failures by 45% on agentic coding tasks.",
       "url": "https://github.com/Spielewoy/autoprompt-skill",
       "author": "Spielewoy",
       "byline": "Spielewoy",

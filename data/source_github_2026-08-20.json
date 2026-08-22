@@ -4,7 +4,7 @@
   "stories": [
     {
       "source": "github",
-      "title": "ZSvirt/zsvirt",
+      "title": "zsvirt — Core IaaS engine and cloud infrastructure foundation of ZSvirt",
       "url": "https://github.com/ZSvirt/zsvirt",
       "author": "ZSvirt",
       "byline": "ZSvirt",
@@ -24,7 +24,7 @@
     },
     {
       "source": "github",
-      "title": "Tiger3807861189/DeepSeek-V4-J-Space-Capability-Realization-Report",
+      "title": "DeepSeek-V4-J-Space-Capability-Realization-Report — DeepSeek V4 × J-Space capability realization report — benchmark evidence that J-Space r…",
       "url": "https://github.com/Tiger3807861189/DeepSeek-V4-J-Space-Capability-Realization-Report",
       "author": "Tiger3807861189",
       "byline": "Tiger3807861189",
@@ -44,7 +44,7 @@
     },
     {
       "source": "github",
-      "title": "zouyuxuan122/Deepseek-Harness-EAC",
+      "title": "Deepseek-Harness-EAC — DeepSeek Harness (dsh) Windows / Linux desktop client - bundled Node.js + dsh CLI, one-click launch, 10 built-in UI…",
       "url": "https://github.com/zouyuxuan122/Deepseek-Harness-EAC",
       "author": "zouyuxuan122",
       "byline": "zouyuxuan122",
@@ -64,7 +64,7 @@
     },
     {
       "source": "github",
-      "title": "Leutenegger/watermarks-remover",
+      "title": "watermarks-remover — Remove multi-vendor AI provenance traces: Unicode text sanitization, statistical rewriting techniques, and C2PA/metada…",
       "url": "https://github.com/Leutenegger/watermarks-remover",
       "author": "Leutenegger",
       "byline": "Leutenegger",
@@ -84,7 +84,7 @@
     },
     {
       "source": "github",
-      "title": "CopilotKit/openbot",
+      "title": "openbot — Open-source AI coworkers that each get a computer of their own: a browser, files and tools, with every action decided before it h…",
       "url": "https://github.com/CopilotKit/openbot",
       "author": "CopilotKit",
       "byline": "CopilotKit",
@@ -104,7 +104,7 @@
     },
     {
       "source": "github",
-      "title": "wang2122/sprix-sage-router",
+      "title": "sprix-sage-router — Sprix AI at 屿智同行 — state-aware SELF/COLLABORATE/HANDOFF routing for A2A agent networks.",
       "url": "https://github.com/wang2122/sprix-sage-router",
       "author": "wang2122",
       "byline": "wang2122",
@@ -124,7 +124,7 @@
     },
     {
       "source": "github",
-      "title": "hairyf/deepseek-harness-desktop",
+      "title": "deepseek-harness-desktop — DeepSeek Harness Tauri 桌面版 | Only 5mb installer, zero environment setup, preset plugins, Windows / macOS / Linux.",
       "url": "https://github.com/hairyf/deepseek-harness-desktop",
       "author": "hairyf",
       "byline": "hairyf",
@@ -144,7 +144,7 @@
     },
     {
       "source": "github",
-      "title": "vvxw/deploy-vercel",
+      "title": "deploy-vercel — Install Command：npm install",
       "url": "https://github.com/vvxw/deploy-vercel",
       "author": "vvxw",
       "byline": "vvxw",

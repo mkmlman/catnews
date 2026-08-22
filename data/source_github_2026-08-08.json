@@ -4,7 +4,7 @@
   "stories": [
     {
       "source": "github",
-      "title": "firecrawl/anydoc",
+      "title": "anydoc — Convert Word, PowerPoint, Excel, OpenDocument, RTF, EPUB, CSV, and PDF to clean Markdown. Built in Rust, with Node.js and Python b…",
       "url": "https://github.com/firecrawl/anydoc",
       "author": "firecrawl",
       "byline": "firecrawl",
@@ -23,7 +23,7 @@
     },
     {
       "source": "github",
-      "title": "thebuggeddev/anatomy",
+      "title": "anatomy — An interactive 3D human anatomy explorer built using threejs with GPT 5.6 Sol",
       "url": "https://github.com/thebuggeddev/anatomy",
       "author": "thebuggeddev",
       "byline": "thebuggeddev",
@@ -42,7 +42,7 @@
     },
     {
       "source": "github",
-      "title": "KKKKhazix/human-writing",
+      "title": "human-writing — 让 AI 写的中文读起来像一个具体的人在说话。通用创作与改稿 Skill，开箱即用。",
       "url": "https://github.com/KKKKhazix/human-writing",
       "author": "KKKKhazix",
       "byline": "KKKKhazix",
@@ -61,7 +61,7 @@
     },
     {
       "source": "github",
-      "title": "Binaryify/open-kimi-ppt-skill",
+      "title": "open-kimi-ppt-skill — 非官方 Kimi Slides Skill：让 AI Agent 生成可编辑 PPTD + PPTX，并附带本地浏览器编辑器 Unofficial Kimi Slides skill for AI agents — generate…",
       "url": "https://github.com/Binaryify/open-kimi-ppt-skill",
       "author": "Binaryify",
       "byline": "Binaryify",
@@ -99,7 +99,7 @@
     },
     {
       "source": "github",
-      "title": "Accio-org/RealReplicaBench",
+      "title": "RealReplicaBench — RealReplicaBench: Benchmarking Long-Horizon Agents in High-Fidelity, Stateful, and Reproducible Replicas of Real Online…",
       "url": "https://github.com/Accio-org/RealReplicaBench",
       "author": "Accio-org",
       "byline": "Accio-org",
@@ -118,7 +118,7 @@
     },
     {
       "source": "github",
-      "title": "mikiarlo3/awesome-growth-hacking-skills",
+      "title": "awesome-growth-hacking-skills — Find agentic growth hacking skills for Claude, ChatGPT, Manus | by enso.bot",
       "url": "https://github.com/mikiarlo3/awesome-growth-hacking-skills",
       "author": "mikiarlo3",
       "byline": "mikiarlo3",
@@ -137,7 +137,7 @@
     },
     {
       "source": "github",
-      "title": "magicrew/doc7",
+      "title": "doc7 — Turn documents into AI-ready Markdown with visual understanding",
       "url": "https://github.com/magicrew/doc7",
       "author": "magicrew",
       "byline": "magicrew",
@@ -175,7 +175,7 @@
     },
     {
       "source": "github",
-      "title": "0xwilliamortiz/claude-red",
+      "title": "claude-red — claude-red is a curated library of offensive security skills designed for the Claude skills system. Each skill is a structured…",
       "url": "https://github.com/0xwilliamortiz/claude-red",
       "author": "0xwilliamortiz",
       "byline": "0xwilliamortiz",
@@ -194,7 +194,7 @@
     },
     {
       "source": "github",
-      "title": "MarcosSete/awesome-free-ai-course-notes",
+      "title": "awesome-free-ai-course-notes — A curated collection of machine learning and AI lecture notes from the world's leading universities.  This r…",
       "url": "https://github.com/MarcosSete/awesome-free-ai-course-notes",
       "author": "MarcosSete",
       "byline": "MarcosSete",
@@ -213,7 +213,7 @@
     },
     {
       "source": "github",
-      "title": "nfzerox/VirtualMacOniPad",
+      "title": "VirtualMacOniPad — People have dreamed of running macOS on iPad for more than a decade. Today, that dream comes true. With Virtual Mac, iPa…",
       "url": "https://github.com/nfzerox/VirtualMacOniPad",
       "author": "nfzerox",
       "byline": "nfzerox",
@@ -232,7 +232,7 @@
     },
     {
       "source": "github",
-      "title": "disler/super-simple-software-factory",
+      "title": "super-simple-software-factory — Repeatable agents-plus-code workflows, packaged as one skill, stamped into any repo. Deterministic Python o…",
       "url": "https://github.com/disler/super-simple-software-factory",
       "author": "disler",
       "byline": "disler",
@@ -251,7 +251,7 @@
     },
     {
       "source": "github",
-      "title": "wumingqi60/lingxi",
+      "title": "lingxi — 灵犀跨境-开源共建版",
       "url": "https://github.com/wumingqi60/lingxi",
       "author": "wumingqi60",
       "byline": "wumingqi60",

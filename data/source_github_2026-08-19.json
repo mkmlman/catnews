@@ -4,7 +4,7 @@
   "stories": [
     {
       "source": "github",
-      "title": "s1dashu/ip-as-logo-skill",
+      "title": "ip-as-logo-skill — A compact Agent Skill for highly simplified, rounded, subtly neo-skeuomorphic IP mascot logos.",
       "url": "https://github.com/s1dashu/ip-as-logo-skill",
       "author": "s1dashu",
       "byline": "s1dashu",
@@ -24,7 +24,7 @@
     },
     {
       "source": "github",
-      "title": "cinderline/northcinder",
+      "title": "northcinder — Buyer-run, ad-neutral shopping-agent MCP software with deterministic ranking, signed purchase mandates, and a local audit tra…",
       "url": "https://github.com/cinderline/northcinder",
       "author": "cinderline",
       "byline": "cinderline",
@@ -44,7 +44,7 @@
     },
     {
       "source": "github",
-      "title": "dsh-market/dsh-market",
+      "title": "dsh-market — The plugin market inside DeepSeek Harness — browse, search, one-click install · DSH 可视化插件市场",
       "url": "https://github.com/dsh-market/dsh-market",
       "author": "dsh-market",
       "byline": "dsh-market",
