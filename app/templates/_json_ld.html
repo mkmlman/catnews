@@ -1,11 +1,11 @@
-{% macro item_list(stories, name) %}
+{% macro item_list(stories, name, cap=25) %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "ItemList",
   "name": {{ name | tojson }},
   "itemListElement": [
-    {% for story in stories %}
+    {% for story in stories[:cap] %}
     {
       "@type": "ListItem",
       "position": {{ loop.index }},

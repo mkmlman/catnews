@@ -96,6 +96,22 @@ _env = Environment(
 )
 
 
+def site_description() -> str:
+    """Default meta/OG description, derived from the configured sources.
+
+    Generated rather than hardcoded so adding or removing a source in
+    sources.yaml updates every page's descriptions automatically.
+    """
+    labels = list(SOURCE_LABELS.values())
+    if not labels:
+        joined = "developer-focused"
+    elif len(labels) == 1:
+        joined = labels[0]
+    else:
+        joined = ", ".join(labels[:-1]) + ", and " + labels[-1]
+    return f"{APP_NAME} — a curated daily digest of {joined} stories. What's worth reading."
+
+
 def render_page(
     name: str,
     *,
@@ -117,6 +133,7 @@ def render_page(
         app_name=APP_NAME,
         source_labels=SOURCE_LABELS,
         source_tags=SOURCE_TAGS,
+        site_description=site_description(),
         badge_css=badge_css(),
         palette=palette_entries(),
         base_path=base_path,
@@ -399,7 +416,7 @@ def render_manifest() -> str:
     manifest = {
         "name": "catnews",
         "short_name": APP_NAME,
-        "description": "A curated daily digest of developer-focused stories.",
+        "description": site_description(),
         "start_url": "./",
         "scope": "./",
         "display": "standalone",
@@ -527,10 +544,12 @@ def walk_site_urls(out_dir: Path, max_bytes: int = 0) -> list[str]:
         urls.append("./" + rel)
         if rel.endswith("/index.html"):
             urls.append("./" + rel[: -len("index.html")])
-    # Search data is precached too (matching live mode) so full-archive search
-    # works offline; it is not fingerprinted (see _sw_stable) and revalidates
-    # cache-first on each online fetch, so the cache name still stays stable.
-    urls += ["./api/search.json", "./api/fetch-status.json"]
+    # Fetch-status is tiny, so it is precached for instant offline health at
+    # first visit. search.json is deliberately NOT: it grows with the archive,
+    # and the client lazy-fetches it on first search focus anyway — the
+    # network-first handler then runtime-caches it, so offline search still
+    # works once search has been used online.
+    urls += ["./api/fetch-status.json"]
     return list(dict.fromkeys(urls))
 
 
@@ -605,7 +624,6 @@ def live_site_urls(snapshots: list) -> list[str]:
         "./stats/",
         "./sources/",
         "./api/",
-        "./api/search.json",
         "./api/fetch-status.json",
         "./design/",
     ]

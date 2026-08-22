@@ -581,6 +581,9 @@
   try {
     viewPref = localStorage.getItem(VIEW_KEY);
   } catch (e) {}
+  // Initialized before the first applyFilters() call below; populated by
+  // initNewSince() once the edition dates have been compared.
+  var newCards = new Set();
   var state = {
     source: preferredSource === "All" || CFG.sourceTags[preferredSource] ? preferredSource : "All",
     savedOnly: filterPrefs.savedOnly === true,
@@ -746,8 +749,6 @@
      “New since your last visit” (client-side only: edition dates on cards)
      ------------------------------------------------------------- */
   var LAST_SEEN_KEY = "catnews:last-seen";
-  var newCards = new Set();
-  var storiesEl = document.getElementById("stories");
   var digestEdition = storiesEl ? storiesEl.getAttribute("data-digest-date") : "";
   var newEditionEl = document.getElementById("new-edition");
   var newEditionText = document.getElementById("new-edition-text");
@@ -908,7 +909,12 @@
     if (index >= 0 && list[index]) {
       selectedIndex = index;
       list[index].classList.add("is-selected");
-      list[index].scrollIntoView({ block: "nearest", behavior: "smooth" });
+      list[index].scrollIntoView({
+        block: "nearest",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+      });
     } else {
       selectedIndex = -1;
     }
@@ -1173,7 +1179,6 @@
     searchResults.classList.remove("is-closing");
     searchResults.hidden = false;
     searchInput.setAttribute("aria-expanded", "true");
-    searchInput.classList.add("is-typing");
   }
 
   function renderResults() {
@@ -1532,9 +1537,7 @@
     });
   }
   if (editionToast) {
-    window.addEventListener("visibilitychange", function () {
-      if (document.visibilityState === "visible") checkForNewEdition();
-    });
+    // Fired at the document (and propagated to window); one listener is enough.
     document.addEventListener("visibilitychange", function () {
       if (!document.hidden) checkForNewEdition();
     });

@@ -906,16 +906,17 @@ def test_build_site_emits_pwa_files(tmp_path):
     match = re.search(r"PRECACHE = \[(.*?)\];", sw, re.DOTALL)
     assert match
     precache = match.group(1)
-    # stable app shell + search data is precached (offline search works)
+    # stable app shell + tiny health data is precached; the growing
+    # search index is lazy-fetched on first search instead
     for rel in ('"./"', '"./static/style.css"', '"./404.html"', '"./archive/"'):
         assert rel in precache, f"missing {rel} in precache"
-    for rel in ('"./api/search.json"', '"./api/fetch-status.json"'):
-        assert rel in precache, f"missing {rel} in precache"
+    assert '"./api/fetch-status.json"' in precache
     # mutable digest/feed/other API data is NOT precached (cache-name stability)
     for rel in (
         '"./index.html"',
         '"./feed.rss"',
         '"./api/stories.json"',
+        '"./api/search.json"',
         '"./archive/hn/2026-08-02/"',
     ):
         assert rel not in precache, f"did not expect {rel} in precache"
@@ -1110,7 +1111,7 @@ def test_live_app_serves_pwa(client, tmp_path):
     assert "./static/" not in live_site_urls(
         [SourceSnapshot(source="hn", date=date(2026, 8, 2), stories=[])]
     )
-    assert "./api/search.json" in live_site_urls(
+    assert "./api/search.json" not in live_site_urls(
         [SourceSnapshot(source="hn", date=date(2026, 8, 2), stories=[])]
     )
     assert "./api/fetch-status.json" in live_site_urls(
@@ -1576,7 +1577,7 @@ def test_walk_site_urls_precaches_only_stable_files(tmp_path):
     assert "./feed.rss" not in urls
     assert "./sitemap.xml" not in urls
     assert "./api/stories.json" not in urls
-    assert "./api/search.json" in urls
+    assert "./api/search.json" not in urls
     assert "./api/fetch-status.json" in urls
     assert "./archive/hn/2026-08-02/" not in urls
 

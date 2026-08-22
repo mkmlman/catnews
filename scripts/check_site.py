@@ -161,16 +161,20 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
 
         match = re.search(r"PRECACHE = \[(.*?)\];", sw_text, re.DOTALL)
         precache = match.group(1) if match else ""
-        # Precaches the stable app shell plus offline search data; the daily
-        # digest, feed, and other API data revalidate on demand instead, so the
-        # SW cache never churns on the daily refresh.
+        # Precaches the stable app shell plus tiny health data; the daily
+        # digest, feed, search index, and other API data revalidate on demand
+        # instead, so the SW cache never churns on the daily refresh and
+        # first-time visitors don't download the whole search index.
         if '"./static/style.css"' not in precache:
             errors.append("service worker does not precache static/style.css")
-        for rel in ("./api/search.json", "./api/fetch-status.json"):
-            if f'"{rel}"' not in precache:
-                errors.append(
-                    f"service worker should precache offline search file {rel}"
-                )
+        if '"./api/fetch-status.json"' not in precache:
+            errors.append(
+                "service worker should precache offline health file ./api/fetch-status.json"
+            )
+        if '"./api/search.json"' in precache:
+            errors.append(
+                "service worker should lazy-fetch ./api/search.json, not precache it"
+            )
         for rel in (
             "./api/digest.json",
             "./index.html",
