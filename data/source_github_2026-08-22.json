@@ -1,0 +1,46 @@
+{
+  "source": "github",
+  "date": "2026-08-22",
+  "stories": [
+    {
+      "source": "github",
+      "title": "MengTo/threeui",
+      "url": "https://github.com/MengTo/threeui",
+      "author": "MengTo",
+      "byline": "MengTo",
+      "external_id": "MengTo/threeui",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-21T11:56:39Z",
+      "score": 856,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Open-source ThreeUI Community catalog with live interactive components and complete Community source.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "Spielewoy/autoprompt-skill",
+      "url": "https://github.com/Spielewoy/autoprompt-skill",
+      "author": "Spielewoy",
+      "byline": "Spielewoy",
+      "external_id": "Spielewoy/autoprompt-skill",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-17T22:40:47Z",
+      "score": 618,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Autoprompt is a coding-agent skill that cuts failures by 45% on agentic coding tasks.",
+      "links": []
+    }
+  ]
+}
