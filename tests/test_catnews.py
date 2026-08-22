@@ -779,6 +779,7 @@ def test_config_loads_default_sources(tmp_path):
 
     assert "hn" in SOURCES
     assert "arxiv" in SOURCES
+    assert "simonw" in SOURCES
     assert SOURCE_LABELS["github"] == "GitHub"
     assert SOURCE_TAGS["registerspill"] == "Register Spill"
     assert SOURCES["arxiv"]["weekday"] == 0
@@ -823,7 +824,7 @@ def test_config_falls_back_to_builtin_when_yaml_missing(tmp_path):
     missing = tmp_path / "nope.yaml"
     assert not missing.exists()
     sources = load_sources(missing)
-    assert set(sources) == {"hn", "arxiv", "github", "registerspill"}
+    assert set(sources) == {"hn", "arxiv", "github", "registerspill", "simonw"}
 
 
 def test_badge_css_covers_every_source():
@@ -1130,7 +1131,11 @@ def test_service_worker_serves_api_data_network_first(client, tmp_path):
         tmp_path,
     )
     sw = client.get("/sw.js").text
-    assert 'request.mode === "navigate" || url.pathname.indexOf("/api/") !== -1' in sw
+    # Navigations, API data, and the manifest are all network-first (fresh
+    # when online); only stable shell assets are cache-first.
+    assert 'request.mode === "navigate"' in sw
+    assert 'url.pathname.indexOf("/api/") !== -1' in sw
+    assert 'url.pathname.indexOf("/manifest.json") !== -1' in sw
 
 
 def test_api_json_aliases_match_static_build(client, tmp_path):
@@ -1992,7 +1997,11 @@ def test_classify_status():
     assert classify_status(304) == "good"
     assert classify_status(404) == "dead"
     assert classify_status(410) == "dead"
-    assert classify_status(403) == "dead"
+    assert classify_status(451) == "dead"
+    # 4xx bot-blocks are "could not verify" (error), never a false "dead".
+    assert classify_status(403) == "error"
+    assert classify_status(429) == "error"
+    assert classify_status(401) == "error"
     assert classify_status(503) == "error"
     assert classify_status(None) == "error"
 
@@ -2052,6 +2061,9 @@ def test_home_edition_card_rendered_and_served(client, tmp_path):
     assert card.status_code == 200
     assert card.headers["content-type"] == "image/png"
     assert card.content.startswith(b"\x89PNG\r\n\x1a\n")
+
+    # A card for an edition that was never published must not be served.
+    assert client.get("/static/og/home/2026-08-03.png").status_code == 404
 
 
 def test_story_cards_carry_edition_dates(client, tmp_path):
@@ -2394,3 +2406,223 @@ def test_light_theme_text_tokens_meet_contrast():
     assert contrast(muted, paper) >= 4.5
     assert contrast(muted, card) >= 4.5
     assert contrast(faint, paper) >= 3.0
+
+
+# --- Regression tests from the review round (digest size, corruption, ghosts)
+
+
+def test_latest_stories_backfills_rolling_sources_to_limit(tmp_path):
+    from app.store import latest_stories
+
+    # A rolling source archives only *new* stories (deltas), so snapshots are
+    # small (2/day) even though the source limit is 15. latest_stories merges
+    # across editions so the digest again shows the full top-N.
+    save_snapshot(
+        SourceSnapshot(
+            source="github",
+            date=date(2026, 8, 1),
+            stories=[
+                Story(source="github", title="Curated", url="https://g/1", score=10),
+            ],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="github",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(source="github", title="Next", url="https://g/2", score=9),
+                Story(
+                    source="github", title="Curated again", url="https://g/1", score=12
+                ),
+            ],
+        ),
+        tmp_path,
+    )
+    merged = latest_stories("github", tmp_path)
+    assert [s.title for s in merged] == ["Next", "Curated again"]
+
+    limited = latest_stories("github", tmp_path, limit=1)
+    assert [s.title for s in limited] == ["Next"]
+
+    digest = combined_digest(tmp_path)
+    assert digest is not None
+    assert [s.title for s in digest.stories] == ["Next", "Curated again"]
+
+
+def test_combined_digest_includes_backfilled_stories(tmp_path):
+    # GitHub's trending snapshot for Aug 3 only archived one new story, but the
+    # digest must still show the full configured per-source top-N by merging
+    # the previous snapshots (this is the shrink bug: digests dropped to 2-8
+    # stories for sources whose front page stays roughly constant).
+    save_snapshot(
+        SourceSnapshot(
+            source="github",
+            date=date(2026, 8, 1),
+            stories=[
+                Story(
+                    source="github",
+                    title=f"Repo{i}",
+                    url=f"https://g/{i}",
+                    score=50 - i,
+                )
+                for i in range(5)
+            ],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="github",
+            date=date(2026, 8, 2),
+            stories=[
+                Story(
+                    source="github",
+                    title=f"Repo{i}",
+                    url=f"https://g/{i}",
+                    score=50 - i,
+                )
+                for i in range(5)
+            ],
+        ),
+        tmp_path,
+    )
+    digest = combined_digest(tmp_path)
+    assert digest is not None
+    assert len(digest.stories) >= 5
+
+
+def test_corrupt_snapshot_does_not_break_site(tmp_path):
+    from app.store import load_all_snapshots, load_snapshot
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    # A corrupt archive file (truncated write, hand edit) must be skipped, not
+    # explode the build or the dev server.
+    (tmp_path / "source_hn_2026-08-03.json").write_text("{not json")
+
+    assert load_snapshot("hn", date(2026, 8, 3), tmp_path) is None
+    assert [s.date for s in load_all_snapshots(tmp_path)] == [date(2026, 8, 2)]
+
+
+def test_source_with_no_label_or_tag_gets_key_fallback(tmp_path):
+    from app.config import load_sources
+
+    yaml_file = tmp_path / "sources.yaml"
+    yaml_file.write_text(
+        """
+sources:
+  - key: blog
+    type: rss
+    url: https://example.com/feed
+    boolish_weekday: "nine"
+    weekday: 42
+"""
+    )
+    sources = load_sources(yaml_file)
+    assert sources["blog"]["label"] == "blog"
+    assert sources["blog"]["tag"] == "blog"
+    # An out-of-range weekday is dropped so cadence is never weekly · 42.
+    assert sources["blog"]["weekday"] is None
+
+
+def test_build_survives_residual_source_not_in_config(tmp_path):
+    from scripts.build_site import build_site
+
+    # A snapshot for a source that has since been removed from sources.yaml;
+    # `ghost` is not a config source, so builds rely on the label/tag fallback.
+    save_snapshot(
+        SourceSnapshot(
+            source="ghost",
+            date=date(2026, 8, 2),
+            stories=[Story(source="ghost", title="Leftover", url="https://g")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="Live", url="https://hn")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site_ghost"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+
+    page = (out / "archive" / "ghost" / "2026-08-02" / "index.html").read_text()
+    assert "Leftover" in page
+    feed = (out / "feed-ghost.rss").read_text()
+    assert "Leftover" in feed
+    stats = (out / "stats" / "index.html").read_text()
+    # The stats page lists per-source rows, not story titles: the ghost row
+    # must render via the key fallback rather than a KeyError.
+    assert "ghost" in stats
+    assert "Leftover" in (out / "api" / "stories.json").read_text()
+
+
+def test_ghost_source_stats_page_renders(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="ghost",
+            date=date(2026, 8, 2),
+            stories=[Story(source="ghost", title="Leftover", url="https://g")],
+        ),
+        tmp_path,
+    )
+    assert client.get("/stats/").status_code == 200
+    assert client.get("/archive/").status_code == 200
+
+
+def test_hex_rgb_handles_named_and_short_colors():
+    from app.config import source_accent_rgb
+    from app.og_image import hex_rgb
+
+    assert hex_rgb("#123456") == (0x12, 0x34, 0x56)
+    assert hex_rgb("abc") == (0xAA, 0xBB, 0xCC)
+    assert hex_rgb("rebeccapurple") is None
+    assert hex_rgb("") is None
+
+    # A named-color source override previously crashed the OG renderer.
+    from app.config import badge_color
+
+    original = {"type": "builtin", "label": "X", "tag": "x", "color": "rebeccapurple"}
+    from app import config as config_module
+
+    config_module.SOURCES["tint"] = original
+    try:
+        assert source_accent_rgb("tint") == (0x3B, 0x3E, 0x37)
+        assert badge_color("tint") == ("rebeccapurple",) * 4
+    finally:
+        config_module.SOURCES.pop("tint", None)
+
+
+def test_feed_redirect_honors_base_path(client, tmp_path, monkeypatch):
+    from app import main as app_main
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    monkeypatch.setattr(app_main, "BASE_PATH", "/catnews")
+    resp = client.get("/feed", follow_redirects=False)
+    assert resp.status_code == 307 or resp.status_code == 302
+    assert resp.headers["location"] == "/catnews/feed.rss"
+
+
+def test_parse_links_accepts_single_quoted_hrefs():
+    html = """<p>Read <a href=\'https://example.com/a\'>the post</a> and
+    <a href="https://example.com/b">the other</a>.</p>"""
+    links = parse_links(html)
+    assert [l.url for l in links] == ["https://example.com/a", "https://example.com/b"]

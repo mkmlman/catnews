@@ -50,10 +50,21 @@ _PAWS: list[tuple[int, tuple[int, int, int]]] = [
 ]
 
 
-def hex_rgb(value: str) -> tuple[int, int, int]:
-    """Parse a #RRGGBB hex color into an (r, g, b) tuple."""
-    hexstr = value.lstrip("#")
-    return (int(hexstr[0:2], 16), int(hexstr[2:4], 16), int(hexstr[4:6], 16))
+def hex_rgb(value: str) -> tuple[int, int, int] | None:
+    """Parse a #RGB or #RRGGBB hex color into an (r, g, b) tuple.
+
+    Returns None when the value is not a hex color (e.g. a named CSS color
+    like "rebeccapurple"), so callers can fall back instead of crashing.
+    """
+    hexstr = str(value).strip("#").strip()
+    if len(hexstr) == 3:
+        hexstr = "".join(ch * 2 for ch in hexstr)
+    if len(hexstr) != 6:
+        return None
+    try:
+        return (int(hexstr[0:2], 16), int(hexstr[2:4], 16), int(hexstr[4:6], 16))
+    except ValueError:
+        return None
 
 
 class _Canvas:

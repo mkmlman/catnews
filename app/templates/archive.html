@@ -21,8 +21,8 @@
     {% for snap in day.snapshots %}
     <li class="archive-day-item" style="--i: {{ loop.index0 }}">
       <a href="{{ base_path }}/archive/{{ snap.source }}/{{ snap.date.isoformat() }}/" class="archive-day-link">
-        <span class="badge badge-{{ snap.source }}">{{ source_tags[snap.source] }}</span>
-        <span class="archive-day-source">{{ source_labels[snap.source] }}</span>
+        <span class="badge badge-{{ snap.source }}">{{ source_tags.get(snap.source, snap.source) }}</span>
+        <span class="archive-day-source">{{ source_labels.get(snap.source, snap.source) }}</span>
         <span class="archive-day-stories">{{ snap.stories | length }} stor{{ "y" if snap.stories | length == 1 else "ies" }}</span>
       </a>
     </li>

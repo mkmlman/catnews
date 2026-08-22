@@ -14,9 +14,16 @@ from fastapi.responses import (
 )
 from fastapi.staticfiles import StaticFiles
 
-from .config import BASE_PATH, BASE_URL, DATA_DIR, SOURCES, badge_color, today_utc
+from .config import (
+    BASE_PATH,
+    BASE_URL,
+    DATA_DIR,
+    SOURCES,
+    source_accent_rgb,
+    today_utc,
+)
 from .models import Digest, SourceSnapshot, Story
-from .og_image import hex_rgb, render_og_image
+from .og_image import render_og_image
 from .render import (
     app_version,
     archive_days,
@@ -30,7 +37,6 @@ from .render import (
     render_service_worker,
     render_source_rss,
     search_index,
-    snapshot_nav,
     sparkline_points,
     story_editions,
 )
@@ -41,9 +47,11 @@ from .store import (
     days_archiving,
     fetch_health,
     fetch_status,
+    latest_stories,
     load_all_snapshots,
     load_latest_snapshot,
     load_snapshot,
+    sibling_snapshots,
     site_stats,
     source_registry,
     top_domains,
@@ -60,7 +68,7 @@ def _edition_card(source: str, day: str, count: int) -> bytes:
     `day` is an ISO date string so the cache key is hashable; a source that
     changes its snapshot count re-renders the card.
     """
-    accent = hex_rgb(str(badge_color(source)[0]))
+    accent = source_accent_rgb(source)
     return render_og_image(
         date_line=f"{day[5:7]}.{day[8:10]}.{day[0:4]}",
         count_line=f"{count} STORIES",
@@ -82,8 +90,8 @@ def _home_card(day: str, count: int) -> bytes:
 def og_home_image(day: date) -> Response:
     """Share card for the combined edition shown on the home page."""
     digest = combined_digest(DATA_DIR)
-    if digest is None:
-        raise HTTPException(status_code=404, detail="No edition published yet.")
+    if digest is None or digest.date != day:
+        raise HTTPException(status_code=404, detail="No such edition.")
     png = _home_card(day.isoformat(), len(digest.stories))
     return Response(
         content=png,
@@ -180,15 +188,14 @@ def archive_snapshot(request: Request, source: str, day: date) -> HTMLResponse:
         raise HTTPException(
             status_code=404, detail=f"No snapshot for {source} on {day}."
         )
-    snapshots = load_all_snapshots(DATA_DIR)
-    prev_snap, next_snap = snapshot_nav(snap, snapshots)
+    prev_snap, next_snap = sibling_snapshots(source, day, DATA_DIR)
     return page(
         request,
         "snapshot.html",
         f"/archive/{source}/{day.isoformat()}/",
         og_image=f"{BASE_URL}/static/og/{source}/{day.isoformat()}.png",
         snapshot=snap,
-        label=SOURCES[source]["label"],
+        label=SOURCES.get(source, {}).get("label", source),
         prev_snapshot=prev_snap,
         next_snapshot=next_snap,
         story_editions={story.url: snap.date.isoformat() for story in snap.stories},
@@ -361,7 +368,7 @@ def rss() -> Response:
 
 @app.get("/feed")
 def feed_redirect() -> RedirectResponse:
-    return RedirectResponse("/feed.rss")
+    return RedirectResponse(BASE_PATH + "/feed.rss")
 
 
 @app.get("/feed-{source}.rss")
@@ -372,8 +379,12 @@ def source_rss(source: str) -> Response:
     snap = load_latest_snapshot(source, DATA_DIR)
     if snap is None:
         raise HTTPException(status_code=404, detail=f"No snapshot for {source}.")
+    stories = latest_stories(source, DATA_DIR)
+    if not stories:
+        raise HTTPException(status_code=404, detail=f"No snapshot for {source}.")
+    merged = SourceSnapshot(source=source, date=snap.date, stories=stories)
     xml = render_source_rss(
-        source, snap, f"{BASE_URL}/", f"{BASE_URL}/feed-{source}.rss"
+        source, merged, f"{BASE_URL}/", f"{BASE_URL}/feed-{source}.rss"
     )
     return Response(content=xml, media_type="application/rss+xml; charset=utf-8")
 

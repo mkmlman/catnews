@@ -70,16 +70,20 @@ def collect_story_urls(stories: list[dict]) -> list[dict]:
 
 
 def classify_status(status: int | None) -> str:
-    """Map an HTTP status to dead | good | error."""
+    """Map an HTTP status to dead | good | error.
+
+    Only definitive "gone forever" codes are dead: 404, 410, and 451. Other
+    4xx responses (403 bot-blocks, 429 rate limits, 401 auth walls) mean the
+    page exists but won't answer this checker, so they're reported as
+    "error" (could not verify) rather than badging a live page "Dead link".
+    """
     if status is None:
         return "error"
     if status in (404, 410, 451):
         return "dead"
-    if 400 <= status < 500:
-        return "dead"
-    if status >= 500:
-        return "error"
-    return "good"
+    if 200 <= status < 400:
+        return "good"
+    return "error"
 
 
 def check_url(client: httpx.Client, record: dict) -> dict:
@@ -96,11 +100,11 @@ def check_url(client: httpx.Client, record: dict) -> dict:
             return {**record, "status": response.status_code, "error": None}
         except httpx.HTTPStatusError as exc:
             last_status = exc.response.status_code
-            if last_status not in (None, 404, 410, 451) and (
-                last_status >= 400 and last_status < 500
-            ):
-                break
             if last_status in (404, 410, 451):
+                break
+            # Other 4xx (403 bot-block, 429 rate limit, 401 auth wall) mean the
+            # page exists but won't answer this checker — retrying won't help.
+            if 400 <= last_status < 500:
                 break
             if attempt < RETRIES:
                 time.sleep(BACKOFF * (attempt + 1))

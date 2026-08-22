@@ -7,8 +7,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.config import SOURCES, badge_color
-from app.og_image import hex_rgb, render_og_image
+from app.config import SOURCE_LABELS, SOURCES, source_accent_rgb
+from app.models import SourceSnapshot
+from app.og_image import render_og_image
 from app.render import (
     archive_days,
     load_dead_links,
@@ -37,6 +38,7 @@ from app.store import (
     days_archiving,
     fetch_health,
     fetch_status,
+    latest_stories,
     load_all_snapshots,
     site_stats,
     source_registry,
@@ -93,7 +95,7 @@ def build_site(
     # by source + date so each day shares a unique card).
     for snap in snapshots:
         og_rel = f"static/og/{snap.source}/{snap.date.isoformat()}.png"
-        accent = hex_rgb(str(badge_color(snap.source)[0]))
+        accent = source_accent_rgb(snap.source)
         write(
             out_dir / og_rel,
             render_og_image(
@@ -154,7 +156,7 @@ def build_site(
                 page_path=f"/archive/{snap.source}/{snap.date.isoformat()}/",
                 og_image=f"{base_url}/static/og/{snap.source}/{snap.date.isoformat()}.png",
                 snapshot=snap,
-                label=SOURCES[snap.source]["label"],
+                label=SOURCE_LABELS.get(snap.source, snap.source),
                 prev_snapshot=prev_snap,
                 next_snapshot=next_snap,
                 story_editions={
@@ -229,13 +231,21 @@ def build_site(
 
     # Per-source feeds: one stream per source with a snapshot, e.g. /feed-hn.rss.
     # snapshots are ordered ascending by date, so the last per source is newest.
+    # The feed shows the merged latest top-N (see store.latest_stories) rather
+    # than just the newest delta-only snapshot, so subscribers keep receiving a
+    # full stream even for rolling sources.
     latest_by_source = {snap.source: snap for snap in snapshots}
     for source, snapshot in latest_by_source.items():
+        merged = SourceSnapshot(
+            source=source,
+            date=snapshot.date,
+            stories=latest_stories(source, data_dir),
+        )
         write(
             out_dir / f"feed-{source}.rss",
             render_source_rss(
                 source,
-                snapshot,
+                merged,
                 f"{base_url}/",
                 f"{base_url}/feed-{source}.rss",
             ),

@@ -42,7 +42,10 @@ def load_snapshot(source: str, date_obj: date, data_dir: Path) -> SourceSnapshot
     path = snapshot_path(source, date_obj, data_dir)
     if not path.exists():
         return None
-    return SourceSnapshot.model_validate_json(path.read_text())
+    try:
+        return SourceSnapshot.model_validate_json(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
 
 
 def load_latest_snapshot(source: str, data_dir: Path) -> SourceSnapshot | None:
@@ -234,6 +237,61 @@ def _sources(data_dir: Path) -> list[str]:
     )
 
 
+def latest_stories(
+    source: str, data_dir: Path, limit: int | None = None
+) -> list[Story]:
+    """The latest ``limit`` distinct stories archived for a source.
+
+    Snapshots only archive genuinely new stories (see `unseen_stories`), so the
+    newest snapshot alone under-represents rolling sources — a story that stays
+    on a blog or GitHub's trending list for several days is archived once and
+    then drops out of the digest. Merge newest-first, backfilling from older
+    snapshots (deduplicated by external_id/url) until the source's limit is
+    reached.
+    """
+    cap = limit if limit is not None else int(SOURCES.get(source, {}).get("limit", 20))
+    seen: set[str] = set()
+    merged: list[Story] = []
+    for snapshot_date in reversed(list_snapshot_dates(source, data_dir)):
+        snapshot = load_snapshot(source, snapshot_date, data_dir)
+        if snapshot is None:
+            continue
+        # Only stories not already kept by a *newer* snapshot (dedupe across
+        # editions, not within one — a day's own listing keeps its full order).
+        fresh = {s.external_id or s.url for s in snapshot.stories} - seen
+        if not fresh:
+            continue
+        for story in snapshot.stories:
+            if (story.external_id or story.url) not in fresh:
+                continue
+            merged.append(story)
+            if cap and len(merged) >= cap:
+                return merged
+        seen |= fresh
+    return merged
+
+
+def sibling_snapshots(
+    source: str, date_obj: date, data_dir: Path
+) -> tuple[SourceSnapshot | None, SourceSnapshot | None]:
+    """The snapshots adjacent to ``date_obj`` for this source (nav arrows).
+
+    Loads only this source's snapshots instead of materializing the whole
+    archive, which keeps snapshot navigation fast on large histories.
+    """
+    dates = list_snapshot_dates(source, data_dir)
+    if date_obj not in dates:
+        return None, None
+    index = dates.index(date_obj)
+    previous = load_snapshot(source, dates[index - 1], data_dir) if index > 0 else None
+    following = (
+        load_snapshot(source, dates[index + 1], data_dir)
+        if index < len(dates) - 1
+        else None
+    )
+    return previous, following
+
+
 def combined_digest(data_dir: Path, day: date | None = None) -> Digest | None:
     """A Digest combining the latest stories from every source (for RSS/markdown).
 
@@ -247,8 +305,11 @@ def combined_digest(data_dir: Path, day: date | None = None) -> Digest | None:
     latest: date | None = None
     for source in SOURCES:
         snap = load_latest_snapshot(source, data_dir)
-        if snap:
-            per_source.append(snap.stories)
+        if snap is None:
+            continue
+        stories = latest_stories(source, data_dir)
+        if stories:
+            per_source.append(stories)
             if latest is None or snap.date > latest:
                 latest = snap.date
     stories = interleave(per_source)
@@ -281,8 +342,8 @@ def source_registry(data_dir: Path) -> list[dict]:
         rows.append(
             {
                 "key": key,
-                "label": cfg["label"],
-                "tag": cfg["tag"],
+                "label": cfg.get("label") or key,
+                "tag": cfg.get("tag") or key,
                 "cadence": cadence_label(key),
                 "limit": cfg.get("limit"),
                 "last_fetched": snap.date if snap else None,

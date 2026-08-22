@@ -88,12 +88,14 @@ def parse_links(content: str, *, self_host: str | None = None) -> list[CuratedLi
     seen: set[str] = set()
     root = _root_domain(self_host) if self_host else ""
     for match in re.finditer(
-        r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', content, re.DOTALL
+        r"""<a\b[^>]*?(?:href=(?:"([^"]*)"|'([^']*)'))[^>]*>(.*?)</a>""",
+        content,
+        re.DOTALL,
     ):
         if len(links) >= MAX_LINKS:
             break
-        url = html_lib.unescape(match.group(1)).strip()
-        text = _anchor_text(match.group(2))
+        url = html_lib.unescape(match.group(1) or match.group(2) or "").strip()
+        text = _anchor_text(match.group(3))
         if not url or len(text) < 3:
             continue
         if safe_http_url(url) is None:

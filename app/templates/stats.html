@@ -48,8 +48,8 @@
       {% for source, count in stats.by_source.items() %}
       <tr>
         <th scope="row">
-          <span class="source-name">{{ source_labels[source] }}</span>
-          <span class="badge badge-{{ source }}">{{ source_tags[source] }}</span>
+          <span class="source-name">{{ source_labels.get(source, source) }}</span>
+          <span class="badge badge-{{ source }}">{{ source_tags.get(source, source) }}</span>
         </th>
         <td>{{ stats.snapshots_by_source.get(source, 0) }}</td>
         <td>{{ count }}</td>
@@ -101,7 +101,7 @@
           <thead>
             <tr>
               <th scope="col">Week</th>
-              {% for source in source_labels %}<th scope="col">{{ source_tags[source] }}</th>{% endfor %}
+              {% for source in source_labels %}<th scope="col">{{ source_tags.get(source, source) }}</th>{% endfor %}
               <th scope="col">Total</th>
             </tr>
           </thead>
@@ -174,8 +174,8 @@
         {% for row in fetch_health %}
         <tr>
           <th scope="row">
-            <span class="source-name">{{ source_labels[row.source] }}</span>
-            <span class="badge badge-{{ row.source }}">{{ source_tags[row.source] }}</span>
+            <span class="source-name">{{ source_labels.get(row.source, row.source) }}</span>
+            <span class="badge badge-{{ row.source }}">{{ source_tags.get(row.source, row.source) }}</span>
           </th>
           <td>{{ row.last_fetched.strftime("%b %d, %Y") if row.last_fetched else "—" }}</td>
           <td>{{ row.actual }}</td>

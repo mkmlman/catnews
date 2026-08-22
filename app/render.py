@@ -399,7 +399,7 @@ def render_manifest() -> str:
     manifest = {
         "name": "catnews",
         "short_name": APP_NAME,
-        "description": "A curated daily digest of HN, arXiv, GitHub, and Register Spill stories.",
+        "description": "A curated daily digest of developer-focused stories.",
         "start_url": "./",
         "scope": "./",
         "display": "standalone",
@@ -468,7 +468,11 @@ self.addEventListener("fetch", (event) => {{
     // Fresh responses when online — the daily digest, snapshot pages, and API
     // data all change day to day, so serve the network and refresh the cache;
     // only fall back to the cache when offline. Everything else is cache-first.
-    if (request.mode === "navigate" || url.pathname.indexOf("/api/") !== -1) {{
+    if (
+        request.mode === "navigate" ||
+        url.pathname.indexOf("/api/") !== -1 ||
+        url.pathname.indexOf("/manifest.json") !== -1
+    ) {{
         event.respondWith(
             fetch(request)
                 .then((response) => {{
@@ -680,15 +684,15 @@ def render_source_rss(source: str, snapshot, base_url: str, feed_url: str) -> st
     """
     fg = FeedGenerator()
     fg.id(feed_url)
-    fg.title(f"{APP_NAME} — {SOURCE_LABELS[source]}")
+    label = SOURCE_LABELS.get(source, source)
+    tag = SOURCE_TAGS.get(source, source)
+    fg.title(f"{APP_NAME} — {label}")
     fg.link(href=feed_url, rel="self")
     fg.link(
         href=f"{base_url.rstrip('/')}/archive/{source}/{snapshot.date.isoformat()}/",
         rel="alternate",
     )
-    fg.subtitle(
-        f"{SOURCE_LABELS[source]} — latest {SOURCE_TAGS[source]} stories on {APP_NAME}."
-    )
+    fg.subtitle(f"{label} — latest {tag} stories on {APP_NAME}.")
     fg.language("en")
 
     stories = sorted(

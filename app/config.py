@@ -6,6 +6,8 @@ from pathlib import Path
 
 import yaml
 
+from .og_image import hex_rgb
+
 APP_NAME = "catnews"
 
 
@@ -100,6 +102,15 @@ _BUILTIN_SOURCES: dict[str, dict] = {
         "limit": 10,
         "weekday": 0,
     },
+    "simonw": {
+        "label": "Simon Willison",
+        "tag": "SimonW",
+        "type": "rss",
+        "url": "https://simonwillison.net/atom/everything/",
+        "extract_links": False,
+        "cadence_days": 1,
+        "limit": 20,
+    },
 }
 
 
@@ -142,6 +153,17 @@ def load_sources(path: Path | None = None) -> dict[str, dict]:
                 cfg = {**defaults, **entry, "key": key}
                 cfg["cadence_days"] = int(cfg.get("cadence_days", 1))
                 cfg["limit"] = int(cfg.get("limit", 20))
+                cfg["label"] = str(cfg.get("label") or key)
+                cfg["tag"] = str(cfg.get("tag") or key)
+                weekday = cfg.get("weekday")
+                if weekday is not None:
+                    try:
+                        cfg["weekday"] = int(weekday)
+                    except (TypeError, ValueError):
+                        cfg["weekday"] = None
+                    else:
+                        if not 0 <= cfg["weekday"] < 7:
+                            cfg["weekday"] = None
                 sources[key] = cfg
             return sources
     return {k: dict(v) for k, v in _BUILTIN_SOURCES.items()}
@@ -149,8 +171,8 @@ def load_sources(path: Path | None = None) -> dict[str, dict]:
 
 SOURCES: dict[str, dict] = load_sources()
 
-SOURCE_LABELS: dict[str, str] = {k: v["label"] for k, v in SOURCES.items()}
-SOURCE_TAGS: dict[str, str] = {k: v["tag"] for k, v in SOURCES.items()}
+SOURCE_LABELS: dict[str, str] = {k: v.get("label") or k for k, v in SOURCES.items()}
+SOURCE_TAGS: dict[str, str] = {k: v.get("tag") or k for k, v in SOURCES.items()}
 
 
 def _apply_env_overrides(sources: dict[str, dict]) -> dict[str, dict]:
@@ -182,7 +204,9 @@ def cadence_label(key: str) -> str:
     if days == 1:
         return "daily"
     if (weekday := cfg.get("weekday")) is not None:
-        return f"weekly · {WEEKDAYS[weekday]}"
+        if isinstance(weekday, int) and 0 <= weekday < 7:
+            return f"weekly · {WEEKDAYS[weekday]}"
+        cfg["weekday"] = None
     if days == 7:
         return "weekly"
     return f"every {days} days"
@@ -211,6 +235,20 @@ def badge_color(key: str) -> tuple[str, str, str, str]:
         return PALETTE[list(SOURCES).index(key) % len(PALETTE)]
     except ValueError:
         return PALETTE[-1]
+
+
+def source_accent_rgb(key: str) -> tuple[int, int, int]:
+    """RGB accent for a source's OG card (light foreground badge color).
+
+    Falls back to graphite if the source is unknown or its color override
+    isn't a hex color, so a named CSS color in sources.yaml can never crash
+    the OG renderer.
+    """
+    if key in SOURCES:
+        rgb = hex_rgb(str(badge_color(key)[0]))
+        if rgb is not None:
+            return rgb
+    return (0x3B, 0x3E, 0x37)
 
 
 def badge_css() -> str:
