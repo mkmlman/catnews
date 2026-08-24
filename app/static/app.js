@@ -235,8 +235,12 @@
     if (window.MutationObserver) {
       new MutationObserver(function () {
         previousScrollY = window.scrollY;
-        paintHeaderScrim();
-        paintStickyOffsets();
+        /* Theme CSS changes the masthead dimensions after the attribute flips. */
+        window.requestAnimationFrame(function () {
+          paintHeaderScrim();
+          paintStickyOffsets();
+          window.setTimeout(paintStickyOffsets, 280);
+        });
       }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-design-system"] });
     }
   }

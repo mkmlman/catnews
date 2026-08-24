@@ -1019,6 +1019,8 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   margin: 0 0 10px;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  box-shadow: 0 10px 18px -18px var(--ink);
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 .filter-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -2513,7 +2515,7 @@ a.is-dead,
     backdrop-filter: blur(14px);
   }
   .filters {
-    background: color-mix(in srgb, var(--paper) 94%, transparent);
+    background: var(--paper);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
   }
@@ -2969,7 +2971,7 @@ html[data-design-system="kami"] .filters {
   padding: 14px 18px;
   border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--paper) 76%, transparent);
+  background: var(--paper);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
