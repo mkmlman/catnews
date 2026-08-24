@@ -303,6 +303,13 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
       rgba(var(--chrome-surface), 0) 100%
     );
   }
+  html[data-design-system="earendil"] .site-header {
+    transition: padding 0.28s var(--ease-soft), background-color 0.25s ease;
+  }
+  html[data-design-system="earendil"] .site-header.is-compact {
+    padding-top: 22px;
+    padding-bottom: 16px;
+  }
 }
 
 .wordmark {
@@ -2628,28 +2635,27 @@ a.is-dead,
     position: absolute;
     top: 0;
     right: 0;
-    height: 100%;
-    padding: 7px 0 0 18px;
-    font-family: var(--mono-font);
-    font-size: 0.72rem;
-    color: var(--muted);
-    background: linear-gradient(90deg, transparent, rgb(var(--chrome-surface)) 35%);
-    pointer-events: none;
-  }
-  .filter-scroll-cue {
-    width: 34px;
+    width: 38px;
+    height: 36px;
     padding: 0;
     font-size: 0;
+    color: var(--muted);
+    background: linear-gradient(90deg, transparent, rgb(var(--chrome-surface)) 42%);
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s ease;
   }
   .filter-scroll-cue::after {
     content: "→";
     display: block;
-    padding-top: 9px;
+    padding-top: 5px;
     font-size: 0.82rem;
     text-align: right;
   }
-  .filter-scroll-cue { display: none; }
-  .filter-scroll-cue.is-hidden { opacity: 0; transform: translateX(12px); transition: opacity 0.35s ease, transform 0.35s ease; }
+  .filter-scroll-cue.is-hidden {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(12px);
+  }
   .filter-label, .chip, .filter-actions, .hide-read { flex-shrink: 0; }
 
   .source-details { flex-direction: column; align-items: stretch; }

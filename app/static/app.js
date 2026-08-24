@@ -185,6 +185,8 @@
      ------------------------------------------------------------- */
   var headerEl = document.querySelector(".site-header");
   var desktopMq = window.matchMedia("(min-width: 861px)");
+  var previousScrollY = window.scrollY;
+  var headerIsCompact = false;
 
   function paintStickyOffsets() {
     if (!headerEl) return;
@@ -193,16 +195,50 @@
     document.documentElement.style.setProperty("--header-h", h + "px");
   }
 
+  function setHeaderCompact(compact) {
+    if (!headerEl || headerIsCompact === compact) return;
+    headerIsCompact = compact;
+    headerEl.classList.toggle("is-compact", compact);
+    paintStickyOffsets();
+    /* Keep the sticky bar aligned through the padding transition. */
+    window.setTimeout(paintStickyOffsets, 280);
+  }
+
   function paintHeaderScrim() {
-    if (headerEl) headerEl.classList.toggle("is-scrolled", window.scrollY > 8);
+    if (!headerEl) return;
+    var y = window.scrollY;
+    headerEl.classList.toggle("is-scrolled", y > 8);
+
+    var isEarDesktop =
+      desktopMq.matches && document.documentElement.getAttribute("data-design-system") === "earendil";
+    var movingDown = y > previousScrollY + 2;
+    var movingUp = y < previousScrollY - 2;
+    if (isEarDesktop && !headerEl.classList.contains("nav-open")) {
+      if (y > 120 && movingDown) setHeaderCompact(true);
+      else if (y < 48 || movingUp) setHeaderCompact(false);
+    } else {
+      setHeaderCompact(false);
+    }
+    previousScrollY = y;
   }
 
   if (headerEl) {
-    window.addEventListener("resize", paintStickyOffsets);
+    window.addEventListener("resize", function () {
+      previousScrollY = window.scrollY;
+      paintStickyOffsets();
+      paintHeaderScrim();
+    });
     window.addEventListener("load", paintStickyOffsets);
     window.addEventListener("scroll", paintHeaderScrim, { passive: true });
     paintStickyOffsets();
     paintHeaderScrim();
+    if (window.MutationObserver) {
+      new MutationObserver(function () {
+        previousScrollY = window.scrollY;
+        paintHeaderScrim();
+        paintStickyOffsets();
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-design-system"] });
+    }
   }
 
   /* -------------------------------------------------------------
@@ -572,23 +608,42 @@
   var loadMoreBtn = document.getElementById("load-more");
   var loadMoreCount = document.getElementById("load-more-count");
   var exportSavedBtn = document.getElementById("export-saved");
-  var sourceFilterRow = document.querySelector(".filter-row--sources");
+  var sourceRail = document.querySelector(".source-options");
   var filterScrollCue = document.querySelector(".filter-scroll-cue");
   var storiesEl = document.getElementById("stories");
   var viewBtns = filtersEl && filtersEl.querySelectorAll(".view-btn");
   var PAGE_SIZE = 12;
   var filterPrefs = loadObject(FILTER_KEY);
-  var preferredSource = filterPrefs.source;
+  function readFilterUrlState() {
+    var params = new URLSearchParams(window.location.search);
+    function boolParam(name) {
+      return params.get(name) === "1" || params.get(name) === "true";
+    }
+    return {
+      source: params.get("source"),
+      sourcePresent: params.has("source"),
+      view: params.get("view"),
+      viewPresent: params.has("view"),
+      saved: boolParam("saved"),
+      savedPresent: params.has("saved"),
+      hideRead: boolParam("hideRead"),
+      hideReadPresent: params.has("hideRead"),
+    };
+  }
+
+  var filterUrlState = readFilterUrlState();
+  var preferredSource = filterUrlState.sourcePresent ? filterUrlState.source : filterPrefs.source;
   var viewPref = null;
   try {
     viewPref = localStorage.getItem(VIEW_KEY);
   } catch (e) {}
+  if (filterUrlState.viewPresent) viewPref = filterUrlState.view;
   // Initialized before the first applyFilters() call below; populated by
   // initNewSince() once the edition dates have been compared.
   var newCards = new Set();
   var state = {
     source: preferredSource === "All" || CFG.sourceTags[preferredSource] ? preferredSource : "All",
-    savedOnly: filterPrefs.savedOnly === true,
+    savedOnly: filterUrlState.savedPresent ? filterUrlState.saved : filterPrefs.savedOnly === true,
     newOnly: false,
     loaded: PAGE_SIZE,
     view: viewPref === "list" ? "list" : "grid",
@@ -602,7 +657,33 @@
     });
   }
 
-  if (hideRead && filterPrefs.hideRead === true) hideRead.checked = true;
+  function syncFilterUrl() {
+    if (!window.history || !window.history.replaceState) return;
+    try {
+      var url = new URL(window.location.href);
+      var params = url.searchParams;
+      if (state.source !== "All") params.set("source", state.source);
+      else params.delete("source");
+      if (state.view === "list") params.set("view", "list");
+      else params.delete("view");
+      if (state.savedOnly) params.set("saved", "1");
+      else params.delete("saved");
+      if (hideRead && hideRead.checked) params.set("hideRead", "1");
+      else params.delete("hideRead");
+      var query = params.toString();
+      window.history.replaceState(
+        window.history.state,
+        "",
+        url.pathname + (query ? "?" + query : "") + url.hash
+      );
+    } catch (e) {}
+  }
+
+  if (hideRead) {
+    hideRead.checked = filterUrlState.hideReadPresent
+      ? filterUrlState.hideRead
+      : filterPrefs.hideRead === true;
+  }
 
   function applyFilters() {
     if (!filtersEl) return;
@@ -713,6 +794,7 @@
       }
       setActiveChips();
       persistFilterState();
+      syncFilterUrl();
       applyFilters();
     });
     if (hideRead) {
@@ -720,6 +802,7 @@
         filtersTouched = true;
         state.loaded = PAGE_SIZE;
         persistFilterState();
+        syncFilterUrl();
         applyFilters();
       });
     }
@@ -746,6 +829,22 @@
     applyFilters();
     paintView();
   }
+
+  window.addEventListener("popstate", function () {
+    if (!filtersEl) return;
+    var next = readFilterUrlState();
+    var prefs = loadObject(FILTER_KEY);
+    var source = next.sourcePresent ? next.source : prefs.source;
+    state.source = source === "All" || CFG.sourceTags[source] ? source : "All";
+    state.savedOnly = next.savedPresent ? next.saved : prefs.savedOnly === true;
+    state.loaded = PAGE_SIZE;
+    if (hideRead) {
+      hideRead.checked = next.hideReadPresent ? next.hideRead : prefs.hideRead === true;
+    }
+    setActiveChips();
+    paintView();
+    applyFilters();
+  });
 
   /* -------------------------------------------------------------
      “New since your last visit” (client-side only: edition dates on cards)
@@ -827,14 +926,14 @@
   initNewSince();
 
   function updateFilterScrollCue() {
-    if (!sourceFilterRow || !filterScrollCue) return;
-    var atEnd = sourceFilterRow.scrollLeft + sourceFilterRow.clientWidth >= sourceFilterRow.scrollWidth - 4;
-    var hasMore = sourceFilterRow.scrollWidth > sourceFilterRow.clientWidth;
+    if (!sourceRail || !filterScrollCue) return;
+    var atEnd = sourceRail.scrollLeft + sourceRail.clientWidth >= sourceRail.scrollWidth - 4;
+    var hasMore = sourceRail.scrollWidth > sourceRail.clientWidth;
     filterScrollCue.classList.toggle("is-hidden", atEnd || !hasMore);
   }
 
-  if (sourceFilterRow) {
-    sourceFilterRow.addEventListener("scroll", updateFilterScrollCue, { passive: true });
+  if (sourceRail) {
+    sourceRail.addEventListener("scroll", updateFilterScrollCue, { passive: true });
     window.addEventListener("resize", updateFilterScrollCue);
     updateFilterScrollCue();
   }
