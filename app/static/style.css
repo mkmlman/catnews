@@ -309,6 +309,8 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   html[data-design-system="earendil"] .site-header.is-compact {
     padding-top: 22px;
     padding-bottom: 16px;
+    background: rgb(var(--chrome-surface));
+    box-shadow: 0 8px 16px -14px var(--ink);
   }
 }
 

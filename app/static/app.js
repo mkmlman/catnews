@@ -212,10 +212,10 @@
     var isEarDesktop =
       desktopMq.matches && document.documentElement.getAttribute("data-design-system") === "earendil";
     var movingDown = y > previousScrollY + 2;
-    var movingUp = y < previousScrollY - 2;
     if (isEarDesktop && !headerEl.classList.contains("nav-open")) {
       if (y > 120 && movingDown) setHeaderCompact(true);
-      else if (y < 48 || movingUp) setHeaderCompact(false);
+      /* Keep the compact reading chrome stable until the page is nearly home. */
+      else if (y < 48) setHeaderCompact(false);
     } else {
       setHeaderCompact(false);
     }
