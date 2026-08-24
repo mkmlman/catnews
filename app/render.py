@@ -437,6 +437,17 @@ def render_manifest() -> str:
                 "type": "image/png",
                 "purpose": "any",
             },
+            {
+                "src": "./static/icon-maskable-512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable",
+            },
+        ],
+        "shortcuts": [
+            {"name": "Archive", "url": "./archive/"},
+            {"name": "Sources", "url": "./sources/"},
+            {"name": "Stats", "url": "./stats/"},
         ],
     }
     return render_json(manifest)

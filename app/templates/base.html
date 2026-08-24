@@ -173,6 +173,7 @@
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
   <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
   <div class="container">
     <header class="site-header">
@@ -193,7 +194,6 @@
         </div>
       </nav>
     </header>
-    <a class="skip-link" href="#main-content">Skip to content</a>
     <main id="main-content" tabindex="-1">
       {% block content %}{% endblock %}
     </main>
@@ -249,6 +249,20 @@
         if (!option) return;
         window.catnewsSetTheme(option.dataset.themeOption);
         close();
+      });
+      menu.addEventListener("keydown", function (event) {
+        if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+        event.preventDefault();
+        var options = Array.prototype.slice.call(
+          menu.querySelectorAll("[data-theme-option]")
+        );
+        var index = options.indexOf(document.activeElement);
+        var next =
+          index < 0
+            ? 0
+            : (index + (event.key === "ArrowDown" ? 1 : -1) + options.length) %
+              options.length;
+        options[next].focus();
       });
       document.addEventListener("click", function (event) {
         if (menu.hidden || event.target.closest(".theme-picker")) return;
@@ -353,6 +367,7 @@
         <li><span>Mark as read</span><span><b>m</b><kbd>m</kbd></span></li>
         <li><span>Search the archive</span><span><b>/</b><kbd>/</kbd></span></li>
         <li><span>Move in search results</span><span><b>&uarr; &darr;</b><kbd>&uarr;</kbd><kbd>&darr;</kbd></span></li>
+        <li><span>Previous / next edition</span><span><b>&larr; &rarr;</b><kbd>&larr;</kbd><kbd>&rarr;</kbd></span></li>
       </ul>
       <button class="install-dialog-close" id="help-dialog-close" type="button">Got it</button>
     </div>

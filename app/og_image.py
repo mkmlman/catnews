@@ -137,6 +137,23 @@ def _paws(canvas: _Canvas) -> None:
         canvas.fill_ellipse(cx, 548, 46, 46, color)
 
 
+ICON_SIZE = 512
+
+
+def render_maskable_icon() -> bytes:
+    """Render a 512x512 maskable app icon: an ink paw print on paper.
+
+    Android adaptive masks crop to the central ~80% safe zone, so every
+    shape stays well inside a 409px circle around the middle.
+    """
+    canvas = _Canvas(ICON_SIZE, ICON_SIZE)
+    canvas.fill_rect(0, 0, ICON_SIZE - 1, ICON_SIZE - 1, PAPER)
+    canvas.fill_ellipse(256, 312, 92, 76, INK)
+    for toe_cx, toe_cy in ((150, 198), (256, 158), (362, 198)):
+        canvas.fill_ellipse(toe_cx, toe_cy, 37, 37, INK)
+    return canvas.png()
+
+
 def render_og_image(
     *,
     date_line: str | None = None,

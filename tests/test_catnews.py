@@ -946,6 +946,34 @@ def test_font_face_declares_full_variable_ranges():
     assert "font-weight: 100 900;" in css
 
 
+def test_skip_link_is_first_focusable_element():
+    base = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
+    ).read_text()
+    assert base.index('class="skip-link"') < base.index("<header")
+    assert base.index('class="skip-link"') < base.index("site-header")
+
+
+def test_manifest_registers_maskable_icon_and_shortcuts():
+    import json
+
+    from app.render import render_manifest
+
+    manifest = json.loads(render_manifest())
+    purposes = {icon["purpose"] for icon in manifest["icons"]}
+    assert "any" in purposes
+    assert "maskable" in purposes
+    shortcut_names = {shortcut["name"] for shortcut in manifest["shortcuts"]}
+    assert {"Archive", "Sources", "Stats"} <= shortcut_names
+
+
+def test_help_dialog_documents_edition_nav():
+    base = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
+    ).read_text()
+    assert "Previous / next edition" in base
+
+
 def test_get_fetcher_rss_and_api():
     from app.fetchers import get_fetcher
 
@@ -1893,7 +1921,8 @@ def test_manifest_theme_color_matches_page_background():
     assert data["theme_color"] == data["background_color"] == "#faf9f6"
     assert data["id"] == "./"
     assert data["display_override"] == ["standalone", "minimal-ui"]
-    assert all(icon.get("purpose") == "any" for icon in data["icons"])
+    purposes = {icon.get("purpose") for icon in data["icons"]}
+    assert purposes == {"any", "maskable"}
 
 
 def test_design_page_stat_cards_use_real_data(client, tmp_path):

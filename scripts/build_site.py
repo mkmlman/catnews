@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.config import SOURCE_LABELS, SOURCES, source_accent_rgb
 from app.models import SourceSnapshot
-from app.og_image import render_og_image
+from app.og_image import render_maskable_icon, render_og_image
 from app.render import (
     archive_days,
     load_dead_links,
@@ -115,6 +115,9 @@ def build_site(
             accent=(27, 54, 93),
         ),
     )
+
+    # Maskable PWA icon for Android adaptive launchers.
+    write(out_dir / "static/icon-maskable-512.png", render_maskable_icon())
 
     # Static assets (style.css, fonts, favicon)
     shutil.copytree(STATIC_DIR, out_dir / "static", dirs_exist_ok=True)
