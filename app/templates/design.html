@@ -9,14 +9,14 @@
 
 <!-- ============ HERO / TOKENS ============ -->
 <section class="ds-hero">
-  <h2 class="ds-title">Warm restraint</h2>
-  <p class="ds-lede">Parchment canvas, ink-blue accent, serif-led hierarchy, hairline rules. A fixed constraint set that drives every page.</p>
+  <h2 class="ds-title">Paper &amp; ink</h2>
+  <p class="ds-lede">Warm paper canvas, ink-first monochrome, mono-led UI type, serif italics for display. Hairline rules and flat surfaces — after the earendil.com design system. The footer's EAR / KAMI switch flips to the original parchment companion mode.</p>
   <div class="ds-tokens">
-    <span><b>Canvas</b><span data-var="--paper">#f5f4ed</span></span>
-    <span><b>Accent</b><span data-var="--accent">#1B365D</span></span>
+    <span><b>Canvas</b><span data-var="--paper">#faf9f6</span></span>
+    <span><b>Ink</b><span data-var="--ink">#353431</span></span>
+    <span><b>Mono</b><span class="ds-token-val">Departure Mono</span></span>
     <span><b>Serif</b><span class="ds-token-val">Source Serif 4</span></span>
-    <span><b>Display</b><span class="ds-token-val">Fraunces</span></span>
-    <span><b>Mono</b><span class="ds-token-val">ui-monospace</span></span>
+    <span><b>Rule</b><span data-var="--line">rgba(39,37,34,.18)</span></span>
   </div>
 </section>
 
@@ -28,12 +28,12 @@
     <p class="ds-section-lede">A small, fixed rule set. Stability comes from repetition, not decoration.</p>
   </div>
   <ol class="ds-rules">
-    <li><span class="ds-n">1</span><p>The canvas is warm parchment, never pure white, never cool gray. Light and dark are first-class tokens, not afterthoughts.</p></li>
-    <li><span class="ds-n">2</span><p>One ink-blue accent. Source badges are the only chromatic interruption, each drawn from a fixed 12-color palette.</p></li>
-    <li><span class="ds-n">3</span><p>All grays are warm with a yellow-brown undertone, never cool blue-grays.</p></li>
-    <li><span class="ds-n">4</span><p>Serif carries hierarchy, mono carries function. Source Serif 4 for headings and body, Fraunces for display, mono for labels, badges, and code.</p></li>
-    <li><span class="ds-n">5</span><p>Separation is a hairline rule or a whisper shadow, never a hard drop shadow.</p></li>
-    <li><span class="ds-n">6</span><p>Cards are transparent until hover, then a faint accent wash.</p></li>
+    <li><span class="ds-n">1</span><p>The canvas is warm paper — never pure white, never cool gray. Light, dark, and pitch themes are first-class tokens, not afterthoughts.</p></li>
+    <li><span class="ds-n">2</span><p>One accent: ink itself. Links, active states, and emphasis inherit the text color. The source-badge palette is the only chromatic interruption.</p></li>
+    <li><span class="ds-n">3</span><p>Departure Mono carries function: navigation, labels, badges, chips, code, tabular numbers. Source Serif carries reading: titles, summaries, prose — italic for display moments.</p></li>
+    <li><span class="ds-n">4</span><p>Separation is a hairline rule at ~18% opacity. No card shadows, no frosted panels, no glow.</p></li>
+    <li><span class="ds-n">5</span><p>Surfaces are flat and transparent until hover, then a faint wash of ink at 3–5%.</p></li>
+    <li><span class="ds-n">6</span><p>The hover affordance is a dotted underline. Chrome is fixed to the viewport edges inside one shared frame gutter.</p></li>
   </ol>
 </section>
 
@@ -42,34 +42,33 @@
   <div class="ds-section-head">
     <p class="ds-section-num">02 · Color</p>
     <h2 class="ds-section-title">Palette</h2>
-    <p class="ds-section-lede">Warm neutrals and one ink-blue accent. Every swatch is a CSS custom property, so the same token flips cleanly between themes.</p>
+    <p class="ds-section-lede">Warm neutrals and one accent — ink itself. Every swatch is a CSS custom property, so the same token flips cleanly between themes.</p>
   </div>
 
   <h3 class="ds-subhead">Canvas</h3>
   <div class="ds-swatches">
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--paper)"></div><div class="ds-info"><p class="ds-name">Paper</p><p class="ds-role">Page background · the foundation</p><span class="ds-hex" data-var="--paper">#f5f4ed</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--paper-deep)"></div><div class="ds-info"><p class="ds-name">Paper Deep</p><p class="ds-role">Share bars · recessed surfaces</p><span class="ds-hex" data-var="--paper-deep">#eceadf</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--card)"></div><div class="ds-info"><p class="ds-name">Card</p><p class="ds-role">Code blocks · white-paper variant</p><span class="ds-hex" data-var="--card">#fdfcf7</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: var(--paper)"></div><div class="ds-info"><p class="ds-name">Paper</p><p class="ds-role">Page background · the foundation</p><span class="ds-hex" data-var="--paper">#faf9f6</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: var(--card)"></div><div class="ds-info"><p class="ds-name">Card</p><p class="ds-role">Dialogs · raised paper (matches canvas)</p><span class="ds-hex" data-var="--card">#faf9f6</span></div></div>
   </div>
 
   <h3 class="ds-subhead">Ink &amp; text</h3>
   <div class="ds-swatches">
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--ink)"></div><div class="ds-info"><p class="ds-name">Ink</p><p class="ds-role">Primary text · warm near-black</p><span class="ds-hex" data-var="--ink">#23241f</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--ink-soft)"></div><div class="ds-info"><p class="ds-name">Ink Soft</p><p class="ds-role">Secondary text · summaries</p><span class="ds-hex" data-var="--ink-soft">#3f413a</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--muted)"></div><div class="ds-info"><p class="ds-name">Muted</p><p class="ds-role">Tertiary text · bylines · labels</p><span class="ds-hex" data-var="--muted">#84867a</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--faint)"></div><div class="ds-info"><p class="ds-name">Faint</p><p class="ds-role">Ghost text · filter labels</p><span class="ds-hex" data-var="--faint">#b3b4a9</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: #353431"></div><div class="ds-info"><p class="ds-name">Ink</p><p class="ds-role">Primary text · warm near-black</p><span class="ds-hex" data-var="--ink">#353431</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: rgba(53,52,49,0.86)"></div><div class="ds-info"><p class="ds-name">Ink Soft</p><p class="ds-role">Secondary text · summaries</p><span class="ds-hex" data-var="--ink-soft">rgba(53,52,49,.86)</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: rgba(53,52,49,0.62)"></div><div class="ds-info"><p class="ds-name">Muted</p><p class="ds-role">Tertiary text · bylines · labels</p><span class="ds-hex" data-var="--muted">rgba(53,52,49,.62)</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: rgba(53,52,49,0.45)"></div><div class="ds-info"><p class="ds-name">Faint</p><p class="ds-role">Ghost text · placeholders</p><span class="ds-hex" data-var="--faint">rgba(53,52,49,.45)</span></div></div>
   </div>
 
   <h3 class="ds-subhead">Accent</h3>
   <div class="ds-swatches">
-    <div class="ds-swatch ds-accent"><div class="ds-chip" style="background: var(--accent)"></div><div class="ds-info"><p class="ds-name">Ink Blue</p><p class="ds-role">Links · active chips · rules · emphasis</p><span class="ds-hex" data-var="--accent">#1B365D</span></div></div>
-    <div class="ds-swatch ds-accent"><div class="ds-chip" style="background: var(--accent-deep)"></div><div class="ds-info"><p class="ds-name">Ink Blue Deep</p><p class="ds-role">Link hover · stronger emphasis</p><span class="ds-hex" data-var="--accent-deep">#14263f</span></div></div>
+    <div class="ds-swatch ds-accent"><div class="ds-chip" style="background: var(--accent)"></div><div class="ds-info"><p class="ds-name">Accent = Ink</p><p class="ds-role">Links · active chips · fills · emphasis</p><span class="ds-hex" data-var="--accent">#353431</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: #7c231b"></div><div class="ds-info"><p class="ds-name">Danger</p><p class="ds-role">Dead-link warnings only</p><span class="ds-hex" data-var="--danger">#7c231b</span></div></div>
   </div>
 
   <h3 class="ds-subhead">Hairlines</h3>
   <div class="ds-swatches">
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--line)"></div><div class="ds-info"><p class="ds-name">Line</p><p class="ds-role">Dividers · list rules</p><span class="ds-hex" data-var="--line">#e2e0d4</span></div></div>
-    <div class="ds-swatch"><div class="ds-chip" style="background: var(--line-strong)"></div><div class="ds-info"><p class="ds-name">Line Strong</p><p class="ds-role">Table headers · borders</p><span class="ds-hex" data-var="--line-strong">#cfcdc0</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: rgba(39,37,34,0.18)"></div><div class="ds-info"><p class="ds-name">Line</p><p class="ds-role">Dividers · list rules · card borders</p><span class="ds-hex" data-var="--line">rgba(39,37,34,.18)</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: rgba(39,37,34,0.34)"></div><div class="ds-info"><p class="ds-name">Line Strong</p><p class="ds-role">Table headers · input underlines</p><span class="ds-hex" data-var="--line-strong">rgba(39,37,34,.34)</span></div></div>
   </div>
 
   <h3 class="ds-subhead">Source badges</h3>
@@ -92,63 +91,58 @@
   <div class="ds-section-head">
     <p class="ds-section-num">03 · Typography</p>
     <h2 class="ds-section-title">Type System</h2>
-    <p class="ds-section-lede">Serif carries hierarchy, mono carries function. Three self-hosted families, one scale.</p>
+    <p class="ds-section-lede">Mono carries function, serif carries reading. Two self-hosted families, one scale.</p>
   </div>
 
   <div class="ds-family-grid">
     <div class="ds-family">
-      <p class="ds-glyph ds-glyph-display">Aa</p>
-      <p class="ds-family-role">Display · Fraunces</p>
-      <p class="ds-family-use">Wordmark, story titles, stat values. Weight 560–620, tight letter-spacing.</p>
+      <p class="ds-glyph ds-glyph-mono">Aa</p>
+      <p class="ds-family-role">Mono · Departure Mono</p>
+      <p class="ds-family-use">The interface voice: navigation, labels, badges, chips, code, tabular numbers. A pixel font — set at 13–15px for UI text.</p>
     </div>
     <div class="ds-family">
       <p class="ds-glyph ds-glyph-serif">Aa</p>
       <p class="ds-family-role">Serif · Source Serif 4</p>
-      <p class="ds-family-use">Headings, body, bylines, dates. Warm, readable, weight 300–700 with matching italics.</p>
+      <p class="ds-family-use">Story titles (weight 600) and reading text. Warm, readable, 300–700 with matching italics.</p>
     </div>
     <div class="ds-family">
-      <p class="ds-glyph ds-glyph-mono">Aa</p>
-      <p class="ds-family-role">Mono · ui-monospace</p>
-      <p class="ds-family-use">Navigation, labels, badges, chips, code, tabular numbers. System fallback to SF Mono / Menlo.</p>
+      <p class="ds-glyph ds-glyph-display">Aa</p>
+      <p class="ds-family-role">Display · Serif Italic</p>
+      <p class="ds-family-use">Page titles, section headings, edition subtitles. Weight 400 italic — the earendil-style editorial voice.</p>
     </div>
   </div>
 
   <h3 class="ds-subhead">Scale</h3>
   <div class="ds-type-grid">
     <div class="ds-type-row">
-      <div class="ds-type-label">Display</div>
-      <div class="ds-type-sample ds-type-display">Wordmark &amp; hero</div>
-      <div class="ds-type-specs"><b>1.6rem</b> Fraunces 600<br>letter −0.02em<br>line 1.0</div>
-    </div>
-    <div class="ds-type-row">
       <div class="ds-type-label">Page Title</div>
       <div class="ds-type-sample ds-type-h1">Sources · Stats · Archive</div>
-      <div class="ds-type-specs"><b>2.4rem</b> serif 400<br>letter −0.02em<br>line 1.2</div>
+      <div class="ds-type-specs"><b>2.25rem</b> serif 400 italic<br>line 1.15</div>
     </div>
     <div class="ds-type-row">
       <div class="ds-type-label">Story Title</div>
       <div class="ds-type-sample ds-type-story">A quiet essay on systems design</div>
-      <div class="ds-type-specs"><b>1.22rem</b> Fraunces 620<br>letter −0.02em<br>line 1.28</div>
+      <div class="ds-type-specs"><b>1.375rem</b> serif 600<br>line 1.3 · dotted hover</div>
     </div>
     <div class="ds-type-row">
-      <div class="ds-type-label">Body</div>
-      <div class="ds-type-sample ds-type-body">Warm parchment, a single ink-blue accent, serif-led hierarchy, and hairline rules keep the daily grid calm across four sources.</div>
-      <div class="ds-type-specs"><b>17px</b> serif 400<br>line 1.7<br>antialiased</div>
+      <div class="ds-type-label">Body / UI</div>
+      <div class="ds-type-sample ds-type-body">Warm paper, a single ink accent, mono-led chrome and hairline rules keep the daily feed calm across four sources.</div>
+      <div class="ds-type-specs"><b>0.9375rem</b> mono 400<br>line 1.6<br>antialiased</div>
     </div>
     <div class="ds-type-row">
-      <div class="ds-type-label">Label · md</div>
-      <div class="ds-type-sample ds-type-label-md">Summaries · bylines · prose code</div>
-      <div class="ds-type-specs"><b>0.8rem</b> serif/mono<br>line 1.55</div>
+      <div class="ds-type-label">Reading</div>
+      <div class="ds-type-sample ds-type-label-md">Summaries · bylines · why-read notes</div>
+      <div class="ds-type-specs"><b>0.9375rem</b> serif italic<br>line 1.55</div>
     </div>
     <div class="ds-type-row">
-      <div class="ds-type-label">Label · sm</div>
+      <div class="ds-type-label">Label · ui</div>
       <div class="ds-type-sample ds-type-label-sm">NAVIGATION · EDITION DATE · BADGES</div>
-      <div class="ds-type-specs"><b>0.72rem</b> mono 600<br>letter +0.14em · uppercase</div>
+      <div class="ds-type-specs"><b>0.8125rem</b> mono 400<br>+0.04em · uppercase</div>
     </div>
     <div class="ds-type-row">
-      <div class="ds-type-label">Label · xs</div>
+      <div class="ds-type-label">Label · meta</div>
       <div class="ds-type-sample ds-type-label-xs">WHY READ · SCORES · FOOTER</div>
-      <div class="ds-type-specs"><b>0.64rem</b> mono 600<br>letter +0.12em · uppercase</div>
+      <div class="ds-type-specs"><b>0.8125rem</b> mono 400<br>+0.06em · uppercase</div>
     </div>
   </div>
 </section>
@@ -158,32 +152,32 @@
   <div class="ds-section-head">
     <p class="ds-section-num">04 · Rhythm &amp; Form</p>
     <h2 class="ds-section-title">Spacing &amp; Shape</h2>
-    <p class="ds-section-lede">A 4px mental base unit, tuned by hand at each scale. Cards rest on hairline rules and faint hover washes, never hard shadows.</p>
+    <p class="ds-section-lede">One responsive frame controls every outer alignment: fixed chrome rows share gutters with the content column.</p>
   </div>
 
   <table class="ds-space-table">
     <tr><th>Scale</th><th>Value</th><th>Use</th><th></th></tr>
-    <tr><td class="ds-name">xs</td><td class="ds-val">4px</td><td class="ds-use">Inline chips · focus gaps</td><td class="ds-bar"><span style="width:12px"></span></td></tr>
-    <tr><td class="ds-name">sm</td><td class="ds-val">6–8px</td><td class="ds-use">Story-top badges · badge gaps</td><td class="ds-bar"><span style="width:22px"></span></td></tr>
-    <tr><td class="ds-name">md</td><td class="ds-val">14–18px</td><td class="ds-use">Card padding · story grid gap</td><td class="ds-bar"><span style="width:48px"></span></td></tr>
-    <tr><td class="ds-name">lg</td><td class="ds-val">24px</td><td class="ds-use">Container padding · header gap</td><td class="ds-bar"><span style="width:72px"></span></td></tr>
-    <tr><td class="ds-name">xl</td><td class="ds-val">34–44px</td><td class="ds-use">Masthead · page-header top</td><td class="ds-bar"><span style="width:120px"></span></td></tr>
-    <tr><td class="ds-name">2xl</td><td class="ds-val">70px</td><td class="ds-use">Between major sections · footer</td><td class="ds-bar"><span style="width:200px"></span></td></tr>
+    <tr><td class="ds-name">frame-inline</td><td class="ds-val">75px</td><td class="ds-use">Shared gutter — header, footer, content (48/40/28px on smaller viewports)</td><td class="ds-bar"><span style="width:120px"></span></td></tr>
+    <tr><td class="ds-name">frame-block</td><td class="ds-val">56px</td><td class="ds-use">Chrome inset from viewport edges</td><td class="ds-bar"><span style="width:90px"></span></td></tr>
+    <tr><td class="ds-name">content-w</td><td class="ds-val">760px</td><td class="ds-use">Reading column cap; stories may widen to 920px</td><td class="ds-bar"><span style="width:200px"></span></td></tr>
+    <tr><td class="ds-name">md</td><td class="ds-val">14–20px</td><td class="ds-use">Card padding · grid gap</td><td class="ds-bar"><span style="width:28px"></span></td></tr>
+    <tr><td class="ds-name">sm</td><td class="ds-val">4–10px</td><td class="ds-use">Chips · badges · inline gaps</td><td class="ds-bar"><span style="width:16px"></span></td></tr>
+    <tr><td class="ds-name">xs</td><td class="ds-val">1px</td><td class="ds-use">Hairline rules everywhere</td><td class="ds-bar"><span style="width:4px"></span></td></tr>
   </table>
 
   <h3 class="ds-subhead">Radii</h3>
   <div class="ds-radii">
-    <div class="ds-radius"><div class="ds-box" style="border-radius: 4px"></div><div class="ds-r"><b>4</b> px</div><div class="ds-label">Inline prose code</div></div>
-    <div class="ds-radius"><div class="ds-box" style="border-radius: 12px"></div><div class="ds-r"><b>12</b> px</div><div class="ds-label">Cards · code blocks</div></div>
-    <div class="ds-radius"><div class="ds-box" style="border-radius: 999px"></div><div class="ds-r"><b>999</b> px</div><div class="ds-label">Badges · chips · toggle</div></div>
+    <div class="ds-radius"><div class="ds-box" style="border-radius: 2px"></div><div class="ds-r"><b>2</b> px</div><div class="ds-label">Tags · badges · buttons</div></div>
+    <div class="ds-radius"><div class="ds-box" style="border-radius: 4px"></div><div class="ds-r"><b>4</b> px</div><div class="ds-label">Cards · panels · dropdowns</div></div>
+    <div class="ds-radius"><div class="ds-box" style="border-radius: 999px"></div><div class="ds-r"><b>999</b> px</div><div class="ds-label">Round icon controls only</div></div>
   </div>
 
   <h3 class="ds-subhead">Depth</h3>
-  <p class="ds-section-lede">No hard drop shadows. Depth comes from a faint top glow, whisper shadows on code, and accent-washed hover states.</p>
+  <p class="ds-section-lede">No shadows on surfaces. Depth comes from hairlines, the faint ink wash on hover, and a whisper of paper grain over the whole canvas.</p>
   <div class="ds-shadow-row">
-    <div class="ds-shadow-demo"><p class="ds-t">Glow</p><p class="ds-s">radial-gradient at 50% −120px<br>ink-blue at ~7% opacity</p></div>
-    <div class="ds-shadow-demo"><p class="ds-t">Whisper Shadow</p><p class="ds-s">0 12px 32px −14px rgba(35,36,31,0.22)<br>used on code blocks</p></div>
-    <div class="ds-shadow-demo"><p class="ds-t">Hover Wash</p><p class="ds-s">accent 6% fill · accent 18% border<br>the only card affordance</p></div>
+    <div class="ds-shadow-demo"><p class="ds-t">Grain</p><p class="ds-s">feTurbulence noise tile<br>at ~5% opacity, fixed</p></div>
+    <div class="ds-shadow-demo"><p class="ds-t">Hover Wash</p><p class="ds-s">ink at 3–5% fill<br>border deepens to line-strong</p></div>
+    <div class="ds-shadow-demo"><p class="ds-t">Panel Shadow</p><p class="ds-s">dropdowns only<br>0 12px 32px rgba(0,0,0,.12)</p></div>
   </div>
 </section>
 
@@ -198,7 +192,7 @@
   <div class="ds-comp-grid">
     <div class="ds-comp">
       <h3 class="ds-comp-title">Badges</h3>
-      <p class="ds-hint">mono 600 · 0.64rem · pill · per-source color pair</p>
+      <p class="ds-hint">mono 0.68rem · 2px tag · per-source color pair</p>
       <div class="ds-demo">
         {% for key, tag in source_tags.items() %}
         <span class="badge badge-{{ key }}">{{ tag }}</span>
@@ -208,7 +202,7 @@
 
     <div class="ds-comp">
       <h3 class="ds-comp-title">Filter Chips &amp; toggles</h3>
-      <p class="ds-hint">mono 0.72rem · pill · stroke icons · active = ink-blue fill · anchored right</p>
+      <p class="ds-hint">mono 0.8125rem · 2px tag · active = ink fill · anchored right</p>
       <div class="ds-demo" style="flex-direction: row; flex-wrap: wrap; gap: 8px; align-items: center;">
         <button class="chip is-active" type="button">All</button>
         {% for key, tag in source_tags.items() %}
@@ -231,7 +225,7 @@
 
     <div class="ds-comp">
       <h3 class="ds-comp-title">Links &amp; buttons</h3>
-      <p class="ds-hint">story-link is the primary CTA · breadcrumbs mark secondary nav · method tags mark verbs</p>
+      <p class="ds-hint">links inherit ink with dotted-underline hovers · method tags mark verbs</p>
       <div class="ds-demo">
         <span class="ds-stack">
           <a class="story-link" href="{{ base_path }}/">Read</a>
@@ -243,13 +237,13 @@
 
     <div class="ds-comp">
       <h3 class="ds-comp-title">Story card</h3>
-      <p class="ds-hint">transparent → accent wash on hover · display title · hairline rules</p>
+      <p class="ds-hint">hairline border · serif title · flat hover wash</p>
       <div class="ds-demo">
         <article class="story">
           <div class="story-top">
             <span class="badge badge-hn">HN</span>
           </div>
-          <h4 class="story-title"><a href="{{ base_path }}/">A story title set in Fraunces, clamped to three lines</a></h4>
+          <h4 class="story-title"><a href="{{ base_path }}/">A story title set in Source Serif, clamped to three lines</a></h4>
           <p class="story-by">by pseudonymous_submitter</p>
           <div class="story-foot">
             <a class="story-link" href="{{ base_path }}/">Read</a>
@@ -261,7 +255,7 @@
 
     <div class="ds-comp">
       <h3 class="ds-comp-title">Stat cards</h3>
-      <p class="ds-hint">display numeral · mono label · accent rule on hover</p>
+      <p class="ds-hint">serif numeral · mono label · hairline border</p>
       <div class="ds-demo">
         <div class="ds-statgrid">
           <div class="stat-card">
@@ -278,7 +272,7 @@
 
     <div class="ds-comp">
       <h3 class="ds-comp-title">Code block</h3>
-      <p class="ds-hint">card surface · hairline border · 12px radius · mono 0.82rem</p>
+      <p class="ds-hint">transparent paper · hairline border · 4px radius · mono 0.78rem</p>
       <div class="ds-demo">
         <pre class="code-block">$ uv run python scripts/build_site.py --base-path {{ base_path or "/catnews" }}
 [catnews] built 4 snapshots (65 stories) -> site/</pre>
@@ -296,15 +290,15 @@
   </div>
   <table class="ds-decision">
     <tr><th>Task</th><th>How</th></tr>
-    <tr><td class="ds-task">Primary text</td><td class="ds-how"><code>var(--ink)</code> on <code>var(--paper)</code>, serif 400</td></tr>
-    <tr><td class="ds-task">A link</td><td class="ds-how"><code>var(--accent)</code>, hover <code>var(--accent-deep)</code></td></tr>
-    <tr><td class="ds-task">Emphasize a number</td><td class="ds-how">Fraunces 560–620, tabular-nums, not bold</td></tr>
-    <tr><td class="ds-task">Label something</td><td class="ds-how">mono 600, uppercase, +0.12em letter-spacing, muted/faint</td></tr>
-    <tr><td class="ds-task">Tag a source</td><td class="ds-how"><code>badge badge-&lt;source&gt;</code>, palette color in source order</td></tr>
-    <tr><td class="ds-task">Filter the feed</td><td class="ds-how">chip pill, <code>.is-active</code> fills ink-blue</td></tr>
-    <tr><td class="ds-task">Separate sections</td><td class="ds-how">hairline <code>var(--line)</code>, or the 40px accent rule under page headers</td></tr>
-    <tr><td class="ds-task">Show code</td><td class="ds-how"><code>.code-block</code>, card surface, hairline border, mono</td></tr>
-    <tr><td class="ds-task">Hover affordance</td><td class="ds-how">accent 6% wash + accent 18% border, never a drop shadow</td></tr>
+    <tr><td class="ds-task">Primary text</td><td class="ds-how"><code>var(--ink)</code> on <code>var(--paper)</code>, Departure Mono 400</td></tr>
+    <tr><td class="ds-task">A link</td><td class="ds-how">inherits ink; hover shows a <em>dotted underline</em></td></tr>
+    <tr><td class="ds-task">Emphasize a number</td><td class="ds-how">Source Serif 600, tabular-nums, not bold</td></tr>
+    <tr><td class="ds-task">Label something</td><td class="ds-how">mono 400, uppercase, +0.04–0.08em tracking, muted/faint</td></tr>
+    <tr><td class="ds-task">Tag a source</td><td class="ds-how"><code>badge badge-&lt;source&gt;</code>, palette color as text on a 2px bordered tag</td></tr>
+    <tr><td class="ds-task">Filter the feed</td><td class="ds-how">chip tag, <code>.is-active</code> fills ink</td></tr>
+    <tr><td class="ds-task">Separate sections</td><td class="ds-how">hairline <code>var(--line)</code> — never a shadow</td></tr>
+    <tr><td class="ds-task">Show code</td><td class="ds-how"><code>.code-block</code>, hairline border, mono</td></tr>
+    <tr><td class="ds-task">Hover affordance</td><td class="ds-how">ink 3–5% wash + deeper hairline; dotted underline for text</td></tr>
   </table>
 </section>
 
@@ -320,29 +314,29 @@
     <div class="ds-anti-row">
       <p class="ds-anti-topic">Page canvas</p>
       <div class="ds-anti-pair">
-        <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>Pure white or cool gray as the page background. It makes the warmth of the parchment feel brittle.</span></p>
-        <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>Always warm parchment (<code>var(--paper)</code>), with the matching <code>data-theme="dark"</code> or the OLED <code>data-theme="pitch"</code>.</span></p>
+        <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>Pure white or cool gray as the page background. It makes the warmth of the paper feel brittle.</span></p>
+        <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>Always warm paper (<code>var(--paper)</code>), with the matching <code>data-theme="dark"</code> or the OLED <code>data-theme="pitch"</code>.</span></p>
       </div>
     </div>
     <div class="ds-anti-row">
       <p class="ds-anti-topic">Accent</p>
       <div class="ds-anti-pair">
-        <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>A second chromatic accent color competing with ink blue.</span></p>
-        <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>One accent; let the source-badge palette carry the only other color, assigned from the fixed 12.</span></p>
+        <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>A chromatic accent color competing with the ink. The page is monochrome.</span></p>
+        <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>Ink is the accent. Let the source-badge palette carry the only other color, assigned from the fixed 12.</span></p>
       </div>
     </div>
     <div class="ds-anti-row">
       <p class="ds-anti-topic">Grays</p>
       <div class="ds-anti-pair">
         <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>Cool blue-grays (<code>#6b7280</code>, <code>#f3f4f6</code>). They clash with the warm undertone.</span></p>
-        <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>Use the warm ramp: ink → ink-soft → muted → faint, all yellow-brown undertoned.</span></p>
+        <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>Use the warm alpha ramp of ink: ink → ink-soft → muted → faint.</span></p>
       </div>
     </div>
     <div class="ds-anti-row">
-      <p class="ds-anti-topic">Shadows</p>
+      <p class="ds-anti-topic">Shadows &amp; fills</p>
       <div class="ds-anti-pair">
-        <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>Hard drop shadows to lift cards above the page.</span></p>
-        <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>A faint glow, whisper shadow on code, or the accent hover wash. Depth from restraint.</span></p>
+        <p class="ds-anti-line never"><span class="ds-cue">Never</span><span>Drop shadows to lift cards, frosted panels, or filled pill badges.</span></p>
+        <p class="ds-anti-line instead"><span class="ds-cue">Instead</span><span>Hairlines and the faint hover wash. Dropdowns may cast one soft shadow — nothing else.</span></p>
       </div>
     </div>
   </div>

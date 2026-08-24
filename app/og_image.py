@@ -6,9 +6,9 @@ import zlib
 WIDTH = 1200
 HEIGHT = 630
 
-PAPER = (245, 244, 237)
-INK = (35, 36, 31)
-INK_SOFT = (63, 65, 58)
+PAPER = (250, 249, 246)
+INK = (53, 52, 49)
+INK_SOFT = (107, 105, 99)
 
 _TEXT = "CATNEWS"
 _WORDMARK_SCALE = 8

@@ -255,7 +255,12 @@ def source_accent_rgb(key: str) -> tuple[int, int, int]:
 
 
 def badge_css() -> str:
-    """CSS custom-property + class rules for every source badge (light & dark)."""
+    """CSS custom-property + class rules for every source badge (light & dark).
+
+    Badges are flat ink-on-paper tags: the palette supplies text color only,
+    and the border derives from ``currentColor`` in style.css. Background
+    tokens stay defined for the OG card renderer.
+    """
     light: list[str] = [":root {"]
     dark: list[str] = ['[data-theme="dark"], [data-theme="pitch"] {']
     rules: list[str] = []
@@ -265,10 +270,7 @@ def badge_css() -> str:
         light.append(f"  --badge-{key}-bg: {bg};")
         dark.append(f"  --badge-{key}: {dark_fg};")
         dark.append(f"  --badge-{key}-bg: {dark_bg};")
-        rules.append(
-            f".badge-{key} {{ color: var(--badge-{key}); "
-            f"background: var(--badge-{key}-bg); }}"
-        )
+        rules.append(f".badge-{key} {{ color: var(--badge-{key}); }}")
     light.append("}")
     dark.append("}")
     return "\n".join(light + dark + rules)

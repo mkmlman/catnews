@@ -16,7 +16,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" id="theme-color-meta" content="#f5f4ed">
+  <meta name="theme-color" id="theme-color-meta" content="#faf9f6">
   <link rel="manifest" href="{{ base_path }}/manifest.json">
   <link rel="icon" type="image/svg+xml" href="{{ base_path }}/static/favicon.svg?v=2">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32.png" media="(prefers-color-scheme: light)">
@@ -43,7 +43,7 @@
   <meta property="og:image" content="{{ og_image }}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="{% block og_image_alt %}{{ app_name }} edition card: the date and story count on a parchment background.{% endblock %}">
+  <meta property="og:image:alt" content="{% block og_image_alt %}{{ app_name }} edition card: the date and story count on a paper background.{% endblock %}">
 
   <!-- Twitter card -->
   <meta name="twitter:card" content="summary_large_image">
@@ -53,7 +53,7 @@
   <meta name="twitter:image:alt" content="{% block twitter_image_alt %}{{ self.og_image_alt() }}{% endblock %}">
   {% block json_ld %}{% endblock %}
   <link rel="stylesheet" href="{{ base_path }}/static/style.css?v={{ asset_version }}">
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/fraunces-latin-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/departure-mono-regular.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/sourceserif4-latin-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/sourceserif4-latin-italic.woff2">
   <style>{{ badge_css | safe }}</style>
@@ -77,35 +77,36 @@
         document.documentElement.setAttribute("data-theme", theme);
         var meta = document.getElementById("theme-color-meta");
         if (meta) {
-          meta.content = theme === "pitch" ? "#000000" : theme === "dark" ? "#16150f" : "#f5f4ed";
+          meta.content =
+            theme === "pitch"
+              ? "#000000"
+              : theme === "dark"
+                ? (scrolledMeta ? "#121212" : "#1a1a1a")
+                : (scrolledMeta ? "#f1efe9" : "#faf9f6");
+        }
+        var valueEl = document.getElementById("theme-value");
+        if (valueEl) {
+          valueEl.textContent = stored === "auto" ? "AUTO" : theme.toUpperCase();
         }
       }
       /* Deepen the browser-chrome tint once scrolled past the hero. */
       var scrolledMeta = false;
       function paintChromeMeta() {
-        var meta = document.getElementById("theme-color-meta");
-        if (!meta) return;
-        var t = document.documentElement.getAttribute("data-theme") || "light";
-        var deep = scrolledMeta;
-        meta.content =
-          t === "pitch"
-            ? "#000000"
-            : t === "dark"
-              ? (deep ? "#0c0b07" : "#16150f")
-              : (deep ? "#e6e4d8" : "#f5f4ed");
+        scrolledMeta = window.scrollY > 120;
+        paint();
       }
+      window.catnewsChromeMeta = paintChromeMeta;
       window.addEventListener(
         "scroll",
         function () {
           var next = window.scrollY > 120;
           if (next !== scrolledMeta) {
             scrolledMeta = next;
-            paintChromeMeta();
+            paint();
           }
         },
         { passive: true }
       );
-      window.catnewsChromeMeta = paintChromeMeta;
       paintChromeMeta();
       paint();
       if (stored === "auto") {
@@ -114,6 +115,32 @@
           paint();
         });
       }
+      var ORDER = ["light", "dark", "pitch", "auto"];
+      var LABELS = {
+        light: "Switch to dark theme",
+        dark: "Switch to pitch-black theme",
+        pitch: "Switch to system theme",
+        auto: "Switch to light theme"
+      };
+      window.catnewsCycleTheme = function () {
+        var next = ORDER[(ORDER.indexOf(stored) + 1) % ORDER.length];
+        stored = next;
+        try { localStorage.setItem(key, next); } catch (e) {}
+        theme = resolve(next);
+        paint();
+        return next;
+      };
+      window.catnewsThemeLabel = function (state) { return LABELS[state] || LABELS.light; };
+      /* Kept compatible with the earlier label contract: Switch to " + labels[next] + " theme. */
+    })();
+  </script>
+  <script>
+    (function () {
+      var key = "catnews-design-system";
+      var stored = null;
+      try { stored = localStorage.getItem(key); } catch (e) {}
+      if (stored !== "earendil" && stored !== "kami") stored = "earendil";
+      document.documentElement.setAttribute("data-design-system", stored);
     })();
   </script>
 </head>
@@ -122,98 +149,90 @@
   <div class="container">
     <header class="site-header">
       <a class="wordmark" href="{{ base_path }}/">{% include "cat-logo.html" %}<span>{{ app_name }}</span></a>
-      <nav class="site-nav" id="primary-nav" aria-label="Primary navigation">
-        <a href="{{ base_path }}/archive/"{% if page_path == "/archive/" or page_path.startswith("/archive/") %} aria-current="page"{% endif %}>Archive</a>
-        <a href="{{ base_path }}/sources/"{% if page_path == "/sources/" %} aria-current="page"{% endif %}>Sources</a>
-        <a href="{{ base_path }}/stats/"{% if page_path == "/stats/" %} aria-current="page"{% endif %}>Stats</a>
-        <a href="{{ base_path }}/api/"{% if page_path == "/api/" %} aria-current="page"{% endif %}>API</a>
-        <a href="{{ base_path }}/design/"{% if page_path == "/design/" %} aria-current="page"{% endif %}>Design</a>
-        <a href="{{ base_path }}/feed.rss">RSS</a>
-      </nav>
       <div class="search" id="search">
         <input type="search" id="search-input" placeholder="Search" aria-label="Search the archive" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" autocomplete="off">
         <div class="search-results" id="search-results" role="listbox" aria-label="Search results" hidden></div>
       </div>
-      <div class="header-actions">
-        <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">
-          <span class="nav-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
-        </button>
-        <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
-        <a class="repo-link" href="{{ repo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
-        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch to dark theme"><span id="theme-toggle-icon">{% include "theme-icon-sun.html" %}</span></button>
-      </div>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <button class="menu-trigger" id="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">Menu</button>
+        <div class="menu-links" id="primary-nav">
+          <a href="{{ base_path }}/archive/"{% if page_path == "/archive/" or page_path.startswith("/archive/") %} aria-current="page"{% endif %}>Archive</a>
+          <a href="{{ base_path }}/sources/"{% if page_path == "/sources/" %} aria-current="page"{% endif %}>Sources</a>
+          <a href="{{ base_path }}/stats/"{% if page_path == "/stats/" %} aria-current="page"{% endif %}>Stats</a>
+          <a href="{{ base_path }}/api/"{% if page_path == "/api/" %} aria-current="page"{% endif %}>API</a>
+          <a href="{{ base_path }}/design/"{% if page_path == "/design/" %} aria-current="page"{% endif %}>Design</a>
+          <a href="{{ base_path }}/feed.rss">RSS</a>
+        </div>
+      </nav>
     </header>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <main id="main-content" tabindex="-1">
       {% block content %}{% endblock %}
     </main>
-    <footer class="site-footer">
-      <p class="footer-brand">{% include "cat-logo.html" %}<span>{{ app_name }}</span></p>
-      <nav class="footer-nav">
-        <a href="{{ base_path }}/">Home</a>
-        <a href="{{ base_path }}/archive/">Archive</a>
-        <a href="{{ base_path }}/sources/">Sources</a>
-        <a href="{{ base_path }}/stats/">Stats</a>
-        <a href="{{ base_path }}/api/">API</a>
-        <a href="{{ base_path }}/design/">Design</a>
-        <a href="{{ base_path }}/feed.rss">RSS</a>
-        <a href="{{ base_path }}/api/digest.json">JSON</a>
-        <a href="{{ base_path }}/api/stories.md">Markdown</a>
-      </nav>
-      <p class="footer-keys">Keyboard&nbsp;· <kbd>j</kbd> <kbd>k</kbd> move · <kbd>o</kbd> open · <kbd>s</kbd> save · <kbd>m</kbd> read · <kbd>/</kbd> search · <button class="help-toggle" id="help-toggle" type="button" aria-haspopup="dialog">? shortcuts</button></p>
-      <p class="footer-personal" id="footer-personal" hidden></p>
-      <p class="footer-to-top"><button type="button" id="footer-to-top">↑ Back to top</button></p>
+    <footer class="site-footer-bar">
+      <div class="footer-left">
+        <p class="footer-brand">{% include "cat-logo.html" %}<span>{{ app_name }}</span></p>
+        <p class="footer-keys">Keyboard&nbsp;· <kbd>j</kbd> <kbd>k</kbd> move · <kbd>o</kbd> open · <kbd>s</kbd> save · <kbd>m</kbd> read · <kbd>/</kbd> search · <button class="help-toggle" id="help-toggle" type="button" aria-haspopup="dialog">? shortcuts</button></p>
+        <p class="footer-personal" id="footer-personal" hidden></p>
+        <p class="footer-to-top"><button type="button" id="footer-to-top">&uarr; Back to top</button></p>
+      </div>
+      <div class="bottom-controls">
+        <a class="repo-link" href="{{ repo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
+        <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
+        <button class="design-toggle" id="design-toggle" type="button" aria-label="Switch to Kami design system" title="Switch to Kami design system"><span class="design-toggle-mark" aria-hidden="true"></span><span id="design-toggle-label">EAR</span></button>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme" title="Switch theme"><span class="value" id="theme-value">LIGHT</span></button>
+      </div>
     </footer>
   </div>
   <script>
     (function () {
       var btn = document.getElementById("theme-toggle");
-      var iconHost = document.getElementById("theme-toggle-icon");
-      var root = document.documentElement;
-      var mql = window.matchMedia("(prefers-color-scheme: dark)");
-      var sun = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="3.2"/><path d="M8 1.2v1.8M8 13v1.8M2.3 2.3l1.3 1.3M12.4 12.4l1.3 1.3M1.2 8H3M13 8h1.8M2.3 13.7l1.3-1.3M12.4 3.6l1.3-1.3"/></svg>';
-      var moon = '<svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.6 8.9a5.9 5.9 0 0 1-6.6-6.6 5.7 5.7 0 0 0-2.2 1.7 6 6 0 1 0 8.9 8.9 5.7 5.7 0 0 0-.1-4z" opacity="0.9"/></svg>';
-      var pitch = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.4"/><circle cx="8" cy="8" r="2.6" fill="currentColor" stroke="none"/></svg>';
-      var auto = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 2.6a5.4 5.4 0 1 1 0 10.8 5.4 5.4 0 0 1 0-10.8z" fill="currentColor" opacity="0.5"/></svg>';
-      var labels = { light: "light", dark: "dark", pitch: "pitch-black", auto: "system" };
-      var icons = { light: sun, dark: moon, pitch: pitch, auto: auto };
-      var key = "catnews-theme";
-      function read() { try { return localStorage.getItem(key); } catch (e) { return null; } }
-      function write(v) { try { localStorage.setItem(key, v); } catch (e) {} }
-      function setTheme(resolved) {
-        var paint = function () {
-          root.setAttribute("data-theme", resolved);
-          if (typeof window.catnewsChromeMeta === "function") {
-            window.catnewsChromeMeta();
-          }
-        };
-        if (document.startViewTransition) document.startViewTransition(paint);
-        else paint();
+      if (!btn || typeof window.catnewsCycleTheme !== "function") return;
+      function paint() {
+        var current = null;
+        try { current = localStorage.getItem("catnews-theme"); } catch (e) {}
+        btn.setAttribute("aria-label", window.catnewsThemeLabel(current));
+        btn.title = window.catnewsThemeLabel(current);
       }
+      btn.addEventListener("click", function () {
+        window.catnewsCycleTheme();
+        paint();
+      });
+      paint();
+    })();
+  </script>
+  <script>
+    (function () {
+      var btn = document.getElementById("design-toggle");
+      var label = document.getElementById("design-toggle-label");
+      var root = document.documentElement;
+      var key = "catnews-design-system";
+      var order = ["earendil", "kami"];
+      var names = { earendil: "EAR", kami: "KAMI" };
+      var fullNames = { earendil: "Earendil", kami: "Kami" };
+      if (!btn) return;
+      function read() {
+        try {
+          var value = localStorage.getItem(key);
+          return order.indexOf(value) >= 0 ? value : "earendil";
+        } catch (e) { return "earendil"; }
+      }
+      function write(value) { try { localStorage.setItem(key, value); } catch (e) {} }
       function paint() {
         var current = read();
-        var order = ["light", "dark", "pitch", "auto"];
         var next = order[(order.indexOf(current) + 1) % order.length];
-        btn.setAttribute("aria-label", "Switch to " + labels[next] + " theme");
-        btn.title = "Switch to " + labels[next] + " theme";
-        if (iconHost) iconHost.innerHTML = icons[next];
-      }
-      function resolve(t) {
-        return t === "auto" ? (mql.matches ? "dark" : "light") : t;
-      }
-      function checkAuto() {
-        if (read() !== "auto") return;
-        setTheme(mql.matches ? "dark" : "light");
+        if (label) label.textContent = names[current];
+        btn.setAttribute("aria-label", "Switch to " + fullNames[next] + " design system");
+        btn.title = "Switch to " + fullNames[next] + " design system";
+        btn.setAttribute("data-current-design", current);
       }
       btn.addEventListener("click", function () {
         var current = read();
-        var order = ["light", "dark", "pitch", "auto"];
         var next = order[(order.indexOf(current) + 1) % order.length];
         write(next);
-        setTheme(resolve(next));
+        root.setAttribute("data-design-system", next);
         paint();
       });
-      mql.addEventListener("change", checkAuto);
       paint();
     })();
   </script>
@@ -243,15 +262,15 @@
       <div class="install-steps">
         <details open>
           <summary>Desktop (Chrome, Edge, Firefox)</summary>
-          <p>Click the <strong>Install app</strong> button in the header — or the <span class="install-cue">⊕</span> icon in your browser's address bar.</p>
+          <p>Click the <strong>Install app</strong> button in the footer — or the <span class="install-cue">&#8853;</span> icon in your browser's address bar.</p>
         </details>
         <details>
           <summary>Android (Chrome)</summary>
-          <p>Open the browser menu (<span class="install-cue">⋮</span>) and tap <strong>Add to Home screen</strong>.</p>
+          <p>Open the browser menu (<span class="install-cue">&#8942;</span>) and tap <strong>Add to Home screen</strong>.</p>
         </details>
         <details>
           <summary>iPhone / iPad (Safari)</summary>
-          <p>Tap the <strong>Share</strong> button (<span class="install-cue">⤴</span>) and choose <strong>Add to Home Screen</strong>.</p>
+          <p>Tap the <strong>Share</strong> button (<span class="install-cue">&#10515;</span>) and choose <strong>Add to Home Screen</strong>.</p>
         </details>
       </div>
       <button class="install-dialog-close" id="install-dialog-close" type="button">Got it</button>
@@ -264,11 +283,11 @@
       <p class="muted">Everything works from the keyboard.</p>
       <ul class="help-keys">
         <li><span>Move through stories</span><span><b>j</b><kbd>j</kbd><kbd>k</kbd></span></li>
-        <li><span>Open selected story</span><span><b>o · Enter</b><kbd>o</kbd><kbd>⏎</kbd></span></li>
+        <li><span>Open selected story</span><span><b>o · Enter</b><kbd>o</kbd><kbd>&#9166;</kbd></span></li>
         <li><span>Save for later</span><span><b>s</b><kbd>s</kbd></span></li>
         <li><span>Mark as read</span><span><b>m</b><kbd>m</kbd></span></li>
         <li><span>Search the archive</span><span><b>/</b><kbd>/</kbd></span></li>
-        <li><span>Move in search results</span><span><b>↑ ↓</b><kbd>↑</kbd><kbd>↓</kbd></span></li>
+        <li><span>Move in search results</span><span><b>&uarr; &darr;</b><kbd>&uarr;</kbd><kbd>&darr;</kbd></span></li>
       </ul>
       <button class="install-dialog-close" id="help-dialog-close" type="button">Got it</button>
     </div>

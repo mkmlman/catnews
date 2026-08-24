@@ -49,13 +49,15 @@
 </div>
 
 <div class="filters" id="filters">
-  <div class="filter-scroll">
-    <div class="filter-row filter-row--sources" role="group" aria-labelledby="source-filter-label">
-      <span class="filter-label" id="source-filter-label">Source</span>
-      <button class="chip is-active" type="button" data-source="All" aria-pressed="true" aria-controls="stories">All<span class="chip-count">{{ ns.counts.values() | sum }}</span></button>
-      {% for key, tag in source_tags.items() %}
-      <button class="chip" type="button" data-source="{{ key }}" aria-pressed="false" aria-controls="stories">{{ tag }}<span class="chip-count">{{ ns.counts.get(key, 0) }}</span></button>
-      {% endfor %}
+      <div class="filter-scroll">
+      <div class="filter-row filter-row--sources" role="group" aria-labelledby="source-filter-label">
+        <span class="filter-label" id="source-filter-label">Source</span>
+      <span class="source-options">
+        <button class="chip is-active" type="button" data-source="All" aria-pressed="true" aria-controls="stories">All<span class="chip-count">{{ ns.counts.values() | sum }}</span></button>
+        {% for key, tag in source_tags.items() %}
+        <button class="chip" type="button" data-source="{{ key }}" aria-pressed="false" aria-controls="stories">{{ tag }}<span class="chip-count">{{ ns.counts.get(key, 0) }}</span></button>
+        {% endfor %}
+      </span>
       <span class="filter-actions">
         <span class="view-toggle" role="group" aria-label="Story layout">
           <button class="chip view-btn view-btn--grid is-active" type="button" data-view="grid" aria-pressed="true" aria-label="Card grid view" title="Card grid view">

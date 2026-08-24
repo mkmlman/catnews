@@ -422,8 +422,8 @@ def render_manifest() -> str:
         "display": "standalone",
         "display_override": ["standalone", "minimal-ui"],
         "id": "./",
-        "background_color": "#f5f4ed",
-        "theme_color": "#f5f4ed",
+        "background_color": "#faf9f6",
+        "theme_color": "#faf9f6",
         "icons": [
             {
                 "src": "./static/favicon.svg",

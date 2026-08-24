@@ -92,6 +92,7 @@
     siteHeader.classList.toggle("nav-open", open);
     navToggle.setAttribute("aria-expanded", open ? "true" : "false");
     navToggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+    paintStickyOffsets();
   }
 
   if (navToggle) {
@@ -187,7 +188,8 @@
 
   function paintStickyOffsets() {
     if (!headerEl) return;
-    var h = desktopMq.matches ? headerEl.offsetHeight : 0;
+    /* Both mobile headers occupy space while the filters stay sticky. */
+    var h = headerEl.offsetHeight;
     document.documentElement.style.setProperty("--header-h", h + "px");
   }
 

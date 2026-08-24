@@ -1831,7 +1831,7 @@ def test_manifest_theme_color_matches_page_background():
     from app.render import render_manifest
 
     data = json.loads(render_manifest())
-    assert data["theme_color"] == data["background_color"] == "#f5f4ed"
+    assert data["theme_color"] == data["background_color"] == "#faf9f6"
     assert data["id"] == "./"
     assert data["display_override"] == ["standalone", "minimal-ui"]
     assert all(icon.get("purpose") == "any" for icon in data["icons"])
