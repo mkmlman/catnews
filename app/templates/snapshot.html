@@ -17,10 +17,10 @@
 {% if prev_snapshot or next_snapshot %}
 <nav class="snapshot-nav" aria-label="Edition navigation">
   {% if prev_snapshot %}
-  <a class="snapshot-nav-link" href="{{ base_path }}/archive/{{ snapshot.source }}/{{ prev_snapshot.date.isoformat() }}/" aria-label="Previous snapshot: {{ prev_snapshot.date.strftime("%B %d, %Y") }}"><span aria-hidden="true">←</span> {{ prev_snapshot.date.strftime("%b %d, %Y") }}</a>
+  <a class="snapshot-nav-link" rel="prev" href="{{ base_path }}/archive/{{ snapshot.source }}/{{ prev_snapshot.date.isoformat() }}/" aria-label="Previous snapshot: {{ prev_snapshot.date.strftime("%B %d, %Y") }}"><span aria-hidden="true">←</span> {{ prev_snapshot.date.strftime("%b %d, %Y") }}</a>
   {% else %}<span class="snapshot-nav-spacer"></span>{% endif %}
   {% if next_snapshot %}
-  <a class="snapshot-nav-link" href="{{ base_path }}/archive/{{ snapshot.source }}/{{ next_snapshot.date.isoformat() }}/" aria-label="Next snapshot: {{ next_snapshot.date.strftime("%B %d, %Y") }}">{{ next_snapshot.date.strftime("%b %d, %Y") }} <span aria-hidden="true">→</span></a>
+  <a class="snapshot-nav-link" rel="next" href="{{ base_path }}/archive/{{ snapshot.source }}/{{ next_snapshot.date.isoformat() }}/" aria-label="Next snapshot: {{ next_snapshot.date.strftime("%B %d, %Y") }}">{{ next_snapshot.date.strftime("%b %d, %Y") }} <span aria-hidden="true">→</span></a>
   {% else %}<span class="snapshot-nav-spacer"></span>{% endif %}
 </nav>
 {% endif %}

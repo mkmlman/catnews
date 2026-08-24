@@ -1057,6 +1057,20 @@
       openHelp();
       return;
     }
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      if (!event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+        var editionLink = document.querySelector(
+          ".snapshot-nav-link[rel='" +
+            (event.key === "ArrowLeft" ? "prev" : "next") +
+            "']"
+        );
+        if (editionLink) {
+          event.preventDefault();
+          editionLink.click();
+          return;
+        }
+      }
+    }
     if (list.length === 0) return;
 
     if (event.key === "j" || event.key === "k") {

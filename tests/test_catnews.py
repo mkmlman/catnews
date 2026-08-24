@@ -887,6 +887,49 @@ def test_base_theme_toggle_cycles_through_all_states():
     assert "catnewsChromeMeta" in base
 
 
+def test_css_defines_radius_tokens():
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    assert "--radius-sm:" in css
+    assert "--radius-pill:" in css
+    assert css.count("var(--radius-sm)") > 10
+    assert css.count("var(--radius-pill)") > 5
+    assert "border-radius: 2px;" not in css
+
+
+def test_base_has_theme_picker_menu():
+    base = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
+    ).read_text()
+    assert 'id="theme-menu"' in base
+    assert 'data-theme-option="pitch"' in base
+    assert "catnewsSetTheme" in base
+
+
+def test_desktop_nav_is_inline():
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    assert ".js .menu-trigger { display: none; }" in css
+    assert "@media (min-width: 861px)" in css
+
+
+def test_story_cards_use_content_visibility():
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    assert "content-visibility: auto;" in css
+
+
+def test_print_stylesheet_exists():
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    assert "@media print" in css
+    assert ".story-title a::after" in css
+
+
 def test_get_fetcher_rss_and_api():
     from app.fetchers import get_fetcher
 

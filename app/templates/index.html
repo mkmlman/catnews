@@ -22,10 +22,13 @@
 {% for story in digest.stories %}
 {% if ns.counts.update({story.source: ns.counts.get(story.source, 0) + 1}) %}{% endif %}
 {% endfor %}
-<section class="hero">
+<section class="hero hero--ticks">
   <h1 class="sr-only">{{ app_name }} — {{ digest.date.strftime("%B %d, %Y") }}</h1>
   <p class="edition-label">{{ digest.date.strftime("%B %d, %Y") }}</p>
   <p class="edition-sub">{{ digest.stories | length }} stor{{ "y" if digest.stories | length == 1 else "ies" }}{% if freshness.latest_snapshot and freshness.latest_snapshot < digest.date %} · sources through {{ freshness.latest_snapshot.strftime("%b %d, %Y") }}{% endif %}</p>
+  <div class="hero-ticks" aria-hidden="true">
+    {% for key in source_tags %}<span class="badge-{{ key }}"></span>{% endfor %}
+  </div>
 </section>
 
 {% if freshness.has_issues %}
