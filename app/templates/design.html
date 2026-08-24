@@ -341,6 +341,35 @@
     </div>
   </div>
 </section>
+
+<!-- ============ 08 COMPANION MODE ============ -->
+<section class="ds-section">
+  <div class="ds-section-head">
+    <p class="ds-section-num">08 · Companion Mode</p>
+    <h2 class="ds-section-title">Kami</h2>
+    <p class="ds-section-lede">The parchment companion system: serif-led reading type, an ink-blue accent, rounded surfaces, and a compact sticky header. Flip it with the DESIGN control in the footer — every rule above still applies, with these substitutions.</p>
+  </div>
+
+  <h3 class="ds-subhead">Tokens</h3>
+  <div class="ds-swatches">
+    <div class="ds-swatch"><div class="ds-chip" style="background: #f5f4ed"></div><div class="ds-info"><p class="ds-name">Paper</p><p class="ds-role">Warm parchment canvas</p><span class="ds-hex">#f5f4ed</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: #23241f"></div><div class="ds-info"><p class="ds-name">Ink</p><p class="ds-role">Primary text · deep olive-black</p><span class="ds-hex">#23241f</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: #1b365d"></div><div class="ds-info"><p class="ds-name">Accent</p><p class="ds-role">Ink-blue · links, active chips, focus rings — the only chroma</p><span class="ds-hex">#1b365d</span></div></div>
+    <div class="ds-swatch"><div class="ds-chip" style="background: #cfcdc0"></div><div class="ds-info"><p class="ds-name">Line Strong</p><p class="ds-role">Solid hairlines · inputs · table heads</p><span class="ds-hex">#cfcdc0</span></div></div>
+  </div>
+
+  <h3 class="ds-subhead">Substitutions</h3>
+  <table class="ds-decision">
+    <tr><th>Token</th><th>Earendil</th><th>Kami</th></tr>
+    <tr><td class="ds-task">UI mono</td><td class="ds-how">Departure Mono (self-hosted)</td><td class="ds-how">system <code>ui-monospace</code> stack</td></tr>
+    <tr><td class="ds-task">Display serif</td><td class="ds-how">Source Serif italic</td><td class="ds-how">Fraunces 600, tight tracking</td></tr>
+    <tr><td class="ds-task">Body size</td><td class="ds-how">0.9375rem mono-led</td><td class="ds-how">17px serif, line-height 1.7</td></tr>
+    <tr><td class="ds-task">Radius</td><td class="ds-how">4px hairline squares</td><td class="ds-how">12px rounds, pill chips &amp; badges</td></tr>
+    <tr><td class="ds-task">Chrome</td><td class="ds-how">fixed masthead in a frame gutter</td><td class="ds-how">sticky frosted bar with inline nav</td></tr>
+    <tr><td class="ds-task">Hover</td><td class="ds-how">ink wash + dotted underline</td><td class="ds-how">accent wash + soft lift shadow</td></tr>
+    <tr><td class="ds-task">Progress bar</td><td class="ds-how">ink hairline</td><td class="ds-how">accent blue</td></tr>
+  </table>
+</section>
 {% endblock %}
 
 {% block scripts %}
@@ -355,7 +384,7 @@
       });
     }
     paint();
-    new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+    new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ["data-theme", "data-design-system"] });
   })();
 </script>
 {% endblock %}

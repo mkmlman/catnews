@@ -209,10 +209,11 @@
     var y = window.scrollY;
     headerEl.classList.toggle("is-scrolled", y > 8);
 
-    var isEarDesktop =
-      desktopMq.matches && document.documentElement.getAttribute("data-design-system") === "earendil";
+    var design = document.documentElement.getAttribute("data-design-system");
+    var isDesktopChrome =
+      desktopMq.matches && (design === "earendil" || design === "kami");
     var movingDown = y > previousScrollY + 2;
-    if (isEarDesktop && !headerEl.classList.contains("nav-open")) {
+    if (isDesktopChrome && !headerEl.classList.contains("nav-open")) {
       if (y > 120 && movingDown) setHeaderCompact(true);
       /* Keep the compact reading chrome stable until the page is nearly home. */
       else if (y < 48) setHeaderCompact(false);

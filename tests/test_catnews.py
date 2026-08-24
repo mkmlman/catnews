@@ -875,7 +875,7 @@ def test_css_defines_pitch_black_palette():
         Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
     ).read_text()
     assert '[data-theme="pitch"]' in css
-    assert "--paper: #000000;" in css
+    assert "--paper: #0d0c0a;" in css
 
 
 def test_base_theme_toggle_cycles_through_all_states():

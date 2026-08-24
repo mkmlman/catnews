@@ -16,6 +16,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
+  <script>
+    (function () {
+      var key = "catnews-design-system";
+      var stored = null;
+      try { stored = localStorage.getItem(key); } catch (e) {}
+      if (stored !== "earendil" && stored !== "kami") stored = "earendil";
+      document.documentElement.setAttribute("data-design-system", stored);
+    })();
+  </script>
   <meta name="theme-color" id="theme-color-meta" content="#faf9f6">
   <link rel="manifest" href="{{ base_path }}/manifest.json">
   <link rel="icon" type="image/svg+xml" href="{{ base_path }}/static/favicon.svg?v=2">
@@ -53,9 +62,26 @@
   <meta name="twitter:image:alt" content="{% block twitter_image_alt %}{{ self.og_image_alt() }}{% endblock %}">
   {% block json_ld %}{% endblock %}
   <link rel="stylesheet" href="{{ base_path }}/static/style.css?v={{ asset_version }}">
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/departure-mono-regular.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/sourceserif4-latin-normal.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ base_path }}/static/fonts/sourceserif4-latin-italic.woff2">
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var fonts = {{ base_path | tojson }} + "/static/fonts/";
+      var preloads =
+        root.getAttribute("data-design-system") === "kami"
+          ? ["fraunces-latin-normal.woff2"]
+          : ["departure-mono-regular.woff2"];
+      preloads.push("sourceserif4-latin-normal.woff2", "sourceserif4-latin-italic.woff2");
+      preloads.forEach(function (file) {
+        var link = document.createElement("link");
+        link.rel = "preload";
+        link.as = "font";
+        link.type = "font/woff2";
+        link.crossOrigin = "";
+        link.href = fonts + file;
+        document.head.appendChild(link);
+      });
+    })();
+  </script>
   <style>{{ badge_css | safe }}</style>
   <script>
     (function () {
@@ -77,12 +103,20 @@
         document.documentElement.setAttribute("data-theme", theme);
         var meta = document.getElementById("theme-color-meta");
         if (meta) {
+          var design = "earendil";
+          try {
+            var storedDesign = localStorage.getItem("catnews-design-system");
+            if (storedDesign === "kami") design = "kami";
+          } catch (e) {}
+          var lightTop = design === "kami" ? "#f5f4ed" : "#faf9f6";
+          var lightScrolled = design === "kami" ? "#efeee7" : "#f1efe9";
+          var darkTop = design === "kami" ? "#16150f" : "#1a1a1a";
           meta.content =
             theme === "pitch"
-              ? "#000000"
+              ? "#0d0c0a"
               : theme === "dark"
-                ? (scrolledMeta ? "#121212" : "#1a1a1a")
-                : (scrolledMeta ? "#f1efe9" : "#faf9f6");
+                ? (scrolledMeta ? "#121212" : darkTop)
+                : (scrolledMeta ? lightScrolled : lightTop);
         }
         var valueEl = document.getElementById("theme-value");
         if (valueEl) {
@@ -122,25 +156,19 @@
         pitch: "Switch to system theme",
         auto: "Switch to light theme"
       };
-      window.catnewsCycleTheme = function () {
-        var next = ORDER[(ORDER.indexOf(stored) + 1) % ORDER.length];
+      window.catnewsSetTheme = function (next) {
+        if (ORDER.indexOf(next) < 0) return stored;
         stored = next;
         try { localStorage.setItem(key, next); } catch (e) {}
         theme = resolve(next);
         paint();
         return next;
       };
+      window.catnewsCycleTheme = function () {
+        return window.catnewsSetTheme(ORDER[(ORDER.indexOf(stored) + 1) % ORDER.length]);
+      };
       window.catnewsThemeLabel = function (state) { return LABELS[state] || LABELS.light; };
       /* Kept compatible with the earlier label contract: Switch to " + labels[next] + " theme. */
-    })();
-  </script>
-  <script>
-    (function () {
-      var key = "catnews-design-system";
-      var stored = null;
-      try { stored = localStorage.getItem(key); } catch (e) {}
-      if (stored !== "earendil" && stored !== "kami") stored = "earendil";
-      document.documentElement.setAttribute("data-design-system", stored);
     })();
   </script>
 </head>
@@ -179,24 +207,58 @@
       <div class="bottom-controls">
         <a class="repo-link" href="{{ repo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
         <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
-        <button class="design-toggle" id="design-toggle" type="button" aria-label="Switch to Kami design system" title="Switch to Kami design system"><span class="design-toggle-mark" aria-hidden="true"></span><span id="design-toggle-label">EAR</span></button>
-        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme" title="Switch theme"><span class="value" id="theme-value">LIGHT</span></button>
+        <button class="design-toggle" id="design-toggle" type="button" aria-label="Switch to Kami design system" title="Switch to Kami design system"><span class="design-toggle-mark" aria-hidden="true"></span><span id="design-toggle-label">DESIGN · EAR</span></button>
+        <div class="theme-picker">
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-haspopup="menu" aria-expanded="false" title="Theme"><span class="value" id="theme-value">LIGHT</span></button>
+          <div class="theme-menu" id="theme-menu" role="menu" hidden>
+            <button type="button" role="menuitemradio" aria-checked="true" data-theme-option="light">Light</button>
+            <button type="button" role="menuitemradio" aria-checked="false" data-theme-option="dark">Dark</button>
+            <button type="button" role="menuitemradio" aria-checked="false" data-theme-option="pitch">Pitch</button>
+            <button type="button" role="menuitemradio" aria-checked="false" data-theme-option="auto">Auto</button>
+          </div>
+        </div>
       </div>
     </footer>
   </div>
   <script>
     (function () {
       var btn = document.getElementById("theme-toggle");
-      if (!btn || typeof window.catnewsCycleTheme !== "function") return;
-      function paint() {
-        var current = null;
-        try { current = localStorage.getItem("catnews-theme"); } catch (e) {}
-        btn.setAttribute("aria-label", window.catnewsThemeLabel(current));
-        btn.title = window.catnewsThemeLabel(current);
+      var menu = document.getElementById("theme-menu");
+      if (!btn || !menu || typeof window.catnewsSetTheme !== "function") return;
+      function current() {
+        try { return localStorage.getItem("catnews-theme"); } catch (e) { return null; }
       }
+      function paint() {
+        var cur = current();
+        btn.setAttribute("aria-expanded", String(menu.hidden === false));
+        menu.querySelectorAll("[data-theme-option]").forEach(function (option) {
+          option.setAttribute("aria-checked", String(option.dataset.themeOption === cur));
+        });
+        if (typeof window.catnewsThemeLabel === "function") {
+          var label = window.catnewsThemeLabel(cur);
+          btn.setAttribute("aria-label", label);
+        }
+      }
+      function open() { menu.hidden = false; paint(); }
+      function close() { menu.hidden = true; paint(); }
       btn.addEventListener("click", function () {
-        window.catnewsCycleTheme();
-        paint();
+        if (menu.hidden) open(); else close();
+      });
+      menu.addEventListener("click", function (event) {
+        var option = event.target.closest("[data-theme-option]");
+        if (!option) return;
+        window.catnewsSetTheme(option.dataset.themeOption);
+        close();
+      });
+      document.addEventListener("click", function (event) {
+        if (menu.hidden || event.target.closest(".theme-picker")) return;
+        close();
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !menu.hidden) {
+          close();
+          btn.focus();
+        }
       });
       paint();
     })();
@@ -208,7 +270,7 @@
       var root = document.documentElement;
       var key = "catnews-design-system";
       var order = ["earendil", "kami"];
-      var names = { earendil: "EAR", kami: "KAMI" };
+      var names = { earendil: "DESIGN · EAR", kami: "DESIGN · KAMI" };
       var fullNames = { earendil: "Earendil", kami: "Kami" };
       if (!btn) return;
       function read() {
@@ -229,6 +291,8 @@
       btn.addEventListener("click", function () {
         var current = read();
         var next = order[(order.indexOf(current) + 1) % order.length];
+        root.classList.add("design-flip");
+        window.setTimeout(function () { root.classList.remove("design-flip"); }, 320);
         write(next);
         root.setAttribute("data-design-system", next);
         paint();
