@@ -6,7 +6,9 @@
   <h1>Not found</h1>
   <p class="muted">That page doesn't exist — it may have been archived or moved.</p>
 </section>
-<section class="api-section">
-  <p class="prose">Try browsing the <a href="{{ base_path }}/archive/">archive</a>, the <a href="{{ base_path }}/sources/">sources</a>, or head back <a href="{{ base_path }}/">home</a>.</p>
+<section class="no-matches" aria-label="Page not found">
+  {% include "cat-logo.html" %}
+  <p>Nothing curled up here.</p>
+  <p>Browse the <a href="{{ base_path }}/archive/">archive</a> or press <kbd>/</kbd> to search.</p>
 </section>
 {% endblock %}

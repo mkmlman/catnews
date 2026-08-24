@@ -295,6 +295,7 @@
         window.setTimeout(function () { root.classList.remove("design-flip"); }, 320);
         write(next);
         root.setAttribute("data-design-system", next);
+        if (typeof window.catnewsChromeMeta === "function") window.catnewsChromeMeta();
         paint();
       });
       paint();

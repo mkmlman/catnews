@@ -930,6 +930,22 @@ def test_print_stylesheet_exists():
     assert ".story-title a::after" in css
 
 
+def test_view_transitions_respect_reduced_motion():
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    assert "@view-transition { navigation: auto; }" in css
+    assert "@view-transition { navigation: none; }" in css
+
+
+def test_font_face_declares_full_variable_ranges():
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    assert css.count("font-weight: 200 900;") == 2
+    assert "font-weight: 100 900;" in css
+
+
 def test_get_fetcher_rss_and_api():
     from app.fetchers import get_fetcher
 
