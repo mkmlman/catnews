@@ -2548,7 +2548,7 @@ a.is-dead,
 
   .footer-left { max-width: 60%; }
   .site-footer-bar {
-    flex-direction: column-reverse;
+    flex-direction: column;
     align-items: flex-start;
     gap: 18px;
     padding: 28px 0 0;
@@ -2680,7 +2680,7 @@ a.is-dead,
 
   /* Footer stacks below content on small screens */
   .site-footer-bar {
-    flex-direction: column-reverse;
+    flex-direction: column;
     align-items: flex-start;
     gap: 18px;
   }
@@ -2916,12 +2916,12 @@ html[data-design-system="kami"] .theme-toggle {
 }
 html[data-design-system="kami"] .site-footer-bar {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-end;
   margin-top: 70px;
   padding: 44px 0 0;
   border-top: 1px solid var(--line);
-  text-align: center;
+  text-align: left;
 }
 html[data-design-system="kami"] .site-footer-bar::before {
   content: "";
@@ -2934,7 +2934,7 @@ html[data-design-system="kami"] .site-footer-bar::before {
   background: var(--accent);
   opacity: 0.45;
 }
-html[data-design-system="kami"] .site-footer-bar .footer-left { align-items: center; }
+html[data-design-system="kami"] .site-footer-bar .footer-left { align-items: flex-start; }
 html[data-design-system="kami"] .footer-brand {
   font-family: "Fraunces", var(--serif-font);
   font-size: 1.05rem;
@@ -2942,7 +2942,7 @@ html[data-design-system="kami"] .footer-brand {
   text-transform: none;
 }
 html[data-design-system="kami"] .footer-brand svg { color: var(--accent); }
-html[data-design-system="kami"] .bottom-controls { justify-content: center; }
+html[data-design-system="kami"] .bottom-controls { justify-content: flex-end; }
 html[data-design-system="kami"] .hero {
   padding: 22px 0 10px;
   text-align: center;
@@ -3165,13 +3165,16 @@ html[data-design-system="kami"] .ds-comp {
     margin: 0 0 12px;
   }
   html[data-design-system="kami"] .site-footer-bar {
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     padding: 44px 0 0;
-    text-align: center;
+    text-align: left;
   }
   html[data-design-system="kami"] .site-footer-bar .footer-left {
     max-width: 100%;
+    align-items: flex-start;
   }
+  html[data-design-system="kami"] .bottom-controls { justify-content: flex-start; }
 }
 
 @media (max-width: 860px) {
