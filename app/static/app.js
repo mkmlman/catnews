@@ -241,7 +241,10 @@
           paintStickyOffsets();
           window.setTimeout(paintStickyOffsets, 280);
         });
-      }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-design-system"] });
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-design-system"] });
+    }
+    if (window.ResizeObserver) {
+      new ResizeObserver(paintStickyOffsets).observe(headerEl);
     }
   }
 

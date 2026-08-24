@@ -304,7 +304,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
     );
   }
   html[data-design-system="earendil"] .site-header {
-    transition: padding 0.28s var(--ease-soft), background-color 0.25s ease;
+    transition: background-color 0.25s ease;
   }
   html[data-design-system="earendil"] .site-header.is-compact {
     padding-top: 22px;
