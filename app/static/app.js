@@ -1668,4 +1668,21 @@
       window.setTimeout(checkForNewEdition, 1500);
     });
   }
+
+  /* Printing an archive should include collapsed sections: open every
+     <details> for the printout and restore the reader's state afterwards. */
+  var openedForPrint = [];
+  window.addEventListener("beforeprint", function () {
+    openedForPrint = [];
+    document.querySelectorAll("details:not([open])").forEach(function (d) {
+      openedForPrint.push(d);
+      d.setAttribute("open", "");
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    openedForPrint.forEach(function (d) {
+      d.removeAttribute("open");
+    });
+    openedForPrint = [];
+  });
 })();

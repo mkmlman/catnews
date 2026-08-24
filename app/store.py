@@ -344,6 +344,7 @@ def source_registry(data_dir: Path) -> list[dict]:
                 "key": key,
                 "label": cfg.get("label") or key,
                 "tag": cfg.get("tag") or key,
+                "url": cfg.get("url"),
                 "cadence": cadence_label(key),
                 "limit": cfg.get("limit"),
                 "last_fetched": snap.date if snap else None,

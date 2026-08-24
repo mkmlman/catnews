@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="#1B365D">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="#353431">
   <style>
-    :root { fill: #1B365D; }
-    @media (prefers-color-scheme: dark) { :root { fill: #9db9db; } }
+    :root { fill: #353431; }
+    @media (prefers-color-scheme: dark) { :root { fill: #f0eee8; } }
   </style>
   <g>
     <animateTransform attributeName="transform" type="rotate" values="0 32 62; 6 32 62; -4 32 62; 2 32 62; 0 32 62" keyTimes="0;0.3;0.6;0.8;1" dur="3.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>

@@ -38,6 +38,7 @@
   {% if src.status_detail %}<p class="source-status-detail">{{ src.status_detail }}</p>{% endif %}
   <p class="source-links">
     {% if src.last_fetched %}
+    {% if src.url %}<a href="{{ src.url }}" target="_blank" rel="noopener noreferrer">visit site ↗</a><span class="sep"> · </span>{% endif %}
     <a href="{{ base_path }}/feed-{{ src.key }}.rss">RSS feed</a><span class="sep"> · </span>
     <a href="{{ base_path }}/archive/{{ src.key }}/{{ src.last_fetched.isoformat() }}/">latest snapshot</a><span class="sep"> · </span>
     <a href="{{ base_path }}/api/sources/{{ src.key }}.json">source API</a>

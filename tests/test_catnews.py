@@ -974,6 +974,48 @@ def test_help_dialog_documents_edition_nav():
     assert "Previous / next edition" in base
 
 
+def test_favicon_matches_earendil_ink_palette():
+    svg = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "favicon.svg"
+    ).read_text()
+    assert "#353431" in svg
+    assert "#f0eee8" in svg
+    assert "#1B365D" not in svg
+    assert "#9db9db" not in svg
+
+
+def test_sources_page_links_to_source_site():
+    template = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "sources.html"
+    ).read_text()
+    assert 'href="{{ src.url }}"' in template
+    registry_src = (
+        Path(__file__).resolve().parent.parent / "app" / "store.py"
+    ).read_text()
+    assert '"url": cfg.get("url")' in registry_src
+
+
+def test_feeds_carry_xslt_stylesheet():
+    from app.render import FEED_STYLESHEET_PI, _with_feed_stylesheet
+
+    assert "feed.xsl" in FEED_STYLESHEET_PI
+    xml = "<?xml version='1.0' encoding='UTF-8'?>\n<rss></rss>"
+    out = _with_feed_stylesheet(xml)
+    assert out.index("xml-stylesheet") > out.index("<?xml")
+    xsl = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "feed.xsl"
+    ).read_text()
+    assert "xsl:stylesheet" in xsl
+
+
+def test_print_opens_collapsed_details():
+    js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    assert "beforeprint" in js
+    assert "afterprint" in js
+
+
 def test_get_fetcher_rss_and_api():
     from app.fetchers import get_fetcher
 

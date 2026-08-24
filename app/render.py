@@ -663,6 +663,21 @@ def app_version() -> str:
     return digest.hexdigest()[:16]
 
 
+FEED_STYLESHEET_PI = '<?xml-stylesheet type="text/xsl" href="static/feed.xsl"?>'
+
+
+def _with_feed_stylesheet(xml: str) -> str:
+    """Insert the XSLT processing instruction after the XML declaration.
+
+    Browsers then render feed.rss as a readable page instead of raw XML;
+    dedicated RSS readers ignore the instruction entirely. The href is
+    relative because every feed lives next to static/ (locally, on Pages,
+    and under the dev server).
+    """
+    end = xml.index("?>") + 2
+    return xml[:end] + "\n" + FEED_STYLESHEET_PI + xml[end:]
+
+
 def render_rss(digest: Digest, base_url: str) -> str:
     fg = FeedGenerator()
     fg.id(f"{base_url}/")
@@ -700,7 +715,7 @@ def render_rss(digest: Digest, base_url: str) -> str:
             parts.append(f'<p>Discuss on <a href="{story.hn_url}">Hacker News</a></p>')
         entry.content("".join(parts), type="html")
 
-    return fg.rss_str(pretty=True).decode("utf-8")
+    return _with_feed_stylesheet(fg.rss_str(pretty=True).decode("utf-8"))
 
 
 def render_source_rss(source: str, snapshot, base_url: str, feed_url: str) -> str:
@@ -750,4 +765,4 @@ def render_source_rss(source: str, snapshot, base_url: str, feed_url: str) -> st
             parts.append(f'<p>Discuss on <a href="{story.hn_url}">Hacker News</a></p>')
         entry.content("".join(parts), type="html")
 
-    return fg.rss_str(pretty=True).decode("utf-8")
+    return _with_feed_stylesheet(fg.rss_str(pretty=True).decode("utf-8"))
