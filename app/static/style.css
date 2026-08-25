@@ -1988,6 +1988,8 @@ a.is-dead,
   display: block;
   width: 120px;
   height: 28px;
+  /* Right-aligned to match the table's right-set column headers. */
+  margin-left: auto;
   overflow: visible;
   --spark-area: rgba(53, 52, 49, 0.12);
 }
@@ -2006,7 +2008,7 @@ a.is-dead,
   stroke: var(--paper);
   stroke-width: 2.4;
 }
-.spark-cell { padding-right: 12px; padding-left: 12px; }
+.spark-cell { padding-right: 4px; padding-left: 12px; }
 .stat-table tbody tr .stat-spark { transition: opacity 0.25s ease, transform 0.25s ease; }
 .stat-table tbody tr:hover .stat-spark { transform: scale(1.04); }
 .stat-table tbody:has(tr:hover) tr:not(:hover) .stat-spark { opacity: 0.4; }
