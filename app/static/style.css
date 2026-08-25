@@ -174,6 +174,114 @@ body::after {
 
 [data-theme="pitch"] body::after { opacity: 0.035; }
 
+/* ==========================================================================
+   OCEAN BACKGROUND — a WebGL sea after earendil.com's canvas scene.
+   The fixed canvas paints the whole viewport (layer 0); content scrolls
+   above it on a translucent paper veil so reading stays comfortable while
+   the water shows through at the frame edges. Kami keeps solid paper.
+   ========================================================================== */
+
+.ocean-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+@supports (height: 100dvh) {
+  .ocean-canvas { height: 100dvh; }
+}
+.ocean-canvas.shader-ready { opacity: 1; }
+html[data-design-system="kami"] .ocean-canvas { display: none; }
+
+.container {
+  position: relative;
+  z-index: 1;
+}
+/* Reading veil: a soft column hugging the story grid only. The hero, sky,
+   horizon, and both side margins stay clear so the sea reads like
+   earendil.com's home page; cards keep a readable backing. One declaration
+   per theme keeps the veil intact even where advanced CSS is missing. */
+.container::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 37% 80% at 50% 62%,
+    rgba(250, 249, 246, 0.97) 0%,
+    rgba(250, 249, 246, 0.97) 42%,
+    rgba(250, 249, 246, 0.88) 58%,
+    rgba(250, 249, 246, 0.5) 74%,
+    rgba(250, 249, 246, 0.12) 90%,
+    rgba(250, 249, 246, 0) 100%
+  );
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, transparent 280px, #000 560px);
+  mask-image: linear-gradient(180deg, transparent 0, transparent 280px, #000 560px);
+}
+[data-theme="dark"] .container::before {
+  background: radial-gradient(
+    ellipse 37% 80% at 50% 62%,
+    rgba(26, 26, 26, 0.97) 0%,
+    rgba(26, 26, 26, 0.97) 42%,
+    rgba(26, 26, 26, 0.88) 58%,
+    rgba(26, 26, 26, 0.5) 74%,
+    rgba(26, 26, 26, 0.12) 90%,
+    rgba(26, 26, 26, 0) 100%
+  );
+}
+[data-theme="pitch"] .container::before {
+  background: radial-gradient(
+    ellipse 37% 80% at 50% 62%,
+    rgba(13, 12, 10, 0.98) 0%,
+    rgba(13, 12, 10, 0.98) 42%,
+    rgba(13, 12, 10, 0.9) 58%,
+    rgba(13, 12, 10, 0.55) 74%,
+    rgba(13, 12, 10, 0.16) 90%,
+    rgba(13, 12, 10, 0) 100%
+  );
+}
+@media (max-width: 800px) {
+  .container::before,
+  [data-theme="dark"] .container::before,
+  [data-theme="pitch"] .container::before {
+    /* Narrow screens: the column is most of the viewport, so widen the soft
+       edge and clear the (shorter) hero plus a sliver of sea. */
+    background: radial-gradient(
+      ellipse 68% 80% at 50% 62%,
+      rgba(var(--chrome-surface), 0.97) 0%,
+      rgba(var(--chrome-surface), 0.97) 42%,
+      rgba(var(--chrome-surface), 0.88) 58%,
+      rgba(var(--chrome-surface), 0.5) 74%,
+      rgba(var(--chrome-surface), 0.12) 90%,
+      rgba(var(--chrome-surface), 0) 100%
+    );
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, transparent 210px, #000 430px);
+    mask-image: linear-gradient(180deg, transparent 0, transparent 210px, #000 430px);
+  }
+  [data-theme="pitch"] .container::before {
+    background: radial-gradient(
+      ellipse 68% 80% at 50% 62%,
+      rgba(13, 12, 10, 0.98) 0%,
+      rgba(13, 12, 10, 0.98) 42%,
+      rgba(13, 12, 10, 0.9) 58%,
+      rgba(13, 12, 10, 0.55) 74%,
+      rgba(13, 12, 10, 0.16) 90%,
+      rgba(13, 12, 10, 0) 100%
+    );
+  }
+}
+html[data-design-system="kami"] .container { z-index: auto; }
+html[data-design-system="kami"] .container::before { content: none; }
+
+@media print {
+  .ocean-canvas { display: none !important; }
+}
+
 [hidden] { display: none !important; }
 
 ::selection { background: var(--ink); color: var(--paper); }
@@ -1310,7 +1418,9 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   padding: 18px 20px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: transparent;
+  /* Light frost: keeps type clean where the ocean or star field shows
+     through the reading veil, while staying far from opaque. */
+  background: rgba(var(--chrome-surface), 0.6);
   transition: background-color 0.18s, border-color 0.18s;
   animation: rise 0.5s var(--ease-soft) both;
   animation-delay: min(calc(var(--i, 0) * 0.04s), 0.36s);
@@ -3384,6 +3494,7 @@ html[data-design-system="kami"] .ds-comp {
   .site-header,
   .site-footer-bar,
   .to-top,
+  .ocean-canvas,
   .filters,
   .new-edition,
   .source-alert,

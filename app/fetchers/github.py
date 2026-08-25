@@ -51,7 +51,6 @@ def parse_item(item: dict) -> Story:
         source="github",
         title=display_title(full_name, desc),
         url=safe_http_url(item.get("html_url")) or f"https://github.com/{full_name}",
-        byline=item.get("owner", {}).get("login"),
         author=item.get("owner", {}).get("login"),
         external_id=full_name,
         score=item.get("stargazers_count"),

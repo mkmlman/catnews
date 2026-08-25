@@ -330,7 +330,7 @@ def render_markdown(digest: Digest) -> str:
         blocks.append(f"### {i}. {story.title}")
         blocks.append("")
         blocks.append(
-            f"- **Source:** {story.source} · **By:** {story.byline or story.author or 'unknown'}"
+            f"- **Source:** {story.source} · **By:** {story.author or 'unknown'}"
         )
         if story.why_read:
             blocks.append(f"- **Why read:** {story.why_read}")
@@ -362,7 +362,7 @@ def search_index(snapshots: list[SourceSnapshot]) -> list[dict[str, str]]:
                 "url": story.url,
                 "date": snapshot.date.isoformat(),
             }
-            for field in ("author", "byline", "summary", "snippet", "why_read"):
+            for field in ("author", "summary", "snippet", "why_read"):
                 value = getattr(story, field)
                 if value:
                     record[field] = value
@@ -703,7 +703,7 @@ def render_rss(digest: Digest, base_url: str) -> str:
         entry.id(story.url)
         entry.title(story.title)
         entry.link(href=story.url)
-        entry.author({"name": story.byline or story.author or "unknown"})
+        entry.author({"name": story.author or "unknown"})
         if story.published:
             entry.published(_aware(story.published))
         parts = []
@@ -753,7 +753,7 @@ def render_source_rss(source: str, snapshot, base_url: str, feed_url: str) -> st
         entry.id(story.url)
         entry.title(story.title)
         entry.link(href=story.url)
-        entry.author({"name": story.byline or story.author or "unknown"})
+        entry.author({"name": story.author or "unknown"})
         if story.published:
             entry.published(_aware(story.published))
         parts = []

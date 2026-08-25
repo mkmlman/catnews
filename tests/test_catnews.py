@@ -201,7 +201,6 @@ def test_rss_parse_entry_falls_back_to_feed_author():
     story_with_author = parse_rss_entry(entry, "simonw", feed_author="Simon Willison")
     assert story_with_author is not None
     assert story_with_author.author == "Simon Willison"
-    assert story_with_author.byline == "Simon Willison"
 
 
 def test_rss_strip_html():
@@ -296,7 +295,7 @@ def test_story_markdown_and_why_read():
         source="hn",
         title="T",
         url="https://example.com",
-        byline="alice",
+        author="alice",
         why_read="Short.",
     )
     md = story.to_markdown()

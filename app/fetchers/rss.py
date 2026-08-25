@@ -64,7 +64,6 @@ def parse_entry(
         source=source,
         title=title.strip(),
         url=url,
-        byline=author,
         author=author,
         external_id=external_id,
         published=_published(entry),

@@ -75,7 +75,6 @@ def parse_entry(entry: ET.Element) -> Story | None:
         url=safe_http_url(id_url) or f"https://arxiv.org/abs/{external_id}",
         authors=authors,
         author=authors[0] if authors else None,
-        byline=authors[0] if authors else None,
         external_id=external_id,
         category=category,
         published=published,

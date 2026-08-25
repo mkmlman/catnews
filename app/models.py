@@ -35,10 +35,9 @@ class Story(BaseModel):
     )
     title: str
     url: str
-    author: str | None = None
-    byline: str | None = Field(
+    author: str | None = Field(
         default=None,
-        description="Short attribution shown next to the source, e.g. the HN submitter",
+        description="Attribution shown next to the source, e.g. the HN submitter",
     )
     external_id: str | None = Field(
         default=None, description="Native id in the source system"
@@ -59,8 +58,6 @@ class Story(BaseModel):
     score: int | None = None
     comments: int | None = None
     hn_url: str | None = None
-    points: int | None = None
-    num_comments: int | None = None
     snippet: str | None = Field(
         default=None, description="Plain-text excerpt of the story"
     )

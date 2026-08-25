@@ -512,9 +512,9 @@
     var meta = {
       title: link ? link.textContent.trim() : "",
       source: card.getAttribute("data-source") || "",
-      byline: "",
+      author: "",
     };
-    if (by) meta.byline = by.textContent.replace(/^by\s+/i, "").trim();
+    if (by) meta.author = by.textContent.replace(/^by\s+/i, "").trim();
     return meta;
   }
 
@@ -1165,7 +1165,6 @@
       }
       var haystack = [
         story.title,
-        story.byline,
         story.author,
         story.why_read,
         story.summary,
@@ -1343,7 +1342,7 @@
         text.innerHTML = markText(story.title, tokens);
         var sub = document.createElement("span");
         sub.className = "search-result-sub";
-        sub.innerHTML = markText(story.byline || story.author || "", tokens);
+        sub.innerHTML = markText(story.author || "", tokens);
         a.appendChild(tag);
         a.appendChild(text);
         a.appendChild(sub);
@@ -1450,7 +1449,7 @@
       "- **Source:** " +
         (story.source || "unknown") +
         " · **By:** " +
-        (story.byline || story.author || "unknown"),
+        (story.author || "unknown"),
     ];
     if (story.why_read) lines.push("- **Why read:** " + story.why_read);
     if (story.summary) lines.push("- **Summary:** " + story.summary);
@@ -1476,7 +1475,7 @@
           url: url,
           title: m.title,
           source: m.source || "unknown",
-          byline: m.byline || "unknown",
+          author: m.author || "unknown",
         });
       });
       if (!savedStories.length) return;
@@ -1685,4 +1684,583 @@
     });
     openedForPrint = [];
   });
+
+  /* -------------------------------------------------------------
+     Ocean background — a full-viewport WebGL sea after earendil.com's
+     canvas scene (their shader is built on afl_ext's MIT "ocean weaves").
+     Day water under light themes; night sky with stars over dark/pitch,
+     cross-faded on theme flips. Clicks drop ripples into the water.
+     Wave motion slows to a quiet drift under prefers-reduced-motion;
+     rendering pauses in background tabs. Kami keeps solid paper.
+     ------------------------------------------------------------- */
+  (function () {
+    var canvas = document.getElementById("ocean");
+    if (!canvas || !canvas.getContext) return;
+    var gl =
+      canvas.getContext("webgl", { antialias: false }) ||
+      canvas.getContext("experimental-webgl", { antialias: false });
+    if (!gl) return;
+
+    var root = document.documentElement;
+    var reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    /* Shared projection constants — JS mirrors them so pointer ripples
+       land exactly where the shader puts the water. */
+    var PROJECTION_DEPTH = 1.5;
+    var BASE_TILT = 0.14;
+    var WATER_DEPTH = 1.0;
+    var CAMERA_HEIGHT = 1.5;
+
+    var QUALITY_SETTINGS = {
+      low: { scale: 0.25, lowDpiScale: 0.425, raymarchSteps: 20, waveIterRaymarch: 4, waveIterNormal: 16, fbmOctaves: 2 },
+      medium: { scale: 0.35, lowDpiScale: 0.595, raymarchSteps: 24, waveIterRaymarch: 6, waveIterNormal: 16, fbmOctaves: 3 },
+      high: { scale: 0.4, lowDpiScale: 0.68, raymarchSteps: 32, waveIterRaymarch: 8, waveIterNormal: 16, fbmOctaves: 4 }
+    };
+    var QUALITY_LEVELS = ["low", "medium", "high"];
+    var LOW_DPI_THRESHOLD = 1.5;
+    var LOW_DPI_NOISE_SCALE = 1.7;
+    var AUTO_FPS_LOW = 28;
+    var AUTO_FPS_HIGH = 55;
+    var AUTO_SAMPLE_WINDOW = 2000;
+    var AUTO_COOLDOWN = 4000;
+
+    var currentQuality = "high";
+    var fpsSamples = [];
+    var lastQualityChange = 0;
+
+    /* Reduced motion eases the sea toward a slow ambient drift rather than
+       freezing mid-wave; grain barely matters so it only slows a little. */
+    var REDUCED_WAVE_SPEED = 0.15;
+    var REDUCED_GRAIN_SPEED = 0.75;
+    var SPEED_EASE_DURATION = 3.0;
+
+    var THEME_FADE_MS = 900;
+    function ease(t) { return t * t * (3.0 - 2.0 * t); }
+
+    function nightTarget() {
+      var theme = root.getAttribute("data-theme");
+      return theme === "dark" || theme === "pitch" ? 1.0 : 0.0;
+    }
+    function deepTarget() {
+      return root.getAttribute("data-theme") === "pitch" ? 1.0 : 0.0;
+    }
+
+    var nightBlend = nightTarget();
+    var nightFrom = nightBlend;
+    var nightTo = nightBlend;
+    var nightFadeStart = null;
+    var deepBlend = deepTarget();
+    var deepFrom = deepBlend;
+    var deepTo = deepBlend;
+    var deepFadeStart = null;
+
+    function updateBlends(nowMs) {
+      if (nightTo !== nightTarget()) {
+        nightFrom = nightBlend; nightTo = nightTarget(); nightFadeStart = nowMs;
+      }
+      if (deepTo !== deepTarget()) {
+        deepFrom = deepBlend; deepTo = deepTarget(); deepFadeStart = nowMs;
+      }
+      if (nightFadeStart !== null) {
+        var p = Math.min((nowMs - nightFadeStart) / THEME_FADE_MS, 1);
+        nightBlend = nightFrom + (nightTo - nightFrom) * ease(p);
+        if (p >= 1) { nightFadeStart = null; nightBlend = nightTo; }
+      }
+      if (deepFadeStart !== null) {
+        var q = Math.min((nowMs - deepFadeStart) / THEME_FADE_MS, 1);
+        deepBlend = deepFrom + (deepTo - deepFrom) * ease(q);
+        if (q >= 1) { deepFadeStart = null; deepBlend = deepTo; }
+      }
+    }
+
+    var vertexSource = [
+      "attribute vec2 position;",
+      "void main() { gl_Position = vec4(position, 0.0, 1.0); }"
+    ].join("\n");
+
+    function fragmentSource(s) {
+      return [
+        "precision highp float;",
+        "uniform vec2 iResolution;",
+        "uniform float u_waveTime;",
+        "uniform float u_grainTime;",
+        "uniform float u_noiseScale;",
+        "uniform float u_night;",
+        "uniform float u_deep;",
+        "uniform vec4 u_ripples[10];",
+        "uniform int u_rippleCount;",
+        // afl_ext 2017-2024 | MIT License (ocean weaves)
+        "#define PI 3.14159265359",
+        "#define DRAG_MULT 0.38",
+        "#define WATER_DEPTH " + WATER_DEPTH.toFixed(1),
+        "#define CAMERA_HEIGHT " + CAMERA_HEIGHT,
+        "#define ITERATIONS_RAYMARCH " + s.waveIterRaymarch,
+        "#define ITERATIONS_NORMAL " + s.waveIterNormal,
+        "#define RAYMARCH_STEPS " + s.raymarchSteps,
+        "#define FBM_OCTAVES " + s.fbmOctaves,
+
+        "float hash21(vec2 p) {",
+        "  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);",
+        "}",
+        "float noise21(vec2 p) {",
+        "  vec2 i = floor(p);",
+        "  vec2 f = fract(p);",
+        "  f = f * f * (3.0 - 2.0 * f);",
+        "  float a = hash21(i);",
+        "  float b = hash21(i + vec2(1.0, 0.0));",
+        "  float c = hash21(i + vec2(0.0, 1.0));",
+        "  float d = hash21(i + vec2(1.0, 1.0));",
+        "  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);",
+        "}",
+        "float fbm(vec2 p) {",
+        "  float value = 0.0;",
+        "  float amplitude = 0.5;",
+        "  float frequency = 1.0;",
+        "  for (int i = 0; i < FBM_OCTAVES; i++) {",
+        "    value += amplitude * noise21(p * frequency);",
+        "    frequency *= 2.0;",
+        "    amplitude *= 0.5;",
+        "  }",
+        "  return value;",
+        "}",
+
+        "mat3 rotAxis(vec3 axis, float angle) {",
+        "  float s = sin(angle);",
+        "  float c = cos(angle);",
+        "  float oc = 1.0 - c;",
+        "  return mat3(",
+        "    oc * axis.x * axis.x + c, oc * axis.x * axis.y - axis.z * s, oc * axis.z * axis.x + axis.y * s,",
+        "    oc * axis.x * axis.y + axis.z * s, oc * axis.y * axis.y + c, oc * axis.y * axis.z - axis.x * s,",
+        "    oc * axis.z * axis.x - axis.y * s, oc * axis.y * axis.z + axis.x * s, oc * axis.z * axis.z + c",
+        "  );",
+        "}",
+        "vec3 getRay(vec2 fragCoord) {",
+        "  vec2 uv = ((fragCoord.xy / iResolution.xy) * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);",
+        "  vec3 proj = normalize(vec3(uv.x, uv.y, " + PROJECTION_DEPTH + "));",
+        "  return rotAxis(vec3(1.0, 0.0, 0.0), " + BASE_TILT + ") * proj;",
+        "}",
+
+        "float star(vec2 screenUv, vec2 cellId, vec2 grid) {",
+        "  float rnd = hash21(cellId);",
+        "  if (rnd > 0.8) return 0.0;",
+        "  vec2 starPos = vec2(hash21(cellId + 0.1), hash21(cellId + 0.2));",
+        "  vec2 starUv = (cellId + starPos) / grid;",
+        "  vec2 deltaPx = (screenUv - starUv) * iResolution.xy;",
+        "  float sizePx = 0.25 + hash21(cellId + 0.3) * 0.45;",
+        "  float d = length(deltaPx);",
+        "  float core = smoothstep(sizePx, sizePx * 0.2, d);",
+        "  float phase = hash21(cellId + 0.4) * 6.28318;",
+        "  float speed = 0.2 + hash21(cellId + 0.5) * 0.3;",
+        "  float amount = mix(0.1, 0.35, hash21(cellId + 0.7));",
+        "  float flicker = mix(1.0 - amount, 1.0 + amount, 0.5 + 0.5 * sin(u_waveTime * speed + phase));",
+        "  float lumens = mix(1.0, 12.0, hash21(cellId + 0.6));",
+        "  float brightness = mix(0.6, 1.4, lumens / 12.0);",
+        "  return core * flicker * brightness;",
+        "}",
+
+        "vec2 wavedx(vec2 position, vec2 direction, float frequency, float timeshift) {",
+        "  float x = dot(direction, position) * frequency + timeshift;",
+        "  float wave = exp(sin(x) - 1.0);",
+        "  float dx = wave * cos(x);",
+        "  return vec2(wave, -dx);",
+        "}",
+        "float getripples(vec2 position) {",
+        "  float rippleSum = 0.0;",
+        "  for (int i = 0; i < 10; i++) {",
+        "    if (i >= u_rippleCount) break;",
+        "    vec4 ripple = u_ripples[i];",
+        "    float age = u_waveTime - ripple.z;",
+        "    if (age < 0.0 || age > 12.0) continue;",
+        "    float dist = length(position - ripple.xy);",
+        "    float phase = dist * 4.0 - age * 3.2;",
+        "    float envelope = exp(-0.45 * age) * exp(-dist * 0.16);",
+        "    float fadeIn = smoothstep(0.0, 0.3, age);",
+        "    rippleSum += ripple.w * envelope * fadeIn * sin(phase);",
+        "  }",
+        "  return rippleSum;",
+        "}",
+        "float getwaves(vec2 position, int iterations, bool withRipples) {",
+        "  float wavePhaseShift = length(position) * 0.1;",
+        "  vec2 swellDir = normalize(vec2(-0.25, 1.0));",
+        "  float swellBias = 0.35;",
+        "  float iter = 0.0;",
+        "  float frequency = 1.0;",
+        "  float timeMultiplier = 2.0;",
+        "  float weight = 1.0;",
+        "  float sumOfValues = 0.0;",
+        "  float sumOfWeights = 0.0;",
+        "  for (int i = 0; i < 16; i++) {",
+        "    if (i >= iterations) break;",
+        "    vec2 p = normalize(mix(vec2(sin(iter), cos(iter)), swellDir, swellBias));",
+        "    vec2 res = wavedx(position, p, frequency, u_waveTime * timeMultiplier + wavePhaseShift);",
+        "    position += p * res.y * weight * DRAG_MULT;",
+        "    sumOfValues += res.x * weight;",
+        "    sumOfWeights += weight;",
+        "    weight = mix(weight, 0.0, 0.2);",
+        "    frequency *= 1.18;",
+        "    timeMultiplier *= 1.07;",
+        "    iter += 1232.399963;",
+        "  }",
+        "  float waves = sumOfValues / sumOfWeights;",
+        "  float swellPhase = dot(position, swellDir) * 0.18 - u_waveTime * 0.08;",
+        "  float swell = sin(swellPhase);",
+        "  vec2 cameraPos = vec2(u_waveTime * 0.2, 1.0);",
+        "  float swellFade = smoothstep(28.0, 4.0, length(position - cameraPos));",
+        "  waves += swell * swellFade * 0.35;",
+        "  if (withRipples) waves += getripples(position);",
+        "  return waves;",
+        "}",
+        "float raymarchwater(vec3 camera, vec3 start, vec3 end, float depth) {",
+        "  vec3 pos = start;",
+        "  vec3 dir = normalize(end - start);",
+        "  for (int i = 0; i < RAYMARCH_STEPS; i++) {",
+        "    float height = getwaves(pos.xz, ITERATIONS_RAYMARCH, false) * depth - depth;",
+        "    if (height + 0.01 > pos.y) {",
+        "      return distance(pos, camera);",
+        "    }",
+        "    pos += dir * (pos.y - height);",
+        "  }",
+        "  return distance(start, camera);",
+        "}",
+        "vec3 normal(vec2 pos, float e, float depth) {",
+        "  vec2 ex = vec2(e, 0);",
+        "  float H = getwaves(pos.xy, ITERATIONS_NORMAL, true) * depth;",
+        "  vec3 a = vec3(pos.x, H, pos.y);",
+        "  return normalize(",
+        "    cross(",
+        "      a - vec3(pos.x - e, getwaves(pos.xy - ex.xy, ITERATIONS_NORMAL, true) * depth, pos.y),",
+        "      a - vec3(pos.x, getwaves(pos.xy + ex.yx, ITERATIONS_NORMAL, true) * depth, pos.y + e)",
+        "    )",
+        "  );",
+        "}",
+
+        "float intersectPlane(vec3 origin, vec3 direction, vec3 point, vec3 nrm) {",
+        "  return clamp(dot(point - origin, nrm) / dot(direction, nrm), -1.0, 9991999.0);",
+        "}",
+        "vec3 extra_cheap_atmosphere(vec3 raydir, vec3 sundir) {",
+        "  float special_trick = 1.0 / (raydir.y * 1.0 + 0.1);",
+        "  float special_trick2 = 1.0 / (sundir.y * 11.0 + 1.0);",
+        "  float raysundt = pow(abs(dot(sundir, raydir)), 2.0);",
+        "  float sundt = pow(max(0.0, dot(sundir, raydir)), 8.0);",
+        "  vec3 suncolor = mix(vec3(1.0), max(vec3(0.0), vec3(1.0) - vec3(5.5, 13.0, 22.4) / 22.4), special_trick2);",
+        "  vec3 bluesky = vec3(12.0, 12.0, 13.0) / 22.4 * suncolor;",
+        "  vec3 bluesky2 = max(vec3(0.0), bluesky - vec3(12.0, 12.0, 13.0) * 0.002 * (special_trick + -6.0 * sundir.y * sundir.y));",
+        "  bluesky2 *= special_trick * (0.24 + raysundt * 0.24);",
+        "  return bluesky2 * (1.0 + 1.0 * pow(1.0 - raydir.y, 3.0));",
+        "}",
+        "vec3 getSunDirection() {",
+        "  return normalize(vec3(-0.0773502691896258, 0.6, 0.5773502691896258));",
+        "}",
+        "vec3 getDaySky(vec3 dir) {",
+        "  return extra_cheap_atmosphere(dir, getSunDirection()) * 0.62;",
+        "}",
+        "vec2 skyUV(vec3 dir) {",
+        "  float u = atan(dir.z, dir.x) / (2.0 * PI) + 0.5;",
+        "  float v = clamp(dir.y * 0.5 + 0.5, 0.0, 1.0);",
+        "  return vec2(u, v);",
+        "}",
+        "vec3 getNightSky(vec3 dir) {",
+        "  vec2 uv = skyUV(dir);",
+        "  vec3 topColor = mix(vec3(0.015, 0.02, 0.04), vec3(0.008, 0.01, 0.02), u_deep);",
+        "  vec3 bottomColor = mix(vec3(0.03, 0.035, 0.05), vec3(0.016, 0.015, 0.014), u_deep);",
+        "  vec3 color = mix(bottomColor, topColor, uv.y);",
+        "  vec2 screenUv = vec2(-1.0);",
+        "  vec3 unrotated = rotAxis(vec3(1.0, 0.0, 0.0), -" + BASE_TILT + ") * dir;",
+        "  if (unrotated.z > 0.0) {",
+        "    vec2 p = (unrotated.xy / unrotated.z) * " + PROJECTION_DEPTH + ";",
+        "    vec2 ndc = p / vec2(iResolution.x / iResolution.y, 1.0);",
+        "    screenUv = ndc * 0.5 + 0.5;",
+        "  }",
+        "  if (screenUv.x >= 0.0 && screenUv.x <= 1.0 && screenUv.y > 0.35 && screenUv.y <= 1.0) {",
+        "    float gridX = 40.0;",
+        "    float gridY = 30.0;",
+        "    vec2 grid = vec2(gridX, gridY);",
+        "    vec2 baseCell = floor(vec2(screenUv.x * gridX, screenUv.y * gridY));",
+        "    float s = 0.0;",
+        "    for (int yi = -1; yi <= 1; yi++) {",
+        "      for (int xi = -1; xi <= 1; xi++) {",
+        "        vec2 cell = baseCell + vec2(float(xi), float(yi));",
+        "        if (cell.y < 0.0 || cell.y >= gridY) continue;",
+        "        cell.x = mod(cell.x + gridX, gridX);",
+        "        s += star(screenUv, cell, grid);",
+        "      }",
+        "    }",
+        "    float horizonFade = smoothstep(0.35, 0.55, screenUv.y);",
+        "    color += vec3(1.0, 0.97, 0.9) * s * horizonFade;",
+        "  }",
+        "  return color;",
+        "}",
+
+        "vec3 aces_tonemap(vec3 color) {",
+        "  mat3 m1 = mat3(0.59719, 0.07600, 0.02840, 0.35458, 0.90834, 0.13383, 0.04823, 0.01566, 0.83777);",
+        "  mat3 m2 = mat3(1.60475, -0.10208, -0.00327, -0.53108, 1.10813, -0.07276, -0.07367, -0.00605, 1.07602);",
+        "  vec3 v = m1 * color;",
+        "  vec3 a = v * (v + 0.0245786) - 0.000090537;",
+        "  vec3 b = v * (0.983729 * v + 0.4329510) + 0.238081;",
+        "  return pow(clamp(m2 * (a / b), 0.0, 1.0), vec3(1.0 / 2.2));",
+        "}",
+        "float gaussian(float z, float u, float o) {",
+        "  return (1.0 / (o * sqrt(2.0 * 3.1415))) * exp(-(((z - u) * (z - u)) / (2.0 * (o * o))));",
+        "}",
+        "vec4 applyFilmGrain(vec3 color, vec2 fragCoord) {",
+        "  float gray = dot(color, vec3(0.299, 0.587, 0.114));",
+        "  vec2 uv = fragCoord * u_noiseScale / iResolution;",
+        "  float seed = dot(uv, vec2(12.9898, 78.233));",
+        "  float noise = fract(sin(seed) * 43758.5453 + u_grainTime * 1.5);",
+        "  float variance = mix(0.75, 0.6, u_night);",
+        "  noise = gaussian(noise, 0.0, variance * variance);",
+        "  float grainIntensity = mix(0.4, 0.065, u_night);",
+        "  gray += noise * (1.0 - gray) * grainIntensity;",
+        "  gray = clamp(gray, 0.0, 1.0);",
+        "  vec3 dark = mix(vec3(0.62), vec3(0.05), u_night);",
+        "  vec3 light = mix(vec3(0.97), vec3(1.0), u_night);",
+        "  return vec4(mix(dark, light, gray), 1.0);",
+        "}",
+
+        "void mainImage(out vec4 fragColor, in vec2 fragCoord) {",
+        "  vec3 ray = getRay(fragCoord);",
+        "  if (ray.y >= 0.0) {",
+        "    vec3 C;",
+        "    float horizonFactor = smoothstep(0.02, 0.25, ray.y);",
+        "    float nb = pow(u_night, mix(0.35, 1.0, horizonFactor));",
+        "    C = mix(getDaySky(ray), getNightSky(ray), nb);",
+        "    fragColor = vec4(aces_tonemap(C * 2.0), 1.0);",
+        "    return;",
+        "  }",
+        "  vec3 waterPlaneHigh = vec3(0.0, 0.0, 0.0);",
+        "  vec3 waterPlaneLow = vec3(0.0, -WATER_DEPTH, 0.0);",
+        "  vec3 origin = vec3(u_waveTime * 0.2, CAMERA_HEIGHT, 1.0);",
+        "  float highHit = intersectPlane(origin, ray, waterPlaneHigh, vec3(0.0, 1.0, 0.0));",
+        "  float lowHit = intersectPlane(origin, ray, waterPlaneLow, vec3(0.0, 1.0, 0.0));",
+        "  vec3 highHitPos = origin + ray * highHit;",
+        "  vec3 lowHitPos = origin + ray * lowHit;",
+        "  float dist = raymarchwater(origin, highHitPos, lowHitPos, WATER_DEPTH);",
+        "  vec3 waterHitPos = origin + ray * dist;",
+        "  float eps = max(0.01, dist * 0.004);",
+        "  vec3 N = normal(waterHitPos.xz, eps, WATER_DEPTH);",
+        "  N = mix(N, vec3(0.0, 1.0, 0.0), 0.6 * min(1.0, sqrt(dist * 0.01) * 1.1));",
+        "  float fresnelSharp = 0.04 + 0.96 * pow(1.0 - max(0.0, dot(-N, ray)), 5.0);",
+        "  float fresnelFlat = 0.04 + 0.96 * pow(1.0 - max(0.0, dot(vec3(0.0, 1.0, 0.0), -ray)), 5.0);",
+        "  float fresnel = mix(fresnelSharp, fresnelFlat, min(1.0, sqrt(dist * 0.01) * 1.1));",
+        "  vec3 R = normalize(reflect(ray, N));",
+        "  R.y = abs(R.y);",
+        "  float rh = smoothstep(0.02, 0.25, R.y);",
+        "  float rb = pow(u_night, mix(0.35, 1.0, rh));",
+        "  vec3 reflection = mix(getDaySky(R), getNightSky(R), rb);",
+        "  vec3 scatteringBase = mix(vec3(0.055, 0.065, 0.08), vec3(0.02, 0.02, 0.03), u_night);",
+        "  vec3 scattering = scatteringBase * (0.2 + (waterHitPos.y + WATER_DEPTH) / WATER_DEPTH);",
+        "  vec3 C = fresnel * reflection + scattering;",
+        "  vec3 fogColor = mix(vec3(0.55, 0.55, 0.58), vec3(0.03, 0.035, 0.05), u_night);",
+        "  fogColor = mix(fogColor, fogColor * 0.72, u_deep);",
+        "  float fogAmount = 1.0 - exp(-dist * 0.02);",
+        "  C = mix(C, fogColor, fogAmount);",
+        "  float waveBrightness = mix(1.55, 1.9, u_night);",
+        "  fragColor = vec4(aces_tonemap(C * waveBrightness), 1.0);",
+        "}",
+        "void main() {",
+        "  vec4 sceneColor;",
+        "  mainImage(sceneColor, gl_FragCoord.xy);",
+        "  gl_FragColor = applyFilmGrain(sceneColor.rgb * mix(1.0, 0.82, u_deep), gl_FragCoord.xy);",
+        "}"
+      ].join("\n");
+    }
+
+    function compile(type, source) {
+      var shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        if (window.console) console.warn("catnews ocean:", gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+      }
+      return shader;
+    }
+
+    var vs = compile(gl.VERTEX_SHADER, vertexSource);
+    var fs = compile(gl.FRAGMENT_SHADER, fragmentSource(QUALITY_SETTINGS[currentQuality]));
+    var program = null;
+    var uniforms = {};
+    function linkProgram() {
+      if (program) gl.deleteProgram(program);
+      program = gl.createProgram();
+      gl.attachShader(program, vs);
+      gl.attachShader(program, fs);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        if (window.console) console.warn("catnews ocean:", gl.getProgramInfoLog(program));
+        program = null;
+        return false;
+      }
+      ["iResolution", "u_waveTime", "u_grainTime", "u_noiseScale", "u_night",
+        "u_deep", "u_ripples", "u_rippleCount"].forEach(function (name) {
+          uniforms[name] = gl.getUniformLocation(program, name);
+        });
+      uniforms.position = gl.getAttribLocation(program, "position");
+      return true;
+    }
+    if (!vs || !fs || !linkProgram()) return;
+
+    var quad = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+
+    function setQuality(next) {
+      if (QUALITY_LEVELS.indexOf(next) < 0 || next === currentQuality) return;
+      currentQuality = next;
+      fs = compile(gl.FRAGMENT_SHADER, fragmentSource(QUALITY_SETTINGS[currentQuality]));
+      if (!fs || !linkProgram()) return;
+      resize();
+    }
+    function updateAutoQuality(nowMs, fps) {
+      fpsSamples.push({ t: nowMs, fps: fps });
+      var cutoff = nowMs - AUTO_SAMPLE_WINDOW;
+      while (fpsSamples.length && fpsSamples[0].t < cutoff) fpsSamples.shift();
+      if (fpsSamples.length < 3 || nowMs - lastQualityChange < AUTO_COOLDOWN) return;
+      var avg = fpsSamples.reduce(function (sum, s) { return sum + s.fps; }, 0) / fpsSamples.length;
+      var idx = QUALITY_LEVELS.indexOf(currentQuality);
+      if (avg < AUTO_FPS_LOW && idx > 0) {
+        setQuality(QUALITY_LEVELS[idx - 1]);
+        fpsSamples = [];
+        lastQualityChange = nowMs;
+      } else if (avg > AUTO_FPS_HIGH && idx < QUALITY_LEVELS.length - 1) {
+        setQuality(QUALITY_LEVELS[idx + 1]);
+        fpsSamples = [];
+        lastQualityChange = nowMs;
+      }
+    }
+
+    /* Ripples — clicks anywhere project through the camera onto the water. */
+    var MAX_RIPPLES = 10;
+    var RIPPLE_LIFETIME = 12;
+    var ripples = [];
+    var rippleData = new Float32Array(MAX_RIPPLES * 4);
+    document.addEventListener("click", function (event) {
+      var ndcX = (event.clientX / window.innerWidth) * 2 - 1;
+      var ndcY = -((event.clientY / window.innerHeight) * 2 - 1);
+      var aspect = Math.max(canvas.width, 1) / Math.max(canvas.height, 1);
+      var rx = ndcX * aspect, ry = ndcY, rz = PROJECTION_DEPTH;
+      var len = Math.sqrt(rx * rx + ry * ry + rz * rz) || 1;
+      rx /= len; ry /= len; rz /= len;
+      var tilt = BASE_TILT;
+      var cy = ry * Math.cos(tilt) + rz * Math.sin(tilt);
+      var cz = -ry * Math.sin(tilt) + rz * Math.cos(tilt);
+      if (cy >= 0) return;
+      var camX = waveTime * 0.2;
+      var t = -CAMERA_HEIGHT / cy;
+      ripples.push({ x: camX + rx * t, z: 1.0 + cz * t, t: waveTime, amp: 0.18 });
+      if (ripples.length > MAX_RIPPLES) ripples.shift();
+    }, false);
+    function rippleUniforms() {
+      while (ripples.length && waveTime - ripples[0].t > RIPPLE_LIFETIME) ripples.shift();
+      for (var i = 0; i < ripples.length; i++) {
+        rippleData[i * 4] = ripples[i].x;
+        rippleData[i * 4 + 1] = ripples[i].z;
+        rippleData[i * 4 + 2] = ripples[i].t;
+        rippleData[i * 4 + 3] = ripples[i].amp;
+      }
+      return rippleData;
+    }
+
+    function resize() {
+      var width = window.innerWidth;
+      var height = window.innerHeight;
+      if (!width || !height) return;
+      var settings = QUALITY_SETTINGS[currentQuality];
+      var dpi = window.devicePixelRatio || 1;
+      var scale = (dpi < LOW_DPI_THRESHOLD ? settings.lowDpiScale : settings.scale);
+      canvas.width = Math.round(width * dpi * scale);
+      canvas.height = Math.round(height * dpi * scale);
+    }
+
+    var waveTime = 0;
+    var grainTime = 0;
+    var lastFrame = null;
+    var waveSpeed = reduceQuery.matches ? REDUCED_WAVE_SPEED : 1.0;
+    var grainSpeed = reduceQuery.matches ? REDUCED_GRAIN_SPEED : 1.0;
+    var waveSpeedFrom = waveSpeed, waveSpeedTo = waveSpeed;
+    var grainSpeedFrom = grainSpeed, grainSpeedTo = grainSpeed;
+    var speedEaseElapsed = SPEED_EASE_DURATION;
+    var frameCount = 0;
+    var lastFpsAt = 0;
+    var rafId = null;
+
+    function updateClocks(nowMs) {
+      if (lastFrame === null) {
+        waveTime = nowMs * 0.001;
+        grainTime = nowMs * 0.001;
+        lastFrame = nowMs;
+        return;
+      }
+      var delta = Math.max(0, (nowMs - lastFrame) * 0.001);
+      var reduced = reduceQuery.matches;
+      var targetWave = reduced ? REDUCED_WAVE_SPEED : 1.0;
+      var targetGrain = reduced ? REDUCED_GRAIN_SPEED : 1.0;
+      if (waveSpeedTo !== targetWave || grainSpeedTo !== targetGrain) {
+        speedEaseElapsed = 0;
+        waveSpeedFrom = waveSpeed; waveSpeedTo = targetWave;
+        grainSpeedFrom = grainSpeed; grainSpeedTo = targetGrain;
+      }
+      if (speedEaseElapsed < SPEED_EASE_DURATION) {
+        speedEaseElapsed += delta;
+        var p = ease(Math.min(speedEaseElapsed / SPEED_EASE_DURATION, 1));
+        waveSpeed = waveSpeedFrom + (waveSpeedTo - waveSpeedFrom) * p;
+        grainSpeed = grainSpeedFrom + (grainSpeedTo - grainSpeedFrom) * p;
+      }
+      waveTime += delta * waveSpeed;
+      grainTime += delta * grainSpeed;
+      lastFrame = nowMs;
+    }
+
+    function render(nowMs) {
+      updateClocks(nowMs);
+      updateBlends(nowMs);
+      frameCount++;
+      if (nowMs - lastFpsAt >= 1000) {
+        updateAutoQuality(nowMs, frameCount);
+        frameCount = 0;
+        lastFpsAt = nowMs;
+      }
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.useProgram(program);
+      gl.enableVertexAttribArray(uniforms.position);
+      gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+      gl.vertexAttribPointer(uniforms.position, 2, gl.FLOAT, false, 0, 0);
+      gl.uniform2f(uniforms.iResolution, canvas.width, canvas.height);
+      gl.uniform1f(uniforms.u_waveTime, waveTime);
+      gl.uniform1f(uniforms.u_grainTime, grainTime);
+      gl.uniform1f(uniforms.u_noiseScale,
+        (window.devicePixelRatio || 1) < LOW_DPI_THRESHOLD ? LOW_DPI_NOISE_SCALE : 1.0);
+      gl.uniform1f(uniforms.u_night, nightBlend);
+      gl.uniform1f(uniforms.u_deep, deepBlend);
+      gl.uniform4fv(uniforms.u_ripples, rippleUniforms());
+      gl.uniform1i(uniforms.u_rippleCount, ripples.length);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      canvas.classList.add("shader-ready");
+      rafId = requestAnimationFrame(render);
+    }
+
+    function running() { return rafId !== null; }
+    function stop() {
+      if (running()) { cancelAnimationFrame(rafId); rafId = null; }
+    }
+    function sync() {
+      if (document.hidden) { stop(); }
+      else if (!running()) {
+        lastFrame = null; /* avoid a time jump after a long pause */
+        rafId = requestAnimationFrame(render);
+      }
+    }
+    document.addEventListener("visibilitychange", sync);
+
+    var reduceHandler = reduceQuery.addEventListener
+      ? function () { sync(); }
+      : null;
+    if (reduceHandler) reduceQuery.addEventListener("change", reduceHandler);
+    else if (reduceQuery.addListener) reduceQuery.addListener(sync);
+
+    window.addEventListener("resize", resize);
+    resize();
+    sync();
+  })();
 })();
