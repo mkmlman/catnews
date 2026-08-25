@@ -1,0 +1,108 @@
+{
+  "source": "simonw",
+  "date": "2026-08-25",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "llm-anthropic 0.27",
+      "url": "https://simonwillison.net/2026/Aug/24/llm-anthropic/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/24/llm-anthropic/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-24T16:27:04Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Release: llm-anthropic 0.27 This release of the Anthropic plugin for LLM mainly provides compatibility with the recently released anthropic v1.0.0 Python library, which switches from httpx to httpx2 . OpenAI made the same change in their v3.0.0 release two weeks ago. Anthropic provide this migration guide for upgrading to 1.0, so I prompted Fable 5 in Claude Code with: Upgrade to anthropic>=1 - read https://raw.githubusercontent.com/anthropics/anthropic-sdk-python/refs/heads/main/MIGRATION.md and get the tests passing Here's the resulting PR . Tags: python , httpx , llm , anthropic , claude",
+      "links": [
+        {
+          "title": "llm-anthropic 0.27",
+          "url": "https://github.com/simonw/llm-anthropic/releases/tag/0.27",
+          "site": "github.com"
+        },
+        {
+          "title": "LLM",
+          "url": "https://llm.datasette.io/",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "anthropic v1.0.0",
+          "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v1.0.0",
+          "site": "github.com"
+        },
+        {
+          "title": "httpx2",
+          "url": "https://github.com/pydantic/httpx2",
+          "site": "github.com"
+        },
+        {
+          "title": "v3.0.0 release",
+          "url": "https://github.com/openai/openai-python/releases/tag/v3.0.0",
+          "site": "github.com"
+        },
+        {
+          "title": "migration guide",
+          "url": "https://github.com/anthropics/anthropic-sdk-python/blob/v1.0.0/MIGRATION.md",
+          "site": "github.com"
+        },
+        {
+          "title": "the resulting PR",
+          "url": "https://github.com/simonw/llm-anthropic/pull/84",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Your executable is a SQLite database",
+      "url": "https://simonwillison.net/2026/Aug/24/your-executable-is-a-sqlite-database/",
+      "author": "Simon Willison",
+      "byline": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/24/your-executable-is-a-sqlite-database/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-24T11:38:15Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "points": null,
+      "num_comments": null,
+      "snippet": "Your executable is a SQLite database Farid Zakaria describes a neat Linux pattern for creating a SQLite database file that can be directly used as an executable binary. The trick sets the SQLite file format's 4-byte application ID (68 bytes into the file) to SELF, standing for Structured Executable & Linkable Format. The various components of the ELF executable format are then arranged into a number of different SQLite tables, using this schema . Their self-exec interpreter ( C code here ) can then extract and execute the necessary pieces. You can additionally use a Linux mechanism called binfmt_misc to teach the kernel to execute that any time it encounters an executable matching that binary pattern. Farid uses NixOS here, but without NixOS I think registration looks something like this: printf '%s\\n' ':self:M:68:SELF::/usr/local/bin/self-exec:' \\ > /proc/sys/fs/binfmt_misc/register Via",
+      "links": [
+        {
+          "title": "Your executable is a SQLite database",
+          "url": "https://fzakaria.com/2026/08/23/your-executable-is-a-sqlite-database",
+          "site": "fzakaria.com"
+        },
+        {
+          "title": "this schema",
+          "url": "https://github.com/fzakaria/selfdb/blob/main/schema/self.sql",
+          "site": "github.com"
+        },
+        {
+          "title": "C code here",
+          "url": "https://github.com/fzakaria/selfdb/blob/main/loader/self-exec.c",
+          "site": "github.com"
+        },
+        {
+          "title": "binfmt_misc",
+          "url": "https://docs.kernel.org/admin-guide/binfmt-misc.html",
+          "site": "docs.kernel.org"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49415271",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    }
+  ]
+}
