@@ -973,7 +973,7 @@ def test_help_dialog_documents_edition_nav():
     assert "Previous / next edition" in base
 
 
-def test_favicon_matches_earendil_ink_palette():
+def test_favicon_matches_departure_ink_palette():
     svg = (
         Path(__file__).resolve().parent.parent / "app" / "static" / "favicon.svg"
     ).read_text()

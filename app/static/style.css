@@ -1,6 +1,6 @@
 /* ==========================================================================
    catnews
-   Design language: Departure — after earendil.com.
+   Design language: Departure.
    Warm paper canvas, ink-first monochrome, mono-led UI type, serif italics
    for display, hairline rules, flat surfaces, dotted-underline hovers.
    ========================================================================== */
@@ -175,7 +175,7 @@ body::after {
 [data-theme="pitch"] body::after { opacity: 0.035; }
 
 /* ==========================================================================
-   OCEAN BACKGROUND — a WebGL sea after earendil.com's canvas scene.
+   OCEAN BACKGROUND — a WebGL sea for the Departure design system.
    The fixed canvas paints the whole viewport (layer 0); content scrolls
    above it on a translucent paper veil so reading stays comfortable while
    the water shows through at the frame edges. Kami keeps solid paper.
@@ -202,8 +202,8 @@ html[data-design-system="kami"] .ocean-canvas { display: none; }
   z-index: 1;
 }
 /* Reading veil: a soft column hugging the story grid only. The hero, sky,
-   horizon, and both side margins stay clear so the sea reads like
-   earendil.com's home page; cards keep a readable backing. One declaration
+   horizon, and both side margins stay clear so the sea reads like a full
+   scene; cards keep a readable backing. One declaration
    per theme keeps the veil intact even where advanced CSS is missing. */
 .container::before {
   content: "";
@@ -429,10 +429,10 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
       rgba(var(--chrome-surface), 0) 100%
     );
   }
-  html[data-design-system="earendil"] .site-header {
+  html[data-design-system="departure"] .site-header {
     transition: background-color 0.25s ease;
   }
-  html[data-design-system="earendil"] .site-header.is-compact {
+  html[data-design-system="departure"] .site-header.is-compact {
     padding-top: 22px;
     padding-bottom: 16px;
     background: rgb(var(--chrome-surface));
@@ -2962,7 +2962,7 @@ a.is-dead,
    KAMI ALTERNATE
    The original catnews system stays available as a local companion mode:
    parchment, serif-led hierarchy, ink-blue accents, rounded cards, and a
-   compact sticky header. The default stylesheet above is the Earendil mode.
+   compact sticky header. The default stylesheet above is the Departure mode.
    ======================================================================== */
 html[data-design-system="kami"] {
   color-scheme: light;

@@ -21,7 +21,7 @@
       var key = "catnews-design-system";
       var stored = null;
       try { stored = localStorage.getItem(key); } catch (e) {}
-      if (stored !== "earendil" && stored !== "kami") stored = "earendil";
+      if (stored !== "departure" && stored !== "kami") stored = "departure";
       document.documentElement.setAttribute("data-design-system", stored);
     })();
   </script>
@@ -103,7 +103,7 @@
         document.documentElement.setAttribute("data-theme", theme);
         var meta = document.getElementById("theme-color-meta");
         if (meta) {
-          var design = "earendil";
+          var design = "departure";
           try {
             var storedDesign = localStorage.getItem("catnews-design-system");
             if (storedDesign === "kami") design = "kami";
@@ -208,7 +208,7 @@
       <div class="bottom-controls">
         <a class="repo-link" href="{{ repo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
         <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
-        <button class="design-toggle" id="design-toggle" type="button" aria-label="Switch to Kami design system" title="Switch to Kami design system"><span class="design-toggle-mark" aria-hidden="true"></span><span id="design-toggle-label">DESIGN · EAR</span></button>
+        <button class="design-toggle" id="design-toggle" type="button" aria-label="Switch to Kami design system" title="Switch to Kami design system"><span class="design-toggle-mark" aria-hidden="true"></span><span id="design-toggle-label">DESIGN · DEP</span></button>
         <div class="theme-picker">
           <button class="theme-toggle" id="theme-toggle" type="button" aria-haspopup="menu" aria-expanded="false" title="Theme"><span class="value" id="theme-value">LIGHT</span></button>
           <div class="theme-menu" id="theme-menu" role="menu" hidden>
@@ -284,15 +284,15 @@
       var label = document.getElementById("design-toggle-label");
       var root = document.documentElement;
       var key = "catnews-design-system";
-      var order = ["earendil", "kami"];
-      var names = { earendil: "DESIGN · EAR", kami: "DESIGN · KAMI" };
-      var fullNames = { earendil: "Earendil", kami: "Kami" };
+      var order = ["departure", "kami"];
+      var names = { departure: "DESIGN · DEP", kami: "DESIGN · KAMI" };
+      var fullNames = { departure: "Departure", kami: "Kami" };
       if (!btn) return;
       function read() {
         try {
           var value = localStorage.getItem(key);
-          return order.indexOf(value) >= 0 ? value : "earendil";
-        } catch (e) { return "earendil"; }
+          return order.indexOf(value) >= 0 ? value : "departure";
+        } catch (e) { return "departure"; }
       }
       function write(value) { try { localStorage.setItem(key, value); } catch (e) {} }
       function paint() {

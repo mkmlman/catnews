@@ -211,7 +211,7 @@
 
     var design = document.documentElement.getAttribute("data-design-system");
     var isDesktopChrome =
-      desktopMq.matches && (design === "earendil" || design === "kami");
+      desktopMq.matches && (design === "departure" || design === "kami");
     var movingDown = y > previousScrollY + 2;
     if (isDesktopChrome && !headerEl.classList.contains("nav-open")) {
       if (y > 120 && movingDown) setHeaderCompact(true);
@@ -1686,8 +1686,8 @@
   });
 
   /* -------------------------------------------------------------
-     Ocean background — a full-viewport WebGL sea after earendil.com's
-     canvas scene (their shader is built on afl_ext's MIT "ocean weaves").
+     Ocean background — a full-viewport WebGL sea for the Departure
+     design system, built on afl_ext's MIT "ocean weaves" shader.
      Day water under light themes; night sky with stars over dark/pitch,
      cross-faded on theme flips. Clicks drop ripples into the water.
      Wave motion slows to a quiet drift under prefers-reduced-motion;
