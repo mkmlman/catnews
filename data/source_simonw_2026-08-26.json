@@ -1,0 +1,59 @@
+{
+  "source": "simonw",
+  "date": "2026-08-26",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "EVE Online: The Move to Python 3 Begins!",
+      "url": "https://simonwillison.net/2026/Aug/25/eve-online-move-to-python-3/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/25/eve-online-move-to-python-3/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-25T22:59:30Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "EVE Online: The Move to Python 3 Begins! EVE Online has been one of the most interesting case studies in Python at scale for over twenty years now. They've been running on Stackless Python since their launch in 2003, and their last major upgrade was 16 years ago, to Stackless Python 2.7 in 2010 . Their upgrade to Python 3 will start using the futurize script against 2.4 million lines of code, followed by careful manual review of the ~20,000 places where Python 2 and 3 behavior differ - for example 1 / 2 is 0 in Python 2 but is 0.5 in Python 3. There's nothing in this announcement about how they plan to replace Stackless, but at their conference last year they presented Scheduling in Carbon: Leaving Stackless Python Behind describing how they replaced Stackless in the Carbon engine for their more recent game EVE Frontier, using their (now open source) carbonengine/scheduler library. Via L",
+      "links": [
+        {
+          "title": "EVE Online: The Move to Python 3 Begins!",
+          "url": "https://www.eveonline.com/news/view/the-move-to-python-3-begins",
+          "site": "eveonline.com"
+        },
+        {
+          "title": "Stackless Python",
+          "url": "https://github.com/stackless-dev/stackless/wiki/",
+          "site": "github.com"
+        },
+        {
+          "title": "in 2010",
+          "url": "https://www.eveonline.com/news/view/stackless-python-2.7",
+          "site": "eveonline.com"
+        },
+        {
+          "title": "futurize",
+          "url": "https://python-future.org/futurize.html",
+          "site": "python-future.org"
+        },
+        {
+          "title": "Scheduling in Carbon: Leaving Stackless Python Behind",
+          "url": "https://youtu.be/-x299qHLQs0",
+          "site": "youtu.be"
+        },
+        {
+          "title": "carbonengine/scheduler",
+          "url": "https://github.com/carbonengine/scheduler",
+          "site": "github.com"
+        },
+        {
+          "title": "Lobster.rs",
+          "url": "https://lobste.rs/s/e1oalq/move_python_3_begins",
+          "site": "lobste.rs"
+        }
+      ]
+    }
+  ]
+}
