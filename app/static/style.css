@@ -407,7 +407,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   top: 0;
   left: 0;
   right: 0;
-  z-index: 220;
+  z-index: 300;
   display: flex;
   align-items: flex-start;
   gap: 20px;
@@ -417,6 +417,9 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
 }
 .site-header > * { pointer-events: auto; }
 .site-header > .search { margin-left: auto; }
+.site-header:focus-within {
+  z-index: 310;
+}
 
 /* Opaque-to-transparent veil once content scrolls beneath */
 @media (min-width: 861px) {
@@ -435,6 +438,11 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   html[data-design-system="departure"] .site-header.is-compact {
     padding-top: 22px;
     padding-bottom: 16px;
+    background: rgb(var(--chrome-surface));
+    box-shadow: 0 8px 16px -14px var(--ink);
+  }
+  /* Keep search legible over the source filter bar: solidify header while searching (desktop) */
+  .site-header:focus-within {
     background: rgb(var(--chrome-surface));
     box-shadow: 0 8px 16px -14px var(--ink);
   }
@@ -572,6 +580,8 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   position: relative;
   display: inline-flex;
   align-items: center;
+  z-index: 235;
+  isolation: isolate;
 }
 .search input[type="search"] {
   appearance: none;
@@ -601,7 +611,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   width: 340px;
   max-height: 380px;
   overflow-y: auto;
-  z-index: 240;
+  z-index: 320;
   padding: 8px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -2720,6 +2730,9 @@ a.is-dead,
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
   }
+  .site-header:focus-within {
+    background: rgb(var(--chrome-surface));
+  }
   .filters {
     background: var(--paper);
     -webkit-backdrop-filter: blur(12px);
@@ -3045,7 +3058,7 @@ html[data-design-system="kami"] .site-header {
   top: 0;
   left: auto;
   right: auto;
-  z-index: 30;
+  z-index: 300;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas: "wordmark nav search";
@@ -3344,7 +3357,7 @@ html[data-design-system="kami"] .ds-comp {
     left: 0;
     right: 0;
     width: 100%;
-    z-index: 220;
+    z-index: 300;
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-areas: "wordmark nav" "search search";
@@ -3354,6 +3367,9 @@ html[data-design-system="kami"] .ds-comp {
     background: color-mix(in srgb, var(--paper) 94%, transparent);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
+  }
+  html[data-design-system="kami"] .site-header:focus-within {
+    background: rgb(var(--chrome-surface));
   }
   html[data-design-system="kami"] .site-header > .search {
     grid-area: search;
