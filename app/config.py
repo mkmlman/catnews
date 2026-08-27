@@ -52,7 +52,12 @@ PALETTE_NAMES: tuple[str, ...] = (
 )
 
 PALETTE: list[tuple[str, str, str, str]] = [
-    ("#9c4d14", "#f8e7d2", "#f0b177", "rgba(240, 177, 119, 0.15)"),  # ember
+    (
+        "#7a3c10",
+        "#f8e7d2",
+        "#f0b177",
+        "rgba(240, 177, 119, 0.15)",
+    ),  # ember — darkened for AAA on paper
     ("#8a1f18", "#f7e2df", "#f2a7a2", "rgba(242, 167, 162, 0.15)"),  # clay
     ("#3b3e37", "#e9e9e2", "#c8cbc1", "rgba(200, 203, 193, 0.15)"),  # graphite
     ("#20507a", "#dfeaf4", "#9db9db", "rgba(157, 185, 219, 0.15)"),  # cerulean

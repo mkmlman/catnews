@@ -208,6 +208,7 @@
       <div class="bottom-controls">
         <a class="repo-link" href="{{ repo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
         <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
+        <button class="ocean-toggle" id="ocean-toggle" type="button" aria-pressed="true" aria-label="Hide ocean background" title="Hide ocean background">◐</button>
         <button class="design-toggle" id="design-toggle" type="button" aria-label="Switch to Kami design system" title="Switch to Kami design system"><span class="design-toggle-mark" aria-hidden="true"></span><span id="design-toggle-label">DESIGN · DEP</span></button>
         <div class="theme-picker">
           <button class="theme-toggle" id="theme-toggle" type="button" aria-haspopup="menu" aria-expanded="false" title="Theme"><span class="value" id="theme-value">LIGHT</span></button>
@@ -326,7 +327,27 @@
   <script src="{{ base_path }}/static/app.js?v={{ asset_version }}" defer></script>
   <script>
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("{{ base_path }}/sw.js").catch(function (err) {
+      navigator.serviceWorker.register("{{ base_path }}/sw.js").then(function (reg) {
+        if (reg) {
+          reg.addEventListener("updatefound", function () {
+            var worker = reg.installing;
+            if (!worker) return;
+            worker.addEventListener("statechange", function () {
+              if (worker.state === "installed" && navigator.serviceWorker.controller) {
+                var toast = document.getElementById("edition-toast");
+                var txt = document.getElementById("edition-toast-text");
+                var btn = document.getElementById("edition-toast-refresh");
+                if (toast && txt) {
+                  txt.textContent = "New version available";
+                  toast.hidden = false;
+                  requestAnimationFrame(function(){ toast.classList.add("is-visible"); });
+                  if (btn) btn.onclick = function(){ window.location.reload(); };
+                }
+              }
+            });
+          });
+        }
+      }).catch(function (err) {
         console.warn("catnews: service worker registration failed", err);
       });
     }

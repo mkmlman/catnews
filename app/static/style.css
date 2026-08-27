@@ -1494,6 +1494,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   white-space: nowrap;
 }
 /* Per-source colors arrive as generated `.badge-<source>` color rules. */
+[data-theme="pitch"] .badge { border-color: color-mix(in srgb, currentColor 60%, transparent); }
 
 .story-title {
   font-family: var(--serif-font);

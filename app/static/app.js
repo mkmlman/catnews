@@ -1146,6 +1146,49 @@
       });
   }
 
+  function levenshteinOne(a, b) {
+    if (a === b) return 0;
+    if (Math.abs(a.length - b.length) > 1) return 2;
+    var al = a.length, bl = b.length;
+    var i = 0, j = 0, edits = 0;
+    while (i < al && j < bl) {
+      if (a[i] === b[j]) { i++; j++; }
+      else {
+        if (edits === 1) return 2;
+        edits++;
+        if (al > bl) i++;
+        else if (bl > al) j++;
+        else { i++; j++; }
+      }
+    }
+    edits += (al - i) + (bl - j);
+    return edits;
+  }
+  function tokenMatches(haystack, token) {
+    if (haystack.indexOf(token) !== -1) return 2;
+    if (token.length < 4) return 0;
+    var words = haystack.split(/\s+/);
+    for (var w = 0; w < words.length; w++) {
+      if (Math.abs(words[w].length - token.length) > 1) continue;
+      if (levenshteinOne(words[w], token) === 1) return 1;
+    }
+    return 0;
+  }
+  function excerptAround(text, tokens) {
+    if (!text) return "";
+    var lower = normalize(text);
+    var best = -1;
+    tokens.forEach(function (tk) {
+      var idx = lower.indexOf(tk);
+      if (idx !== -1 && (best === -1 || idx < best)) best = idx;
+    });
+    if (best === -1) return text.slice(0, 90);
+    var start = Math.max(0, best - 35);
+    var snippet = text.slice(start, start + 90);
+    if (start > 0) snippet = "…" + snippet;
+    if (start + 90 < text.length) snippet = snippet + "…";
+    return snippet;
+  }
   function searchStories(query) {
     var tokens = normalize(query)
       .split(/\s+/)
@@ -1172,12 +1215,15 @@
       ]
         .map(normalize)
         .join(" ");
+      var titleLower = normalize(story.title);
       var score = 0;
       var ok = true;
       tokens.forEach(function (token) {
-        if (haystack.indexOf(token) === -1) ok = false;
-        else score += 1;
-        if (normalize(story.title).indexOf(token) !== -1) score += 2;
+        var m = tokenMatches(haystack, token);
+        if (!m) ok = false;
+        else score += m;
+        if (titleLower.indexOf(token) !== -1) score += 2;
+        else if (token.length >= 4 && titleLower.split(/\s+/).some(function (w) { return levenshteinOne(w, token) === 1; })) score += 1;
       });
       if (ok) results.push({ score: score, story: story });
     });
@@ -1220,6 +1266,15 @@
   var searchSource = "All";
   var searchDays = 0;
   var searchDebounceTimer = null;
+  var searchStatus = document.getElementById("search-status");
+  if (!searchStatus && searchEl) {
+    searchStatus = document.createElement("div");
+    searchStatus.id = "search-status";
+    searchStatus.className = "sr-only";
+    searchStatus.setAttribute("aria-live", "polite");
+    searchStatus.setAttribute("aria-atomic", "true");
+    searchEl.appendChild(searchStatus);
+  }
 
   function paintFacets() {
     if (!searchResults || !storiesCache) return;
@@ -1326,6 +1381,7 @@
       hint.id = "search-result-hint";
       searchResults.appendChild(hint);
       paintActiveResult();
+      if (searchStatus) searchStatus.textContent = "";
       showSearchResults();
       return;
     }
@@ -1359,9 +1415,9 @@
         var sub = document.createElement("span");
         sub.className = "search-result-sub";
         var authorPart = story.author ? markText(story.author, tokens) : "";
-        var whyPart = story.why_read ? markText(story.why_read.slice(0, 90), tokens) : "";
+        var whyPart = story.why_read ? markText(excerptAround(story.why_read, tokens), tokens) : "";
         sub.innerHTML = whyPart ? (authorPart ? authorPart + " · " : "") + whyPart : authorPart;
-        if (whyPart && sub.textContent.length > 92) sub.title = story.why_read;
+        if (whyPart && story.why_read && story.why_read.length > 92) sub.title = story.why_read;
         a.appendChild(tag);
         a.appendChild(text);
         a.appendChild(sub);
@@ -1379,6 +1435,11 @@
       });
     }
     paintActiveResult();
+    if (searchStatus) {
+      if (!query) searchStatus.textContent = "";
+      else if (!hits.length) searchStatus.textContent = searchUnavailable ? "Search unavailable" : "No matches for " + query;
+      else searchStatus.textContent = hits.length + (hits.length === 1 ? " result for " : " results for ") + query;
+    }
     showSearchResults();
   }
 
@@ -1424,6 +1485,14 @@
       if (!searchEl.contains(event.target)) {
         hideSearchResults();
       }
+    });
+    searchInput.addEventListener("transitionend", function (e) {
+      if (e.propertyName === "width") paintStickyOffsets();
+    });
+  }
+  if (headerEl) {
+    headerEl.addEventListener("transitionend", function (e) {
+      if (e.propertyName === "padding-top" || e.propertyName === "padding-bottom" || e.propertyName === "background-color") paintStickyOffsets();
     });
   }
 
@@ -2284,5 +2353,33 @@
     window.addEventListener("resize", resize);
     resize();
     sync();
+  })();
+  (function () {
+    var btn = document.getElementById("ocean-toggle");
+    var canvas = document.getElementById("ocean");
+    if (!btn || !canvas) return;
+    var key = "catnews:ocean";
+    var saveData = (navigator.connection && navigator.connection.saveData) || false;
+    var reducePref = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function isForcedOff() { return saveData || reducePref; }
+    function read() {
+      try { var v = localStorage.getItem(key); if (v === "off" || v === "on") return v; } catch (e) {}
+      return isForcedOff() ? "off" : "on";
+    }
+    function apply(state) {
+      var on = state === "on";
+      canvas.hidden = !on;
+      canvas.style.display = on ? "" : "none";
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.setAttribute("aria-label", on ? "Hide ocean background" : "Show ocean background");
+      btn.title = on ? "Hide ocean background" : "Show ocean background";
+      try { localStorage.setItem(key, state); } catch (e) {}
+    }
+    var initial = read();
+    apply(initial);
+    btn.addEventListener("click", function () {
+      var cur = canvas.hidden ? "off" : "on";
+      apply(cur === "on" ? "off" : "on");
+    });
   })();
 })();
