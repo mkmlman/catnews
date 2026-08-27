@@ -1219,6 +1219,7 @@
   var activeSearchIndex = -1;
   var searchSource = "All";
   var searchDays = 0;
+  var searchDebounceTimer = null;
 
   function paintFacets() {
     if (!searchResults || !storiesCache) return;
@@ -1288,6 +1289,8 @@
   function hideSearchResults() {
     if (!searchResults) return;
     searchResults.classList.add("is-closing");
+    if (searchEl) searchEl.classList.remove("has-results");
+    if (headerEl) headerEl.classList.remove("search-open");
     clearTimeout(searchHideTimer);
     searchHideTimer = setTimeout(function () {
       searchResults.hidden = true;
@@ -1300,21 +1303,33 @@
     clearTimeout(searchHideTimer);
     searchResults.classList.remove("is-closing");
     searchResults.hidden = false;
+    if (searchEl) searchEl.classList.add("has-results");
+    if (headerEl) headerEl.classList.add("search-open");
     searchInput.setAttribute("aria-expanded", "true");
+  }
+  function debouncedRender() {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(renderResults, 150);
   }
 
   function renderResults() {
     var query = searchInput.value.trim();
-    if (!query) {
-      hideSearchResults();
-      activeSearchIndex = -1;
-      return;
-    }
     var tokens = normalize(query).split(/\s+/).filter(Boolean);
-    var hits = searchStories(query);
     searchResults.innerHTML = "";
     activeSearchIndex = -1;
     paintFacets();
+    if (!query) {
+      var hint = document.createElement("div");
+      hint.className = "search-result search-result--none";
+      var total = storiesCache ? storiesCache.length : "";
+      hint.textContent = total ? "Type to search " + total + " stories — try python, llm, hugging face" : "Type to search the archive…";
+      hint.id = "search-result-hint";
+      searchResults.appendChild(hint);
+      paintActiveResult();
+      showSearchResults();
+      return;
+    }
+    var hits = searchStories(query);
     if (!hits.length) {
       var none = document.createElement("div");
       none.className = "search-result search-result--none";
@@ -1326,10 +1341,11 @@
       searchResults.appendChild(none);
     } else {
       hits.forEach(function (story) {
+        var idx = Array.prototype.indexOf.call(hits, story);
         var a = document.createElement("a");
         a.className = "search-result";
-        a.id = "search-result-" + Array.prototype.indexOf.call(hits, story);
-        a.style.setProperty("--i", Array.prototype.indexOf.call(hits, story));
+        a.id = "search-result-" + idx;
+        a.style.setProperty("--i", idx);
         a.href = story.url;
         a.target = "_blank";
         a.rel = "noopener";
@@ -1342,7 +1358,10 @@
         text.innerHTML = markText(story.title, tokens);
         var sub = document.createElement("span");
         sub.className = "search-result-sub";
-        sub.innerHTML = markText(story.author || "", tokens);
+        var authorPart = story.author ? markText(story.author, tokens) : "";
+        var whyPart = story.why_read ? markText(story.why_read.slice(0, 90), tokens) : "";
+        sub.innerHTML = whyPart ? (authorPart ? authorPart + " · " : "") + whyPart : authorPart;
+        if (whyPart && sub.textContent.length > 92) sub.title = story.why_read;
         a.appendChild(tag);
         a.appendChild(text);
         a.appendChild(sub);
@@ -1352,6 +1371,9 @@
             a
           );
           paintActiveResult();
+        });
+        a.addEventListener("click", function () {
+          hideSearchResults();
         });
         searchResults.appendChild(a);
       });
@@ -1367,7 +1389,7 @@
         renderResults();
       });
     });
-    searchInput.addEventListener("input", renderResults);
+    searchInput.addEventListener("input", debouncedRender);
     searchInput.addEventListener("keydown", function (event) {
       if (event.key === "ArrowDown") {
         event.preventDefault();
