@@ -2356,30 +2356,52 @@
   })();
   (function () {
     var btn = document.getElementById("ocean-toggle");
-    var canvas = document.getElementById("ocean");
-    if (!btn || !canvas) return;
-    var key = "catnews:ocean";
+    var ocean = document.getElementById("ocean");
+    var fluid = document.getElementById("fluid");
+    if (!btn || !ocean || !fluid) return;
+    var key = "catnews:background";
+    var legacyKey = "catnews:ocean";
     var saveData = (navigator.connection && navigator.connection.saveData) || false;
     var reducePref = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     function isForcedOff() { return saveData || reducePref; }
     function read() {
-      try { var v = localStorage.getItem(key); if (v === "off" || v === "on") return v; } catch (e) {}
-      return isForcedOff() ? "off" : "on";
+      // TEST: force fluid visible in departure for verification
+      if (document.documentElement.getAttribute("data-design-system") !== "kami" && !isForcedOff()) return "fluid";
+      try {
+        var v = localStorage.getItem(key);
+        if (v === "ocean" || v === "fluid" || v === "off") return v;
+        var legacy = localStorage.getItem(legacyKey);
+        if (legacy === "off") return "off";
+        if (legacy === "on") return "ocean";
+      } catch (e) {}
+      return isForcedOff() ? "off" : "fluid";
     }
     function apply(state) {
-      var on = state === "on";
-      canvas.hidden = !on;
-      canvas.style.display = on ? "" : "none";
-      btn.setAttribute("aria-pressed", on ? "true" : "false");
-      btn.setAttribute("aria-label", on ? "Hide ocean background" : "Show ocean background");
-      btn.title = on ? "Hide ocean background" : "Show ocean background";
-      try { localStorage.setItem(key, state); } catch (e) {}
+      var showOcean = state === "ocean";
+      var showFluid = state === "fluid";
+      ocean.hidden = !showOcean; ocean.style.display = showOcean ? "" : "none";
+      if (window.catnewsFluid) {
+        if (showFluid) window.catnewsFluid.show(); else window.catnewsFluid.hide();
+      } else {
+        fluid.hidden = !showFluid; if (showFluid) fluid.classList.add("is-visible"); else fluid.classList.remove("is-visible");
+        fluid.style.display = showFluid ? "" : "none";
+      }
+      var label = showOcean ? "Ocean" : showFluid ? "Fluid" : "Off";
+      var next = showOcean ? "fluid" : showFluid ? "off" : "ocean";
+      btn.textContent = showOcean ? "◐" : showFluid ? "≈" : "○";
+      btn.setAttribute("aria-pressed", state !== "off" ? "true" : "false");
+      btn.setAttribute("aria-label", "Background: " + label + " — switch to " + next);
+      btn.title = "Background: " + label + " — click for " + next + "";
+      try { localStorage.setItem(key, state); localStorage.setItem(legacyKey, showOcean ? "on" : "off"); } catch (e) {}
     }
-    var initial = read();
-    apply(initial);
+    var cur = read();
+    apply(cur);
     btn.addEventListener("click", function () {
-      var cur = canvas.hidden ? "off" : "on";
-      apply(cur === "on" ? "off" : "on");
+      var curState;
+      try { curState = localStorage.getItem(key); } catch (e) { curState = null; }
+      if (curState !== "ocean" && curState !== "fluid" && curState !== "off") curState = !ocean.hidden ? "ocean" : !fluid.hidden ? "fluid" : "off";
+      var next = curState === "ocean" ? "fluid" : curState === "fluid" ? "off" : "ocean";
+      apply(next);
     });
   })();
 })();

@@ -174,6 +174,7 @@
 </head>
 <body>
   <canvas class="ocean-canvas" id="ocean" aria-hidden="true"></canvas>
+  <canvas class="fluid-canvas" id="fluid" aria-hidden="true" hidden></canvas>
   <a class="skip-link" href="#main-content">Skip to content</a>
   <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
   <div class="container">
@@ -325,6 +326,7 @@
     };
   </script>
   <script src="{{ base_path }}/static/app.js?v={{ asset_version }}" defer></script>
+  <script src="{{ base_path }}/static/fluid.js?v={{ asset_version }}" defer></script>
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("{{ base_path }}/sw.js").then(function (reg) {

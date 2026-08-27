@@ -197,6 +197,23 @@ body::after {
 .ocean-canvas.shader-ready { opacity: 1; }
 html[data-design-system="kami"] .ocean-canvas { display: none; }
 
+.fluid-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+@supports (height: 100dvh) {
+  .fluid-canvas { height: 100dvh; }
+}
+.fluid-canvas.is-visible { opacity: 1; }
+html[data-design-system="kami"] .fluid-canvas { display: none !important; }
+body:has(.fluid-canvas.is-visible) .container::before { opacity: 0.55; }
+
 .container {
   position: relative;
   z-index: 1;
@@ -2936,7 +2953,8 @@ a.is-dead,
     animation: none !important;
   }
   html { scroll-behavior: auto; }
-  .ocean-canvas { display: none !important; }
+  .ocean-canvas,
+  .fluid-canvas { display: none !important; }
   .container::before { -webkit-mask-image: none !important; mask-image: none !important; }
 }
 
