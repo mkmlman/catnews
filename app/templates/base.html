@@ -21,11 +21,11 @@
       var key = "catnews-design-system";
       var stored = null;
       try { stored = localStorage.getItem(key); } catch (e) {}
-      if (stored !== "departure" && stored !== "kami") stored = "departure";
+      if (stored !== "departure" && stored !== "kami") stored = "kami";
       document.documentElement.setAttribute("data-design-system", stored);
     })();
   </script>
-  <meta name="theme-color" id="theme-color-meta" content="#faf9f6">
+  <meta name="theme-color" id="theme-color-meta" content="#f5f4ed">
   <link rel="manifest" href="{{ base_path }}/manifest.json">
   <link rel="icon" type="image/svg+xml" href="{{ base_path }}/static/favicon.svg?v=3">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32.png" media="(prefers-color-scheme: light)">
@@ -103,10 +103,11 @@
         document.documentElement.setAttribute("data-theme", theme);
         var meta = document.getElementById("theme-color-meta");
         if (meta) {
-          var design = "departure";
+          var design = "kami";
           try {
             var storedDesign = localStorage.getItem("catnews-design-system");
-            if (storedDesign === "kami") design = "kami";
+            if (storedDesign === "departure") design = "departure";
+            else if (storedDesign === "kami") design = "kami";
           } catch (e) {}
           var lightTop = design === "kami" ? "#f5f4ed" : "#faf9f6";
           var lightScrolled = design === "kami" ? "#efeee7" : "#f1efe9";
@@ -336,8 +337,8 @@
       function read() {
         try {
           var value = localStorage.getItem(key);
-          return order.indexOf(value) >= 0 ? value : "departure";
-        } catch (e) { return "departure"; }
+          return order.indexOf(value) >= 0 ? value : "kami";
+        } catch (e) { return "kami"; }
       }
       function write(value) { try { localStorage.setItem(key, value); } catch (e) {} }
       function paint() {
