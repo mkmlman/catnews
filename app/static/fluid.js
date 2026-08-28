@@ -12,17 +12,16 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { canvas.hidd
 resizeCanvas();
 
 let config = {
-    // catnews paper background
-
+    // defaults match footer dials [Image 1] — subtle ink
     SIM_RESOLUTION: 128,
     DYE_RESOLUTION: 1024,
     CAPTURE_RESOLUTION: 512,
-    DENSITY_DISSIPATION: 1,
+    DENSITY_DISSIPATION: 0.925,
     VELOCITY_DISSIPATION: 0.2,
     PRESSURE: 0.8,
     PRESSURE_ITERATIONS: 20,
-    CURL: 45,
-    SPLAT_RADIUS: 0.45,
+    CURL: 0,
+    SPLAT_RADIUS: 0.14,
     SPLAT_FORCE: 6000,
     SHADING: true,
     COLORFUL: true,
@@ -33,7 +32,7 @@ let config = {
     BLOOM: true,
     BLOOM_ITERATIONS: 8,
     BLOOM_RESOLUTION: 256,
-    BLOOM_INTENSITY: 1.0,
+    BLOOM_INTENSITY: 0.30,
     BLOOM_THRESHOLD: 0.6,
     BLOOM_SOFT_KNEE: 0.7,
     SUNRAYS: true,
@@ -1486,9 +1485,10 @@ function correctDeltaY (delta) {
 
 function generateColor () {
     let c = HSVtoRGB(Math.random(), 1.0, 1.0);
-    c.r *= 0.15;
-    c.g *= 0.15;
-    c.b *= 0.15;
+    // visible on warm paper — brighter than original 0.15, but not washed-out
+    c.r *= 0.45;
+    c.g *= 0.45;
+    c.b *= 0.45;
     return c;
 }
 
@@ -1570,6 +1570,8 @@ function hashCode (s) {
 window.catnewsFluid = {
   show: function(){ canvas.hidden = false; canvas.style.display = ''; canvas.classList.add('is-visible'); if (typeof resizeCanvas === 'function' && typeof initFramebuffers === 'function'){ resizeCanvas(); initFramebuffers(); } },
   hide: function(){ canvas.hidden = true; canvas.style.display = 'none'; canvas.classList.remove('is-visible'); },
-  splat: function(x,y,dx,dy){ splat(x,y,dx,dy, generateColor()); }
+  splat: function(x,y,dx,dy){ splat(x,y,dx,dy, generateColor()); },
+  get config(){ return config; },
+  setConfig: function(key, value){ config[key]=value; if(key==='BLOOM' || key==='SHADING' || key==='SUNRAYS') updateKeywords(); }
 };
 })();

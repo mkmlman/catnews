@@ -26,7 +26,7 @@ STATIC_DIR = Path(__file__).resolve().parent / "static"
 def static_asset_version() -> str:
     """Return a short fingerprint for browser-loaded CSS and JavaScript."""
     digest = hashlib.sha256()
-    for name in ("style.css", "app.js", "fluid.js"):
+    for name in ("style.css", "app.js", "fluid.js", "dials.js"):
         path = STATIC_DIR / name
         if path.is_file():
             digest.update(name.encode("utf-8"))

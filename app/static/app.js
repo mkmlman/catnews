@@ -2365,8 +2365,6 @@
     var reducePref = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     function isForcedOff() { return saveData || reducePref; }
     function read() {
-      // TEST: force fluid visible in departure for verification
-      if (document.documentElement.getAttribute("data-design-system") !== "kami" && !isForcedOff()) return "fluid";
       try {
         var v = localStorage.getItem(key);
         if (v === "ocean" || v === "fluid" || v === "off") return v;
@@ -2374,7 +2372,11 @@
         if (legacy === "off") return "off";
         if (legacy === "on") return "ocean";
       } catch (e) {}
-      return isForcedOff() ? "off" : "fluid";
+      // default: fluid in departure, ocean in kami, off if forced
+      if (isForcedOff()) return "off";
+      var design = document.documentElement.getAttribute("data-design-system");
+      if (design === "kami") return "ocean";
+      return "fluid";
     }
     function apply(state) {
       var showOcean = state === "ocean";
@@ -2386,6 +2388,13 @@
         fluid.hidden = !showFluid; if (showFluid) fluid.classList.add("is-visible"); else fluid.classList.remove("is-visible");
         fluid.style.display = showFluid ? "" : "none";
       }
+      var dialers = document.getElementById("fluid-dialers");
+      if (dialers) {
+        var isKami = document.documentElement.getAttribute("data-design-system") === "kami";
+        var shouldShow = showFluid && !isKami && !isForcedOff();
+        dialers.hidden = !shouldShow;
+        dialers.setAttribute("aria-hidden", shouldShow ? "false" : "true");
+      }
       var label = showOcean ? "Ocean" : showFluid ? "Fluid" : "Off";
       var next = showOcean ? "fluid" : showFluid ? "off" : "ocean";
       btn.textContent = showOcean ? "◐" : showFluid ? "≈" : "○";
@@ -2396,6 +2405,16 @@
     }
     var cur = read();
     apply(cur);
+    // Keep dialer visibility in sync when design system flips to/from kami
+    if (window.MutationObserver) {
+      new MutationObserver(function () {
+        try {
+          var v = localStorage.getItem(key);
+          if (v !== "ocean" && v !== "fluid" && v !== "off") v = cur;
+          apply(v);
+        } catch (e) { apply(cur); }
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-design-system"] });
+    }
     btn.addEventListener("click", function () {
       var curState;
       try { curState = localStorage.getItem(key); } catch (e) { curState = null; }
