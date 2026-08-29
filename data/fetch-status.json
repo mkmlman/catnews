@@ -1,19 +1,19 @@
 {
-  "date": "2026-08-28",
+  "date": "2026-08-29",
   "sources": {
     "hn": {
       "state": "ok",
-      "snapshot_date": "2026-08-28",
+      "snapshot_date": "2026-08-29",
       "stories": 25
     },
     "github": {
       "state": "ok",
-      "snapshot_date": "2026-08-28",
+      "snapshot_date": "2026-08-29",
       "stories": 15
     },
     "simonw": {
       "state": "ok",
-      "snapshot_date": "2026-08-28",
+      "snapshot_date": "2026-08-29",
       "stories": 20
     },
     "arxiv": {
