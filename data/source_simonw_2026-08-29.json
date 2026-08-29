@@ -1,0 +1,39 @@
+{
+  "source": "simonw",
+  "date": "2026-08-29",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Just a rumour of a bug is enough to find a security exploit these days",
+      "url": "https://simonwillison.net/2026/Aug/28/just-a-rumour-of-a-bug/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/28/just-a-rumour-of-a-bug/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-28T22:12:02Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Just a rumour of a bug is enough to find a security exploit these days Anil Madhavapeddy is a professor of computer science at Cambridge and a core maintainer of the OCaml compiler. In this somewhat alarming post he reports that security issues in OCaml projects are seeing evidence of attempted exploits within minutes of patches being shared for discussion: This normally takes a few days and a release within a week or two is reasonable. Within about ten minutes (!) this website was fielding probes for percent-encoded traversal sequences, indicating that automated watchers are keeping an eye on public repositories. Modern coding agents have become so effective at finding flaws that the slightest hint at a new bug can be enough information for them to find it, something Anil has been able to demonstrate using his own agents, switching to DeepSeek V4 Pro⁠ when Claude Fable refused the task.",
+      "links": [
+        {
+          "title": "Just a rumour of a bug is enough to find a security exploit thes",
+          "url": "https://anil.recoil.org/notes/rumour-is-the-exploit",
+          "site": "anil.recoil.org"
+        },
+        {
+          "title": "confirms in the Hacker News comments",
+          "url": "https://news.ycombinator.com/item?id=49480466#49480777",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49480466",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    }
+  ]
+}
