@@ -1,0 +1,49 @@
+{
+  "source": "simonw",
+  "date": "2026-08-30",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Introducing Hy4 Preview",
+      "url": "https://simonwillison.net/2026/Aug/29/hy4/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/29/hy4/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-29T23:53:13Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Introducing Hy4 Preview New open weight text input (no vision) LLM from Chinese company Tencent today: 770B total parameters, 49B active parameters, 1M token context window, 1.56TB on Hugging Face . This is a big size increase from their previous Hy3 in July, which was 295B, 21B active, 256,000 context, 598GB. I recently started using model chat templates to better understand their capabilities. Here's Hy4's chat_template.jinja on Hugging Face, which includes this section: {% - if not reasoning_effort is defined %} {% - set reasoning_effort = 'high' %} {% - elif reasoning_effort not in [ 'high' , 'no_think' ] %} {% - if reasoning_effort is none %} {{- raise_exception('reasoning_effort error : None, should be no_think/high') }} {% - else %} {{- raise_exception('reasoning_effort error : ' + reasoning_effort + ', should be no_think/high') }} {% - endif %} {% - endif %} So it looks like ther",
+      "links": [
+        {
+          "title": "Introducing Hy4 Preview",
+          "url": "https://hy.tencent.ai/research/hy4-preview",
+          "site": "hy.tencent.ai"
+        },
+        {
+          "title": "1.56TB on Hugging Face",
+          "url": "https://huggingface.co/tencent/Hy4-preview",
+          "site": "huggingface.co"
+        },
+        {
+          "title": "Hy3",
+          "url": "https://huggingface.co/tencent/Hy3",
+          "site": "huggingface.co"
+        },
+        {
+          "title": "chat_template.jinja",
+          "url": "https://huggingface.co/tencent/Hy4-preview/blob/main/chat_template.jinja",
+          "site": "huggingface.co"
+        },
+        {
+          "title": "via OpenRouter",
+          "url": "https://openrouter.ai/tencent/hy4-preview#apps",
+          "site": "openrouter.ai"
+        }
+      ]
+    }
+  ]
+}
