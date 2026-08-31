@@ -1,0 +1,154 @@
+{
+  "source": "registerspill",
+  "date": "2026-08-31",
+  "stories": [
+    {
+      "source": "registerspill",
+      "title": "Joy & Curiosity #97",
+      "url": "https://registerspill.thorstenball.com/p/joy-and-curiosity-97",
+      "author": "Thorsten Ball",
+      "external_id": "https://registerspill.thorstenball.com/p/joy-and-curiosity-97",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-30T06:01:01Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Interesting & joyful things from the previous week",
+      "links": [
+        {
+          "title": "Everything I own, owned",
+          "url": "https://schlarp.com/posts/everything-i-own-owned/",
+          "site": "schlarp.com"
+        },
+        {
+          "title": "The Golden Rule for Becoming a Better Writer",
+          "url": "https://nappertime.com/the-golden-rule-of-becoming-a-better-writer/",
+          "site": "nappertime.com"
+        },
+        {
+          "title": "the Rhine Group",
+          "url": "https://www.rhinegroup.eu/",
+          "site": "rhinegroup.eu"
+        },
+        {
+          "title": "How Europe is killing makers and micro-entrepreneurs",
+          "url": "https://lectronz.com/u/lectronz/articles/how-europe-is-killing-makers-and-micro-entrepreneurs",
+          "site": "lectronz.com"
+        },
+        {
+          "title": "The end of programming",
+          "url": "https://pauldix.com/the-end-of-programming",
+          "site": "pauldix.com"
+        },
+        {
+          "title": "CleanShot X",
+          "url": "https://cleanshot.com/",
+          "site": "cleanshot.com"
+        },
+        {
+          "title": "this",
+          "url": "https://x.com/thorstenball/status/1940835737672602056",
+          "site": "x.com"
+        },
+        {
+          "title": "a new version on September 1",
+          "url": "https://x.com/CleanShot/status/2092274623899406635",
+          "site": "x.com"
+        },
+        {
+          "title": "SaaS Isn’t Dead. Sameness Is.",
+          "url": "https://aicoding.leaflet.pub/3mtu6c5wsvc2n",
+          "site": "aicoding.leaflet.pub"
+        },
+        {
+          "title": "we recorded another episode of Raising an Agent",
+          "url": "https://www.youtube.com/watch?v=SI3N8MCQHfo",
+          "site": "youtube.com"
+        },
+        {
+          "title": "“US consumer spending on Apple’s App Store fell for the first ti",
+          "url": "https://www.ft.com/content/e5533f32-e4c2-4ce1-9d2e-a831e96546b4?syn-25a6b1a6=1",
+          "site": "ft.com"
+        },
+        {
+          "title": "Dylan Patel was on the Dwarkesh podcast again",
+          "url": "https://www.dwarkesh.com/p/dylan-patel-3",
+          "site": "dwarkesh.com"
+        },
+        {
+          "title": "doing $1B",
+          "url": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-second-quarter-fiscal-2027",
+          "site": "nvidianews.nvidia.com"
+        },
+        {
+          "title": "per day",
+          "url": "https://x.com/APompliano/status/2092730885674029152?s=20",
+          "site": "x.com"
+        },
+        {
+          "title": "What if demand flattens?",
+          "url": "https://x.com/phl43/status/2092973404924104808?s=20",
+          "site": "x.com"
+        },
+        {
+          "title": "Simplified Technical English",
+          "url": "https://en.wikipedia.org/wiki/Simplified_Technical_English",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "Building a backyard office, the build and cost breakdown",
+          "url": "https://www.imkylelambert.com/articles/building-a-backyard-office-the-build-and-cost-breakdown",
+          "site": "imkylelambert.com"
+        },
+        {
+          "title": "Interview with Doug McIlroy",
+          "url": "https://tmpout.sh/5/2.html",
+          "site": "tmpout.sh"
+        },
+        {
+          "title": "Fornax’s Guide To Ridiculously Fast Ethernet",
+          "url": "https://docs.pixeldrain.com/posts/2024-03-07_network_optimizations/",
+          "site": "docs.pixeldrain.com"
+        },
+        {
+          "title": "Language evolves, truth-telling endures",
+          "url": "https://read.fluxcollective.org/p/249",
+          "site": "read.fluxcollective.org"
+        },
+        {
+          "title": "more investigation into the OpenAI & HuggingFace incident",
+          "url": "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation",
+          "site": "metr.org"
+        },
+        {
+          "title": "the OpenAI report",
+          "url": "https://cdn.openai.com/pdf/67869394-cb91-4c12-888c-5cbd85c7814c/OpenAI-Hugging-Face%20Incident-Technical-Report.pdf",
+          "site": "cdn.openai.com"
+        },
+        {
+          "title": "how hard it was to make sense of the incident",
+          "url": "https://x.com/RyanGreenblatt/status/2092692685224325542",
+          "site": "x.com"
+        },
+        {
+          "title": "The Rise and Fall of Agent Civilizations",
+          "url": "https://www.dwarkesh.com/p/openai-huggingface",
+          "site": "dwarkesh.com"
+        },
+        {
+          "title": "Brett had Amp build a custom, JIT tool inside an Orb",
+          "url": "https://x.com/0xBrettj/status/2092967091163078767",
+          "site": "x.com"
+        },
+        {
+          "title": "trained a language model to make images by writing code",
+          "url": "https://surya.website/rling-qwen-to-paint-with-code",
+          "site": "surya.website"
+        }
+      ]
+    }
+  ]
+}

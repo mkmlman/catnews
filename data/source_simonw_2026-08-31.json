@@ -1,0 +1,129 @@
+{
+  "source": "simonw",
+  "date": "2026-08-31",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Understanding ChatGPT Work",
+      "url": "https://simonwillison.net/2026/Aug/30/understanding-chatgpt-work/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/30/understanding-chatgpt-work/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-30T23:59:47Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "OpenAI announced ChatGPT Work on July 9th, and have been furiously iterating on it ever since. It is an extraordinarily confusing and very powerful product. Here's what I've figured out about it so far. ChatGPT Work is actually two products The more interesting version of ChatGPT Work is the one that runs in the cloud. This can be accessed via chatgpt.com or through the ChatGPT mobile apps. Let's call it Work Cloud . If you install the ChatGPT desktop app - the app that used to be called Codex - you gain access to a thing called ChatGPT Work that can access files and run programs directly on your computer. Let's call that one Work Local . This one feels more like regular Codex re-skinned to be less intimidating to non-software-developers. ( Update : Work Cloud is also available from the ChatGPT desktop app, via a Where should this chat run? dropdown.) For the rest of this article I'm goi",
+      "links": [
+        {
+          "title": "announced ChatGPT Work",
+          "url": "https://openai.com/index/chatgpt-for-your-most-ambitious-work/",
+          "site": "openai.com"
+        },
+        {
+          "title": "chatgpt.com",
+          "url": "https://www.chatgpt.com/",
+          "site": "chatgpt.com"
+        },
+        {
+          "title": "Where should this chat run?",
+          "url": "https://bsky.app/profile/jkwim.bsky.social/post/3mueurvkss52h",
+          "site": "bsky.app"
+        },
+        {
+          "title": "official answer",
+          "url": "https://learn.chatgpt.com/docs/get-started-with-work",
+          "site": "learn.chatgpt.com"
+        },
+        {
+          "title": "the browser tool",
+          "url": "https://learn.chatgpt.com/docs/browser?surface=web",
+          "site": "learn.chatgpt.com"
+        },
+        {
+          "title": "shot-scraper javascript",
+          "url": "https://shot-scraper.datasette.io/en/stable/javascript.html",
+          "site": "shot-scraper.datasette.io"
+        },
+        {
+          "title": "london-pelicans-in-her-piety.simonw.chatgpt.site",
+          "url": "https://london-pelicans-in-her-piety.simonw.chatgpt.site/",
+          "site": "london-pelicans-in-her-piety.simonw.chatgpt.site"
+        },
+        {
+          "title": "medieval Christian imagery",
+          "url": "https://devonchurchland.co.uk/blog/pelican-in-her-piety/#What-is-a-Pelican-In-Her-Piety",
+          "site": "devonchurchland.co.uk"
+        },
+        {
+          "title": "auto-review mechanism",
+          "url": "https://learn.chatgpt.com/docs/sandboxing/auto-review",
+          "site": "learn.chatgpt.com"
+        },
+        {
+          "title": "Here's the site it built",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "web.run",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/#tool-web-run",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "a lot of skills",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/#skills",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "control-browser skill",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/skills/control-browser",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "on /skills/control-browser",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/skills/control-browser#browser-documentation",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "documents",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/skills/documents",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "imagegen",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/skills/imagegen",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "pdf",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/skills/pdf",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "Spreadsheets",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/skills/spreadsheets",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "sites:sites-building",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/skills/sites-sites-building",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "openai-docs",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/skills/openai-docs",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "data-analytics:build-dashboard",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/skills/data-analytics-build-dashboard",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        }
+      ]
+    }
+  ]
+}

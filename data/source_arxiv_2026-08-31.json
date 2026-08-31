@@ -1,0 +1,332 @@
+{
+  "source": "arxiv",
+  "date": "2026-08-31",
+  "stories": [
+    {
+      "source": "arxiv",
+      "title": "QGPINNs: A Physics-Informed Neural Network Framework for Nonlocal Differential Equations on Quantum Graphs",
+      "url": "https://arxiv.org/abs/2608.28589v1",
+      "author": "Vaibhav Mehandiratta",
+      "external_id": "2608.28589v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Vaibhav Mehandiratta",
+        "Saket Ramchandra"
+      ],
+      "category": "cs.LG",
+      "published": "2026-08-28T17:59:47Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "We propose QGPINNs, a physics-informed neural network framework developed in PyTorch for the numerical solution of nonlocal differential equations on quantum graphs. The framework is designed as a general computational implementation in which the solution on each edge of the graph is approximated by a neural network, while a unified graph-based loss function enforces the governing equations together with initial, boundary, and vertex transmission conditions. In particular, the formulation incorporates standard continuity and Kirchhoff-Neumann vertex conditions and Dirichlet boundary conditions into the learning process to couple the local edge-wise neural approximations into a global solution on the graph. The framework is developed for two representative classes of nonlinear models: multi-order fractional elliptic problems and time-fractional evolution equations on quantum graphs. To im",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Aero Hand Open: A Simulation-Ready Tendon-Driven Hand for Dexterous Manipulation Learning",
+      "url": "https://arxiv.org/abs/2608.28578v1",
+      "author": "Nan Wang",
+      "external_id": "2608.28578v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Nan Wang",
+        "Mohit Yadav",
+        "Jonathan Wulff",
+        "Aidan Rosenbaum",
+        "Kezhou Chen",
+        "Yuvan Sharma",
+        "Xu Dong",
+        "Yiwei Tao"
+      ],
+      "category": "cs.RO",
+      "published": "2026-08-28T17:53:48Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Tendon-driven hands are anthropomorphic, and moving the actuators off the joints is what makes a hand of this capability affordable to build. Two effects produce that saving. Routing force through a cable removes the requirement that a motor fit inside the joint it drives, so smaller and cheaper motors suffice, and one motor can drive several joints through a single cable, so fewer motors are needed. They are also harder to learn on than a direct-drive hand. The underactuated transmission that produces the saving is itself difficult to represent in a simulator, and the joints one cable drives are not independently commandable. We present Aero Hand Open, a tendon-driven anthropomorphic hand that is released simulation-ready. Three things ship with it. A simulation model reproduces the cable transmission itself. An identified actuation map connects that model to the motor commands in both ",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Learning a Size-Weight Frontier for Synthetic-Augmented Inference",
+      "url": "https://arxiv.org/abs/2608.28576v1",
+      "author": "Chengpiao Huang",
+      "external_id": "2608.28576v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Chengpiao Huang",
+        "Kaizheng Wang"
+      ],
+      "category": "stat.ME",
+      "published": "2026-08-28T17:52:33Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Synthetic data can improve statistical inference when real data are scarce, but naively treating synthetic samples as real data can introduce bias and lead to unreliable inference. We develop a general framework for synthetic-augmented inference across a population of related tasks. It characterizes synthetic augmentation by the number of synthetic observations and their weight. Central to our framework is a size-weight frontier that specifies, for each weight, the largest synthetic sample size for which all smaller sizes attain the target task-marginal coverage. We estimate this frontier from historical tasks, and establish a finite-sample coverage guarantee simultaneously for all size-weight configurations on or below the estimated frontier. In experiments using large language model responses to augment opinion survey data, our procedure achieves target coverage and substantially narro",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "On two proofs of $d^2$ mixing of weighted Dikin walks",
+      "url": "https://arxiv.org/abs/2608.28566v1",
+      "author": "Yuansi Chen",
+      "external_id": "2608.28566v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Yuansi Chen",
+        "Yunbum Kook"
+      ],
+      "category": "cs.DS",
+      "published": "2026-08-28T17:43:58Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "We study the mixing time of weighted Dikin walks for sampling from exponential distributions on polytopes and truncated positive-semidefinite (PSD) cones. Our first result gives a general total-variation mixing bound under strong self-concordance, $\\barν$-symmetry, and mixed-trace regularity on the local metric. The key idea is to control the Metropolis--Hastings acceptance probability on a high-probability region rather than at every point. Applying this framework to the Lee--Sidford, Lewis-weight, and John metrics yields an $\\widetilde O(d^2)$ mixing bound for sampling from polytopes, while applying it to a hybrid barrier yields an $\\widetilde O(d^4)$ mixing bound for sampling from truncated PSD cones. Our second result establishes stronger $χ^2$-divergence guarantees and pointwise acceptance control using a new fourth-order bootstrap condition. For a suitably scaled Lee--Sidford metri",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Learning between the peaks: sharp asymptotics for kernel ridge regression under power-law anisotropy",
+      "url": "https://arxiv.org/abs/2608.28564v1",
+      "author": "Lorenzo Rizzi",
+      "external_id": "2608.28564v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Lorenzo Rizzi",
+        "Arie Wortsman Zurich",
+        "Bruno Loureiro"
+      ],
+      "category": "stat.ML",
+      "published": "2026-08-28T17:41:53Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "We study kernel ridge regression under anisotropic Gaussian data, where the input covariance decays as a power law with exponent $α\\geq 0$ for polynomial inner-product kernels. We derive asymptotically sharp expressions for the kernel spectrum and the generalization error in the polynomial high-dimensional regime $n=Θ(d^κ)$, revealing how anisotropy reshapes the learning curves. For weak anisotropy ($0<α<1$), the problem remains effectively high-dimensional and retains some features of the isotropic case, while departing from it in others: the variance still peaks at integer sample complexities $κ\\in\\mathbb{N}$, but these peaks are progressively damped as $α$ grows; meanwhile, for targets strongly aligned with the data's principal directions, the bias drops at fractional sample complexities, decoupling the bias transitions from the interpolation peaks. For strong anisotropy ($α> 1$), the",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "A Formal Limitation on Learning Human Language From Textual Corpora",
+      "url": "https://arxiv.org/abs/2608.28560v1",
+      "author": "Emily Cheng",
+      "external_id": "2608.28560v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Emily Cheng",
+        "Ryan Cotterell"
+      ],
+      "category": "cs.CL",
+      "published": "2026-08-28T17:38:24Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Can a listener recover what a speaker means from the form of an utterance alone? We answer this question information-theoretically, and for a listener given by any featurizer of text, including the hidden states of contemporary large language models. Modeling language use as a joint distribution over meanings, contexts, and utterances, we derive upper bounds on the probability that a decoder recovers a speaker's intended meaning from a representation of the utterance. The bounds are governed by the uncertainty that form leaves about meaning, which splits into an irreducible part and a part that only (extralinguistic) context, but never the utterance alone, can resolve. Because these quantities are intrinsic to language, no representation, however much text or supervision produced it, can surpass them; the bounds hold whether the space of meanings is discrete or continuous. Experiments on",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Blog: Survey of Optimizers",
+      "url": "https://arxiv.org/abs/2608.28557v1",
+      "author": "Ruoran Xu",
+      "external_id": "2608.28557v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Ruoran Xu"
+      ],
+      "category": "cs.LG",
+      "published": "2026-08-28T17:35:11Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Neural-network optimization in 2025-2026 is no longer well described as a succession of new Adam variants. The design space has expanded from coordinates to matrices and layers, from fixed training horizons to policies over time, and from mathematical update rules to state representations that must survive sharding and low-precision computation. This survey organizes recent optimizers and training optimization methods along four largely independent axes: temporal estimation, update geometry, horizon management, and representation and systems. It connects the spectral normalization of Muon, the historical matrix statistics of Shampoo and SOAP, adaptive and hybrid matrix methods, memory-efficient optimizers, schedule-free training, small-batch corrections, and quantized optimizer states. The central empirical conclusion is deliberately non-triumphal: matrix-aware methods represent a genuin",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Logos: An Agent Harness on a Cross-Process Bus",
+      "url": "https://arxiv.org/abs/2608.28553v1",
+      "author": "Hanzhang Jia",
+      "external_id": "2608.28553v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Hanzhang Jia",
+        "Liheng Zeng",
+        "Hao Cheng",
+        "Yi Gao",
+        "Bo Ma"
+      ],
+      "category": "cs.AI",
+      "published": "2026-08-28T17:30:10Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Modern agent systems assemble capabilities at runtime, and this dynamic composition has recently received a complete formal treat ment in the spatiotemporal-composability calculus, in which a capability is a component carrying a tracked inverse, and agents are assembled as plugins. This plugin form is carried by a single process sharing one context, a carrier that places all components in one physical failure domain, a fault suspends every component at once, and process death interrupts every session the process hosts. This paper shows that neither the modeling nor the calculus binds an agent to one process, the statelessness of the language model keeps all cross-step state outside the model, and the soundness invariant is defined on the state space alone. These observations condense into four lemmas whose premises are the hypotheses of the calculus and the statelessness of language-mode",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Advancing Interaction-Sensitive Feature Selection: Novel Relief-Based Algorithms, Expanded Comparisons, and Recommendations for Biomedical Data Mining",
+      "url": "https://arxiv.org/abs/2608.28552v1",
+      "author": "Kia Kazemi-Nia",
+      "external_id": "2608.28552v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Kia Kazemi-Nia",
+        "Harsh Bandhey",
+        "Philip J. Freda",
+        "Ryan J. Urbanowicz"
+      ],
+      "category": "cs.LG",
+      "published": "2026-08-28T17:28:50Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "As a precursor to high-dimensional biomedical data modeling, reliable feature selection can reduce computational expense, improve modeling performance, and yield simpler, more interpretable models. However, most filter-based feature selection methods struggle to detect feature interactions, while wrapper or embedded feature selection methods are computationally expensive. Relief-based algorithms (RBAs) are filter methods that are sensitive to feature interactions while mitigating these other limitations. This study (1) refactors, optimizes, and expands the scikit-rebate Python package with existing and newly proposed RBA variants and (2) conducts rigorous RBA benchmark comparisons across diverse genomic simulations. We expand scikit-rebate to include SWRF*, mu-Relief, and 5 novel RBA variants implementing alternative strategies for neighbor selection and feature scoring. All RBAs were ev",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Video Generative Models as Geometry Learner",
+      "url": "https://arxiv.org/abs/2608.28549v1",
+      "author": "Haosen Yang",
+      "external_id": "2608.28549v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Haosen Yang",
+        "Jifei Song",
+        "Zhensong Zhang",
+        "Xiatian Zhu",
+        "Jiankang Deng"
+      ],
+      "category": "cs.CV",
+      "published": "2026-08-28T17:25:31Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Recent generative approaches to geometry estimation adapt pretrained image diffusion models and treat the task as image-conditioned generation. Leveraging off-the-shelf image diffusion models, they either (i) train task-specific geometry models (for depth and surface normal estimation) independently, losing the opportunity of exploring the intrinsic correlation of these geometric targets, or (ii) jointly fine-tune modified image diffusion backbones (e.g., altered self-attention), which typically demands substantial labeled data. To overcome these limitations in a principled fashion, we repurpose pretrained video generative models as a unified and data-efficient framework for geometry estimation, formulated innovatively as a next-frames prediction task. Our method, GeoNeXt, inherits naturally structured knowledge and richer priors from the video model, while further adapting them for join",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "DARTS: Decoder-Aware Representation Tuning via Surgery for Model Merging",
+      "url": "https://arxiv.org/abs/2608.28547v1",
+      "author": "Aaryan Ajay Sharma",
+      "external_id": "2608.28547v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Aaryan Ajay Sharma",
+        "Sai Nishanth Padala",
+        "Seganrasan Subramanian"
+      ],
+      "category": "cs.LG",
+      "published": "2026-08-28T17:22:47Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Model merging combines multiple task-specific fine-tuned LLMs into a single multi-task model without additional training. However, merged models are known to suffer from representation bias: systematic drift between the merged model's hidden states and those of each individual source model. Prior work (Yang et al., 2024a) study and mitigate this bias for encoder-based vision models using a lightweight correction module trained with L1 loss. However, such bias is not studied for decoder models due to their autoregressive nature. We analyze the problem of representation bias in decoder models, and show two challenges absent in encoders: (1) the causal attention mask causes bias to accumulate across token positions, requiring position-dependent correction; and (2) not all token positions are equally important, i.e., high-entropy (decision-critical) positions matter far more than low-entropy",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Offline-Verifiable Accountability for Cross-Organization Agent Messaging: A Preserved Evidence-Bundle Approach",
+      "url": "https://arxiv.org/abs/2608.28542v1",
+      "author": "Adil Alshammari",
+      "external_id": "2608.28542v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Adil Alshammari",
+        "Hayretdin Bahsi"
+      ],
+      "category": "cs.CR",
+      "published": "2026-08-28T17:18:49Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Cross-organization agent workflows require preserved evidence that remains independently verifiable during later audit or dispute review. They may involve multiple organizations, delegated actions, policy-relevant events, and disputed accountability claims. This is difficult when live systems are unavailable, controlled by one party, or not trusted by all participants. Existing mechanisms provide useful pieces, including authenticated logging, delegation semantics, signed checkpoints, and consistency checks. What remains missing is a verifier-centered event-level bundle for checking evidence sufficiency offline under an explicit policy. We propose a preserved evidence-bundle model and a policy-controlled offline verifier for agent-to-agent workflow events. Each bundle preserves policy-required evidence, including sender authentication, authenticated log commitment, witness-backed checkpo",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "An Enclosed Mode Is a Gauge Choice: Topology Relative to Reach in Certified Code World Models",
+      "url": "https://arxiv.org/abs/2608.28541v1",
+      "author": "Javier Aguilar Martín",
+      "external_id": "2608.28541v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Javier Aguilar Martín"
+      ],
+      "category": "cs.LG",
+      "published": "2026-08-28T17:14:58Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "A code world model accepted by a sampling gate can be exactly right on everything the gate can see and arbitrarily wrong beyond it. We characterize what a certified model can know, and what its errors can cost, when the omission is an annular freeze mode enclosing an unreachable interior. The gate quotient makes the question precise: acceptance-with-certainty determines the model exactly on the reachable query set; beyond reach is gauge. On a minimal ring instrument we prove the extreme case (a wrong-topology filled-disc artifact unfalsifiable by any sampling gate and bitwise harmless at play) and measure, with LLM synthesis across three model families, how one knob (a channel of width gamma) walks the same artifact through three regimes: unfalsifiable-and-harmless, falsifiable-and-costly, and instantly falsified. Three principles organize the empirics. First, danger is topology relative",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "InstructMesh: Selective Refinement of Generative 3D Models for Fabrication",
+      "url": "https://arxiv.org/abs/2608.28534v1",
+      "author": "Faraz Faruqi",
+      "external_id": "2608.28534v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Faraz Faruqi",
+        "Ahmed Katary",
+        "Demircan Tas",
+        "Theresa Hradilak",
+        "Ning Zhang",
+        "Jiaji Li",
+        "Fabian Manhardt",
+        "Martin Nisser",
+        "Vrushank Phadnis",
+        "Ruofei Du",
+        "Federico Tombari",
+        "Megan Hofmann",
+        "Stefanie Mueller"
+      ],
+      "category": "cs.AI",
+      "published": "2026-08-28T17:09:42Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Recent advances in generative AI allow users to create 3D models from text or images. However, these models prioritize visual plausibility over geometric accuracy, often generating results with flaws that compromise their intended use post-fabrication. We present InstructMesh, an interactive post-generation refinement tool that enables selective repair of generative 3D models through region selection and targeted operations, such as opening or sealing voids, or adjusting local thickness. Users can invoke edit operations via natural language prompts or slider controls. By operating directly on the intermediate latent representation, InstructMesh allows users to apply robust geometric corrections without requiring expert modeling skills. To inform our design, we first analyze common fabrication-related failure modes in outputs from state-of-the-art generative tools. We then conduct two use",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Relaxed Sender Anonymity for CBDC Interbank Settlement: A Zero-Knowledge Approach on Permissioned EVM",
+      "url": "https://arxiv.org/abs/2608.28529v1",
+      "author": "Pietro Tiberi",
+      "external_id": "2608.28529v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Pietro Tiberi",
+        "Gabriele Marcelli",
+        "Vitangelo Lasorella"
+      ],
+      "category": "cs.CR",
+      "published": "2026-08-28T17:08:02Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Central Bank Digital Currency (CBDC) interbank settlement systems operating on Distributed Ledger Technology (DLT) face a fundamental trade-off: blockchain transparency enables trustless verification but exposes commercially sensitive bilateral transaction flows to all network participants. We propose a confidential interbank settlement protocol for permissioned Ethereum-compatible networks that resolves this tension through a relaxed sender anonymity model tailored to regulatory AML/CFT requirements. In this model, the initiating institution remains publicly identifiable on-chain for accountability and compliance, while the receiving institution, transfer amount, and business payload are cryptographically obfuscated. We realize the protocol on Hyperledger Besu using QBFT consensus, combining Groth16 zero-knowledge proofs over BN254, Poseidon hash commitments in an incremental Merkle tre",
+      "links": []
+    }
+  ]
+}
