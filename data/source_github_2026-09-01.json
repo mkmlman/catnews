@@ -1,0 +1,57 @@
+{
+  "source": "github",
+  "date": "2026-09-01",
+  "stories": [
+    {
+      "source": "github",
+      "title": "CoomeRtool — Coomer Tool",
+      "url": "https://github.com/GangTailorUpgrade/CoomeRtool",
+      "author": "GangTailorUpgrade",
+      "external_id": "GangTailorUpgrade/CoomeRtool",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-31T00:12:45Z",
+      "score": 732,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Coomer Tool",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "my-free-code — Open-source multi-provider AI gateway for Claude Code and other coding agents, with model routing, streaming, tools, reasoni…",
+      "url": "https://github.com/hkqr/my-free-code",
+      "author": "hkqr",
+      "external_id": "hkqr/my-free-code",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-27T17:59:23Z",
+      "score": 617,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Open-source multi-provider AI gateway for Claude Code and other coding agents, with model routing, streaming, tools, reasoning, fallbacks, and local model support",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "shrimply — you're telling me a shrimp made this video?",
+      "url": "https://github.com/soirihiroka/shrimply",
+      "author": "soirihiroka",
+      "external_id": "soirihiroka/shrimply",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-26T01:55:08Z",
+      "score": 596,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "you're telling me a shrimp made this video?",
+      "links": []
+    }
+  ]
+}
