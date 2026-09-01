@@ -1,0 +1,72 @@
+{
+  "source": "simonw",
+  "date": "2026-09-01",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Introducing wrapture",
+      "url": "https://simonwillison.net/2026/Aug/31/introducing-wrapture/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/31/introducing-wrapture/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-31T23:59:36Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Introducing wrapture New from Graham Dumpleton (of wrapt , mod_wsgi, and New Relic's Python agent fame), who describes Wrapture as taking the monkeypatching ideas from wrapt and extending them to apply to testing and tracing at the same time. Wrapture ( full documentation here ) makes it easy to wrap any function or method such that all access can be traced, or can be overridden to return a different value. It acts as both an alternative to unittest.mock and a way to implement tracing against an existing project: Attaching observation to code you do not control, recording what flows through it, and doing so without disturbing the program being watched, is a problem I have never really stopped thinking about. Wrapture includes OpenTelemetry support and even has an entirely configuration-based mechanism for adding tracing to an existing Python project, which looks like this: capture = \" su",
+      "links": [
+        {
+          "title": "Introducing wrapture",
+          "url": "https://grahamdumpleton.me/posts/2026/08/introducing-wrapture/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "wrapt",
+          "url": "https://pypi.org/project/wrapt/",
+          "site": "pypi.org"
+        },
+        {
+          "title": "full documentation here",
+          "url": "https://wrapture.readthedocs.io/",
+          "site": "wrapture.readthedocs.io"
+        },
+        {
+          "title": "OpenTelemetry support",
+          "url": "https://wrapture.readthedocs.io/en/latest/otel-export.html",
+          "site": "wrapture.readthedocs.io"
+        },
+        {
+          "title": "Unit testing with wrapture",
+          "url": "https://grahamdumpleton.me/posts/2026/09/unit-testing-with-wrapture/",
+          "site": "grahamdumpleton.me"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Andrew Digby",
+      "url": "https://simonwillison.net/2026/Aug/31/andrew-digby/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Aug/31/andrew-digby/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-31T22:25:02Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "325 #kakapo! The chicks from this year's record breeding season are now juveniles and so have been added to the population. In 1995 there were just 51 kākāpō left. Recovery of critically endangered species is possible with sustained effort. — Andrew Digby , providing the best news of the year Tags: kakapo",
+      "links": [
+        {
+          "title": "Andrew Digby",
+          "url": "https://bsky.app/profile/digs.bsky.social/post/3mufrrsfhq22r",
+          "site": "bsky.app"
+        }
+      ]
+    }
+  ]
+}
