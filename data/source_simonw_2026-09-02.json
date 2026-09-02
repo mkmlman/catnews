@@ -1,0 +1,297 @@
+{
+  "source": "simonw",
+  "date": "2026-09-02",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Rick Brewster",
+      "url": "https://simonwillison.net/2026/Sep/2/rick-brewster/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/2/rick-brewster/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-02T05:50:57Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Direct2D has always been the biggest hurdle for Paint.NET on WINE, and it's clear that it will never be completed enough for Paint.NET's use. And I can't just \"disable\" the use of Direct2D. So, instead, Paint.NET now has an internal, from-scratch, clean-room reverse-engineered rewrite of Direct2D that it uses on WINE (triggered by using /wine ). It lives in PaintDotNet.Windows.Direct2D1.Managed.dll . This was written by our good friend Claude , without whom this would NOT have been possible and would NEVER have happened. [...] Most of this code is, as they say, \"vibe coded.\" By that I mean that it has not been thoroughly reviewed, it's more \"trust me bro\" style. I cannot possibly review 180,000 lines of code, it's just way way way too much. For reference, the rest of Paint.NET is about 700,000 lines of code and I've been working on it for over 20 years. [...] At times, Claude was working",
+      "links": [
+        {
+          "title": "Claude",
+          "url": "https://claude.ai/",
+          "site": "claude.ai"
+        },
+        {
+          "title": "Rick Brewster",
+          "url": "https://forums.paint.net/topic/134563-🍷-extremely-experimental-winelinux-support-how-to-get-started/",
+          "site": "forums.paint.net"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Claude Fable 5.1 made me a really nice animated pelican",
+      "url": "https://simonwillison.net/2026/Sep/1/claude-fable-5-1/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/1/claude-fable-5-1/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-01T23:57:28Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Today is Claude Fable (and Mythos) 5.1 day . Anthropic say that Fable 5.1 \"sets a new standard for coding, knowledge work, and long-running problem-solving tasks\". Their announcement spends a notable amount of time on scientific research, boasting of a 52.6% score on the brand new Terminal-Bench-Science 0.1 benchmark (first announced on August 27th ), up from 24.7% for Fable 5, 29.0% for Opus 5 and 22.4% for GPT-5.6 Sol. Other benchmarks show slightly improved scores, but none as impressive as the Science one. But how well can it pelican? Back in July I wrote about how I was losing faith in the pelican benchmark - its connection to how good the models were at other tasks didn't seem to hold as strongly as it did back in 2025 . The most interesting insights I get from it now are comparisons within model families, and particularly comparisons for the same prompt at different reasoning effo",
+      "links": [
+        {
+          "title": "Claude Fable (and Mythos) 5.1 day",
+          "url": "https://www.anthropic.com/claude-fable-and-mythos-5-1",
+          "site": "anthropic.com"
+        },
+        {
+          "title": "Terminal-Bench-Science 0.1",
+          "url": "https://www.terminal-bench-science.ai",
+          "site": "terminal-bench-science.ai"
+        },
+        {
+          "title": "on August 27th",
+          "url": "https://www.tbench.ai/news/terminal-bench-science-0-1",
+          "site": "tbench.ai"
+        },
+        {
+          "title": "an issue",
+          "url": "https://github.com/simonw/llm-anthropic/issues/88",
+          "site": "github.com"
+        },
+        {
+          "title": "llm-anthropic",
+          "url": "https://github.com/simonw/llm-anthropic",
+          "site": "github.com"
+        },
+        {
+          "title": "10.017 cents",
+          "url": "https://www.llm-prices.com/#it=27&ot=1998&sel=claude-fable-5-1",
+          "site": "llm-prices.com"
+        },
+        {
+          "title": "9.912 cents",
+          "url": "https://www.llm-prices.com/#it=27&ot=1977&sel=claude-fable-5-1",
+          "site": "llm-prices.com"
+        },
+        {
+          "title": "13.087 cents",
+          "url": "https://www.llm-prices.com/#it=27&ot=2612&sel=claude-fable-5-1",
+          "site": "llm-prices.com"
+        },
+        {
+          "title": "$1.83",
+          "url": "https://www.llm-prices.com/#it=27&ot=36767&sel=claude-fable-5-1",
+          "site": "llm-prices.com"
+        },
+        {
+          "title": "$3.30",
+          "url": "https://www.llm-prices.com/#it=27&ot=65927&sel=claude-fable-5-1",
+          "site": "llm-prices.com"
+        },
+        {
+          "title": "swalsh commented",
+          "url": "https://news.ycombinator.com/item?id=49525378#49526455",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "$1.37",
+          "url": "https://www.llm-prices.com/#it=6121&ot=26201&sel=claude-fable-5-1",
+          "site": "llm-prices.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Codex bundles LibreOffice",
+      "url": "https://simonwillison.net/2026/Sep/1/codex-libreoffice/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/1/codex-libreoffice/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-01T19:03:01Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I was poking around in my ~/.cache/ folder using OmniDiskSweeper when I spotted something interesting. The OpenAI Codex desktop app (since rebranded to just ChatGPT) has 1.7GB of stuff in there in a folder called codex-primary-runtime , including a full Python installation, a full Node.js installation, and native binaries for Poppler , git, and the LibreOffice open source office suite (which forked from OpenOffice.org in 2010): The ~/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/documents folder includes skills which tell Codex how to find and use those binaries. Tags: codex , generative-ai , openai , ai , llms , openoffice , open-source",
+      "links": [
+        {
+          "title": "OmniDiskSweeper",
+          "url": "https://www.omnigroup.com/more",
+          "site": "omnigroup.com"
+        },
+        {
+          "title": "rebranded",
+          "url": "https://help.openai.com/en/articles/20001276-moving-to-the-new-chatgpt-desktop-app",
+          "site": "help.openai.com"
+        },
+        {
+          "title": "Poppler",
+          "url": "https://poppler.freedesktop.org",
+          "site": "poppler.freedesktop.org"
+        },
+        {
+          "title": "LibreOffice",
+          "url": "https://en.wikipedia.org/wiki/LibreOffice",
+          "site": "en.wikipedia.org"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "GeoJSON Map Viewer",
+      "url": "https://simonwillison.net/2026/Sep/1/geojson/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/1/geojson/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-01T18:05:45Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Tool: GeoJSON Map Viewer I was helping Natalie gather some maps of local political boundaries (for the Granada Community Services District and the Midcoast Community Council ) and found a need to display some GeoJSON files on a map and export that as a PNG. I asked GPT-5.6-Sol for suggestions of tools and it proactively built one. After some iterations using Claude Code for web and Fable 5.1 we got to this finished tool. As for the GeoJSON.. it turns out if you ask ChatGPT Work to provide boundaries for almost anything it will churn away extracting and combining files from different Government data sources and build exactly what you need. I got this polygon from: I want a polygon that represents the exact boundary of the El Granada GCSD And this one from: Get me a GeoJSON file for the boundary (or boundaries if that makes sense) for the MCC - Midcoast Community Council - that operates ne",
+      "links": [
+        {
+          "title": "Granada Community Services District",
+          "url": "https://granada.ca.gov",
+          "site": "granada.ca.gov"
+        },
+        {
+          "title": "Midcoast Community Council",
+          "url": "https://midcoastcommunitycouncil.org",
+          "site": "midcoastcommunitycouncil.org"
+        },
+        {
+          "title": "this polygon",
+          "url": "https://gist.github.com/simonw/27d243c9d1cb5d9047fff7360dd49d3c",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "this one",
+          "url": "https://gist.github.com/simonw/b51f9e0190a13932ac64a0cb407a709d",
+          "site": "gist.github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Tarn Adams",
+      "url": "https://simonwillison.net/2026/Sep/1/tarn-adams/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/1/tarn-adams/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-01T17:01:11Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "They took the letters from me! I have to talk about dwarf behavior now. I can't even talk about dwarf AI. It doesn't exist. It's dwarf behavior , and they misbehave sometimes — Tarn Adams , co-creator of Dwarf Fortress Tags: ai , game-design",
+      "links": [
+        {
+          "title": "Tarn Adams",
+          "url": "https://www.pcgamer.com/gaming-industry/dwarf-fortress-creator-says-the-industrys-in-shambles-over-ai-and-layoff-happy-ceos-everyone-i-know-their-bosses-are-slowly-getting-psychosis/",
+          "site": "pcgamer.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-mcp 0.2",
+      "url": "https://simonwillison.net/2026/Sep/1/datasette-mcp/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/1/datasette-mcp/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-01T15:30:12Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-mcp 0.2 \"rows\" from execute_sql is now an array of objects. Previously it was an array of arrays. This should help weaker models avoid losing track of which positional array element maps to which column. #1 Now depends on mcp>=2.1.1 . This is the first non-alpha release of the plugin. I'm confident it's ready as I've been using it quite a bit myself. Tags: datasette , model-context-protocol",
+      "links": [
+        {
+          "title": "datasette-mcp 0.2",
+          "url": "https://github.com/datasette/datasette-mcp/releases/tag/0.2",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Python 3.15.0 candidate 2 is here!",
+      "url": "https://simonwillison.net/2026/Sep/1/python-315-rc-2/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/1/python-315-rc-2/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-01T14:59:18Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Python 3.15.0 candidate 2 is here! Hugo van Kemenade (release manager for Python 3.14 and 3.15) announces the final release candidate for Python 3.15, scheduled for release in October: Entering the release candidate phase, only reviewed code changes which are clear bug fixes are allowed between this release candidate and the final release. [...] We strongly encourage maintainers of third-party Python projects to prepare their projects for 3.15 during this phase, and publish Python 3.15 wheels on PyPI to be ready for the final release of 3.15.0, and to help other projects do their own testing. Any binary wheels built against Python 3.15.0 release candidates will work with future versions of Python 3.15. Back in 2021 I found a bug in Python 3.10 by running my test suites against it... but I hadn't done this during the RC period, so that bug had already shipped! Since then I've always paid ",
+      "links": [
+        {
+          "title": "Python 3.15.0 candidate 2 is here!",
+          "url": "https://discuss.python.org/t/python-3-15-0-candidate-2-is-here/108841",
+          "site": "discuss.python.org"
+        },
+        {
+          "title": "actions/python-versions",
+          "url": "https://github.com/actions/python-versions/releases",
+          "site": "github.com"
+        },
+        {
+          "title": "allow-prereleases",
+          "url": "https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#allow-pre-releases",
+          "site": "github.com"
+        },
+        {
+          "title": "check-latest",
+          "url": "https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#check-latest-version",
+          "site": "github.com"
+        },
+        {
+          "title": "Datasette passes",
+          "url": "https://github.com/simonw/datasette/pull/2895",
+          "site": "github.com"
+        },
+        {
+          "title": "sqlite-utils passes",
+          "url": "https://github.com/simonw/sqlite-utils/pull/852",
+          "site": "github.com"
+        },
+        {
+          "title": "currently blocked",
+          "url": "https://github.com/simonw/llm/pull/1652#issuecomment-5504533598",
+          "site": "github.com"
+        },
+        {
+          "title": "scikit-learn",
+          "url": "https://github.com/scikit-learn/scikit-learn/issues/34652",
+          "site": "github.com"
+        },
+        {
+          "title": "@hugovk.dev",
+          "url": "https://bsky.app/profile/hugovk.dev/post/3muhjndhw322i",
+          "site": "bsky.app"
+        }
+      ]
+    }
+  ]
+}
