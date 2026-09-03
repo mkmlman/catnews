@@ -1,0 +1,222 @@
+{
+  "source": "simonw",
+  "date": "2026-09-03",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "llm-gemini 0.34",
+      "url": "https://simonwillison.net/2026/Sep/2/llm-gemini/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/2/llm-gemini/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-02T16:39:38Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-gemini 0.34 New model gemini-3.8-flash for Gemini 3.8 Flash , with low, medium and high thinking levels. #146 Fixed async responses failing to record the resolved model version. Thanks, Charlie Tonneslan . #137 Google released Gemini 3.8 Flash (and 3.8 Flash Cyber, but that's available to \"trusted defenders\" only) today. Here are the pelicans for high, medium, and low. This is high: For comparison, here are the same pelicans generated using Gemini 3.7 Flash . Something I appreciate about Gemini Flash is that it's fast, cheap, and competent at things like HTML and JavaScript. I was messing around with it and prompted \"make me a cool thing in html\" and it built this , which is certainly a cool thing in HTML! Took 13 seconds, cost 1.8 cents. Your browser does not support HTML5 video. If you click through to the demo you'll see one more thing I built with Gemini 3.8 Flash. My ma",
+      "links": [
+        {
+          "title": "llm-gemini 0.34",
+          "url": "https://github.com/simonw/llm-gemini/releases/tag/0.34",
+          "site": "github.com"
+        },
+        {
+          "title": "Gemini 3.8 Flash",
+          "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/",
+          "site": "blog.google"
+        },
+        {
+          "title": "#146",
+          "url": "https://github.com/simonw/llm-gemini/issues/146",
+          "site": "github.com"
+        },
+        {
+          "title": "Charlie Tonneslan",
+          "url": "https://github.com/c-tonneslan",
+          "site": "github.com"
+        },
+        {
+          "title": "#137",
+          "url": "https://github.com/simonw/llm-gemini/pull/137",
+          "site": "github.com"
+        },
+        {
+          "title": "llm-coding-agent",
+          "url": "https://github.com/simonw/llm-coding-agent",
+          "site": "github.com"
+        },
+        {
+          "title": "Here's the transcript",
+          "url": "https://gist.github.com/simonw/3e36b98292dfdc1b3baff158faa743f7",
+          "site": "gist.github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Claude's new system prompt really doesn't want to reproduce song lyrics",
+      "url": "https://simonwillison.net/2026/Sep/2/claudes-new-system-prompt/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/2/claudes-new-system-prompt/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-02T14:16:42Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Anthropic publish the system prompts for their Claude consumer applications ( Claude.ai and the Claude mobile apps - sadly not for Claude Cowork or Claude Code). I love that they do this, and that they share not just the current prompts but historic changes to their prompts as well. They used to keep all of the prompts on a single page, but when I checked today I noticed they had re-arranged those prompts into an index page and then a page per model - here's the page for Haiku 4.5 for example, which has the original prompt from October 15th 2025 and an updated prompt from January 18th 2026. A neat thing about Anthropic's platform.claude.com/docs site is that it's designed to be usable by LLMs. You can add .md to any page to get back the content as Markdown - here's the system prompt index page and the Markdown prompts for Fable 5.1 . TL;DR: this makes it really easy to diff the prompts. ",
+      "links": [
+        {
+          "title": "publish the system prompts",
+          "url": "https://platform.claude.com/docs/en/release-notes/system-prompts/overview",
+          "site": "platform.claude.com"
+        },
+        {
+          "title": "Claude.ai",
+          "url": "https://claude.ai/",
+          "site": "claude.ai"
+        },
+        {
+          "title": "page for Haiku 4.5",
+          "url": "https://platform.claude.com/docs/en/release-notes/system-prompts/claude-haiku-4-5",
+          "site": "platform.claude.com"
+        },
+        {
+          "title": "platform.claude.com/docs",
+          "url": "https://platform.claude.com/docs/",
+          "site": "platform.claude.com"
+        },
+        {
+          "title": "the system prompt index page",
+          "url": "https://platform.claude.com/docs/en/release-notes/system-prompts/overview.md",
+          "site": "platform.claude.com"
+        },
+        {
+          "title": "the Markdown prompts for Fable 5.1",
+          "url": "https://platform.claude.com/docs/en/release-notes/system-prompts/claude-fable-5-1.md",
+          "site": "platform.claude.com"
+        },
+        {
+          "title": "between Fable 5 and Fable 5.1",
+          "url": "https://github.com/simonw/claude-system-prompts/commit/837a418b5888207b1b11b27d2f5471970da6f99b",
+          "site": "github.com"
+        },
+        {
+          "title": "Sony Music Publishing and Warner Chappell are suing Anthropic",
+          "url": "https://www.theguardian.com/business/2026/aug/31/aanthropic-sued-alleged-theft-songs-ai-train-claude",
+          "site": "theguardian.com"
+        },
+        {
+          "title": "sure enough",
+          "url": "https://claude.ai/share/3e5a199c-27f2-4c51-b66b-2c6f808ed500",
+          "site": "claude.ai"
+        },
+        {
+          "title": "read our conversation here",
+          "url": "https://claude.ai/share/f78010eb-8d52-4f73-aff9-775e333f8180",
+          "site": "claude.ai"
+        },
+        {
+          "title": "dancesafe.org",
+          "url": "https://dancesafe.org/",
+          "site": "dancesafe.org"
+        },
+        {
+          "title": "tripsit.me",
+          "url": "https://tripsit.me/",
+          "site": "tripsit.me"
+        },
+        {
+          "title": "psychonautwiki.org",
+          "url": "https://psychonautwiki.org/",
+          "site": "psychonautwiki.org"
+        },
+        {
+          "title": "Fable 5.1 model documentation",
+          "url": "https://platform.claude.com/docs/en/models/fable-5-1/overview",
+          "site": "platform.claude.com"
+        },
+        {
+          "title": "simonw/claude-system-prompts",
+          "url": "https://github.com/simonw/claude-system-prompts",
+          "site": "github.com"
+        },
+        {
+          "title": "claude-fable.md",
+          "url": "https://github.com/simonw/claude-system-prompts/commits/main/prompts/claude-fable.md",
+          "site": "github.com"
+        },
+        {
+          "title": "claude-opus.md",
+          "url": "https://github.com/simonw/claude-system-prompts/commits/main/prompts/claude-opus.md",
+          "site": "github.com"
+        },
+        {
+          "title": "claude-sonnet.md",
+          "url": "https://github.com/simonw/claude-system-prompts/commits/main/prompts/claude-sonnet.md",
+          "site": "github.com"
+        },
+        {
+          "title": "claude-haiku.md",
+          "url": "https://github.com/simonw/claude-system-prompts/commits/main/prompts/claude-haiku.md",
+          "site": "github.com"
+        },
+        {
+          "title": "was updated twice",
+          "url": "https://github.com/simonw/claude-system-prompts/commits/main/prompts/claude-opus-4.md",
+          "site": "github.com"
+        },
+        {
+          "title": "claude-opus-4.md",
+          "url": "https://github.com/simonw/claude-system-prompts/blob/main/prompts/claude-opus-4.md",
+          "site": "github.com"
+        },
+        {
+          "title": "to Haiku 4.5 on January 18th 2026",
+          "url": "https://github.com/simonw/claude-system-prompts/commit/defcf92d14e064bb17abddc308e2aa58446d5eb5",
+          "site": "github.com"
+        },
+        {
+          "title": "in the CHANGELOG.md",
+          "url": "https://github.com/simonw/claude-system-prompts/blob/main/CHANGELOG.md",
+          "site": "github.com"
+        },
+        {
+          "title": "as an Atom feed",
+          "url": "https://simonw.github.io/claude-system-prompts/feed.atom",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "summarized",
+          "url": "https://github.com/simonw/claude-system-prompts/blob/main/CHANGELOG.md#2026-09-01-claude-fable-51",
+          "site": "github.com"
+        },
+        {
+          "title": "can see here",
+          "url": "https://github.com/simonw/claude-system-prompts/blob/8b5c87dbd70103a037ae5777b8d9365571cf9562/summarize_commits.py#L43",
+          "site": "github.com"
+        },
+        {
+          "title": "a GitHub Actions workflow",
+          "url": "https://github.com/simonw/claude-system-prompts/blob/main/.github/workflows/update.yml",
+          "site": "github.com"
+        },
+        {
+          "title": "claude-code-transcripts",
+          "url": "https://github.com/simonw/claude-code-transcripts",
+          "site": "github.com"
+        },
+        {
+          "title": "published it here",
+          "url": "https://gisthost.github.io/?f1399e27b6a832f0e790b696af812c9b/index.html",
+          "site": "gisthost.github.io"
+        }
+      ]
+    }
+  ]
+}
