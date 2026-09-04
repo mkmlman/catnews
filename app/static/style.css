@@ -1360,39 +1360,6 @@ html[data-design-system="kami"] .fluid-dialers { display: none !important; }
 .source-alert ul { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 16px; }
 .source-alert li { display: inline-flex; align-items: center; gap: 6px; }
 
-.new-edition {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 14px;
-  padding: 8px 12px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius);
-  color: var(--ink-soft);
-  font-family: var(--serif-font);
-  font-size: var(--text-form);
-}
-.new-edition-text { flex: 1; }
-.new-edition button {
-  font: inherit;
-  font-family: var(--mono-font);
-  font-size: var(--text-meta);
-  color: var(--muted);
-  background: transparent;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
-  padding: 3px 10px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.new-edition button:hover { color: var(--ink); border-color: var(--ink); }
-.new-edition-toggle[aria-pressed="true"] {
-  color: var(--paper);
-  background: var(--ink);
-  border-color: var(--ink);
-}
-.new-edition-dismiss { padding: 3px 8px !important; line-height: 1; }
-
 /* ==========================================================================
    FILTERS & CHIPS
    ========================================================================== */
@@ -3435,7 +3402,6 @@ html[data-design-system="kami"] .chip.is-active {
 }
 html[data-design-system="kami"] .save-toggle[aria-pressed="true"],
 html[data-design-system="kami"] .hide-read:has(input:checked),
-html[data-design-system="kami"] .new-edition-toggle[aria-pressed="true"],
 html[data-design-system="kami"] .export-saved:hover,
 html[data-design-system="kami"] .load-more:hover,
 html[data-design-system="kami"] .install-dialog-close:hover {
@@ -3709,7 +3675,6 @@ html[data-design-system="kami"] .ds-comp {
   .to-top,
   .ocean-canvas,
   .filters,
-  .new-edition,
   .source-alert,
   .load-more-wrap,
   .search-results,

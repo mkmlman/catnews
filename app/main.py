@@ -38,7 +38,6 @@ from .render import (
     render_source_rss,
     search_index,
     sparkline_points,
-    story_editions,
 )
 from .store import (
     arxiv_category_counts,
@@ -144,7 +143,6 @@ def index(request: Request) -> HTMLResponse:
     digest = combined_digest(DATA_DIR)
     if digest is None:
         digest = Digest(date=today_utc(), stories=[])
-    snapshots = load_all_snapshots(DATA_DIR)
     return page(
         request,
         "index.html",
@@ -152,7 +150,6 @@ def index(request: Request) -> HTMLResponse:
         og_image=f"{BASE_URL}/static/og/home/{digest.date.isoformat()}.png",
         digest=digest,
         freshness=fetch_status(DATA_DIR),
-        story_editions=story_editions(snapshots),
         dead_links=load_dead_links(DATA_DIR / "linkcheck.json"),
     )
 
@@ -198,7 +195,6 @@ def archive_snapshot(request: Request, source: str, day: date) -> HTMLResponse:
         label=SOURCES.get(source, {}).get("label", source),
         prev_snapshot=prev_snap,
         next_snapshot=next_snap,
-        story_editions={story.url: snap.date.isoformat() for story in snap.stories},
         dead_links=load_dead_links(DATA_DIR / "linkcheck.json"),
     )
 

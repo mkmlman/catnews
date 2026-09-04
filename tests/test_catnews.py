@@ -2216,7 +2216,7 @@ def test_render_markdown_report_lists_dead_links():
     assert "https://ok.example" not in report
 
 
-# --- Home edition card + "new since last visit" edition dates ---------------
+# --- Home edition card -------------------------------------------------------
 
 
 def test_home_edition_card_rendered_and_served(client, tmp_path):
@@ -2239,58 +2239,6 @@ def test_home_edition_card_rendered_and_served(client, tmp_path):
 
     # A card for an edition that was never published must not be served.
     assert client.get("/static/og/home/2026-08-03.png").status_code == 404
-
-
-def test_story_cards_carry_edition_dates(client, tmp_path):
-    save_snapshot(
-        SourceSnapshot(
-            source="hn",
-            date=date(2026, 8, 2),
-            stories=[Story(source="hn", title="A", url="https://a")],
-        ),
-        tmp_path,
-    )
-    save_snapshot(
-        SourceSnapshot(
-            source="arxiv",
-            date=date(2026, 8, 9),
-            stories=[Story(source="arxiv", title="B", url="https://b")],
-        ),
-        tmp_path,
-    )
-    home = client.get("/").text
-    assert 'data-edition="2026-08-02"' in home
-    assert 'data-edition="2026-08-09"' in home
-
-    page = client.get("/archive/arxiv/2026-08-09/").text
-    assert 'data-edition="2026-08-09"' in page
-
-
-def test_story_editions_maps_url_to_newest_snapshot_date():
-    from app.render import story_editions
-
-    snapshots = [
-        SourceSnapshot(
-            source="hn",
-            date=date(2026, 8, 1),
-            stories=[Story(source="hn", url="https://a", title="A")],
-        ),
-        SourceSnapshot(
-            source="hn",
-            date=date(2026, 8, 2),
-            stories=[Story(source="hn", url="https://a", title="A2")],
-        ),
-        SourceSnapshot(
-            source="arxiv",
-            date=date(2026, 8, 9),
-            stories=[Story(source="arxiv", url="https://b", title="B")],
-        ),
-    ]
-    editions = story_editions(snapshots)
-    assert editions == {
-        "https://a": "2026-08-02",
-        "https://b": "2026-08-09",
-    }
 
 
 def test_search_index_records_carry_edition_date():

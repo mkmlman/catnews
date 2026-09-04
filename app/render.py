@@ -378,23 +378,6 @@ def render_search_index(snapshots: list[SourceSnapshot]) -> str:
     )
 
 
-def story_editions(snapshots: list[SourceSnapshot]) -> dict[str, str]:
-    """Map story URL → the ISO date of the edition it appears in (newest copy).
-
-    Used by the client to know which cards are newer than the reader's last
-    visit. Snapshots are ordered ascending by date, so the last seen per source
-    is the one that contributed the digest's copy of each story.
-    """
-    latest: dict[str, SourceSnapshot] = {}
-    for snap in snapshots:
-        latest[snap.source] = snap
-    return {
-        story.url: snap.date.isoformat()
-        for snap in latest.values()
-        for story in snap.stories
-    }
-
-
 def render_json(data: object) -> str:
     """Serialize a generated API artifact compactly and deterministically."""
     return json.dumps(data, ensure_ascii=False, separators=(",", ":"), default=str)

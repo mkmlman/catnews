@@ -646,13 +646,9 @@
     viewPref = localStorage.getItem(VIEW_KEY);
   } catch (e) {}
   if (filterUrlState.viewPresent) viewPref = filterUrlState.view;
-  // Initialized before the first applyFilters() call below; populated by
-  // initNewSince() once the edition dates have been compared.
-  var newCards = new Set();
   var state = {
     source: preferredSource === "All" || CFG.sourceTags[preferredSource] ? preferredSource : "All",
     savedOnly: filterUrlState.savedPresent ? filterUrlState.saved : filterPrefs.savedOnly === true,
-    newOnly: false,
     loaded: PAGE_SIZE,
     view: viewPref === "list" ? "list" : "grid",
   };
@@ -703,8 +699,7 @@
         state.source === "All" || card.getAttribute("data-source") === state.source;
       var savedMatch = !state.savedOnly || (url && saved.has(url));
       var readMatch = !hideRead || !hideRead.checked || !url || !read.has(url);
-      var newMatch = !state.newOnly || (url && newCards.has(url));
-      var match = sourceMatch && savedMatch && readMatch && newMatch;
+      var match = sourceMatch && savedMatch && readMatch;
       if (match) matched++;
       var show = match && matched <= state.loaded;
       card.hidden = !show;
@@ -854,15 +849,7 @@
     applyFilters();
   });
 
-  /* -------------------------------------------------------------
-     “New since your last visit” (client-side only: edition dates on cards)
-     ------------------------------------------------------------- */
-  var LAST_SEEN_KEY = "catnews:last-seen";
   var digestEdition = storiesEl ? storiesEl.getAttribute("data-digest-date") : "";
-  var newEditionEl = document.getElementById("new-edition");
-  var newEditionText = document.getElementById("new-edition-text");
-  var newEditionToggle = document.getElementById("new-edition-toggle");
-  var newEditionDismiss = document.getElementById("new-edition-dismiss");
 
   var SHORT_MONTHS = [
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -880,58 +867,6 @@
   function writeRaw(key, value) {
     try { localStorage.setItem(key, value); } catch (e) {}
   }
-
-  function initNewSince() {
-    if (!digestEdition || !cards.length) return;
-    var lastSeen = readRaw(LAST_SEEN_KEY);
-    if (!lastSeen) {
-      writeRaw(LAST_SEEN_KEY, digestEdition);
-      return;
-    }
-    if (digestEdition <= lastSeen) return;
-    cards.forEach(function (card) {
-      var edition = card.getAttribute("data-edition");
-      if (edition && edition > lastSeen && card.getAttribute("data-url")) {
-        newCards.add(card.getAttribute("data-url"));
-      }
-    });
-    if (!newCards.size || !newEditionEl) return;
-    newEditionText.textContent =
-      newCards.size + " new since your last visit (" + formatShortDate(lastSeen) + ")";
-    newEditionEl.hidden = false;
-  }
-
-  function repaintNewToggle() {
-    if (!newEditionToggle) return;
-    var on = state.newOnly;
-    newEditionToggle.setAttribute("aria-pressed", on ? "true" : "false");
-    newEditionToggle.textContent = on ? "Show all" : "Show new";
-  }
-
-  if (newEditionToggle) {
-    newEditionToggle.addEventListener("click", function () {
-      filtersTouched = true;
-      state.newOnly = !state.newOnly;
-      state.loaded = PAGE_SIZE;
-      repaintNewToggle();
-      applyFilters();
-    });
-  }
-  if (newEditionDismiss) {
-    newEditionDismiss.addEventListener("click", function () {
-      state.newOnly = false;
-      repaintNewToggle();
-      if (newEditionEl) newEditionEl.hidden = true;
-      writeRaw(LAST_SEEN_KEY, digestEdition);
-      applyFilters();
-    });
-  }
-  if (newEditionEl) {
-    newEditionEl.addEventListener("keydown", function (event) {
-      if (event.key === "Escape" && newEditionDismiss) newEditionDismiss.click();
-    });
-  }
-  initNewSince();
 
   function updateFilterScrollCue() {
     if (!sourceRail || !filterScrollCue) return;
@@ -953,8 +888,6 @@
     if (hideRead) hideRead.checked = false;
     state.source = "All";
     state.savedOnly = false;
-    state.newOnly = false;
-    if (newEditionToggle) repaintNewToggle();
     // Reveal the whole edition so a deep-linked story is never hidden by the
     // load-more cutoff, no matter where it sits in the digest.
     state.loaded = cards.length;

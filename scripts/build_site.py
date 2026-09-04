@@ -28,7 +28,6 @@ from app.render import (
     site_version,
     snapshot_nav,
     sparkline_points,
-    story_editions,
     walk_site_urls,
 )
 from app.store import (
@@ -133,7 +132,6 @@ def build_site(
             og_image=f"{base_url}/static/og/home/{digest.date.isoformat()}.png",
             digest=digest,
             freshness=fetch_status(data_dir),
-            story_editions=story_editions(snapshots),
             dead_links=dead_urls,
         ),
     )
@@ -162,9 +160,6 @@ def build_site(
                 label=SOURCE_LABELS.get(snap.source, snap.source),
                 prev_snapshot=prev_snap,
                 next_snapshot=next_snap,
-                story_editions={
-                    story.url: snap.date.isoformat() for story in snap.stories
-                },
                 dead_links=dead_urls,
             ),
         )

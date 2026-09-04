@@ -1,4 +1,4 @@
-<article class="story{% if story.score is not none %} has-score{% endif %}" id="{{ story_anchor(story) }}" style="--i: {{ outer_loop_index | default(0) }}" data-source="{{ story.source }}" data-url="{{ story.url }}"{% if story_editions.get(story.url) %} data-edition="{{ story_editions.get(story.url) }}"{% endif %}>
+<article class="story{% if story.score is not none %} has-score{% endif %}" id="{{ story_anchor(story) }}" style="--i: {{ outer_loop_index | default(0) }}" data-source="{{ story.source }}" data-url="{{ story.url }}">
   {% set dl = dead_links | default({}) %}
   <div class="story-top">
     <span class="badge badge-{{ story.source }}">{{ source_tags.get(story.source, story.source) }}</span>
