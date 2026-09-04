@@ -2305,11 +2305,9 @@
         if (legacy === "off") return "off";
         if (legacy === "on") return "ocean";
       } catch (e) {}
-      // default: fluid in departure, ocean in kami, off if forced
+      // default: ocean, off if forced
       if (isForcedOff()) return "off";
-      var design = document.documentElement.getAttribute("data-design-system");
-      if (design === "kami") return "ocean";
-      return "fluid";
+      return "ocean";
     }
     function apply(state) {
       var showOcean = state === "ocean";
