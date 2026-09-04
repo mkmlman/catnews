@@ -530,6 +530,9 @@
     saveSet(SAVED_KEY, saved);
     saveObject(SAVED_META_KEY, savedMeta);
     paintCard(card, url);
+    /* Saved-only is a live view: removing the current card should remove it
+       immediately instead of leaving a stale result on screen. */
+    applyFilters();
     updateCounts();
   }
 
@@ -598,6 +601,7 @@
           read.add(url);
           saveSet(READ_KEY, read);
           paintCard(card, url);
+          applyFilters();
           updateCounts();
         }
       });
@@ -610,6 +614,8 @@
      ------------------------------------------------------------- */
   var filtersEl = document.getElementById("filters");
   var noMatches = document.getElementById("no-matches");
+  var noMatchesCopy = document.getElementById("no-matches-copy");
+  var resetFiltersBtn = document.getElementById("reset-filters");
   var filterStatus = document.getElementById("filter-status");
   var filtersTouched = false;
   var hideRead = document.getElementById("hide-read");
@@ -706,6 +712,22 @@
       if (show) visible++;
     });
     if (noMatches) noMatches.hidden = matched !== 0;
+    if (noMatchesCopy && matched === 0) {
+      if (state.savedOnly && saved.size === 0) {
+        noMatchesCopy.textContent = "Nothing saved yet.";
+      } else if (state.savedOnly) {
+        noMatchesCopy.textContent = "No saved stories in this edition.";
+      } else if (hideRead && hideRead.checked) {
+        noMatchesCopy.textContent = "Everything here is read.";
+      } else {
+        noMatchesCopy.textContent = "No stories match.";
+      }
+    }
+    if (resetFiltersBtn) {
+      resetFiltersBtn.textContent = state.savedOnly && saved.size === 0
+        ? "Browse all stories"
+        : "Reset filters";
+    }
     if (loadMoreBtn) {
       var hasMore = matched > state.loaded;
       loadMoreBtn.hidden = !hasMore;
@@ -717,12 +739,28 @@
     announceFilterCount(matched, visible);
   }
 
+  function resetFilters() {
+    if (!filtersEl) return;
+    filtersTouched = true;
+    state.source = "All";
+    state.savedOnly = false;
+    state.loaded = PAGE_SIZE;
+    if (hideRead) hideRead.checked = false;
+    setActiveChips();
+    persistFilterState();
+    syncFilterUrl();
+    applyFilters();
+    var allChip = filtersEl.querySelector('[data-source="All"]');
+    if (allChip) allChip.focus();
+  }
+
   function announceFilterCount(matched, visible) {
-    if (!filterStatus || !filtersTouched || matched === 0) return;
+    if (!filterStatus || !filtersTouched) return;
     filterStatus.textContent = "";
     (window.requestAnimationFrame || function (cb) { cb(); })(function () {
-      filterStatus.textContent =
-        "Showing " + visible + " of " + matched + (matched === 1 ? " story." : " stories.");
+      filterStatus.textContent = matched === 0
+        ? (noMatchesCopy ? noMatchesCopy.textContent + " Use the reset button to browse the full edition." : "No stories match the selected filters.")
+        : "Showing " + visible + " of " + matched + (matched === 1 ? " story." : " stories.");
     });
   }
 
@@ -832,6 +870,7 @@
     applyFilters();
     paintView();
   }
+  if (resetFiltersBtn) resetFiltersBtn.addEventListener("click", resetFilters);
 
   window.addEventListener("popstate", function () {
     if (!filtersEl) return;

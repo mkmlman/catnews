@@ -23,11 +23,16 @@
 {% if ns.counts.update({story.source: ns.counts.get(story.source, 0) + 1}) %}{% endif %}
 {% endfor %}
 <section class="hero hero--ticks">
-  <h1 class="sr-only">{{ app_name }} — {{ digest.date.strftime("%B %d, %Y") }}</h1>
-  <p class="edition-label">{{ digest.date.strftime("%B %d, %Y") }}</p>
-  <p class="edition-sub">{{ digest.stories | length }} stor{{ "y" if digest.stories | length == 1 else "ies" }}{% if freshness.latest_snapshot and freshness.latest_snapshot < digest.date %} · sources through {{ freshness.latest_snapshot.strftime("%b %d, %Y") }}{% endif %}</p>
-  <div class="hero-ticks" aria-hidden="true">
-    {% for key in source_tags %}<span class="badge-{{ key }}"></span>{% endfor %}
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <h1 class="hero-title"><span>{{ digest.date.strftime("%B") }}</span> {{ digest.date.strftime("%d") }} <small>{{ digest.date.strftime("%Y") }}</small></h1>
+    </div>
+    <div class="hero-edition">
+      <p class="edition-sub"><span>{{ digest.stories | length }} stor{{ "y" if digest.stories | length == 1 else "ies" }}</span><span class="edition-divider" aria-hidden="true">·</span><span>{{ source_tags | length }} sources</span>{% if freshness.latest_snapshot and freshness.latest_snapshot < digest.date %}<span class="edition-divider" aria-hidden="true">·</span><span>through {{ freshness.latest_snapshot.strftime("%b %d") }}</span>{% endif %}</p>
+      <div class="hero-ticks" aria-hidden="true">
+        {% for key in source_tags %}<span class="badge-{{ key }}"></span>{% endfor %}
+      </div>
+    </div>
   </div>
 </section>
 
@@ -80,7 +85,8 @@
 
 <div class="no-matches" id="no-matches" role="status" hidden>
   {% include "cat-logo.html" %}
-  <p>No stories match the selected filters.</p>
+  <p id="no-matches-copy">No stories match the selected filters.</p>
+  <button class="reset-filters" id="reset-filters" type="button">Reset filters</button>
 </div>
 
 <div class="stories" id="stories" aria-label="Stories"{% if digest.date %} data-digest-date="{{ digest.date.isoformat() }}"{% endif %}>
