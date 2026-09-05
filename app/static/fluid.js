@@ -4,7 +4,6 @@
 // Simulation section
 
 const canvas = document.getElementById('fluid');
-console.log('catnews fluid: init', canvas, 'kami=', document.documentElement.getAttribute('data-design-system'), 'reduce=', window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
 if (!canvas) return;
 if (document.documentElement.getAttribute('data-design-system') === 'kami') return;
@@ -12,7 +11,7 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { canvas.hidd
 resizeCanvas();
 
 let config = {
-    // defaults match footer dials [Image 1] — subtle ink
+    // subtle ink defaults
     SIM_RESOLUTION: 128,
     DYE_RESOLUTION: 1024,
     CAPTURE_RESOLUTION: 512,
@@ -65,6 +64,7 @@ let splatStack = [];
 pointers.push(new pointerPrototype());
 
 const { gl, ext } = getWebGLContext(canvas);
+if (!gl) { canvas.hidden = true; return; }
 
 if (isMobile()) {
     config.DYE_RESOLUTION = 512;
@@ -86,6 +86,8 @@ function getWebGLContext (canvas) {
     if (!isWebGL2)
         gl = canvas.getContext('webgl', params) || canvas.getContext('experimental-webgl', params);
 
+    if (!gl) return { gl: null, ext: { supportLinearFiltering: false } };
+
     let halfFloat;
     let supportLinearFiltering;
     if (isWebGL2) {
@@ -98,7 +100,7 @@ function getWebGLContext (canvas) {
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-    const halfFloatTexType = isWebGL2 ? gl.HALF_FLOAT : halfFloat.HALF_FLOAT_OES;
+    const halfFloatTexType = isWebGL2 ? gl.HALF_FLOAT : (halfFloat && halfFloat.HALF_FLOAT_OES);
     let formatRGBA;
     let formatRG;
     let formatR;
@@ -1096,6 +1098,11 @@ let colorUpdateTimer = 0.0;
 update();
 
 function update () {
+    if (!fluidVisible() || document.hidden) {
+        lastUpdateTime = Date.now();
+        setTimeout(function () { requestAnimationFrame(update); }, 500);
+        return;
+    }
     const dt = calcDeltaTime();
     if (resizeCanvas())
         initFramebuffers();
@@ -1383,7 +1390,20 @@ function correctRadius (radius) {
     return radius;
 }
 
+function fluidVisible() {
+    return canvas && !canvas.hidden && canvas.style.display !== 'none';
+}
+
+function fluidTypingTarget(target) {
+    return target && (target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable);
+}
+
 window.addEventListener('mousedown', e => {
+    if (!fluidVisible()) return;
+    if (e.target && e.target.closest && e.target.closest('a, button, summary, input, select, textarea')) return;
     let posX = scaleByPixelRatio(e.clientX !== undefined ? e.clientX : e.offsetX);
     let posY = scaleByPixelRatio(e.clientY !== undefined ? e.clientY : e.offsetY);
     let pointer = pointers.find(p => p.id == -1);
@@ -1393,7 +1413,9 @@ window.addEventListener('mousedown', e => {
 });
 
 window.addEventListener('mousemove', e => {
+    if (!fluidVisible()) return;
     let pointer = pointers[0];
+    if (!pointer.down) return;
     let posX = scaleByPixelRatio(e.clientX !== undefined ? e.clientX : e.offsetX);
     let posY = scaleByPixelRatio(e.clientY !== undefined ? e.clientY : e.offsetY);
     updatePointerMoveData(pointer, posX, posY);
@@ -1404,7 +1426,7 @@ window.addEventListener('mouseup', () => {
 });
 
 window.addEventListener('touchstart', e => {
-    e.preventDefault();
+    if (!fluidVisible()) return;
     const touches = e.targetTouches;
     while (touches.length >= pointers.length)
         pointers.push(new pointerPrototype());
@@ -1416,7 +1438,7 @@ window.addEventListener('touchstart', e => {
 });
 
 window.addEventListener('touchmove', e => {
-    e.preventDefault();
+    if (!fluidVisible()) return;
     const touches = e.targetTouches;
     for (let i = 0; i < touches.length; i++) {
         let pointer = pointers[i + 1];
@@ -1438,6 +1460,7 @@ window.addEventListener('touchend', e => {
 });
 
 window.addEventListener('keydown', e => {
+    if (fluidTypingTarget(e.target)) return;
     if (e.code === 'KeyP')
         config.PAUSED = !config.PAUSED;
     if (e.key === ' ')

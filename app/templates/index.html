@@ -25,7 +25,7 @@
 <section class="hero hero--ticks">
   <div class="hero-inner">
     <div class="hero-copy">
-      <h1 class="hero-title"><span>{{ digest.date.strftime("%B") }}</span> {{ digest.date.strftime("%d") }} <small>{{ digest.date.strftime("%Y") }}</small></h1>
+      <h1 class="hero-title"><span class="sr-only">{{ app_name }} digest — </span><span>{{ digest.date.strftime("%B") }}</span> {{ digest.date.strftime("%d") }} <small>{{ digest.date.strftime("%Y") }}</small></h1>
     </div>
     <div class="hero-edition">
       <p class="edition-sub"><span>{{ digest.stories | length }} stor{{ "y" if digest.stories | length == 1 else "ies" }}</span><span class="edition-divider" aria-hidden="true">·</span><span>{{ source_tags | length }} sources</span>{% if freshness.latest_snapshot and freshness.latest_snapshot < digest.date %}<span class="edition-divider" aria-hidden="true">·</span><span>through {{ freshness.latest_snapshot.strftime("%b %d") }}</span>{% endif %}</p>
@@ -89,12 +89,12 @@
   <button class="reset-filters" id="reset-filters" type="button">Reset filters</button>
 </div>
 
-<div class="stories" id="stories" aria-label="Stories"{% if digest.date %} data-digest-date="{{ digest.date.isoformat() }}"{% endif %}>
+<section class="stories" id="stories" aria-label="Stories"{% if digest.date %} data-digest-date="{{ digest.date.isoformat() }}"{% endif %}>
   {% for story in digest.stories %}
   {% set outer_loop_index = loop.index0 %}
   {% include "_story.html" with context %}
   {% endfor %}
-</div>
+</section>
 
 <div class="load-more-wrap">
   <button class="load-more" id="load-more" type="button" hidden>Load more</button>

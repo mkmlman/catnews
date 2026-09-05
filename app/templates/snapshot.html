@@ -24,10 +24,15 @@
   {% else %}<span class="snapshot-nav-spacer"></span>{% endif %}
 </nav>
 {% endif %}
-<div class="stories">
+<section class="stories" aria-label="{{ label }} stories">
   {% for story in snapshot.stories %}
   {% set outer_loop_index = loop.index0 %}
   {% include "_story.html" with context %}
+  {% else %}
+  <div class="no-matches" role="status">
+    <p>No stories in this snapshot.</p>
+    <p><a href="{{ base_path }}/archive/">Browse the archive</a></p>
+  </div>
   {% endfor %}
-</div>
+</section>
 {% endblock %}

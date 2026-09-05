@@ -1834,7 +1834,7 @@ def test_stats_sparkline_has_role_img_not_aria_hidden(client, tmp_path):
     page = client.get("/stats/").text
     spark = 'class="stat-spark"'
     assert spark in page
-    assert 'role="img" aria-label="Weekly story trend"' in page
+    assert 'role="img" aria-label="Hacker News weekly story trend"' in page
     assert (
         'class="stat-spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"'
         not in page

@@ -54,13 +54,13 @@
         <td>{{ stats.snapshots_by_source.get(source, 0) }}</td>
         <td>{{ count }}</td>
         <td class="share-cell">
-          <span class="share-bar"><span class="share-fill" style="width: {{ (count * 100 // stats.total_stories) if stats.total_stories else 0 }}%"></span></span>
+          <span class="share-bar" aria-hidden="true"><span class="share-fill" style="width: {{ (count * 100 // stats.total_stories) if stats.total_stories else 0 }}%"></span></span>
           <span class="share-pct">{{ (count / stats.total_stories * 100) | round(1) if stats.total_stories else 0 }}%</span>
         </td>
         <td class="spark-cell">
           {% set series = sparklines.get(source) %}
           {% if series and series.points %}
-          <svg class="stat-spark" viewBox="0 0 100 28" preserveAspectRatio="none" role="img" aria-label="Weekly story trend">
+          <svg class="stat-spark" viewBox="0 0 100 28" preserveAspectRatio="none" role="img" aria-label="{{ source_labels.get(source, source) }} weekly story trend">
             <defs>
               <linearGradient id="spark-fade-{{ source }}" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stop-color="var(--spark-area)"></stop>
@@ -181,7 +181,7 @@
           <td>{{ row.actual }}</td>
           <td>{{ row.expected }}</td>
           <td class="share-cell">
-            <span class="share-bar"><span class="share-fill" style="width: {{ row.rate }}%;"></span></span>
+            <span class="share-bar" aria-hidden="true"><span class="share-fill" style="width: {{ row.rate }}%;"></span></span>
             <span class="share-pct">{{ row.rate }}%</span>
           </td>
         </tr>

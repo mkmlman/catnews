@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Not found — {{ app_name }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
 {% block content %}
 <section class="page-header">
   {{ crumbs([("Home", base_path ~ "/"), ("404", None)]) }}
   <h1>Not found</h1>
-  <p class="muted">That page doesn't exist — it may have been archived or moved.</p>
+  <p class="muted">That page doesn't exist (error 404).</p>
 </section>
-<section class="no-matches" aria-label="Page not found">
+<section class="no-matches" aria-labelledby="not-found-heading">
   {% include "cat-logo.html" %}
+  <h2 id="not-found-heading" class="sr-only">Page not found</h2>
   <p>Nothing curled up here.</p>
-  <p>Browse the <a href="{{ base_path }}/archive/">archive</a> or press <kbd>/</kbd> to search.</p>
+  <p><a href="{{ base_path }}/">Back to today's digest</a> · Browse the <a href="{{ base_path }}/archive/">archive</a> or press <kbd>/</kbd> to search.</p>
 </section>
 {% endblock %}

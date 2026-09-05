@@ -12,31 +12,31 @@
   <ul class="endpoint-list">
     <li>
       <div class="endpoint-row">
-        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/sources.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/sources.json">{{ base_path }}/api/sources</a></code>
+        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/sources.json" title="Copy curl command for GET /api/sources"><span class="method">GET</span> <a href="{{ base_path }}/api/sources.json">{{ base_path }}/api/sources</a></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
-          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/sources.json" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/sources" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/sources.json" aria-label="Fetch and show GET /api/sources response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
         </div>
       </div>
-      <pre class="endpoint-output" hidden></pre>
+      <pre class="endpoint-output" hidden role="status"></pre>
       <p class="endpoint-desc">All snapshots, each with its stories.</p>
     </li>
     <li>
       <div class="endpoint-row">
-        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/sources/{{ source_tags.keys() | list | first }}.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/sources/{{ source_tags.keys() | list | first }}.json">{{ base_path }}/api/sources/&lt;source&gt;.json</a></code>
+        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/sources/{{ source_tags.keys() | list | first }}.json" title="Copy curl command for GET /api/sources/<source>.json"><span class="method">GET</span> <a href="{{ base_path }}/api/sources/{{ source_tags.keys() | list | first }}.json">{{ base_path }}/api/sources/&lt;source&gt;.json</a></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
-          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/sources/{{ source_tags.keys() | list | first }}.json" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/sources/<source>.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/sources/{{ source_tags.keys() | list | first }}.json" aria-label="Fetch and show GET /api/sources/<source>.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
         </div>
       </div>
-      <pre class="endpoint-output" hidden></pre>
+      <pre class="endpoint-output" hidden role="status"></pre>
       <p class="endpoint-desc">The latest snapshot for any source — {{ source_tags.values() | join(", ") }}.</p>
     </li>
     <li>
       <div class="endpoint-row">
         <code class="endpoint-code" data-copy="curl {{ base_url }}/api/sources/&lt;source&gt;/&lt;date&gt;" title="Copy command"><span class="method">GET</span> {{ base_path }}/api/sources/&lt;source&gt;/&lt;date&gt;<span class="endpoint-tag">dev server only</span></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/sources/&lt;source&gt;/&lt;date&gt;" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
         </div>
       </div>
       <p class="endpoint-desc">A specific day's snapshot for a source (YYYY-MM-DD).</p>
@@ -51,66 +51,66 @@
       <div class="endpoint-row">
         <code class="endpoint-code" data-copy="curl {{ base_url }}/api/digest.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/digest.json">{{ base_path }}/api/digest</a></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
-          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/digest.json" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/digest.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/digest.json" aria-label="Fetch and show GET {{ base_path }}/api/digest.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
         </div>
       </div>
-      <pre class="endpoint-output" hidden></pre>
+      <pre class="endpoint-output" hidden role="status"></pre>
       <p class="endpoint-desc">The latest story per source, interleaved.</p>
     </li>
     <li>
       <div class="endpoint-row">
         <code class="endpoint-code" data-copy="curl {{ base_url }}/api/stories.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/stories.json">{{ base_path }}/api/stories</a></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
-          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/stories.json" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/stories.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/stories.json" aria-label="Fetch and show GET {{ base_path }}/api/stories.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
         </div>
       </div>
-      <pre class="endpoint-output" hidden></pre>
+      <pre class="endpoint-output" hidden role="status"></pre>
       <p class="endpoint-desc">Every story across all snapshots.</p>
     </li>
     <li>
       <div class="endpoint-row">
         <code class="endpoint-code" data-copy="curl {{ base_url }}/api/search.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/search.json">{{ base_path }}/api/search.json</a></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
-          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/search.json" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/search.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/search.json" aria-label="Fetch and show GET {{ base_path }}/api/search.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
         </div>
       </div>
-      <pre class="endpoint-output" hidden></pre>
+      <pre class="endpoint-output" hidden role="status"></pre>
       <p class="endpoint-desc">Compact, deduplicated records used by archive search.</p>
     </li>
     <li>
       <div class="endpoint-row">
         <code class="endpoint-code" data-copy="curl {{ base_url }}/api/dead-links.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/dead-links.json">{{ base_path }}/api/dead-links.json</a></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
-          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/dead-links.json" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/dead-links.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/dead-links.json" aria-label="Fetch and show GET {{ base_path }}/api/dead-links.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
         </div>
       </div>
-      <pre class="endpoint-output" hidden></pre>
+      <pre class="endpoint-output" hidden role="status"></pre>
       <p class="endpoint-desc">Gone URLs (404/410/451) used to badge rotted cards.</p>
     </li>
     <li>
       <div class="endpoint-row">
         <code class="endpoint-code" data-copy="curl {{ base_url }}/api/stories.md" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/stories.md">{{ base_path }}/api/stories.md</a></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
-          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/stories.md" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/stories.md" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/stories.md" aria-label="Fetch and show GET {{ base_path }}/api/stories.md response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
         </div>
       </div>
-      <pre class="endpoint-output" hidden></pre>
+      <pre class="endpoint-output" hidden role="status"></pre>
       <p class="endpoint-desc">All stories as a single Markdown document.</p>
     </li>
     <li>
       <div class="endpoint-row">
         <code class="endpoint-code" data-copy="curl {{ base_url }}/feed.rss" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/feed.rss">{{ base_path }}/feed.rss</a></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
-          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/feed.rss" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /feed.rss" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/feed.rss" aria-label="Fetch and show GET {{ base_path }}/feed.rss response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
         </div>
       </div>
-      <pre class="endpoint-output" hidden></pre>
+      <pre class="endpoint-output" hidden role="status"></pre>
       <p class="endpoint-desc">RSS feed of the latest digest.</p>
     </li>
   </ul>
@@ -123,33 +123,33 @@
       <div class="endpoint-row">
         <code class="endpoint-code" data-copy="curl {{ base_url }}/api/stats.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/stats.json">{{ base_path }}/api/stats</a></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
-          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/stats.json" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/stats.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/stats.json" aria-label="Fetch and show GET {{ base_path }}/api/stats.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
         </div>
       </div>
-      <pre class="endpoint-output" hidden></pre>
+      <pre class="endpoint-output" hidden role="status"></pre>
       <p class="endpoint-desc">Totals, snapshots, per-source breakdown.</p>
     </li>
     <li>
       <div class="endpoint-row">
         <code class="endpoint-code" data-copy="curl {{ base_url }}/api/trends.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/trends.json">{{ base_path }}/api/trends</a></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
-          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/trends.json" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/trends.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/trends.json" aria-label="Fetch and show GET {{ base_path }}/api/trends.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
         </div>
       </div>
-      <pre class="endpoint-output" hidden></pre>
+      <pre class="endpoint-output" hidden role="status"></pre>
       <p class="endpoint-desc">Weekly story counts per source.</p>
     </li>
     <li>
       <div class="endpoint-row">
         <code class="endpoint-code" data-copy="curl {{ base_url }}/api/fetch-status.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/fetch-status.json">{{ base_path }}/api/fetch-status.json</a></code>
         <div class="endpoint-tools">
-          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy command" title="Copy command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
-          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/fetch-status.json" aria-label="Fetch and show the response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/fetch-status.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
+          <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/fetch-status.json" aria-label="Fetch and show GET {{ base_path }}/api/fetch-status.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
         </div>
       </div>
-      <pre class="endpoint-output" hidden></pre>
+      <pre class="endpoint-output" hidden role="status"></pre>
       <p class="endpoint-desc">Source freshness and fetch diagnostics.</p>
     </li>
   </ul>

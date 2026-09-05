@@ -80,8 +80,8 @@
   --card: #faf9f6;
   --ink: #353431;
   --ink-soft: rgba(53, 52, 49, 0.86);
-  --muted: #5e5c52;
-  --faint: #75715f;
+  --muted: #57554c;
+  --faint: #66625a;
   --line: rgba(39, 37, 34, 0.18);
   --line-strong: rgba(39, 37, 34, 0.34);
 
@@ -341,8 +341,8 @@ a:hover {
 
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible,
 textarea:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
-  outline: 1px solid var(--ink);
-  outline-offset: 3px;
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
 main:focus { outline: none; }
@@ -526,8 +526,9 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   appearance: none;
   border: 0;
   background: transparent;
-  padding: 4px 0;
+  padding: 8px 4px;
   margin: 0;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   color: var(--ink);
@@ -630,7 +631,6 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   transition: width 0.2s ease, border-color 0.15s;
 }
 .search input[type="search"]:focus {
-  outline: none;
   width: 190px;
   border-bottom-color: var(--ink);
 }
@@ -640,7 +640,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   position: absolute;
   top: calc(100% + 12px);
   right: 0;
-  width: 340px;
+  width: min(340px, calc(100vw - 32px));
   max-height: 380px;
   overflow-y: auto;
   z-index: 320;
@@ -685,8 +685,8 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   text-underline-offset: 0.12em;
 }
 .search-result:focus-visible {
-  outline-offset: -1px;
-  background: rgba(53, 52, 49, 0.05);
+  outline-offset: -2px;
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
 }
 .search-result .badge { justify-self: start; }
 
@@ -707,7 +707,8 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   background: transparent;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
-  padding: 2px 8px;
+  padding: 6px 10px;
+  min-height: 32px;
   cursor: pointer;
 }
 .facet-chip:hover { color: var(--ink); }
@@ -881,7 +882,8 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 6px 10px;
+  padding: 10px 12px;
+  min-height: 40px;
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
@@ -925,165 +927,6 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   transition: background-color 0.18s ease;
 }
 .design-toggle[data-current-design="kami"] .design-toggle-mark { background: currentColor; }
-
-/* ==========================================================================
-   FLUID DIALERS — tactile rotary knobs inspired by tobis.vision/experiments/fluid
-   A floating glass bar anchored at the footer, horizontal on desktop, scrollable
-   on mobile. Each knob is an aluminium-style disc with tick ring + indicator.
-   ========================================================================== */
-
-.fluid-dialers {
-  position: fixed;
-  left: 50%;
-  bottom: 10px;
-  z-index: 220;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 7px 12px 6px;
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 8px;
-  background: rgba(12,12,14,0.96);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.38);
-  transform: translateX(-50%);
-  transition: opacity 0.22s ease, transform 0.22s var(--ease-soft);
-  max-width: calc(100vw - 16px);
-  overflow-x: auto;
-  scrollbar-width: none;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-.fluid-dialers::-webkit-scrollbar { display: none; }
-.fluid-dialers[hidden] { display: none !important; }
-html[data-design-system="kami"] .fluid-dialers { display: none !important; }
-@media (prefers-reduced-motion: reduce) {
-  .fluid-dialers { transition: none; }
-}
-
-.dial {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  min-width: 64px;
-  flex-shrink: 0;
-}
-
-.dial-knob {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 56px;
-  height: 24px;
-  border: 0;
-  background: transparent;
-  position: relative;
-  cursor: ew-resize;
-  touch-action: none;
-  padding: 0;
-  flex-shrink: 0;
-  --dial-pct: 0%;
-  --dial-angle: -135deg;
-}
-.dial-knob:focus-visible { outline: 1px solid rgba(255,255,255,0.55); outline-offset: 2px; border-radius: 4px; }
-.dial-knob-face {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 2px;
-  background: rgba(255,255,255,0.14);
-  border-radius: 999px;
-  transform: translateY(-50%);
-  overflow: visible;
-}
-/* fill */
-.dial-knob-face::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: var(--dial-pct);
-  background: #d6d6d8;
-  border-radius: 999px;
-  pointer-events: none;
-}
-/* thumb */
-.dial-knob-face::after {
-  content: "";
-  position: absolute;
-  left: var(--dial-pct);
-  top: 50%;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #ececec;
-  border: 1px solid #0c0c0e;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.45);
-  pointer-events: none;
-  transition: transform 0.08s ease;
-}
-.dial-knob:active .dial-knob-face::after { transform: translate(-50%, -50%) scale(1.15); }
-.dial-knob:hover .dial-knob-face { background: rgba(255,255,255,0.18); }
-.dial-indicator { display: none; }
-
-.dial-label {
-  font-family: var(--mono-font);
-  font-size: 0.55rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #7e7e80;
-  line-height: 1;
-  white-space: nowrap;
-}
-.dial-value {
-  font-family: var(--mono-font);
-  font-size: 0.58rem;
-  letter-spacing: 0.02em;
-  color: #d0d0d2;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  min-height: 0.58rem;
-  cursor: ew-resize;
-  border-bottom: 1px dotted rgba(255,255,255,0.18);
-  padding-bottom: 1px;
-  user-select: none;
-}
-.dial-value:hover { color: #fff; border-bottom-color: rgba(255,255,255,0.32); }
-.dial-value:active { cursor: grabbing; }
-
-.dial-reset {
-  appearance: none;
-  align-self: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: transparent;
-  color: #8d8d8f;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  margin-left: 2px;
-  transition: color 0.14s, border-color 0.14s, background 0.14s;
-}
-.dial-reset:hover { color: #fff; border-color: rgba(255,255,255,0.20); background: rgba(255,255,255,0.06); }
-
-@media (max-width:560px) {
-  .fluid-dialers {
-    bottom: 8px;
-    gap: 12px;
-    padding: 7px 9px 6px;
-    border-radius: 8px;
-  }
-  .dial-knob { width: 48px; }
-  .dial { min-width: 52px; }
-  .dial-label, .dial-value { font-size: 0.54rem; }
-}
 
 .footer-personal {
   font-family: var(--mono-font);
@@ -1415,6 +1258,7 @@ html[data-design-system="kami"] .fluid-dialers { display: none !important; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  min-height: 32px;
   font-family: var(--mono-font);
   font-size: var(--text-meta);
   letter-spacing: 0.02em;
@@ -1818,6 +1662,8 @@ a.is-dead,
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
   padding: 4px 5px;
   border: 1px solid var(--line);
   border-radius: var(--radius-pill);
@@ -1835,7 +1681,7 @@ a.is-dead,
 }
 .save-toggle[aria-pressed="true"] svg { fill: currentColor; }
 
-.story.is-read { opacity: 0.5; }
+.story.is-read { opacity: 0.65; }
 .story.is-read .story-title a { color: var(--muted); }
 .story.is-read .save-toggle, .story.is-read .copy-toggle { opacity: 0.9; }
 
@@ -2210,7 +2056,7 @@ a.is-dead,
 }
 .heat { stroke: none; }
 .heat-0 { stroke: var(--line); stroke-width: 1; fill: transparent; }
-.heat:hover, .heat:focus { stroke: var(--ink); stroke-width: 1.5; outline: none; }
+.heat:hover, .heat:focus-visible { stroke: var(--ink); stroke-width: 1.5; }
 .heat-1 { fill: color-mix(in srgb, var(--ink) 22%, transparent); }
 .heat-2 { fill: color-mix(in srgb, var(--ink) 45%, transparent); }
 .heat-3 { fill: color-mix(in srgb, var(--ink) 70%, transparent); }
@@ -2341,8 +2187,8 @@ a.is-dead,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -3234,6 +3080,7 @@ a.is-dead,
   .rank-fill,
   .stat-spark polyline { stroke: CanvasText; }
   .stat-spark .spark-dot { fill: CanvasText; stroke: Canvas; }
+  .badge, .chip, .hide-read { forced-color-adjust: auto; }
   a, button, summary, [tabindex]:focus-visible { forced-color-adjust: auto; }
 }
 
@@ -3868,11 +3715,13 @@ html[data-design-system="kami"] .ds-comp {
     color: #000;
   }
   body::after,
+  .container::before,
   .scroll-progress,
   .site-header,
   .site-footer-bar,
   .to-top,
   .ocean-canvas,
+  .fluid-canvas,
   .filters,
   .source-alert,
   .load-more-wrap,

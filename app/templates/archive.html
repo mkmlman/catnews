@@ -29,5 +29,9 @@
     {% endfor %}
   </ul>
 </details>
+{% else %}
+<div class="no-matches" role="status">
+  <p>No snapshots archived yet.</p>
+</div>
 {% endfor %}
 {% endblock %}

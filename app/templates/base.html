@@ -39,6 +39,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>{% block title %}{{ app_name }}{% endblock %}</title>
   <meta name="description" content="{% block description %}{{ self.og_description() }}{% endblock %}">
+  {% block robots %}{% endblock %}
   <link rel="canonical" href="{{ og_url }}">
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{% block feed_alt %}{{ base_url }}/feed.rss{% endblock %}">
 
@@ -181,7 +182,7 @@
   <div class="container">
     <header class="site-header">
       <a class="wordmark" href="{{ base_path }}/">{% include "cat-logo.html" %}<span>{{ app_name }}</span></a>
-      <div class="search" id="search">
+      <div class="search" id="search" role="search">
         <input type="search" id="search-input" placeholder="Search" aria-label="Search the archive" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" autocomplete="off">
         <div class="search-results" id="search-results" role="listbox" aria-label="Search results" hidden></div>
       </div>
@@ -211,49 +212,6 @@
         <a class="repo-link" href="{{ repo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
         <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
         <button class="ocean-toggle" id="ocean-toggle" type="button" aria-pressed="true" aria-label="Hide ocean background" title="Hide ocean background">◐</button>
-        <div class="fluid-dialers" id="fluid-dialers" hidden>
-          <div class="dial" data-key="splat" data-min="0.01" data-max="0.12" data-step="0.005" data-value="0.010">
-            <button class="dial-knob" type="button" role="slider" aria-valuemin="0.01" aria-valuemax="0.12" aria-valuenow="0.010" aria-valuetext="0.010" aria-label="Splat radius">
-              <span class="dial-knob-face"><span class="dial-indicator"></span></span>
-            </button>
-            <span class="dial-label">Splat</span>
-            <span class="dial-value" aria-hidden="true">0.010</span>
-            <input type="range" id="dial-splat" min="0.01" max="0.12" step="0.005" value="0.010" hidden>
-          </div>
-          <div class="dial" data-key="density" data-min="0.90" data-max="1.0" data-step="0.005" data-value="0.925">
-            <button class="dial-knob" type="button" role="slider" aria-valuemin="0.90" aria-valuemax="1.0" aria-valuenow="0.925" aria-valuetext="0.925" aria-label="Dissolve">
-              <span class="dial-knob-face"><span class="dial-indicator"></span></span>
-            </button>
-            <span class="dial-label">Dissolve</span>
-            <span class="dial-value" aria-hidden="true">0.925</span>
-            <input type="range" id="dial-density" min="0.90" max="1.0" step="0.005" value="0.925" hidden>
-          </div>
-          <div class="dial" data-key="curl" data-min="0" data-max="50" data-step="1" data-value="0">
-            <button class="dial-knob" type="button" role="slider" aria-valuemin="0" aria-valuemax="50" aria-valuenow="0" aria-valuetext="0" aria-label="Curl">
-              <span class="dial-knob-face"><span class="dial-indicator"></span></span>
-            </button>
-            <span class="dial-label">Curl</span>
-            <span class="dial-value" aria-hidden="true">0</span>
-            <input type="range" id="dial-curl" min="0" max="50" step="1" value="0" hidden>
-          </div>
-          <div class="dial" data-key="pressure" data-min="0" data-max="30" data-step="1" data-value="20">
-            <button class="dial-knob" type="button" role="slider" aria-valuemin="0" aria-valuemax="30" aria-valuenow="20" aria-valuetext="20" aria-label="Pressure">
-              <span class="dial-knob-face"><span class="dial-indicator"></span></span>
-            </button>
-            <span class="dial-label">Pressure</span>
-            <span class="dial-value" aria-hidden="true">20</span>
-            <input type="range" id="dial-pressure" min="0" max="30" step="1" value="20" hidden>
-          </div>
-          <div class="dial" data-key="bloom" data-min="0" data-max="1.2" data-step="0.05" data-value="0.30">
-            <button class="dial-knob" type="button" role="slider" aria-valuemin="0" aria-valuemax="1.2" aria-valuenow="0.30" aria-valuetext="0.30" aria-label="Bloom">
-              <span class="dial-knob-face"><span class="dial-indicator"></span></span>
-            </button>
-            <span class="dial-label">Bloom</span>
-            <span class="dial-value" aria-hidden="true">0.30</span>
-            <input type="range" id="dial-bloom" min="0" max="1.2" step="0.05" value="0.30" hidden>
-          </div>
-          <button class="dial-reset" id="dial-reset" type="button" aria-label="Reset fluid dials" title="Reset">↺</button>
-        </div>
         <button class="design-toggle" id="design-toggle" type="button" aria-label="Switch to Kami design system" title="Switch to Kami design system"><span class="design-toggle-mark" aria-hidden="true"></span><span id="design-toggle-label">DESIGN · DEP</span></button>
         <div class="theme-picker">
           <button class="theme-toggle" id="theme-toggle" type="button" aria-haspopup="menu" aria-expanded="false" title="Theme"><span class="value" id="theme-value">LIGHT</span></button>
@@ -371,7 +329,6 @@
   </script>
   <script src="{{ base_path }}/static/app.js?v={{ asset_version }}" defer></script>
   <script src="{{ base_path }}/static/fluid.js?v={{ asset_version }}" defer></script>
-  <script src="{{ base_path }}/static/dials.js?v={{ asset_version }}" defer></script>
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("{{ base_path }}/sw.js").then(function (reg) {
@@ -430,13 +387,13 @@
       <h2 id="help-dialog-title">Keyboard shortcuts</h2>
       <p class="muted">Everything works from the keyboard.</p>
       <ul class="help-keys">
-        <li><span>Move through stories</span><span><b>j</b><kbd>j</kbd><kbd>k</kbd></span></li>
-        <li><span>Open selected story</span><span><b>o · Enter</b><kbd>o</kbd><kbd>&#9166;</kbd></span></li>
-        <li><span>Save for later</span><span><b>s</b><kbd>s</kbd></span></li>
-        <li><span>Mark as read</span><span><b>m</b><kbd>m</kbd></span></li>
-        <li><span>Search the archive</span><span><b>/</b><kbd>/</kbd></span></li>
-        <li><span>Move in search results</span><span><b>&uarr; &darr;</b><kbd>&uarr;</kbd><kbd>&darr;</kbd></span></li>
-        <li><span>Previous / next edition</span><span><b>&larr; &rarr;</b><kbd>&larr;</kbd><kbd>&rarr;</kbd></span></li>
+        <li><span>Move through stories</span><span><kbd>j</kbd><kbd>k</kbd></span></li>
+        <li><span>Open selected story</span><span><kbd>o</kbd><kbd>&#9166;</kbd></span></li>
+        <li><span>Save for later</span><span><kbd>s</kbd></span></li>
+        <li><span>Mark as read</span><span><kbd>m</kbd></span></li>
+        <li><span>Search the archive</span><span><kbd>/</kbd></span></li>
+        <li><span>Move in search results</span><span><kbd>&uarr;</kbd><kbd>&darr;</kbd></span></li>
+        <li><span>Previous / next edition</span><span><kbd>&larr;</kbd><kbd>&rarr;</kbd></span></li>
       </ul>
       <button class="install-dialog-close" id="help-dialog-close" type="button">Got it</button>
     </div>

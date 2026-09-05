@@ -144,7 +144,8 @@ def test_theme_and_install_controls_have_accessible_state_management():
     assert 'Switch to " + labels[next] + " theme' in base
     assert 'event.key === "Escape"' in app_js
     assert 'event.key !== "Tab"' in app_js
-    assert "lastFocusedElement.focus()" in app_js
+    assert "installReturnFocus" in app_js
+    assert "helpReturnFocus" in app_js
 
 
 def test_card_scores_are_present_for_curated_sources():

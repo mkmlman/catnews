@@ -51,17 +51,17 @@
   var installDialog = document.getElementById("install-dialog");
   var installDialogClose = document.getElementById("install-dialog-close");
   var deferredPrompt = null;
-  var lastFocusedElement = null;
+  var installReturnFocus = null;
+  var helpReturnFocus = null;
 
   function closeInstallDialog() {
     if (!installDialog) return;
+    var target = installReturnFocus;
+    installReturnFocus = null;
     closeWithFade(installDialog, function () {
       installDialog.hidden = true;
+      if (target && typeof target.focus === "function") target.focus();
     });
-    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
-      lastFocusedElement.focus();
-    }
-    lastFocusedElement = null;
   }
 
   var EASE_MS = 160;
@@ -112,7 +112,7 @@
 
   function showInstallDialog() {
     if (!installDialog) return;
-    lastFocusedElement = document.activeElement;
+    installReturnFocus = document.activeElement;
     installDialog.hidden = false;
     if (installDialogClose) installDialogClose.focus();
   }
@@ -279,20 +279,19 @@
 
   function openHelp() {
     if (!helpDialog) return;
-    lastFocusedElement = document.activeElement;
+    helpReturnFocus = document.activeElement;
     helpDialog.hidden = false;
     if (helpDialogClose) helpDialogClose.focus();
   }
 
   function closeHelp() {
     if (!helpDialog) return;
+    var target = helpReturnFocus;
+    helpReturnFocus = null;
     closeWithFade(helpDialog, function () {
       helpDialog.hidden = true;
+      if (target && typeof target.focus === "function") target.focus();
     });
-    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
-      lastFocusedElement.focus();
-    }
-    lastFocusedElement = null;
   }
 
   if (helpToggle) helpToggle.addEventListener("click", openHelp);
@@ -370,8 +369,17 @@
     }
     if (!value) return;
     el.setAttribute("data-copyable", "1");
-    el.addEventListener("click", function (event) {
-      if (event.target.closest("a")) return;
+    if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+    if (!el.hasAttribute("role")) el.setAttribute("role", "button");
+    function endpointPath(v) {
+      var m = String(v).match(/(\/(api\/\S*|feed\S*))/);
+      return m ? m[1] : String(v).slice(0, 48);
+    }
+    var codeLabel = "Copy curl command for GET " + endpointPath(value);
+    if (el.getAttribute("aria-label") === "Copy command" || !el.hasAttribute("aria-label")) {
+      el.setAttribute("aria-label", codeLabel);
+    }
+    function copyCode() {
       var done = function () {
         showCopyToast("Copied " + value);
         el.classList.add("is-copied");
@@ -386,10 +394,30 @@
         fallbackCopy(value);
         done();
       }
+    }
+    el.addEventListener("click", function (event) {
+      if (event.target.closest("a")) return;
+      copyCode();
+    });
+    el.addEventListener("keydown", function (event) {
+      if (event.target !== el) return;
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        copyCode();
+      }
     });
   });
 
   document.querySelectorAll(".endpoint-copy").forEach(function (btn) {
+    (function () {
+      var li = btn.closest("li");
+      var code = li ? li.querySelector(".endpoint-code") : null;
+      var raw = code ? (code.getAttribute("data-copy") || code.textContent || "") : "";
+      var m = String(raw).match(/(\/(api\/\S*|feed\S*))/);
+      if (m && btn.getAttribute("aria-label") === "Copy command") {
+        btn.setAttribute("aria-label", "Copy curl command for GET " + m[1]);
+      }
+    })();
     btn.addEventListener("click", function () {
       var code = btn.closest("li") ? btn.closest("li").querySelector(".endpoint-code") : null;
       var value = code ? (code.getAttribute("data-copy") || "") : "";
@@ -426,6 +454,12 @@
   }
 
   document.querySelectorAll(".endpoint-run").forEach(function (btn) {
+    (function () {
+      var path = btn.getAttribute("data-run") || "";
+      if (path && btn.getAttribute("aria-label") === "Fetch and show the response") {
+        btn.setAttribute("aria-label", "Fetch and show GET " + path + " response");
+      }
+    })();
     btn.addEventListener("click", function () {
       var li = btn.closest("li");
       var out = li ? li.querySelector(".endpoint-output") : null;
@@ -520,6 +554,7 @@
 
   function toggleSaved(url) {
     var card = cardByUrl.get(url);
+    var prevFocus = document.activeElement;
     if (saved.has(url)) {
       saved.delete(url);
       delete savedMeta[url];
@@ -534,6 +569,10 @@
        immediately instead of leaving a stale result on screen. */
     applyFilters();
     updateCounts();
+    if (card && card.hidden && prevFocus && card.contains(prevFocus)) {
+      var fallback = resetFiltersBtn || (filtersEl && filtersEl.querySelector('[data-source="All"]'));
+      if (fallback && typeof fallback.focus === "function") fallback.focus();
+    }
   }
 
   function toggleRead(url) {
@@ -1082,6 +1121,7 @@
   var searchResults = document.getElementById("search-results");
   var storiesCache = null;
   var searchUnavailable = false;
+  var searchSeq = 0;
 
   function normalize(s) {
     return (s || "").toLowerCase();
@@ -1102,17 +1142,20 @@
       cb(storiesCache);
       return;
     }
+    var seq = ++searchSeq;
     fetch(BASE + "/api/search.json")
       .then(function (res) {
         if (!res.ok) throw new Error("not available");
         return res.json();
       })
       .then(function (stories) {
+        if (seq !== searchSeq) return;
         storiesCache = stories;
         searchUnavailable = false;
         cb(storiesCache);
       })
       .catch(function () {
+        if (seq !== searchSeq) return;
         searchUnavailable = true;
         cb([]);
       });
@@ -1444,13 +1487,17 @@
           : searchResults.querySelector("a.search-result");
         if (active && active.tagName === "A") {
           event.preventDefault();
-          window.open(active.href, "_blank", "noopener");
+          active.click();
         }
       } else if (event.key === "Escape") {
-        searchInput.value = "";
-        hideSearchResults();
-        activeSearchIndex = -1;
-        searchInput.blur();
+        if (searchResults && !searchResults.hidden) {
+          hideSearchResults();
+          activeSearchIndex = -1;
+        } else {
+          searchInput.value = "";
+          activeSearchIndex = -1;
+          searchInput.blur();
+        }
       }
     });
     document.addEventListener("click", function (event) {
@@ -1667,6 +1714,7 @@
   var editionToastClose = document.getElementById("edition-toast-close");
   var TOAST_KEY = "catnews:toast-dismissed";
   var toastTimer = null;
+  var latestEditionSeen = null;
 
   function showEditionToast() {
     if (!editionToast) return;
@@ -1697,6 +1745,7 @@
       .then(function (data) {
         if (!data || !data.date) return;
         var latest = String(data.date);
+        latestEditionSeen = latest;
         if (latest <= digestEdition) {
           hideEditionToast();
           return;
@@ -1718,7 +1767,7 @@
   if (editionToastClose) {
     editionToastClose.addEventListener("click", function () {
       hideEditionToast();
-      if (digestEdition) writeRaw(TOAST_KEY, digestEdition);
+      writeRaw(TOAST_KEY, latestEditionSeen || digestEdition);
     });
   }
   if (editionToast) {
@@ -2358,13 +2407,6 @@
         fluid.hidden = !showFluid; if (showFluid) fluid.classList.add("is-visible"); else fluid.classList.remove("is-visible");
         fluid.style.display = showFluid ? "" : "none";
       }
-      var dialers = document.getElementById("fluid-dialers");
-      if (dialers) {
-        var isKami = document.documentElement.getAttribute("data-design-system") === "kami";
-        var shouldShow = showFluid && !isKami && !isForcedOff();
-        dialers.hidden = !shouldShow;
-        dialers.setAttribute("aria-hidden", shouldShow ? "false" : "true");
-      }
       var label = showOcean ? "Ocean" : showFluid ? "Fluid" : "Off";
       var next = showOcean ? "fluid" : showFluid ? "off" : "ocean";
       btn.textContent = showOcean ? "◐" : showFluid ? "≈" : "○";
@@ -2375,7 +2417,7 @@
     }
     var cur = read();
     apply(cur);
-    // Keep dialer visibility in sync when design system flips to/from kami
+    // Keep background visibility in sync when design system flips to/from kami
     if (window.MutationObserver) {
       new MutationObserver(function () {
         try {
