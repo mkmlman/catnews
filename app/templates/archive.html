@@ -14,7 +14,7 @@
 {% for day in days %}
 <details class="archive-day"{% if loop.first %} open{% endif %}>
   <summary class="archive-day-head">
-    <span class="archive-day-date">{{ day.date.strftime("%A") }} &middot; {{ day.date.strftime("%B %d, %Y") }}</span>
+    <span class="archive-day-date">{{ day.date.strftime("%A") }} &middot; {{ day.date.strftime("%b %d, %Y") }}</span>
     <span class="archive-day-count">{{ day.snapshots | length }} snapshot{{ "s" if day.snapshots | length != 1 else "" }} · {{ day.stories }} stor{{ "y" if day.stories == 1 else "ies" }}</span>
   </summary>
   <ul class="archive-day-list">

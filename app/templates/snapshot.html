@@ -12,7 +12,7 @@
 <section class="page-header">
   {{ crumbs([("Home", base_path ~ "/"), ("Archive", base_path ~ "/archive/"), (label ~ " · " ~ snapshot.date.strftime("%B %d, %Y"), None)]) }}
   <h1>{{ label }}</h1>
-  <p class="muted">{{ snapshot.date.strftime("%A, %B %d, %Y") }} · {{ snapshot.stories | length }} stor{{ "y" if snapshot.stories | length == 1 else "ies" }}</p>
+  <p class="muted">{{ snapshot.date.strftime("%A, %b %d, %Y") }} · {{ snapshot.stories | length }} stor{{ "y" if snapshot.stories | length == 1 else "ies" }}</p>
 </section>
 {% if prev_snapshot or next_snapshot %}
 <nav class="snapshot-nav" aria-label="Edition navigation">

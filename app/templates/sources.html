@@ -4,11 +4,7 @@
 <section class="page-header">
   {{ crumbs([("Home", base_path ~ "/"), ("Sources", None)]) }}
   <h1>Sources</h1>
-  <p class="muted">{{ sources | length }} sources · each fetched on its own cadence</p>
-</section>
-
-<section class="prose">
-  <p>catnews is assembled from the sources below. Each is fetched independently, archived as a snapshot, and surfaced in the combined feed. Adding a source is a single entry in <code>sources.yaml</code> — snapshot, feed, archive, API, and this page all follow automatically.</p>
+  <p class="muted">{{ sources | length }} sources</p>
 </section>
 
 {% for src in sources %}
@@ -28,7 +24,7 @@
     </div>
     <div>
       <dt>Last fetched</dt>
-      <dd>{% if src.last_fetched %}{{ src.last_fetched.strftime("%B %d, %Y") }} · {{ src.stories }} stor{{ "y" if src.stories == 1 else "ies" }}{% else %}never{% endif %}</dd>
+      <dd>{% if src.last_fetched %}{{ src.last_fetched.strftime("%b %d, %Y") }} · {{ src.stories }} stor{{ "y" if src.stories == 1 else "ies" }}{% else %}never{% endif %}</dd>
     </div>
     <div>
       <dt>Status</dt>

@@ -2979,17 +2979,19 @@ a.is-dead,
   .no-js .menu-links { display: flex; flex-direction: row; flex-wrap: wrap; gap: 10px 16px; }
 
   .search { width: 100%; }
-  .search input[type="search"] { flex: 1; width: auto; padding: 8px 2px; }
+  .search input[type="search"] {
+    flex: 1;
+    width: auto;
+    min-height: 40px;
+    padding: 8px 2px;
+    font-size: 16px;
+  }
   .search input[type="search"]:focus { width: auto; }
   .search-results { width: 100%; }
   .share-bar { display: none; }
 
   .filter-scroll { width: 100%; overflow: hidden; }
   .filters { padding: 10px 0; }
-  .filter-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .filter-row::-webkit-scrollbar { display: none; }
-  .source-options { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .source-options::-webkit-scrollbar { display: none; }
   .filter-row {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
@@ -2997,8 +2999,11 @@ a.is-dead,
     align-items: center;
     gap: 8px 6px;
     overflow: visible;
+    flex-wrap: nowrap;
   }
-  .filter-row--sources { padding-right: 0; }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .source-options { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .source-options::-webkit-scrollbar { display: none; }
   .filter-label {
     grid-area: label;
     margin-right: 0;
@@ -3013,11 +3018,20 @@ a.is-dead,
   .source-options .chip { scroll-snap-align: start; }
   .filter-actions {
     grid-area: actions;
-    width: 100%;
-    justify-content: flex-end;
+    width: calc(100% + 54px);
+    justify-content: flex-start;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
     margin-left: 0;
     padding-top: 8px;
     border-top: 1px solid var(--line);
+  }
+  .filter-actions::-webkit-scrollbar { display: none; }
+  .source-options .chip,
+  .filter-actions .chip,
+  .filter-actions .hide-read {
+    min-height: 36px;
   }
   .filter-row--sources { padding-right: 54px; }
   .filter-scroll-cue {
@@ -3048,8 +3062,50 @@ a.is-dead,
   }
   .filter-label, .chip, .filter-actions, .hide-read { flex-shrink: 0; }
 
+  .menu-trigger {
+    min-height: 40px;
+    padding: 8px 12px;
+  }
+  .story .save-toggle,
+  .story .copy-toggle {
+    min-width: 36px;
+    min-height: 36px;
+  }
+
   .source-details { flex-direction: column; align-items: stretch; }
   .source-details > div { justify-content: space-between; gap: 12px; }
+
+  .archive-day-head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "marker date" "marker count";
+    align-items: baseline;
+    gap: 4px 10px;
+  }
+  .archive-day-head::before {
+    grid-area: marker;
+    align-self: start;
+  }
+  .archive-day-date {
+    grid-area: date;
+    min-width: 0;
+    font-size: var(--text-md);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .archive-day-count {
+    grid-area: count;
+    justify-self: start;
+  }
+  .archive-day-link {
+    gap: 8px;
+    padding-inline: 0;
+    padding-block: 10px;
+    min-height: 44px;
+  }
+  .archive-day-list { grid-template-columns: minmax(0, 1fr); }
+  .archive-day-item { min-width: 0; }
 
   .stat-section { overflow-x: auto; }
   .stat-section h2 { padding-right: 12px; }
@@ -3080,6 +3136,42 @@ a.is-dead,
 
   .endpoint-row { flex-direction: column; align-items: stretch; gap: 6px; }
   .endpoint-tools { align-self: flex-start; }
+  .endpoint-tools .icon-btn { width: 36px; height: 36px; }
+  .endpoint-code {
+    overflow-x: visible;
+    overflow-wrap: anywhere;
+  }
+  .endpoint-tag {
+    display: inline-block;
+    margin-left: 6px;
+    white-space: normal;
+    vertical-align: middle;
+  }
+  .code-block {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .snapshot-nav { align-items: center; }
+  .snapshot-nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .source-links { line-height: 2; }
+}
+
+@media (max-width: 360px) {
+  /* Keep the card utility cluster on one line on the smallest phones. */
+  .story-top {
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+  .story-score { margin-left: auto; }
+  .story .save-toggle,
+  .story .copy-toggle {
+    min-width: 34px;
+    min-height: 34px;
+  }
 }
 
 /* ==========================================================================
@@ -3628,6 +3720,7 @@ html[data-design-system="kami"] .ds-comp {
 }
 @media (max-width: 560px) {
   html[data-design-system="kami"] .container { padding: max(120px, var(--header-h, 0px)) 18px 60px; }
+  html[data-design-system="kami"] .page-header { padding: 32px 0 8px; }
   html[data-design-system="kami"] .site-header {
     position: fixed;
     top: 0;
