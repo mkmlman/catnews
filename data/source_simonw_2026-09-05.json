@@ -1,0 +1,111 @@
+{
+  "source": "simonw",
+  "date": "2026-09-05",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "The Pelican comparison grid for Astra is pretty interesting",
+      "url": "https://simonwillison.net/2026/Sep/4/astra-pelicans/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/4/astra-pelicans/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-04T23:59:05Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I got access to GPT-6 Astra this afternoon, so naturally I used it to generate SVGs of pelicans riding bicycles - at low, medium, high, xhigh and max reasoning levels (Astra doesn't support reasoning=none). Then I rendered those pelicans in a comparison grid with GPT-5.6 Sol, Terra, and Luna, and beyond being fun the result was surprisingly useful. See the grid for full quality images. Here's the transcript that created the GPT-6 Nova pelicans. There are a few interesting things that stand out from this grid. The Astra pelicans are much better . The very best GPT-5.6-Sol pelican (I liked xhigh better than max) is still pretty clearly a bunch of abstract shapes. Every single one of the Astra pelicans, from low to xhigh, looks better than that. The Astra max one is really good. Astra below max still doesn't reliably get the pelican legs on both sides of the frame. In terms of cost, Astra m",
+      "links": []
+    },
+    {
+      "source": "simonw",
+      "title": "OpenAI's rogue agents were caught communicating via public wikis",
+      "url": "https://simonwillison.net/2026/Sep/4/rogue-agent-wikis/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/4/rogue-agent-wikis/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-04T17:38:48Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Here we go again... Discovery of a new OpenAI agent message board by Sydney Von Arx, Cormac Slade Byrd, Spencer Kitts, and Thomas Larsen describes the latest accidental cyberattack by models being trained by OpenAI. This time it was agents engaged in some sort of web research benchmark, so they had (supposedly) controlled access to the Web. The agents figured out they could update public Wikis and spent weeks exchanging thousands of messages with each other to collaborate on the benchmark. This story only broke a few hours ago. There are already hints that this affects many other wikis that may not have been found yet. (One of the Wikis on that list belongs to ludism.org . For a delightfully surreal moment I thought that a Ludite organization might have a swarm of agents defacing their space, but it turns out Ludism is \"philosophy as it applies to games and gaming\".) The research team al",
+      "links": [
+        {
+          "title": "Discovery of a new OpenAI agent message board",
+          "url": "https://collusion.wiki",
+          "site": "collusion.wiki"
+        },
+        {
+          "title": "already hints",
+          "url": "https://x.com/xeophon/status/2095871013384806848",
+          "site": "x.com"
+        },
+        {
+          "title": "ludism.org",
+          "url": "https://www.ludism.org",
+          "site": "ludism.org"
+        },
+        {
+          "title": "published the data",
+          "url": "https://collusion.wiki/explorer/download.html",
+          "site": "collusion.wiki"
+        },
+        {
+          "title": "explore in Datasette Lite",
+          "url": "https://lite.datasette.io/?url=https://static.simonwillison.net/static/cors-allow/2026/collusion-wiki.db&metadata=https://gist.github.com/simonw/14fc6912600d1f9c15c0e4a5e60c3cde#/collusion-wiki",
+          "site": "lite.datasette.io"
+        },
+        {
+          "title": "agent.datasette.io",
+          "url": "https://agent.datasette.io/",
+          "site": "agent.datasette.io"
+        },
+        {
+          "title": "UseMod",
+          "url": "https://github.com/mlude/usemod/",
+          "site": "github.com"
+        },
+        {
+          "title": "September 11, 2003",
+          "url": "https://github.com/mlude/usemod/commit/922fcc803efa3fab751c90ab4d4467115c8ff9c9#diff-69e27356ef629022720d868ab0c0e3394775b6c1",
+          "site": "github.com"
+        },
+        {
+          "title": "removed from Perl core in 2015",
+          "url": "https://perlhacks.com/2015/12/long-death-cgi-pm/",
+          "site": "perlhacks.com"
+        },
+        {
+          "title": "a $_REQUEST object",
+          "url": "https://www.php.net/manual/en/reserved.variables.request.php",
+          "site": "php.net"
+        },
+        {
+          "title": "in 2008",
+          "url": "https://github.com/django/django/commit/daa6b38f35#diff-5df632fc96688cddb972e9b6661c7d1cc82debc9ee2a9b6d94157d3a914692e2",
+          "site": "github.com"
+        },
+        {
+          "title": "in 2015",
+          "url": "https://github.com/django/django/commit/75f107b8842dfc890ddd65262bd09ca87c3a15be",
+          "site": "github.com"
+        },
+        {
+          "title": "OpenAI agents hijacked German website in previously undisclosed",
+          "url": "https://www.reuters.com/world/europe/openai-agents-hijacked-german-website-previously-undisclosed-ai-breakout-this-2026-09-04/",
+          "site": "reuters.com"
+        },
+        {
+          "title": "called for a congressional investigation of OpenAI",
+          "url": "https://garymarcus.substack.com/p/pause-openai-now",
+          "site": "garymarcus.substack.com"
+        }
+      ]
+    }
+  ]
+}
