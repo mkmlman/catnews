@@ -156,13 +156,18 @@
   </div>
 
   <table class="ds-space-table">
-    <tr><th>Scale</th><th>Value</th><th>Use</th><th></th></tr>
-    <tr><td class="ds-name">frame-inline</td><td class="ds-val">75px</td><td class="ds-use">Shared gutter — header, footer, content (48/40/28px on smaller viewports)</td><td class="ds-bar"><span style="width:120px"></span></td></tr>
-    <tr><td class="ds-name">frame-block</td><td class="ds-val">56px</td><td class="ds-use">Chrome inset from viewport edges</td><td class="ds-bar"><span style="width:90px"></span></td></tr>
-    <tr><td class="ds-name">content-w</td><td class="ds-val">760px</td><td class="ds-use">Reading column cap; stories may widen to 920px</td><td class="ds-bar"><span style="width:200px"></span></td></tr>
-    <tr><td class="ds-name">md</td><td class="ds-val">14–20px</td><td class="ds-use">Card padding · grid gap</td><td class="ds-bar"><span style="width:28px"></span></td></tr>
-    <tr><td class="ds-name">sm</td><td class="ds-val">4–10px</td><td class="ds-use">Chips · badges · inline gaps</td><td class="ds-bar"><span style="width:16px"></span></td></tr>
-    <tr><td class="ds-name">xs</td><td class="ds-val">1px</td><td class="ds-use">Hairline rules everywhere</td><td class="ds-bar"><span style="width:4px"></span></td></tr>
+    <caption class="sr-only">Spacing scale: token, value, and use</caption>
+    <thead>
+      <tr><th scope="col">Scale</th><th scope="col">Value</th><th scope="col">Use</th><th scope="col"><span class="sr-only">Relative size</span></th></tr>
+    </thead>
+    <tbody>
+    <tr><th class="ds-name" scope="row">frame-inline</th><td class="ds-val">75px</td><td class="ds-use">Shared gutter — header, footer, content (48/40/28px on smaller viewports)</td><td class="ds-bar"><span style="width:120px"></span></td></tr>
+    <tr><th class="ds-name" scope="row">frame-block</th><td class="ds-val">56px</td><td class="ds-use">Chrome inset from viewport edges</td><td class="ds-bar"><span style="width:90px"></span></td></tr>
+    <tr><th class="ds-name" scope="row">content-w</th><td class="ds-val">760px</td><td class="ds-use">Reading column cap; stories may widen to 920px</td><td class="ds-bar"><span style="width:200px"></span></td></tr>
+    <tr><th class="ds-name" scope="row">md</th><td class="ds-val">14–20px</td><td class="ds-use">Card padding · grid gap</td><td class="ds-bar"><span style="width:28px"></span></td></tr>
+    <tr><th class="ds-name" scope="row">sm</th><td class="ds-val">4–10px</td><td class="ds-use">Chips · badges · inline gaps</td><td class="ds-bar"><span style="width:16px"></span></td></tr>
+    <tr><th class="ds-name" scope="row">xs</th><td class="ds-val">1px</td><td class="ds-use">Hairline rules everywhere</td><td class="ds-bar"><span style="width:4px"></span></td></tr>
+    </tbody>
   </table>
 
   <h3 class="ds-subhead">Radii</h3>
@@ -213,11 +218,12 @@
             <button class="chip view-btn is-active" type="button" aria-label="Card grid view" title="Card grid view">{% include "view-grid-icon.html" %}</button>
             <button class="chip view-btn" type="button" aria-label="Editorial list view" title="Editorial list view">{% include "view-list-icon.html" %}</button>
           </span>
-          <label class="hide-read" title="Hide read">
-            <input type="checkbox" aria-label="Hide read">
+          <label class="hide-read">
+            <input type="checkbox">
             {% include "hide-read-icon.html" %}
+            <span>Hide read</span>
           </label>
-          <button class="chip" type="button" aria-label="Show saved stories">{% include "saved-icon.html" %}<span class="chip-count"></span></button>
+          <button class="chip" type="button" aria-label="Show saved stories">{% include "saved-icon.html" %}Saved<span class="chip-count"></span></button>
           <button type="button" class="export-saved">Export ⤓</button>
         </span>
       </div>
@@ -289,16 +295,21 @@
     <p class="ds-section-lede">When in doubt, consult this table. If it's not here, go back to first principles.</p>
   </div>
   <table class="ds-decision">
-    <tr><th>Task</th><th>How</th></tr>
-    <tr><td class="ds-task">Primary text</td><td class="ds-how"><code>var(--ink)</code> on <code>var(--paper)</code>, Departure Mono 400</td></tr>
-    <tr><td class="ds-task">A link</td><td class="ds-how">inherits ink; hover shows a <em>dotted underline</em></td></tr>
-    <tr><td class="ds-task">Emphasize a number</td><td class="ds-how">Source Serif 600, tabular-nums, not bold</td></tr>
-    <tr><td class="ds-task">Label something</td><td class="ds-how">mono 400, uppercase, +0.04–0.08em tracking, muted/faint</td></tr>
-    <tr><td class="ds-task">Tag a source</td><td class="ds-how"><code>badge badge-&lt;source&gt;</code>, palette color as text on a 2px bordered tag</td></tr>
-    <tr><td class="ds-task">Filter the feed</td><td class="ds-how">chip tag, <code>.is-active</code> fills ink</td></tr>
-    <tr><td class="ds-task">Separate sections</td><td class="ds-how">hairline <code>var(--line)</code> — never a shadow</td></tr>
-    <tr><td class="ds-task">Show code</td><td class="ds-how"><code>.code-block</code>, hairline border, mono</td></tr>
-    <tr><td class="ds-task">Hover affordance</td><td class="ds-how">ink 3–5% wash + deeper hairline; dotted underline for text</td></tr>
+    <caption class="sr-only">Design decisions quick reference</caption>
+    <thead>
+      <tr><th scope="col">Task</th><th scope="col">How</th></tr>
+    </thead>
+    <tbody>
+    <tr><th class="ds-task" scope="row">Primary text</th><td class="ds-how"><code>var(--ink)</code> on <code>var(--paper)</code>, Departure Mono 400</td></tr>
+    <tr><th class="ds-task" scope="row">A link</th><td class="ds-how">inherits ink; hover shows a <em>dotted underline</em></td></tr>
+    <tr><th class="ds-task" scope="row">Emphasize a number</th><td class="ds-how">Source Serif 600, tabular-nums, not bold</td></tr>
+    <tr><th class="ds-task" scope="row">Label something</th><td class="ds-how">mono 400, uppercase, +0.04–0.08em tracking, muted/faint</td></tr>
+    <tr><th class="ds-task" scope="row">Tag a source</th><td class="ds-how"><code>badge badge-&lt;source&gt;</code>, palette color as text on a 2px bordered tag</td></tr>
+    <tr><th class="ds-task" scope="row">Filter the feed</th><td class="ds-how">chip tag, <code>.is-active</code> fills ink</td></tr>
+    <tr><th class="ds-task" scope="row">Separate sections</th><td class="ds-how">hairline <code>var(--line)</code> — never a shadow</td></tr>
+    <tr><th class="ds-task" scope="row">Show code</th><td class="ds-how"><code>.code-block</code>, hairline border, mono</td></tr>
+    <tr><th class="ds-task" scope="row">Hover affordance</th><td class="ds-how">ink 3–5% wash + deeper hairline; dotted underline for text</td></tr>
+    </tbody>
   </table>
 </section>
 
@@ -360,14 +371,19 @@
 
   <h3 class="ds-subhead">Substitutions</h3>
   <table class="ds-decision">
-    <tr><th>Token</th><th>Departure</th><th>Kami</th></tr>
-    <tr><td class="ds-task">UI mono</td><td class="ds-how">Departure Mono (self-hosted)</td><td class="ds-how">system <code>ui-monospace</code> stack</td></tr>
-    <tr><td class="ds-task">Display serif</td><td class="ds-how">Source Serif italic</td><td class="ds-how">Fraunces 600, tight tracking</td></tr>
-    <tr><td class="ds-task">Body size</td><td class="ds-how">0.9375rem mono-led</td><td class="ds-how">17px serif, line-height 1.7</td></tr>
-    <tr><td class="ds-task">Radius</td><td class="ds-how">4px hairline squares</td><td class="ds-how">12px rounds, pill chips &amp; badges</td></tr>
-    <tr><td class="ds-task">Chrome</td><td class="ds-how">fixed masthead in a frame gutter</td><td class="ds-how">sticky frosted bar with inline nav</td></tr>
-    <tr><td class="ds-task">Hover</td><td class="ds-how">ink wash + dotted underline</td><td class="ds-how">accent wash + soft lift shadow</td></tr>
-    <tr><td class="ds-task">Progress bar</td><td class="ds-how">ink hairline</td><td class="ds-how">accent blue</td></tr>
+    <caption class="sr-only">Departure versus Kami token substitutions</caption>
+    <thead>
+      <tr><th scope="col">Token</th><th scope="col">Departure</th><th scope="col">Kami</th></tr>
+    </thead>
+    <tbody>
+    <tr><th class="ds-task" scope="row">UI mono</th><td class="ds-how">Departure Mono (self-hosted)</td><td class="ds-how">system <code>ui-monospace</code> stack</td></tr>
+    <tr><th class="ds-task" scope="row">Display serif</th><td class="ds-how">Source Serif italic</td><td class="ds-how">Fraunces 600, tight tracking</td></tr>
+    <tr><th class="ds-task" scope="row">Body size</th><td class="ds-how">0.9375rem mono-led</td><td class="ds-how">17px serif, line-height 1.7</td></tr>
+    <tr><th class="ds-task" scope="row">Radius</th><td class="ds-how">4px hairline squares</td><td class="ds-how">12px rounds, pill chips &amp; badges</td></tr>
+    <tr><th class="ds-task" scope="row">Chrome</th><td class="ds-how">fixed masthead in a frame gutter</td><td class="ds-how">sticky frosted bar with inline nav</td></tr>
+    <tr><th class="ds-task" scope="row">Hover</th><td class="ds-how">ink wash + dotted underline</td><td class="ds-how">accent wash + soft lift shadow</td></tr>
+    <tr><th class="ds-task" scope="row">Progress bar</th><td class="ds-how">ink hairline</td><td class="ds-how">accent blue</td></tr>
+    </tbody>
   </table>
 </section>
 {% endblock %}

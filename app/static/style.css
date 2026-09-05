@@ -1305,11 +1305,17 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
 .hide-read {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
+  min-height: 32px;
   padding: 4px 10px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--muted);
+  font-family: var(--mono-font);
+  font-size: var(--text-meta);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   cursor: pointer;
   white-space: nowrap;
   transition: color 0.15s, border-color 0.15s, background-color 0.15s;
@@ -2540,8 +2546,8 @@ a.is-dead,
   padding: 10px 4px;
   border-bottom: 1px solid var(--line-strong);
 }
-.ds-space-table td { padding: 12px 4px; border-bottom: 1px solid var(--line); vertical-align: middle; }
-.ds-space-table tr:last-child td { border-bottom: none; }
+.ds-space-table td, .ds-space-table tbody th { padding: 12px 4px; border-bottom: 1px solid var(--line); vertical-align: middle; font-weight: 400; }
+.ds-space-table tr:last-child td, .ds-space-table tr:last-child th { border-bottom: none; }
 .ds-space-table .ds-name { font-family: var(--mono-font); font-size: var(--text-form); color: var(--ink); }
 .ds-space-table .ds-val { font-family: var(--mono-font); font-size: var(--text-meta); color: var(--muted); white-space: nowrap; }
 .ds-space-table .ds-use { font-family: var(--serif-font); font-size: var(--text-form); color: var(--ink-soft); }
@@ -2644,7 +2650,7 @@ a.is-dead,
   padding: 10px 4px;
   border-bottom: 1px solid var(--line-strong);
 }
-.ds-decision td { padding: 13px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.ds-decision td, .ds-decision tbody th { padding: 13px 4px; border-bottom: 1px solid var(--line); vertical-align: top; font-weight: 400; }
 .ds-task {
   font-family: var(--serif-font);
   font-size: var(--text-form);
@@ -3342,6 +3348,10 @@ html[data-design-system="kami"] .export-saved {
 }
 html[data-design-system="kami"] .chip {
   padding: 5px 13px;
+  border-radius: var(--radius-pill);
+  text-transform: none;
+}
+html[data-design-system="kami"] .hide-read {
   border-radius: var(--radius-pill);
   text-transform: none;
 }

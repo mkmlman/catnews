@@ -69,12 +69,13 @@
             {% include "view-list-icon.html" %}
           </button>
         </span>
-        <label class="hide-read" title="Hide read">
-          <input type="checkbox" id="hide-read" aria-label="Hide read">
+        <label class="hide-read">
+          <input type="checkbox" id="hide-read">
           {% include "hide-read-icon.html" %}
+          <span>Hide read</span>
         </label>
         <button class="chip" type="button" data-saved="saved" aria-pressed="false" aria-controls="stories" aria-label="Show saved stories" title="Show saved stories">
-          {% include "saved-icon.html" %}<span class="chip-count"></span>
+          {% include "saved-icon.html" %}Saved<span class="chip-count"></span>
         </button>
         <button type="button" class="export-saved" id="export-saved" hidden>Export ⤓</button>
       </span>
