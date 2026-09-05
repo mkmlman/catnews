@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ app_name }} | API{% endblock %}
+{% block og_description %}The {{ app_name }} digest as JSON, Markdown, or RSS — no auth required.{% endblock %}
 {% block content %}
 <section class="page-header">
   {{ crumbs([("Home", base_path ~ "/"), ("API", None)]) }}
@@ -12,7 +13,7 @@
   <ul class="endpoint-list">
     <li>
       <div class="endpoint-row">
-        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/sources.json" title="Copy curl command for GET /api/sources"><span class="method">GET</span> <a href="{{ base_path }}/api/sources.json">{{ base_path }}/api/sources</a></code>
+        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/sources.json" title="Copy curl command for GET /api/sources"><span class="method">GET</span> <a href="{{ base_path }}/api/sources.json">{{ base_path }}/api/sources.json</a></code>
         <div class="endpoint-tools">
           <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/sources" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
           <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/sources.json" aria-label="Fetch and show GET /api/sources response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
@@ -49,7 +50,7 @@
   <ul class="endpoint-list">
     <li>
       <div class="endpoint-row">
-        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/digest.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/digest.json">{{ base_path }}/api/digest</a></code>
+        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/digest.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/digest.json">{{ base_path }}/api/digest.json</a></code>
         <div class="endpoint-tools">
           <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/digest.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
           <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/digest.json" aria-label="Fetch and show GET {{ base_path }}/api/digest.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
@@ -60,7 +61,7 @@
     </li>
     <li>
       <div class="endpoint-row">
-        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/stories.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/stories.json">{{ base_path }}/api/stories</a></code>
+        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/stories.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/stories.json">{{ base_path }}/api/stories.json</a></code>
         <div class="endpoint-tools">
           <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/stories.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
           <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/stories.json" aria-label="Fetch and show GET {{ base_path }}/api/stories.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
@@ -89,7 +90,7 @@
         </div>
       </div>
       <pre class="endpoint-output" hidden role="status"></pre>
-      <p class="endpoint-desc">Gone URLs (404/410/451) used to badge rotted cards.</p>
+      <p class="endpoint-desc">Gone URLs (404/410/451) used for dead-link badges.</p>
     </li>
     <li>
       <div class="endpoint-row">
@@ -121,7 +122,7 @@
   <ul class="endpoint-list">
     <li>
       <div class="endpoint-row">
-        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/stats.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/stats.json">{{ base_path }}/api/stats</a></code>
+        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/stats.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/stats.json">{{ base_path }}/api/stats.json</a></code>
         <div class="endpoint-tools">
           <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/stats.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
           <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/stats.json" aria-label="Fetch and show GET {{ base_path }}/api/stats.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
@@ -132,7 +133,7 @@
     </li>
     <li>
       <div class="endpoint-row">
-        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/trends.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/trends.json">{{ base_path }}/api/trends</a></code>
+        <code class="endpoint-code" data-copy="curl {{ base_url }}/api/trends.json" title="Copy command"><span class="method">GET</span> <a href="{{ base_path }}/api/trends.json">{{ base_path }}/api/trends.json</a></code>
         <div class="endpoint-tools">
           <button type="button" class="icon-btn endpoint-copy" aria-label="Copy curl command for GET /api/trends.json" title="Copy curl command"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button>
           <button type="button" class="icon-btn endpoint-run" data-run="{{ base_path }}/api/trends.json" aria-label="Fetch and show GET {{ base_path }}/api/trends.json response" title="Fetch and show the response"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg></button>
@@ -162,12 +163,12 @@
 
 <section class="api-section">
   <h2 class="api-section-title">Example</h2>
-  <pre class="code-block">$ curl {{ base_url }}/api/sources/hn | head
+  <pre class="code-block">$ curl {{ base_url }}/api/sources/{{ sample_story.source if sample_story else "hn" }}.json
 {
-  "source": "hn",
-  "date": "2026-08-03",
+  "source": {{ sample_story.source | tojson if sample_story else '"hn"' }},
+  "date": {{ sample_date.isoformat() | tojson if sample_date else '"2026-09-05"' }},
   "stories": [
-    { "source": "hn", "title": "Diátaxis", "url": "https://diataxis.fr/" }
+    { "source": {{ sample_story.source | tojson if sample_story else '"hn"' }}, "title": {{ sample_story.title | tojson if sample_story else '"An illustrative story title"' }}, "url": {{ sample_story.url | tojson if sample_story else '"https://example.com/"' }} }
   ]
 }</pre>
 </section>

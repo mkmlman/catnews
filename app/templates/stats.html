@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ app_name }} | Stats{% endblock %}
+{% block og_description %}{{ app_name }} by the numbers — stories curated, snapshots, and weekly trends.{% endblock %}
 {% block content %}
 <section class="page-header">
   {{ crumbs([("Home", base_path ~ "/"), ("Stats", None)]) }}
@@ -75,6 +76,11 @@
         </td>
       </tr>
       {% endfor %}
+      {% if not stats.by_source %}
+      <tr>
+        <td colspan="5" class="muted">No snapshots archived yet — run a fetch to populate stats.</td>
+      </tr>
+      {% endif %}
     </tbody>
   </table>
 </section>
@@ -127,7 +133,7 @@
 
   {% if domains %}
   <div class="stat-detail-block">
-    <h2>Top domains</h2>
+    <h3>Top domains</h3>
     <ul class="rank-list">
       {% set domain_max = domains[0][1] %}
       {% for host, count in domains %}
@@ -143,7 +149,7 @@
 
   {% if arxiv_categories %}
   <div class="stat-detail-block">
-    <h2>arXiv categories</h2>
+    <h3>arXiv categories</h3>
     <ul class="rank-list">
       {% set cat_max = arxiv_categories[0][1] %}
       {% for cat, count in arxiv_categories %}
@@ -159,7 +165,7 @@
 
   {% if fetch_health %}
   <div class="stat-detail-block">
-    <h2>Fetch health</h2>
+    <h3>Fetch health</h3>
     <table class="stat-table stat-table--health">
       <thead>
         <tr>

@@ -488,8 +488,10 @@ self.addEventListener("fetch", (event) => {{
         event.respondWith(
             fetch(request)
                 .then((response) => {{
-                    const copy = response.clone();
-                    caches.open(CACHE).then((cache) => cache.put(request, copy));
+                    if (response.ok) {{
+                        const copy = response.clone();
+                        caches.open(CACHE).then((cache) => cache.put(request, copy));
+                    }}
                     return response;
                 }})
                 .catch(() =>
@@ -610,7 +612,9 @@ def live_site_urls(snapshots: list) -> list[str]:
     """Relative precache URLs for the live FastAPI app (no static build dir)."""
     # StaticFiles serves individual assets, not a directory index at /static/.
     # Including that 404ing URL would make cache.addAll() reject the whole install.
-    urls = ["./"]
+    # "./index.html" is precached alongside "./" so the offline navigation
+    # fallback (caches.match("./index.html")) hits on the live app too.
+    urls = ["./", "./index.html"]
     for path in sorted(STATIC_DIR.rglob("*")):
         if path.is_file():
             urls.append("./static/" + path.relative_to(STATIC_DIR).as_posix())

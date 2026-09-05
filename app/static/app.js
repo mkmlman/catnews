@@ -207,7 +207,6 @@
   function paintHeaderScrim() {
     if (!headerEl) return;
     var y = window.scrollY;
-    headerEl.classList.toggle("is-scrolled", y > 8);
 
     var design = document.documentElement.getAttribute("data-design-system");
     var isDesktopChrome =
@@ -529,7 +528,6 @@
   function paintCard(card, url) {
     if (!card) return;
     card.classList.toggle("is-read", read.has(url));
-    card.classList.toggle("is-saved", saved.has(url));
     var btn = card.querySelector(".save-toggle");
     if (btn) {
       btn.setAttribute("aria-pressed", saved.has(url) ? "true" : "false");
@@ -2248,6 +2246,9 @@
     var ripples = [];
     var rippleData = new Float32Array(MAX_RIPPLES * 4);
     document.addEventListener("click", function (event) {
+      if (!oceanVisible()) return;
+      var target = event.target;
+      if (target && target.closest && target.closest("a, button, summary, input, select, textarea, [role='button']")) return;
       var ndcX = (event.clientX / window.innerWidth) * 2 - 1;
       var ndcY = -((event.clientY / window.innerHeight) * 2 - 1);
       var aspect = Math.max(canvas.width, 1) / Math.max(canvas.height, 1);
@@ -2356,14 +2357,26 @@
     function stop() {
       if (running()) { cancelAnimationFrame(rafId); rafId = null; }
     }
+    /* The canvas is display:none under kami, when toggled off, and before
+       first paint — never burn GPU raymarching an invisible sea. */
+    function oceanVisible() {
+      if (canvas.hidden || canvas.style.display === "none") return false;
+      if (root.getAttribute("data-design-system") === "kami") return false;
+      return true;
+    }
     function sync() {
-      if (document.hidden) { stop(); }
+      if (document.hidden || !oceanVisible()) { stop(); }
       else if (!running()) {
         lastFrame = null; /* avoid a time jump after a long pause */
         rafId = requestAnimationFrame(render);
       }
     }
     document.addEventListener("visibilitychange", sync);
+    if (window.MutationObserver) {
+      var oceanVisibility = new MutationObserver(sync);
+      oceanVisibility.observe(canvas, { attributes: true, attributeFilter: ["hidden", "style", "class"] });
+      oceanVisibility.observe(root, { attributes: true, attributeFilter: ["data-design-system"] });
+    }
 
     var reduceHandler = reduceQuery.addEventListener
       ? function () { sync(); }

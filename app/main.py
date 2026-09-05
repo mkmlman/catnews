@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import functools
-import re
 from datetime import date
 from pathlib import Path
 
@@ -33,8 +32,10 @@ from .render import (
     render_manifest,
     render_markdown,
     render_page,
+    render_robots,
     render_rss,
     render_service_worker,
+    render_sitemap,
     render_source_rss,
     search_index,
     sparkline_points,
@@ -122,8 +123,6 @@ app.mount(
     StaticFiles(directory=Path(__file__).resolve().parent / "static"),
     name="static",
 )
-
-SOURCE_PATTERN = "^(?:" + "|".join(re.escape(k) for k in SOURCES) + ")$"
 
 
 def page(request: Request, name: str, page_path: str = "/", **context) -> HTMLResponse:
@@ -219,7 +218,15 @@ def stats(request: Request) -> HTMLResponse:
 
 @app.get("/api/", response_class=HTMLResponse)
 def api_docs(request: Request) -> HTMLResponse:
-    return page(request, "api.html", "/api/")
+    digest = combined_digest(DATA_DIR)
+    sample = digest.stories[0] if digest and digest.stories else None
+    return page(
+        request,
+        "api.html",
+        "/api/",
+        sample_story=sample,
+        sample_date=digest.date if digest else None,
+    )
 
 
 @app.get("/design/", response_class=HTMLResponse)
@@ -253,6 +260,11 @@ def api_source(source: str) -> SourceSnapshot:
     return snap
 
 
+@app.get("/api/sources/{source}/{day}.json")
+def api_source_day_json(source: str, day: date) -> SourceSnapshot:
+    return api_source_day(source, day)
+
+
 @app.get("/api/sources/{source}/{day}")
 def api_source_day(source: str, day: date) -> SourceSnapshot:
     snap = load_snapshot(source, day, DATA_DIR)
@@ -281,8 +293,10 @@ def api_digest_json() -> SourceSnapshot | dict:
 
 @app.get("/api/stories")
 def api_stories(
-    source: str | None = Query(default=None, pattern=SOURCE_PATTERN),
+    source: str | None = Query(default=None),
 ) -> list[Story]:
+    if source is not None and source not in SOURCES:
+        raise HTTPException(status_code=404, detail=f"Unknown source {source!r}.")
     stories = [s for snap in load_all_snapshots(DATA_DIR) for s in snap.stories]
     if source:
         stories = [s for s in stories if s.source == source]
@@ -291,7 +305,7 @@ def api_stories(
 
 @app.get("/api/stories.json")
 def api_stories_json(
-    source: str | None = Query(default=None, pattern=SOURCE_PATTERN),
+    source: str | None = Query(default=None),
 ) -> list[Story]:
     return api_stories(source)
 
@@ -300,6 +314,11 @@ def api_stories_json(
 def api_search_json() -> list[dict[str, str]]:
     """Compact deduplicated search records for the client-side archive search."""
     return search_index(load_all_snapshots(DATA_DIR))
+
+
+@app.get("/api/search")
+def api_search() -> list[dict[str, str]]:
+    return api_search_json()
 
 
 @app.get("/api/dead-links")
@@ -335,6 +354,11 @@ def api_trends_json() -> list[dict]:
 @app.get("/api/fetch-status.json")
 def api_fetch_status_json() -> dict:
     return fetch_status(DATA_DIR)
+
+
+@app.get("/api/fetch-status")
+def api_fetch_status() -> dict:
+    return api_fetch_status_json()
 
 
 @app.get("/api/sources.json")
@@ -386,6 +410,17 @@ def source_rss(source: str) -> Response:
 
 
 # --- PWA (install + offline) -------------------------------------------------
+
+
+@app.get("/sitemap.xml")
+def sitemap() -> Response:
+    xml = render_sitemap(BASE_URL, load_all_snapshots(DATA_DIR))
+    return Response(content=xml, media_type="application/xml; charset=utf-8")
+
+
+@app.get("/robots.txt")
+def robots() -> PlainTextResponse:
+    return PlainTextResponse(render_robots(BASE_URL))
 
 
 @app.get("/manifest.json")

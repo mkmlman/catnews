@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% from "_json_ld.html" import breadcrumbs with context %}
 {% block title %}{{ app_name }} | Archive{% endblock %}
+{% block og_description %}Every {{ app_name }} snapshot, newest first — browse the full archive.{% endblock %}
 {% block json_ld %}
 {{ breadcrumbs([("Home", base_path ~ "/"), ("Archive", None)]) }}
 {% endblock %}

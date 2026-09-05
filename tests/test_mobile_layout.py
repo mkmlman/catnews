@@ -39,8 +39,8 @@ def test_header_nav_wraps_on_mobile(mobile):
     assert ".js .site-nav" in mobile
     assert "display: none" in mobile
     assert ".no-js .site-nav" in mobile
-    assert ".no-js .nav-toggle { display: none; }" in mobile
-    assert ".nav-toggle" in mobile
+    assert ".no-js .menu-trigger { display: none; }" in mobile
+    assert ".menu-trigger" in mobile
 
 
 def test_html_starts_with_no_js_class_swapped_by_app_script():

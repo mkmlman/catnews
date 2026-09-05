@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ app_name }} | Sources{% endblock %}
+{% block og_description %}The sources behind {{ app_name }} — what they are, how often they fetch, and their status.{% endblock %}
 {% block content %}
 <section class="page-header">
   {{ crumbs([("Home", base_path ~ "/"), ("Sources", None)]) }}

@@ -699,6 +699,8 @@ def test_api_pages_and_filters(client, tmp_path):
     assert snap["source"] == "hn"
     assert client.get("/api/sources/hn.json").json() == snap
     assert client.get("/api/sources/nope").status_code == 404
+    assert client.get("/api/stories?source=nope").status_code == 404
+    assert client.get("/api/stories.json?source=nope").status_code == 404
     assert client.get("/api/sources/hn/2026-08-02").status_code == 200
 
     page = client.get("/archive/hn/2026-08-02/")

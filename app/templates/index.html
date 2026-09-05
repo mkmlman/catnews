@@ -26,6 +26,7 @@
   <div class="hero-inner">
     <div class="hero-copy">
       <h1 class="hero-title"><span class="sr-only">{{ app_name }} digest — </span><span>{{ digest.date.strftime("%B") }}</span> {{ digest.date.strftime("%d") }} <small>{{ digest.date.strftime("%Y") }}</small></h1>
+      <p class="hero-tagline">A curated daily digest — what's worth reading.</p>
     </div>
     <div class="hero-edition">
       <p class="edition-sub"><span>{{ digest.stories | length }} stor{{ "y" if digest.stories | length == 1 else "ies" }}</span><span class="edition-divider" aria-hidden="true">·</span><span>{{ source_tags | length }} sources</span>{% if freshness.latest_snapshot and freshness.latest_snapshot < digest.date %}<span class="edition-divider" aria-hidden="true">·</span><span>through {{ freshness.latest_snapshot.strftime("%b %d") }}</span>{% endif %}</p>
@@ -50,10 +51,11 @@
 </aside>
 {% endif %}
 
+{% if digest.stories %}
 <div class="filters" id="filters">
       <div class="filter-scroll">
       <div class="filter-row filter-row--sources" role="group" aria-labelledby="source-filter-label">
-        <span class="filter-label" id="source-filter-label">Source</span>
+        <h2 class="filter-label" id="source-filter-label">Source</h2>
       <span class="source-options">
         <button class="chip is-active" type="button" data-source="All" aria-pressed="true" aria-controls="stories">All<span class="chip-count">{{ ns.counts.values() | sum }}</span></button>
         {% for key, tag in source_tags.items() %}
@@ -101,5 +103,12 @@
   <button class="load-more" id="load-more" type="button" hidden>Load more</button>
   <p class="load-more-count" id="load-more-count" hidden aria-live="polite"></p>
 </div>
+{% else %}
+<div class="no-matches" role="status">
+  {% include "cat-logo.html" %}
+  <p>No stories in this edition yet.</p>
+  <p>Sources may still be fetching — browse the <a href="{{ base_path }}/archive/">archive</a> or check <a href="{{ base_path }}/sources/">source status</a>.</p>
+</div>
+{% endif %}
 <p class="sr-only" id="filter-status" aria-live="polite"></p>
 {% endblock %}

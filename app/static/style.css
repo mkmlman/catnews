@@ -308,10 +308,6 @@ body:has(.fluid-canvas.is-visible) .container::before { opacity: 0.32; }
 html[data-design-system="kami"] .container { z-index: auto; }
 html[data-design-system="kami"] .container::before { content: none; }
 
-@media print {
-  .ocean-canvas { display: none !important; }
-}
-
 [hidden] { display: none !important; }
 
 ::selection { background: var(--ink); color: var(--paper); }
@@ -407,11 +403,6 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   min-height: 100dvh;
   max-width: none;
   padding: var(--frame-content-top) var(--frame-inline) var(--frame-content-bottom);
-}
-
-.content-surface {
-  width: min(100%, var(--content-w));
-  margin-inline: auto;
 }
 
 /* Reading progress hairline along the very top of the viewport */
@@ -585,7 +576,6 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   }
 }
 
-.nav-link,
 .menu-links a {
   font-family: var(--mono-font);
   font-size: var(--text-ui);
@@ -844,6 +834,14 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   display: block;
   width: 13px;
   height: 13px;
+}
+.bottom-controls .ocean-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  font-size: 0.95rem;
 }
 
 /* Theme toggle — an explicit labeled switch, e.g. LIGHT ▸ DARK ▸ PITCH */
@@ -1141,7 +1139,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
 .to-top svg { display: block; }
 .to-top:hover { color: var(--ink); border-color: var(--ink); }
 
-.theme-toggle:active, .nav-toggle:active, .install-btn:active,
+.theme-toggle:active, .menu-trigger:active, .install-btn:active,
 .save-toggle:active, .export-saved:active, .load-more:active,
 .to-top:active, .install-dialog-close:active, .help-toggle:active,
 .footer-to-top button:active, .chip:active { transform: scale(0.96); }
@@ -1252,7 +1250,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--faint);
-  margin-right: 8px;
+  margin: 0 8px 0 0;
 }
 .chip {
   display: inline-flex;
@@ -1953,6 +1951,15 @@ a.is-dead,
 .stat-details summary::before { content: "+ "; }
 .stat-details[open] summary::before { content: "\2013 "; }
 .stat-detail-block { padding: 18px 0 6px; }
+.stat-detail-block h3 {
+  font-family: var(--mono-font);
+  font-size: var(--text-ui);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: 400;
+  margin: 0 0 4px;
+}
 .stat-trends-data { margin-top: 12px; }
 .stat-trends-table-wrap { overflow-x: auto; }
 
@@ -2827,7 +2834,7 @@ a.is-dead,
     grid-template-areas: "wordmark actions" "nav nav" "search search";
   }
   .no-js .site-nav { grid-area: nav; }
-  .no-js .nav-toggle { display: none; }
+  .no-js .menu-trigger { display: none; }
   .no-js .menu-links { display: flex; flex-direction: row; flex-wrap: wrap; gap: 10px 16px; }
 
   .search { width: 100%; }
@@ -3663,6 +3670,14 @@ html[data-design-system="kami"] .ds-comp {
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
+}
+.hero-tagline {
+  margin: 10px 0 0;
+  font-family: var(--serif-font);
+  font-style: italic;
+  font-size: var(--text-md);
+  color: var(--muted);
+  text-wrap: balance;
 }
 .hero-edition {
   align-self: end;

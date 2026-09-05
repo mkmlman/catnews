@@ -50,9 +50,13 @@ def load_snapshot(source: str, date_obj: date, data_dir: Path) -> SourceSnapshot
 
 def load_latest_snapshot(source: str, data_dir: Path) -> SourceSnapshot | None:
     dates = list_snapshot_dates(source, data_dir)
-    if not dates:
-        return None
-    return load_snapshot(source, dates[-1], data_dir)
+    # Walk back past unreadable snapshots so one corrupt file can't shadow
+    # good history (and report the source as unavailable instead of current).
+    for day in reversed(dates):
+        snap = load_snapshot(source, day, data_dir)
+        if snap is not None:
+            return snap
+    return None
 
 
 def last_fetched(source: str, data_dir: Path) -> date | None:
@@ -339,19 +343,23 @@ def source_registry(data_dir: Path) -> list[dict]:
     for key, cfg in SOURCES.items():
         snap = load_latest_snapshot(key, data_dir)
         status = status_by_source[key]
+        cadence = cadence_label(key)
+        detail = status["detail"]
+        if not detail and status["state"] == "skipped":
+            detail = f"Nothing due at last check ({cadence} cadence)."
         rows.append(
             {
                 "key": key,
                 "label": cfg.get("label") or key,
                 "tag": cfg.get("tag") or key,
                 "url": cfg.get("url"),
-                "cadence": cadence_label(key),
+                "cadence": cadence,
                 "limit": cfg.get("limit"),
                 "last_fetched": snap.date if snap else None,
                 "stories": len(snap.stories) if snap else 0,
                 "state": status["state"],
                 "state_label": status["state_label"],
-                "status_detail": status["detail"],
+                "status_detail": detail,
                 "is_issue": status["is_issue"],
             }
         )
