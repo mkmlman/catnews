@@ -1,0 +1,57 @@
+{
+  "source": "github",
+  "date": "2026-09-06",
+  "stories": [
+    {
+      "source": "github",
+      "title": "human-atlas — Open-source 3D anatomy explorer: 2,234 selectable BodyParts3D meshes, system layers, search, and exploded views.",
+      "url": "https://github.com/ashemag/human-atlas",
+      "author": "ashemag",
+      "external_id": "ashemag/human-atlas",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-05T00:24:43Z",
+      "score": 877,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Open-source 3D anatomy explorer: 2,234 selectable BodyParts3D meshes, system layers, search, and exploded views.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "NoGraphicsAPI — Minimal graphics API. Built on top of latest Vulkan extensions. As close as possibly to my \"No Graphics API\" blog post and…",
+      "url": "https://github.com/sebbbi/NoGraphicsAPI",
+      "author": "sebbbi",
+      "external_id": "sebbbi/NoGraphicsAPI",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-08-31T14:14:12Z",
+      "score": 649,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Minimal graphics API. Built on top of latest Vulkan extensions. As close as possibly to my \"No Graphics API\" blog post and the SIGGRAPH talk.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "wechat-intelligence-hub — Local-first WeChat intelligence system with a read-only CLI, Codex skills, searchable chat history, daily briefin…",
+      "url": "https://github.com/Rion-Wu-tech/wechat-intelligence-hub",
+      "author": "Rion-Wu-tech",
+      "external_id": "Rion-Wu-tech/wechat-intelligence-hub",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-04T15:00:53Z",
+      "score": 551,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Local-first WeChat intelligence system with a read-only CLI, Codex skills, searchable chat history, daily briefings, follow-ups and opportunity tracking.",
+      "links": []
+    }
+  ]
+}
