@@ -1,0 +1,90 @@
+{
+  "source": "simonw",
+  "date": "2026-09-06",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Zach Kehs",
+      "url": "https://simonwillison.net/2026/Sep/6/zach-kehs/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/6/zach-kehs/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-06T08:42:49Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "If you continue to add floors and rooms to a building forever, it will collapse. Software faces no such constraint. The code can always get worse. There can always be a new layer of indirection or a reduction in performance. — Zach Kehs , There's No Limit to How Bad Code Can Get Tags: technical-debt",
+      "links": [
+        {
+          "title": "Zach Kehs",
+          "url": "https://zachkehs.com/blog/theres_no_limit_to_how_bad_code_can_get/#9-ref",
+          "site": "zachkehs.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Introducing GPT-6 Astra for developers",
+      "url": "https://simonwillison.net/2026/Sep/5/introducing-gpt-6-astra-for-developers/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/5/introducing-gpt-6-astra-for-developers/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-05T23:27:48Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Introducing GPT-6 Astra for developers Blink and you'll miss it, but there's a familiar creature at 1m59s : Across the board, Astra has more attention to detail, better understanding of the user's prompt, and can build more sophisticated outputs. In particular, it excels at building 3D models. I've seen it make incredible renderings of gardens, shipyards, animals , cityscapes, even Dyson spheres. Astra really does believe in putting a red neckerchief on a pelican riding a bicycle. Via Hacker News comment Tags: ai , openai , generative-ai , llms , pelican-riding-a-bicycle , gpt-6-astra",
+      "links": [
+        {
+          "title": "Introducing GPT-6 Astra for developers",
+          "url": "https://www.youtube.com/watch?v=bOC3DisEOfg",
+          "site": "youtube.com"
+        },
+        {
+          "title": "1m59s",
+          "url": "https://www.youtube.com/watch?v=bOC3DisEOfg&t=119",
+          "site": "youtube.com"
+        },
+        {
+          "title": "Hacker News comment",
+          "url": "https://news.ycombinator.com/item?id=49554643#49575117",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Using Blender with coding agents on macOS",
+      "url": "https://simonwillison.net/2026/Sep/5/blender-coding-agents-macos/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/5/blender-coding-agents-macos/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-05T15:51:09Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "TIL: Using Blender with coding agents on macOS I've been having fun with Blender in ChatGPT Codex on my Mac recently. Getting it to work with coding agents is really easy: install the full Mac application from blender.org and run a prompt like this: Use the already install /Applications/Blender to render a scene of a pelican riding a bicycle In this case I followed that up with these two prompts: OK add a background and a lot of flair Then: OK make it a whole lot better And got this image, generated using Blender's Python API : Tags: ai , generative-ai , llms , blender , pelican-riding-a-bicycle , coding-agents , gpt-6-astra",
+      "links": [
+        {
+          "title": "blender.org",
+          "url": "https://www.blender.org",
+          "site": "blender.org"
+        },
+        {
+          "title": "using Blender's Python API",
+          "url": "https://github.com/simonw/gpt-6-astra-blender-pelican-bicycle/blob/main/work/pelican_final.py",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
