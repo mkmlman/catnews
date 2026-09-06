@@ -3331,6 +3331,13 @@ html[data-design-system="kami"] .edition-sub {
   font-family: var(--serif-font);
   font-style: italic;
 }
+html[data-design-system="kami"] .hero--ticks {
+  padding: 30px 0 26px;
+  text-align: left;
+}
+html[data-design-system="kami"] .hero--ticks::after {
+  display: none;
+}
 html[data-design-system="kami"] .hero::after {
   width: 40px;
   height: 2px;
@@ -3671,14 +3678,6 @@ html[data-design-system="kami"] .ds-comp {
   text-transform: uppercase;
   white-space: nowrap;
 }
-.hero-tagline {
-  margin: 10px 0 0;
-  font-family: var(--serif-font);
-  font-style: italic;
-  font-size: var(--text-md);
-  color: var(--muted);
-  text-wrap: balance;
-}
 .hero-edition {
   align-self: end;
   min-width: 0;
@@ -3721,6 +3720,7 @@ html[data-design-system="kami"] .ds-comp {
 
 @media (max-width: 700px) {
   .hero--ticks { padding: 26px 0 22px; }
+  html[data-design-system="kami"] .hero--ticks { padding: 26px 0 22px; }
   .hero-inner { grid-template-columns: 1fr; gap: 24px; }
   .hero-edition { text-align: left; }
   .hero-edition .edition-sub,
