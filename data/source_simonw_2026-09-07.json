@@ -1,0 +1,100 @@
+{
+  "source": "simonw",
+  "date": "2026-09-07",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Research acceleration: The view inside OpenAI",
+      "url": "https://simonwillison.net/2026/Sep/6/research-acceleration-the-view-inside-openai/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/6/research-acceleration-the-view-inside-openai/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-06T23:57:40Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Research acceleration: The view inside OpenAI Apparently today is RSI day at OpenAI, for Recursive Self-Improvement - I think it's their new AGI. Both this piece and the new essay An Alien Mind (by Chief Scientist Jakub Pachocki) talk about it, and this one doesn't even bother to expand the acronym. Included are details on how OpenAI's own research team are using coding agents. Like pretty much everyone else 2026 has been the year that agentic engineering really took off at OpenAI, best illustrated by this chart: I'm intrigued at what caused that significant acceleration in AI spend per researcher in late July - my best guess is that's when internal employees gained access to the model later released as GPT-6 Astra. Tags: ai , openai , generative-ai , chatgpt , llms , coding-agents , november-2025-inflection , recursive-self-improvement",
+      "links": [
+        {
+          "title": "Research acceleration: The view inside OpenAI",
+          "url": "https://openai.com/index/research-acceleration-view-inside-openai/",
+          "site": "openai.com"
+        },
+        {
+          "title": "An Alien Mind",
+          "url": "https://openai.com/index/an-alien-mind/",
+          "site": "openai.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "The purpose of DNS is to spread scams",
+      "url": "https://simonwillison.net/2026/Sep/6/the-purpose-of-dns-is-to-spread-scams/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/6/the-purpose-of-dns-is-to-spread-scams/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-06T14:40:07Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "The purpose of DNS is to spread scams Terence Eden shares some daunting statistics in support of his take that \"the Domain Name System's purpose seems to be a vector for criminals to run scams on people at a terrifyingly high rate\". On this Interisle report ( via Andrew Campling ), Terence says: It says 85 million new registrations of gTLDs were made in 2025. Of those 8.5 million were added to blocklists by May 2025. It reckons that a 10% abuse rate is the likely floor for these numbers and it's probably closer to 20%. One in five newly registered domains with a gTLD are scams. That's a bloody crisis. I had no idea. Apparently ICANN have been discussing this problem for years. Tags: dns , scams , terence-eden",
+      "links": [
+        {
+          "title": "The purpose of DNS is to spread scams",
+          "url": "https://shkspr.mobi/blog/2026/09/the-purpose-of-dns-is-to-spread-scams/",
+          "site": "shkspr.mobi"
+        },
+        {
+          "title": "this Interisle report",
+          "url": "https://interisle.net/insights/cybercriminaldomaindemand",
+          "site": "interisle.net"
+        },
+        {
+          "title": "via Andrew Campling",
+          "url": "https://labs.ripe.net/author/andrew_campling/dns-abuse-and-criminal-infrastructure-beyond-definitions-and-blocklists/",
+          "site": "labs.ripe.net"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "There's No Limit to How Bad Code Can Get",
+      "url": "https://simonwillison.net/2026/Sep/6/theres-no-limit-to-how-bad-code-can-get/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/6/theres-no-limit-to-how-bad-code-can-get/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-06T09:08:06Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on There's No Limit to How Bad Code Can Get — Lobste.rs. [In reply to a comment about burning it down to start from scratch when technical debt becomes overwhelming] In my experience it's so rare for that to work. You announce the old thing is irrecoverably drowning in tech debt. You spin up a team to rewrite it from scratch. Work begins. Meanwhile the old thing remains a moving target: it's running the core business, so changes are still necessary. The developers working on it know that it's going to be made obsolete by the new thing soon, so they don't have any incentive to go beyond the smallest effort possible to add the new features. Technical debt continues to mount. Meanwhile, the team working on the new thing are ambitious and probably a little naive. They start out at a great pace - it's greenfield after all - but as time progresses it becomes apparent that nobody ful",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://lobste.rs/s/rfn2mn/there_s_no_limit_how_bad_code_can_get#c_8kdtaw",
+          "site": "lobste.rs"
+        },
+        {
+          "title": "There's No Limit to How Bad Code Can Get",
+          "url": "https://lobste.rs/s/rfn2mn/there_s_no_limit_how_bad_code_can_get",
+          "site": "lobste.rs"
+        },
+        {
+          "title": "Migrations: the sole scalable fix to tech debt",
+          "url": "https://lethain.com/migrations/",
+          "site": "lethain.com"
+        }
+      ]
+    }
+  ]
+}
