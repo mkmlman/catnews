@@ -7,11 +7,13 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import (
     HTMLResponse,
+    JSONResponse,
     PlainTextResponse,
     RedirectResponse,
     Response,
 )
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .config import (
     BASE_PATH,
@@ -22,7 +24,7 @@ from .config import (
     today_utc,
 )
 from .models import Digest, SourceSnapshot, Story
-from .og_image import render_og_image
+from .og_image import render_maskable_icon, render_og_image
 from .render import (
     app_version,
     archive_days,
@@ -118,11 +120,61 @@ def og_edition_image(source: str, day: date) -> Response:
     )
 
 
+@app.get("/static/icon-maskable-512.png")
+def maskable_icon() -> Response:
+    """512px maskable PWA icon for the live app.
+
+    The static build writes the same bytes to
+    ``site/static/icon-maskable-512.png`` (see scripts/build_site.py); the
+    dev server has no build step, so it renders the icon on demand instead
+    of 404ing the manifest's maskable entry (which would break installability).
+
+    Registered before the /static mount so it is matched first.
+    """
+    return Response(
+        content=render_maskable_icon(),
+        media_type="image/png",
+        headers={"Cache-Control": "public, max-age=86400, immutable"},
+    )
+
+
 app.mount(
     "/static",
     StaticFiles(directory=Path(__file__).resolve().parent / "static"),
     name="static",
 )
+
+
+def _wants_json_404(path: str) -> bool:
+    """True when a 404 for `path` should stay machine-readable JSON.
+
+    API routes, feeds, and crawler/build artifacts keep their JSON 404s so
+    clients can handle them programmatically; everything else is a page
+    navigation and gets the pretty 404 page.
+    """
+    if path.startswith("/api/") or path == "/api":
+        return True
+    if path.startswith(("/feed", "/static/og/")):
+        return True
+    return path.endswith((".json", ".rss", ".xml", ".txt", ".js", ".png", ".svg"))
+
+
+@app.exception_handler(StarletteHTTPException)
+async def not_found_page(request: Request, exc: StarletteHTTPException) -> Response:
+    """Serve the designed 404 page for navigations, JSON for data routes.
+
+    Without this, mistyped page URLs on the live app return FastAPI's raw
+    ``{"detail": "Not Found"}`` even though a friendly 404 template exists.
+    Non-404 errors pass through untouched.
+    """
+    if exc.status_code != 404 or _wants_json_404(request.url.path):
+        return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    return HTMLResponse(
+        render_page(
+            "404.html", base_path=BASE_PATH, base_url=BASE_URL, page_path="/404/"
+        ),
+        status_code=404,
+    )
 
 
 def page(request: Request, name: str, page_path: str = "/", **context) -> HTMLResponse:

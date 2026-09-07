@@ -748,6 +748,13 @@
       card.hidden = !show;
       if (show) visible++;
     });
+    /* Keyboard selection must not stick to a card the new filters just hid —
+       otherwise j/k resumes from an invisible position. */
+    var selected = storiesEl ? storiesEl.querySelector(".story.is-selected") : null;
+    if (selected && (selected.hidden || selected.hasAttribute("hidden"))) {
+      selected.classList.remove("is-selected");
+      selectedIndex = -1;
+    }
     if (noMatches) noMatches.hidden = matched !== 0;
     if (noMatchesCopy && matched === 0) {
       if (state.savedOnly && saved.size === 0) {
@@ -1668,11 +1675,43 @@
       if (event.target.closest("rect.heat")) hideHeatTip();
     });
     heatmap.addEventListener("keydown", function (event) {
+      var cell = event.target.closest("rect.heat");
+      if (!cell) return;
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        var cell = event.target.closest("rect.heat");
-        if (cell) showHeatTip(cell);
+        showHeatTip(cell);
+        return;
       }
+      /* Grid navigation with a roving tabindex: the chart is one tab stop,
+         arrows move day to day (left/right = a week, up/down = a day). */
+      var move = 0;
+      if (event.key === "ArrowLeft") move = -7;
+      else if (event.key === "ArrowRight") move = 7;
+      else if (event.key === "ArrowUp") move = -1;
+      else if (event.key === "ArrowDown") move = 1;
+      else if (event.key === "Home") move = "first";
+      else if (event.key === "End") move = "last";
+      else return;
+      event.preventDefault();
+      var cells = Array.prototype.slice.call(heatmap.querySelectorAll("rect.heat"));
+      if (!cells.length) return;
+      var target = null;
+      if (move === "first") target = cells[0];
+      else if (move === "last") target = cells[cells.length - 1];
+      else {
+        var parts = (cell.getAttribute("data-date") || "").split("-");
+        var d = new Date(Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])));
+        if (isNaN(d.getTime())) return;
+        d.setUTCDate(d.getUTCDate() + move);
+        var iso = d.toISOString().slice(0, 10);
+        for (var i = 0; i < cells.length; i++) {
+          if (cells[i].getAttribute("data-date") === iso) { target = cells[i]; break; }
+        }
+      }
+      if (!target) return;
+      cells.forEach(function (c) { c.setAttribute("tabindex", "-1"); });
+      target.setAttribute("tabindex", "0");
+      target.focus();
     });
     window.addEventListener("resize", hideHeatTip);
     window.addEventListener("scroll", hideHeatTip, { passive: true });

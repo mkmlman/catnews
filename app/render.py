@@ -228,6 +228,12 @@ def render_heatmap_svg(daily: list[dict]) -> str:
     the Monday of the week containing the first archived day and runs through
     today, so the chart shows the actual active period instead of a fixed
     six-month window. Days with no snapshot render as an empty box (heat-0).
+
+    Keyboard support uses a roving tabindex: only the first day is in the tab
+    order, and arrow keys move between days by date (left/right = ±7 days,
+    up/down = ±1 day, Home/End = first/last). The client wires this up via
+    each cell's data-date attribute; the weekly data table below the chart
+    remains the screen-reader-friendly alternative for the full dataset.
     """
     from datetime import timedelta
 
@@ -313,10 +319,13 @@ def render_heatmap_svg(daily: list[dict]) -> str:
                 label = f"{count} stories on {day.strftime('%B %d, %Y')}"
             else:
                 label = f"No stories on {day.strftime('%B %d, %Y')}"
+            # Roving tabindex: the first day holds the single tab stop; arrow
+            # keys move it (see the heatmap handler in app.js).
+            tab = 0 if (wi == 0 and wd == 0) else -1
             parts.append(
                 f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" '
                 f'class="heat heat-{shade(count)}" data-date="{day.isoformat()}" '
-                f'data-count="{count}" tabindex="0" aria-label="{label}"></rect>'
+                f'data-count="{count}" tabindex="{tab}" aria-label="{label}"></rect>'
             )
     parts.append("</svg>")
     return "\n".join(parts)

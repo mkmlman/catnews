@@ -3683,7 +3683,6 @@ html[data-design-system="kami"] .ds-comp {
   min-width: 0;
   text-align: right;
 }
-.hero-edition .edition-label { margin-bottom: 10px; }
 .hero-edition .edition-sub {
   display: flex;
   justify-content: flex-end;

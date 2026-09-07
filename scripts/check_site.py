@@ -134,6 +134,36 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
         except (OSError, ElementTree.ParseError) as exc:
             errors.append(f"invalid sitemap.xml: {exc}")
 
+    manifest_path = site_dir / "manifest.json"
+    if manifest_path.is_file():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            manifest = None
+        if manifest is not None:
+            # Manifest icon targets are not HTML href/src attributes, so the
+            # link crawl below never sees them — yet a missing icon breaks
+            # PWA installability silently. Check them explicitly.
+            icons = manifest.get("icons") or []
+            if not icons:
+                errors.append("manifest.json defines no icons")
+            for icon in icons:
+                src = icon.get("src") if isinstance(icon, dict) else None
+                if not src:
+                    errors.append("manifest.json has an icon without src")
+                    continue
+                # Icon srcs are site-root-relative ("./static/…"); resolve them
+                # the same way instead of stripping characters.
+                rel = src[2:] if src.startswith("./") else src.lstrip("/")
+                target = (site_dir / rel).resolve()
+                try:
+                    target.relative_to(site_dir.resolve())
+                except ValueError:
+                    errors.append(f"manifest icon escapes site: {src!r}")
+                    continue
+                if not target.is_file():
+                    errors.append(f"manifest icon missing from site: {src!r}")
+
     parser = LinkParser()
     for html_file in sorted(site_dir.rglob("*.html")):
         try:

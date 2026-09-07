@@ -2751,3 +2751,76 @@ def test_parse_links_accepts_single_quoted_hrefs():
     <a href="https://example.com/b">the other</a>.</p>"""
     links = parse_links(html)
     assert [l.url for l in links] == ["https://example.com/a", "https://example.com/b"]
+
+
+def test_unknown_page_serves_pretty_404_html(client):
+    resp = client.get("/a-page-that-does-not-exist")
+    assert resp.status_code == 404
+    assert "text/html" in resp.headers["content-type"]
+    assert "Not found" in resp.text
+
+
+def test_api_404_stays_json(client):
+    resp = client.get("/api/sources/nope")
+    assert resp.status_code == 404
+    assert "application/json" in resp.headers["content-type"]
+    assert resp.json() == {"detail": "No snapshot for nope."}
+
+
+def test_maskable_icon_served_by_live_app(client):
+    resp = client.get("/static/icon-maskable-512.png")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "image/png"
+    assert resp.content.startswith(b"\x89PNG\r\n\x1a\n")
+
+
+def test_heatmap_uses_roving_tabindex():
+    from app.render import render_heatmap_svg
+
+    svg = render_heatmap_svg(
+        [
+            {"date": date(2026, 8, 10), "count": 2},
+            {"date": date(2026, 8, 11), "count": 0},
+            {"date": date(2026, 8, 12), "count": 1},
+        ]
+    )
+    assert svg.count('tabindex="0"') == 1
+    assert svg.count('tabindex="-1"') == len(re.findall(r"<rect ", svg)) - 1
+
+
+def test_build_site_emits_maskable_icon(tmp_path):
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+    icon = out / "static" / "icon-maskable-512.png"
+    assert icon.is_file()
+    assert icon.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+
+
+def test_check_site_flags_missing_manifest_icon(tmp_path):
+    from scripts.build_site import build_site
+    from scripts.check_site import check_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+    assert check_site(out, "/catnews") == []
+    (out / "static" / "icon-maskable-512.png").unlink()
+    errors = check_site(out, "/catnews")
+    assert any("icon-maskable-512.png" in e for e in errors)
