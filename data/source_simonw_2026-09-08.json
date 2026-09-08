@@ -1,0 +1,235 @@
+{
+  "source": "simonw",
+  "date": "2026-09-08",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "llm 0.35",
+      "url": "https://simonwillison.net/2026/Sep/7/llm/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/7/llm/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-07T23:54:54Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm 0.35 New OpenAI model: gpt-6-astra for GPT-6 Astra . Tags: openai , llm , gpt-6-astra",
+      "links": [
+        {
+          "title": "llm 0.35",
+          "url": "https://github.com/simonw/llm/releases/tag/0.35",
+          "site": "github.com"
+        },
+        {
+          "title": "GPT-6 Astra",
+          "url": "https://openai.com/index/gpt-6-astra/",
+          "site": "openai.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Creepy crawlies",
+      "url": "https://simonwillison.net/2026/Sep/7/creepy-crawlies/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/7/creepy-crawlies/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-07T23:08:58Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Creepy crawlies Konstantin Ryabitsev discusses how bad the \"background radiation\" of abusive crawlers has become from the perspective of git.kernel.org , the official Git repository for the Linux kernel: TL;DR: we spend more CPU cycles rendering commits for scrapers than we spend on all other kinds of legitimate access, including git clones. At any one time, across 5 geo-distributed nodes, there are 14 CPU cores doing nothing but rendering git commits as html. I worry about this a lot from the perspective of Datasette, which serves a huge number of crawlable web pages. Via Hacker News Tags: crawling , git , linux , datasette , ai-ethics",
+      "links": [
+        {
+          "title": "Creepy crawlies",
+          "url": "https://people.kernel.org/monsieuricon/creepy-crawlies",
+          "site": "people.kernel.org"
+        },
+        {
+          "title": "git.kernel.org",
+          "url": "https://git.kernel.org/",
+          "site": "git.kernel.org"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49491791",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Jakub Pachocki",
+      "url": "https://simonwillison.net/2026/Sep/7/jakub-pachocki/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/7/jakub-pachocki/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-07T22:26:25Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "The strongest argument I see for continuing to train much smarter models quickly is the need to build defensive systems against the dangers posed by other AI. [...] We will need powerful, aligned AI for defense; to secure infrastructure, to protect against rogue agents in real time, and to invent entirely new protective measures. This will be a primary focus of OpenAI’s deployment efforts. At the same time, even with the uncertainty that comes from anticipated broad AI progress and the need to build defensive systems, we must not let that become an excuse for recklessness. The idea of racing forward at all costs seems absurd once one internalizes the seriousness of the stakes. — Jakub Pachocki , Chief Scientist at OpenAI Tags: ai-ethics , openai , ai",
+      "links": [
+        {
+          "title": "Jakub Pachocki",
+          "url": "https://openai.com/index/an-alien-mind/#scalable-defense",
+          "site": "openai.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Video compressor",
+      "url": "https://simonwillison.net/2026/Sep/7/video-compressor/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/7/video-compressor/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-07T18:29:07Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Tool: Video compressor I recorded a short demo video of my Equal Earth animation on my phone and wanted to publish an optimized version of that video (using FFMPEG) on my blog, so I had Claude Fable 5.1 in Claude Code for web build me this tool using the WebAssembly build of FFMPEG. Tags: ffmpeg , video , webassembly , claude , claude-code , claude-mythos-fable",
+      "links": [
+        {
+          "title": "build me this tool",
+          "url": "https://claude.ai/code/session_01QHTdJZ4xg6TZfDXCmuvAE9",
+          "site": "claude.ai"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Mercator ↔ Equal Earth",
+      "url": "https://simonwillison.net/2026/Sep/7/equal-earth/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/7/equal-earth/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-07T16:24:16Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Tool: Mercator ↔ Equal Earth I got curious about the Equal Earth map projection that was recently voted on at the UN so I had GPT-6 Astra (medium) in ChatGPT Work build me this animated transition between Mercator and Equal Earth using D3. Tags: geospatial , d3 , vibe-coding , gpt-6-astra",
+      "links": [
+        {
+          "title": "voted on at the UN",
+          "url": "https://www.theguardian.com/world/2026/sep/04/un-vote-world-map-mercator-equal-earth-africa",
+          "site": "theguardian.com"
+        },
+        {
+          "title": "build me",
+          "url": "https://chatgpt.com/share/6a9ee520-c82c-83ea-8111-2f7050c08638",
+          "site": "chatgpt.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-openrouter 0.7.1",
+      "url": "https://simonwillison.net/2026/Sep/2/llm-openrouter/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/2/llm-openrouter/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-02T20:23:26Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-openrouter 0.7.1 Performance fix for loading OpenRouter models. Thanks, waveplate . #59 Tags: llm , openrouter",
+      "links": [
+        {
+          "title": "llm-openrouter 0.7.1",
+          "url": "https://github.com/simonw/llm-openrouter/releases/tag/0.7.1",
+          "site": "github.com"
+        },
+        {
+          "title": "waveplate",
+          "url": "https://github.com/waveplate",
+          "site": "github.com"
+        },
+        {
+          "title": "#59",
+          "url": "https://github.com/simonw/llm-openrouter/issues/59",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm 0.34",
+      "url": "https://simonwillison.net/2026/Sep/2/llm/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/2/llm/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-02T19:23:52Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm 0.34 One new feature: llm logs --usage Markdown output now includes the response duration in milliseconds and as a human-readable duration. llm logs --short includes a new duration_ms field. #1653 Plus several contributed bug fixes, and a significant performance improvement to llm logs thanks to waveplate on GitHub, see also llm-openrouter 0.7.1 . Tags: llm",
+      "links": [
+        {
+          "title": "llm 0.34",
+          "url": "https://github.com/simonw/llm/releases/tag/0.34",
+          "site": "github.com"
+        },
+        {
+          "title": "#1653",
+          "url": "https://github.com/simonw/llm/issues/1653",
+          "site": "github.com"
+        },
+        {
+          "title": "waveplate",
+          "url": "https://github.com/waveplate",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-anthropic 0.28",
+      "url": "https://simonwillison.net/2026/Sep/2/llm-anthropic/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/2/llm-anthropic/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-02T17:59:32Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-anthropic 0.28 Claude Fable 5.1 , reasoning traces are now displayed by default for models that support them, plus a new llm_anthropic.ClaudeRefusal exception for when Claude throws a refusal. Tags: llm , anthropic , claude , claude-mythos-fable",
+      "links": [
+        {
+          "title": "llm-anthropic 0.28",
+          "url": "https://github.com/simonw/llm-anthropic/releases/tag/0.28",
+          "site": "github.com"
+        },
+        {
+          "title": "Claude Fable 5.1",
+          "url": "https://www.anthropic.com/claude/fable",
+          "site": "anthropic.com"
+        }
+      ]
+    }
+  ]
+}
