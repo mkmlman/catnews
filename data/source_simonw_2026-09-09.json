@@ -1,0 +1,120 @@
+{
+  "source": "simonw",
+  "date": "2026-09-09",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Terence Tao",
+      "url": "https://simonwillison.net/2026/Sep/9/terence-tao/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/9/terence-tao/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-09T00:20:17Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I wrote recently about how the collection of good, fruitful open problems is now being mined in a non-renewable fashion, leading to the potential scenario of these problems becoming scarce. [...] We have now seen that even the rumor of someone working on a problem can trigger a massive amount of AI-powered effort to flatten it before the original research project has time to reach its full potential. The incentives may now be pointing in the direction of no longer sharing any promising research directions with the broader community, which would reverse centuries of traditions of open science and do serious long-term damage to the future of the field. — Terence Tao Tags: ai-ethics , mathematics , ai",
+      "links": [
+        {
+          "title": "Terence Tao",
+          "url": "https://mathstodon.xyz/@tao/117237320796901560",
+          "site": "mathstodon.xyz"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "On the Navier–Stokes Millennium Prize Problem",
+      "url": "https://simonwillison.net/2026/Sep/8/on-navier-stokes/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/8/on-navier-stokes/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-08T23:55:12Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "On the Navier–Stokes Millennium Prize Problem Impressive result from OpenAI, who used an unreleased model to produce a resolution to the Navier–Stokes existence and smoothness problem , one of the seven Millennium Prize Problems that have been subject to a $1,000,000 prize since May 24th, 2000. The discovery is somewhat overshadowed by accusations of skulduggery from Tristan Buckmaster, an NYU mathematics professor who was collaborating on related problems with Levent Alpöge, an accomplished mathematician who currently works for Anthropic. Tristan's complaint accompanied a hastily published version of their own results. Here's the PDF describing what happened . The very short version is that Tristan and Levent worked on the problem for almost a year, making extensive use of Claude and Codex (mainly GPT-5.6 Sol), then had a breakthrough on August 15th. The mathematical rumour mill kicked ",
+      "links": [
+        {
+          "title": "On the Navier–Stokes Millennium Prize Problem",
+          "url": "https://openai.com/index/navier-stokes-solution/",
+          "site": "openai.com"
+        },
+        {
+          "title": "the Navier–Stokes existence and smoothness problem",
+          "url": "https://en.wikipedia.org/wiki/Navier–Stokes_existence_and_smoothness",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "Millennium Prize Problems",
+          "url": "https://en.wikipedia.org/wiki/Millennium_Prize_Problems",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "Here's the PDF describing what happened",
+          "url": "https://cims.nyu.edu/~tristanb/statement.pdf",
+          "site": "cims.nyu.edu"
+        },
+        {
+          "title": "$15,000,000",
+          "url": "https://www.llm-prices.com/#ot=300000000000&sel=gpt-6-astra",
+          "site": "llm-prices.com"
+        },
+        {
+          "title": "improve our models",
+          "url": "https://openai.com/policies/how-your-data-is-used-to-improve-model-performance/",
+          "site": "openai.com"
+        },
+        {
+          "title": "Just a rumour of a bug is enough to find a security exploit thes",
+          "url": "https://anil.recoil.org/notes/rumour-is-the-exploit",
+          "site": "anil.recoil.org"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49613262",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Introducing ChatGPT Images 2.5",
+      "url": "https://simonwillison.net/2026/Sep/8/introducing-chatgpt-images-25/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/8/introducing-chatgpt-images-25/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-08T22:46:33Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Introducing ChatGPT Images 2.5 OpenAI's image generation models are apparently used \"more than 3 billion images across ChatGPT Images and the GPT‑Image models in the API\". This latest release improves their instruction-following ability across multiple turns, responds faster, and \"is better at preserving the subjects in your reference photos\". There are two new model IDs in the API: gpt-image-2.5-sunburst and gpt-image-2.5-flare . Based on this I think Sunburst is the stronger option: Choose Sunburst for workflows where editing precision matters most, and Flare for fast, high-quality everyday image generation. I upgraded my openai_image.py CLI tool to support passing in one or more reference images, so now this works: uv run https://tools.simonwillison.net/python/openai_image.py \\ ' add a raccoon scientist studying the chart thoughtfully ' \\ -i https://static.simonwillison.net/static/202",
+      "links": [
+        {
+          "title": "Introducing ChatGPT Images 2.5",
+          "url": "https://openai.com/index/introducing-chatgpt-images-2-5/",
+          "site": "openai.com"
+        },
+        {
+          "title": "on this",
+          "url": "https://developers.openai.com/api/docs/guides/image-generation#overview",
+          "site": "developers.openai.com"
+        },
+        {
+          "title": "upgraded",
+          "url": "https://github.com/simonw/tools/pull/333",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
