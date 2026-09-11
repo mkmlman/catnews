@@ -758,7 +758,10 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   justify-content: space-between;
   align-items: flex-end;
   gap: 24px;
-  padding: 28px var(--frame-inline) 0;
+  /* No horizontal padding: the footer lives inside .container, which already
+     supplies the shared frame-inline gutter. Its own gutter here used to
+     double-indent the footer against the header and content. */
+  padding: 28px 0 0;
 }
 .footer-left {
   display: flex;
@@ -768,7 +771,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
 }
 .footer-brand {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
   font-family: var(--mono-font);
   font-size: var(--text-ui);
@@ -781,7 +784,6 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   width: 17px;
   height: 17px;
   flex: 0 0 auto;
-  align-self: center;
 }
 .footer-keys {
   font-family: var(--mono-font);

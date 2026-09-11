@@ -246,3 +246,26 @@ def test_json_ld_macros_and_block_wired():
         '{% from "_json_ld.html" import breadcrumbs, item_list with context %}'
         in snapshot
     )
+
+
+def test_departure_footer_shares_container_gutter():
+    # Regression: the Departure footer added its own horizontal gutter on top
+    # of .container's frame-inline padding, double-indenting it against the
+    # header and content. It must carry no horizontal padding of its own
+    # (Kami and every mobile breakpoint already use zero).
+    css = (APP_DIR / "static" / "style.css").read_text()
+    block = css.split(".site-footer-bar {", 1)[1].split("}", 1)[0]
+    assert "padding: 28px 0 0;" in block
+    declarations = block.split("/*")[0]
+    assert "frame-inline" not in declarations
+
+
+def test_footer_brand_centers_logo_with_wordmark():
+    # The 17px logo and the uppercase wordmark must share a center axis;
+    # baseline alignment plus a centered svg-specific override left them
+    # a pixel or two apart in the pixel font.
+    css = (APP_DIR / "static" / "style.css").read_text()
+    brand = css.split(".footer-brand {", 1)[1].split("}", 1)[0]
+    assert "align-items: center;" in brand
+    svg = css.split(".footer-brand svg {", 1)[1].split("}", 1)[0]
+    assert "align-self" not in svg
