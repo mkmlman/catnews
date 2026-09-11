@@ -224,8 +224,8 @@ def render_dot_chart(daily: list[dict]) -> str:
     """Halftone dot-matrix area chart of daily story counts.
 
     `daily` is the list of dicts from store.daily_counts (oldest first, one
-    entry per calendar day). Daily volumes become a continuous silhouette
-    filled edge-to-edge with ink dots; three progressively sparser pattern
+    entry per calendar day). Daily volumes become a smooth-flowing silhouette
+    filled edge-to-edge with ink dots; four progressively sparser pattern
     bands dither the top edge so peaks dissolve print-like into the paper
     instead of ending in a hard line. Faint gridlines with nice-rounded
     counts, a baseline with month ticks, and a left spine frame the plot.
@@ -288,9 +288,52 @@ def render_dot_chart(daily: list[dict]) -> str:
 
     curve = [(x_of(i), y_of(counts.get(day_at(i), 0))) for i in range(n_days)]
 
+    # A Catmull-Rom spline through the day centers, flattened to short
+    # segments and clamped to the plot, gives the flowing mountain
+    # silhouette of the reference sheet; raw day-to-day jumps would read as
+    # angular zigzags under the dots. Short spans fall back to straight lines.
+    samples: list[tuple[float, float]] = []
+    if n_days < 3:
+        samples = list(curve)
+    else:
+        extended = [curve[0]] + curve + [curve[-1]]
+        for s in range(len(curve) - 1):
+            p0, p1, p2, p3 = (
+                extended[s],
+                extended[s + 1],
+                extended[s + 2],
+                extended[s + 3],
+            )
+            c1 = (
+                p1[0] + (p2[0] - p0[0]) / 6,
+                p1[1] + (p2[1] - p0[1]) / 6,
+            )
+            c2 = (
+                p2[0] - (p3[0] - p1[0]) / 6,
+                p2[1] - (p3[1] - p1[1]) / 6,
+            )
+            for k in range(8):
+                t = k / 8
+                mt = 1 - t
+                x = (
+                    mt**3 * p1[0]
+                    + 3 * mt**2 * t * c1[0]
+                    + 3 * mt * t**2 * c2[0]
+                    + t**3 * p2[0]
+                )
+                y = (
+                    mt**3 * p1[1]
+                    + 3 * mt**2 * t * c1[1]
+                    + 3 * mt * t**2 * c2[1]
+                    + t**3 * p2[1]
+                )
+                samples.append((x, min(plot_b, max(plot_t, y))))
+        samples.append(curve[-1])
+    smooth = samples
+
     def area_path(offset_top: float, offset_bottom: float | None = None) -> str:
-        """Area between the curve shifted up by two depths (or down to the base)."""
-        top = [(x, max(0.0, y - offset_top)) for x, y in curve]
+        """Area between the smoothed curve shifted up by two depths (or the base)."""
+        top = [(x, max(0.0, y - offset_top)) for x, y in smooth]
         base = plot_b
         d = [f"M{plot_l},{base}", f"L{plot_l},{top[0][1]:.1f}"]
         d += [f"L{x:.1f},{y:.1f}" for x, y in top]
@@ -319,6 +362,8 @@ def render_dot_chart(daily: list[dict]) -> str:
         '<circle cx="3.5" cy="3.5" r="1.4" fill="currentColor"/></pattern>'
         '<pattern id="dots-sparse" width="10" height="10" patternUnits="userSpaceOnUse">'
         '<circle cx="5" cy="5" r="1.2" fill="currentColor"/></pattern>'
+        '<pattern id="dots-fine" width="13" height="13" patternUnits="userSpaceOnUse">'
+        '<circle cx="6.5" cy="6.5" r="1.1" fill="currentColor"/></pattern>'
         "</defs>"
     )
     # Y gridlines + tick labels sit behind the dots; spines draw after.
@@ -332,9 +377,10 @@ def render_dot_chart(daily: list[dict]) -> str:
             f'<text x="{plot_l - 8}" y="{ty + 3.5:.1f}" text-anchor="end" '
             f'class="chart-tick" aria-hidden="true">{tick:,}</text>'
         )
-    # Dithered top edge: three bands from sparse to dense above the curve.
-    parts.append(f'<path d="{area_path(26, 15)}" fill="url(#dots-sparse)"></path>')
-    parts.append(f'<path d="{area_path(15, 6)}" fill="url(#dots-mid)"></path>')
+    # Dithered top edge: four bands from a whisper to solid above the curve.
+    parts.append(f'<path d="{area_path(34, 22)}" fill="url(#dots-fine)"></path>')
+    parts.append(f'<path d="{area_path(22, 13)}" fill="url(#dots-sparse)"></path>')
+    parts.append(f'<path d="{area_path(13, 6)}" fill="url(#dots-mid)"></path>')
     parts.append(f'<path d="{area_path(6, 0)}" fill="url(#dots-dense)"></path>')
     # Solid body of the silhouette down to the base.
     parts.append(f'<path d="{area_path(0)}" fill="url(#dots-dense)"></path>')
@@ -372,15 +418,20 @@ def render_dot_chart(daily: list[dict]) -> str:
         else:
             label = f"No stories on {day.strftime('%B %d, %Y')}"
         # Roving tabindex: the first day holds the single tab stop; arrow
-        # keys move it (see the heatmap handler in app.js).
+        # keys move it (see the heatmap handler in app.js). data-y pins the
+        # hover marker onto the curve surface for this day's value.
         tab = 0 if i == 0 else -1
         day_w = (plot_r - plot_l) / n_days
         parts.append(
             f'<rect x="{plot_l + i * day_w:.1f}" y="{plot_t}" '
             f'width="{day_w:.1f}" height="{plot_b - plot_t}" fill="transparent" '
             f'class="heat" data-date="{day.isoformat()}" '
-            f'data-count="{count}" tabindex="{tab}" aria-label="{label}"></rect>'
+            f'data-count="{count}" data-y="{y_of(count):.1f}" '
+            f'tabindex="{tab}" aria-label="{label}"></rect>'
         )
+    # Hover/focus node riding the silhouette; parked by the client on the
+    # active day column (hidden until then).
+    parts.append('<circle class="chart-marker" r="4.5" hidden="hidden"></circle>')
     parts.append("</svg>")
     return "\n".join(parts)
 

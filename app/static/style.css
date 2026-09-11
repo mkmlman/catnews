@@ -2058,9 +2058,12 @@ a.is-dead,
 /* The dot chart bleeds to the panel edges like a printed sheet graphic:
    fixed viewBox scales uniformly so dots stay circular at any width. */
 .trend-chart.dotchart { color: var(--ink); }
-/* Print-style axes: faint gridlines, stronger spines, mono micro ticks. */
-.chart-grid { stroke: var(--line); stroke-width: 1; }
-.chart-axis { stroke: var(--line-strong); stroke-width: 1; }
+/* Print-style axes: dotted gridlines, stronger spines, mono micro ticks. */
+.chart-grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 1 5; stroke-linecap: round; }
+.chart-axis { stroke: var(--line-strong); stroke-width: 1; stroke-linecap: round; }
+/* Hover/focus node riding the silhouette surface. */
+.chart-marker { fill: var(--ink); stroke: var(--paper); stroke-width: 2; pointer-events: none; }
+.chart-marker[hidden] { display: none; }
 .trend-chart text { fill: var(--faint); font-family: var(--mono-font); font-size: 10px; }
 .heat { stroke: none; }
 .heat:hover, .heat:focus-visible { stroke: var(--ink); stroke-width: 1.5; }
@@ -2220,6 +2223,13 @@ a.is-dead,
   width: calc(100% + 40px);
   max-width: none;
   margin: 0 -20px;
+  cursor: crosshair;
+}
+/* Entrance: the sheet rises into view once (disabled globally under
+   prefers-reduced-motion, where the chart simply renders visible). */
+.sheet-chart.is-in svg { animation: chart-in 0.7s var(--ease-soft) both; }
+@keyframes chart-in {
+  from { opacity: 0; transform: translateY(14px); }
 }
 .sheet-panels {
   display: grid;

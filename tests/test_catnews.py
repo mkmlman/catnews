@@ -1496,8 +1496,9 @@ def test_render_dot_chart_scales_columns_to_days(monkeypatch):
     assert "2026-08-12" in svg
     assert len(re.findall(r"<rect ", svg)) == 3
     # The silhouette is a few pattern-filled paths, not thousands of dots.
-    assert svg.count("<path ") == 4
-    assert "dots-dense" in svg and "dots-mid" in svg and "dots-sparse" in svg
+    assert svg.count("<path ") == 5
+    assert "dots-dense" in svg and "dots-mid" in svg
+    assert "dots-sparse" in svg and "dots-fine" in svg
     # Print-style axes: three gridlines with round tick labels, two spines,
     # and one month tick for the single-month span.
     assert svg.count('class="chart-grid"') == 3
@@ -1519,6 +1520,26 @@ def test_render_dot_chart_marks_peak_day():
     assert svg.count('data-date="2026-08-11"') == 1
     assert "Stories per day" in svg
     assert 'role="img"' in svg
+
+
+def test_dot_chart_smooths_curve_without_overshoot():
+    from app.render import render_dot_chart
+
+    svg = render_dot_chart(
+        [
+            {"date": date(2026, 8, 10), "count": 2},
+            {"date": date(2026, 8, 11), "count": 30},
+            {"date": date(2026, 8, 12), "count": 2},
+            {"date": date(2026, 8, 13), "count": 2},
+        ]
+    )
+    base = re.search(r'<path d="([^"]+)" fill="url\(#dots-dense\)"></path>', svg)
+    assert base is not None
+    points = re.findall(r"L([\d.]+),([\d.]+)", base.group(1))
+    # Flattened spline samples: far more segments than the 4 day columns.
+    assert len(points) > 16
+    # plot_t=30, plot_b=292: clamped, never above the plot or below the base.
+    assert all(30.0 <= float(y) <= 292.0 for _, y in points)
 
 
 def test_dot_chart_ticks_snap_up_so_peak_never_clips():
@@ -2882,3 +2903,41 @@ def test_stats_page_has_no_trend_deltas(client, tmp_path):
     assert "delta-down" not in page
     # The quote itself stays: tabular total with thousands separators.
     assert 'class="sheet-total"' in page
+
+
+def test_dot_chart_marks_curve_points_for_hover_node():
+    from app.render import render_dot_chart
+
+    svg = render_dot_chart(
+        [
+            {"date": date(2026, 8, 10), "count": 4},
+            {"date": date(2026, 8, 11), "count": 16},
+        ]
+    )
+    # Each day overlay pins the hover node's curve height; one parked marker.
+    assert svg.count("data-y=") == 2
+    assert svg.count('class="chart-marker"') == 1
+    assert svg.split('class="chart-marker"')[1].startswith(' r="4.5" hidden="hidden">')
+
+
+def test_chart_client_wires_live_svg_class():
+    # Regression: the tooltip/keyboard wiring once queried a stale svg class
+    # and silently never attached. It must target the class the renderer emits.
+    js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    assert 'querySelector(".trend-chart.dotchart")' in js
+    assert 'querySelector(".trend-chart.heatmap")' not in js
+    assert "moveMarker" in js and "parkMarker" in js
+
+
+def test_chart_entrance_is_progressive_enhancement():
+    js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    assert "sheetChart" in js and "is-in" in js
+    assert "@keyframes chart-in" in css
+    assert ".sheet-chart.is-in svg" in css

@@ -1655,21 +1655,44 @@
     if (!heatTip) return;
     heatTip.hidden = true;
     heatTipShown = false;
+    parkMarker();
   }
 
-  var heatmap = document.querySelector(".trend-chart.heatmap");
+  /* Ink node riding the silhouette: parked on the active day column's
+     curve surface (data-y) whenever its tooltip shows. */
+  var chartMarker = null;
+
+  function parkMarker() {
+    if (chartMarker) chartMarker.hidden = true;
+  }
+
+  function moveMarker(cell) {
+    if (!chartMarker) {
+      chartMarker = document.querySelector(".trend-chart.dotchart .chart-marker");
+      if (!chartMarker) return;
+    }
+    var y = cell.getAttribute("data-y");
+    if (y === null) return;
+    var x = parseFloat(cell.getAttribute("x")) || 0;
+    var w = parseFloat(cell.getAttribute("width")) || 0;
+    chartMarker.setAttribute("cx", x + w / 2);
+    chartMarker.setAttribute("cy", y);
+    chartMarker.hidden = false;
+  }
+
+  var heatmap = document.querySelector(".trend-chart.dotchart");
   if (heatmap && heatTip) {
     document.body.appendChild(heatTip);
     heatmap.addEventListener("mouseover", function (event) {
       var cell = event.target.closest(".heat");
-      if (cell) showHeatTip(cell);
+      if (cell) { showHeatTip(cell); moveMarker(cell); }
     });
     heatmap.addEventListener("mouseout", function (event) {
       if (event.target.closest(".heat")) hideHeatTip();
     });
     heatmap.addEventListener("focusin", function (event) {
       var cell = event.target.closest(".heat");
-      if (cell) showHeatTip(cell);
+      if (cell) { showHeatTip(cell); moveMarker(cell); }
     });
     heatmap.addEventListener("focusout", function (event) {
       if (event.target.closest(".heat")) hideHeatTip();
@@ -1716,6 +1739,27 @@
     window.addEventListener("resize", hideHeatTip);
     window.addEventListener("scroll", hideHeatTip, { passive: true });
   }
+
+  /* Chart entrance: the sheet rises into view the first time it scrolls
+     on screen (the keyframes sit behind the .is-in gate, so no-JS and
+     prefers-reduced-motion readers simply see the chart). */
+  (function () {
+    var sheetChart = document.querySelector(".sheet-chart");
+    if (!sheetChart) return;
+    if (!("IntersectionObserver" in window)) {
+      sheetChart.classList.add("is-in");
+      return;
+    }
+    var chartIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          sheetChart.classList.add("is-in");
+          chartIO.disconnect();
+        }
+      });
+    }, { threshold: 0.12 });
+    chartIO.observe(sheetChart);
+  })();
 
   /* -------------------------------------------------------------
      Stats sheet tabs (/domains, /arxiv, /health): all panels render
