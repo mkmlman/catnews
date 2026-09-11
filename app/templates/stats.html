@@ -2,93 +2,24 @@
 {% block title %}{{ app_name }} | Stats{% endblock %}
 {% block og_description %}{{ app_name }} by the numbers — stories curated, snapshots, and weekly trends.{% endblock %}
 {% block content %}
-<section class="page-header">
-  {{ crumbs([("Home", base_path ~ "/"), ("Stats", None)]) }}
-  <h1>Stats</h1>
-  <p class="muted">{{ stats.editions }} snapshot{{ "s" if stats.editions != 1 else "" }}{% if stats.first_edition and stats.last_edition %} · {{ stats.first_edition.strftime("%b %d, %Y") }} → {{ stats.last_edition.strftime("%b %d, %Y") }}{% endif %}</p>
+<section class="sheet-masthead">
+  <div class="sheet-brand">
+    <p class="sheet-name">{% include "cat-logo.html" %}<span>{{ app_name }}</span></p>
+    <p class="sheet-sub">Archive statistics</p>
+  </div>
+  <p class="sheet-meta">{{ stats.editions }} snapshot{{ "s" if stats.editions != 1 else "" }} · Days archiving {{ days }}{% if stats.first_edition and stats.last_edition %} · {{ stats.first_edition.strftime("%b %d, %Y") }} → {{ stats.last_edition.strftime("%b %d, %Y") }}{% endif %}</p>
 </section>
 
-<div class="stat-grid">
-  <div class="stat-card" style="--i: 0">
-    <span class="stat-label">Stories curated</span>
-    <span class="stat-value">{{ stats.total_stories }}</span>
+<section class="sheet-panel sheet-hero">
+  <h2 class="sheet-panel-title">Stories per day</h2>
+  <div class="sheet-quote">
+    <p class="sheet-label">Stories</p>
+    <p class="sheet-total{% if wows.total is not none %} {{ 'delta-up' if wows.total >= 0 else 'delta-down' }}{% endif %}">{{ "{:,}".format(stats.total_stories) }}</p>
+    {% if wows.total is not none %}<p class="delta {{ 'delta-up' if wows.total >= 0 else 'delta-down' }}">{{ "▲" if wows.total >= 0 else "▼" }} {{ "%+.1f" % wows.total }}% vs last week</p>
+    {% else %}<p class="delta delta-flat">— vs last week</p>{% endif %}
   </div>
-  <div class="stat-card" style="--i: 1">
-    <span class="stat-label">Snapshots</span>
-    <span class="stat-value">{{ stats.editions }}</span>
-  </div>
-  <div class="stat-card" style="--i: 2">
-    <span class="stat-label">First snapshot</span>
-    <span class="stat-value stat-value--date">{{ stats.first_edition.strftime("%b %d, %Y") if stats.first_edition else "—" }}</span>
-  </div>
-  <div class="stat-card" style="--i: 3">
-    <span class="stat-label">Latest snapshot</span>
-    <span class="stat-value stat-value--date">{{ stats.last_edition.strftime("%b %d, %Y") if stats.last_edition else "—" }}</span>
-  </div>
-  {% if days %}
-  <div class="stat-card" style="--i: 4">
-    <span class="stat-label">Days archiving</span>
-    <span class="stat-value">{{ days }}</span>
-  </div>
-  {% endif %}
-</div>
-
-<section class="stat-section">
-  <h2>By source</h2>
-  <table class="stat-table">
-    <thead>
-      <tr>
-        <th scope="col">Source</th>
-        <th scope="col">Snapshots</th>
-        <th scope="col">Stories</th>
-        <th scope="col">Share</th>
-        <th scope="col">Trend</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for source, count in stats.by_source.items() %}
-      <tr>
-        <th scope="row">
-          <span class="source-name">{{ source_labels.get(source, source) }}</span>
-          <span class="badge badge-{{ source }}">{{ source_tags.get(source, source) }}</span>
-        </th>
-        <td>{{ stats.snapshots_by_source.get(source, 0) }}</td>
-        <td>{{ count }}</td>
-        <td class="share-cell">
-          <span class="share-bar" aria-hidden="true"><span class="share-fill" style="width: {{ (count * 100 // stats.total_stories) if stats.total_stories else 0 }}%"></span></span>
-          <span class="share-pct">{{ (count / stats.total_stories * 100) | round(1) if stats.total_stories else 0 }}%</span>
-        </td>
-        <td class="spark-cell">
-          {% set series = sparklines.get(source) %}
-          {% if series and series.points %}
-          <svg class="stat-spark" viewBox="0 0 100 28" preserveAspectRatio="none" role="img" aria-label="{{ source_labels.get(source, source) }} weekly story trend">
-            <defs>
-              <linearGradient id="spark-fade-{{ source }}" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="var(--spark-area)"></stop>
-                <stop offset="100%" stop-color="transparent"></stop>
-              </linearGradient>
-            </defs>
-            <polygon class="spark-area" fill="url(#spark-fade-{{ source }})" points="{{ series.area }}"></polygon>
-            <polyline class="spark-line" vector-effect="non-scaling-stroke" points="{{ series.points }}"></polyline>
-            <circle class="spark-dot" vector-effect="non-scaling-stroke" cx="{{ series.last.x }}" cy="{{ series.last.y }}" r="2"></circle>
-          </svg>
-          {% else %}<span class="muted">—</span>{% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-      {% if not stats.by_source %}
-      <tr>
-        <td colspan="5" class="muted">No snapshots archived yet — run a fetch to populate stats.</td>
-      </tr>
-      {% endif %}
-    </tbody>
-  </table>
-</section>
-
-{% if heatmap %}
-<section class="stat-section">
-  <h2>Stories per day</h2>
-  <div class="trend-chart-wrap">{{ heatmap | safe }}
+  {% if dotchart %}
+  <div class="trend-chart-wrap sheet-chart">{{ dotchart | safe }}
     <div class="heat-tip" id="heat-tip" role="tooltip" hidden></div>
     <div class="trend-legend heatmap-legend">
       <span class="trend-legend-item">Less</span>
@@ -124,79 +55,107 @@
       </div>
     </details>
   </div>
+  {% endif %}
 </section>
-{% endif %}
 
-{% if domains or arxiv_categories or fetch_health %}
-<details class="stat-details">
-  <summary>More detail</summary>
-
-  {% if domains %}
-  <div class="stat-detail-block">
-    <h3>Top domains</h3>
-    <ul class="rank-list">
-      {% set domain_max = domains[0][1] %}
-      {% for host, count in domains %}
-      <li class="rank-item">
-        <span class="rank-name">{{ host }}</span>
-        <span class="rank-bar"><span class="rank-fill" style="width: {{ (count * 100 // domain_max) if domain_max else 0 }}%"></span></span>
-        <span class="rank-num">{{ count }}</span>
-      </li>
+<div class="sheet-panels">
+  <section class="sheet-panel">
+    <h2 class="sheet-panel-title">Stories by source</h2>
+    <p class="sheet-note">{{ stats.by_source | length }} source{{ "s" if stats.by_source | length != 1 else "" }} · {{ stats.snapshots_by_source.values() | sum }} snapshots</p>
+    {% if stats.by_source %}
+    <div class="quote-grid">
+      {% for source, count in stats.by_source.items() %}
+      <article class="quote-card" style="--i: {{ loop.index0 }}">
+        <p class="quote-tag"><span class="badge badge-{{ source }}">{{ source_tags.get(source, source) }}</span></p>
+        <p class="quote-source">{{ source_labels.get(source, source) }}</p>
+        <p class="quote-num">{{ "{:,}".format(count) }}</p>
+        {% set delta = wows.sources.get(source) %}
+        {% if delta is not none %}<p class="delta {{ 'delta-up' if delta >= 0 else 'delta-down' }}">{{ "▲" if delta >= 0 else "▼" }} {{ "%+.1f" % delta }}% WoW</p>
+        {% else %}<p class="delta delta-flat">— WoW</p>{% endif %}
+        {% set series = sparklines.get(source) %}
+        {% if series and series.points %}
+        <svg class="stat-spark" viewBox="0 0 100 28" preserveAspectRatio="none" role="img" aria-label="{{ source_labels.get(source, source) }} weekly story trend">
+          <defs>
+            <linearGradient id="spark-fade-{{ source }}" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--spark-area)"></stop>
+              <stop offset="100%" stop-color="transparent"></stop>
+            </linearGradient>
+          </defs>
+          <polygon class="spark-area" fill="url(#spark-fade-{{ source }})" points="{{ series.area }}"></polygon>
+          <polyline class="spark-line" vector-effect="non-scaling-stroke" points="{{ series.points }}"></polyline>
+          <circle class="spark-dot" vector-effect="non-scaling-stroke" cx="{{ series.last.x }}" cy="{{ series.last.y }}" r="2"></circle>
+        </svg>
+        {% endif %}
+        <p class="quote-sub">{{ stats.snapshots_by_source.get(source, 0) }} snapshot{{ "s" if stats.snapshots_by_source.get(source, 0) != 1 else "" }}</p>
+      </article>
       {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
+    </div>
+    {% else %}
+    <p class="muted">No snapshots archived yet — run a fetch to populate stats.</p>
+    {% endif %}
+  </section>
 
-  {% if arxiv_categories %}
-  <div class="stat-detail-block">
-    <h3>arXiv categories</h3>
-    <ul class="rank-list">
-      {% set cat_max = arxiv_categories[0][1] %}
-      {% for cat, count in arxiv_categories %}
-      <li class="rank-item">
-        <span class="rank-name rank-name--mono">{{ cat }}</span>
-        <span class="rank-bar"><span class="rank-fill" style="width: {{ (count * 100 // cat_max) if cat_max else 0 }}%"></span></span>
-        <span class="rank-num">{{ count }}</span>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
-
-  {% if fetch_health %}
-  <div class="stat-detail-block">
-    <h3>Fetch health</h3>
-    <table class="stat-table stat-table--health">
-      <thead>
-        <tr>
-          <th scope="col">Source</th>
-          <th scope="col">Last fetch</th>
-          <th scope="col">Snapshots</th>
-          <th scope="col">Expected</th>
-          <th scope="col">Rate</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for row in fetch_health %}
-        <tr>
-          <th scope="row">
-            <span class="source-name">{{ source_labels.get(row.source, row.source) }}</span>
-            <span class="badge badge-{{ row.source }}">{{ source_tags.get(row.source, row.source) }}</span>
-          </th>
-          <td>{{ row.last_fetched.strftime("%b %d, %Y") if row.last_fetched else "—" }}</td>
-          <td>{{ row.actual }}</td>
-          <td>{{ row.expected }}</td>
-          <td class="share-cell">
-            <span class="share-bar" aria-hidden="true"><span class="share-fill" style="width: {{ row.rate }}%;"></span></span>
-            <span class="share-pct">{{ row.rate }}%</span>
-          </td>
-        </tr>
+  <section class="sheet-panel">
+    <h2 class="sheet-panel-title">Archive details</h2>
+    <div class="sheet-tabs" role="tablist" aria-label="Archive details">
+      <button type="button" role="tab" class="sheet-tab" data-tab="domains" aria-selected="true" aria-controls="sheet-panel-domains" id="sheet-tab-domains">/domains</button>
+      <button type="button" role="tab" class="sheet-tab" data-tab="arxiv" aria-selected="false" aria-controls="sheet-panel-arxiv" id="sheet-tab-arxiv" tabindex="-1">/arxiv</button>
+      <button type="button" role="tab" class="sheet-tab" data-tab="health" aria-selected="false" aria-controls="sheet-panel-health" id="sheet-tab-health" tabindex="-1">/health</button>
+    </div>
+    {% if domains or arxiv_categories or fetch_health %}
+    <div class="sheet-tabpanel" role="tabpanel" id="sheet-panel-domains" aria-labelledby="sheet-tab-domains" data-tabpanel="domains">
+      {% if domains %}
+      <h3 class="sheet-subhead">Top domains</h3>
+      <ul class="rank-list">
+        {% set domain_max = domains[0][1] %}
+        {% for host, count in domains %}
+        <li class="rank-item">
+          <span class="rank-name">{{ host }}</span>
+          <span class="rank-bar"><span class="rank-fill" style="width: {{ (count * 100 // domain_max) if domain_max else 0 }}%"></span></span>
+          <span class="rank-num">{{ count }}</span>
+        </li>
         {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% endif %}
-
-</details>
-{% endif %}
+      </ul>
+      {% else %}
+      <p class="muted">No domains yet.</p>
+      {% endif %}
+    </div>
+    <div class="sheet-tabpanel" role="tabpanel" id="sheet-panel-arxiv" aria-labelledby="sheet-tab-arxiv" data-tabpanel="arxiv">
+      {% if arxiv_categories %}
+      <h3 class="sheet-subhead">arXiv categories</h3>
+      <ul class="rank-list">
+        {% set cat_max = arxiv_categories[0][1] %}
+        {% for cat, count in arxiv_categories %}
+        <li class="rank-item">
+          <span class="rank-name rank-name--mono">{{ cat }}</span>
+          <span class="rank-bar"><span class="rank-fill" style="width: {{ (count * 100 // cat_max) if cat_max else 0 }}%"></span></span>
+          <span class="rank-num">{{ count }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="muted">No arXiv categories yet.</p>
+      {% endif %}
+    </div>
+    <div class="sheet-tabpanel" role="tabpanel" id="sheet-panel-health" aria-labelledby="sheet-tab-health" data-tabpanel="health">
+      {% if fetch_health %}
+      <h3 class="sheet-subhead">Fetch health</h3>
+      <ul class="rank-list">
+        {% for row in fetch_health %}
+        <li class="rank-item">
+          <span class="rank-name">{{ source_labels.get(row.source, row.source) }}</span>
+          <span class="rank-bar"><span class="rank-fill" style="width: {{ row.rate }}%;"></span></span>
+          <span class="rank-num">{{ row.rate }}%</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="muted">No fetch history yet.</p>
+      {% endif %}
+    </div>
+    {% else %}
+    <p class="muted">No archive details yet — run a fetch to populate stats.</p>
+    {% endif %}
+  </section>
+</div>
 {% endblock %}

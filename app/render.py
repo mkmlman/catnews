@@ -220,20 +220,22 @@ def sparkline_points(
     }
 
 
-def render_heatmap_svg(daily: list[dict]) -> str:
-    """Inline SVG contribution-style heatmap of daily story counts.
+def render_dot_chart(daily: list[dict], rows: int = 12) -> str:
+    """Halftone dot-matrix area chart of daily story counts.
 
     `daily` is the list of dicts from store.daily_counts (oldest first, one
-    entry per calendar day). The grid auto-fits the archive span: it starts at
-    the Monday of the week containing the first archived day and runs through
-    today, so the chart shows the actual active period instead of a fixed
-    six-month window. Days with no snapshot render as an empty box (heat-0).
+    entry per calendar day). Each day is one column of dots; the filled height
+    encodes that day's count relative to the peak, so busy stretches read as
+    dense ink and quiet days as faint rings — a print-like take on the same
+    data the old calendar heatmap showed.
 
     Keyboard support uses a roving tabindex: only the first day is in the tab
     order, and arrow keys move between days by date (left/right = ±7 days,
     up/down = ±1 day, Home/End = first/last). The client wires this up via
-    each cell's data-date attribute; the weekly data table below the chart
+    each dot's data-date attribute; the weekly data table below the chart
     remains the screen-reader-friendly alternative for the full dataset.
+    Dots reuse the `heat` classes so the shared tooltip, focus ring, and
+    Less/More legend keep working unchanged.
     """
     from datetime import timedelta
 
@@ -246,15 +248,13 @@ def render_heatmap_svg(daily: list[dict]) -> str:
 
     today = today_utc()
     first_day = min(counts)
-    # Begin on the Monday of the week containing the first archived day so the
-    # first column holds that day and no fully-empty leading column leaks in.
-    monday = first_day - timedelta(days=first_day.weekday())
-    n_weeks = ((today - monday).days // 7) + 1
+    last_day = max(counts)
+    n_days = (last_day - first_day).days + 1
 
-    cell, gap = 16, 4
-    pad_l, pad_r, pad_t, pad_b = 40, 16, 22, 8
-    width = pad_l + pad_r + n_weeks * cell + (n_weeks - 1) * gap
-    height = pad_t + pad_b + 7 * cell + 6 * gap
+    pitch, radius = 10, 2.4
+    pad_l, pad_r, pad_t, pad_b = 8, 8, 22, 8
+    width = pad_l + pad_r + n_days * pitch
+    height = pad_t + pad_b + rows * pitch
 
     def shade(count: int) -> int:
         if count <= 0:
@@ -270,62 +270,44 @@ def render_heatmap_svg(daily: list[dict]) -> str:
 
     parts: list[str] = []
     parts.append(
-        f'<svg class="trend-chart heatmap" width="{width}" height="{height}" '
+        f'<svg class="trend-chart dotchart" width="{width}" height="{height}" '
         f'viewBox="0 0 {width} {height}" role="img" aria-label="Stories per day, '
-        f'{total} total from {monday.isoformat()} to {today.isoformat()}" '
+        f'{total} total from {first_day.isoformat()} to {today.isoformat()}" '
         f'xmlns="http://www.w3.org/2000/svg">'
     )
-    # Weekday labels along the left edge (Mon / Wed / Fri).
-    for wd, label in ((0, "Mon"), (2, "Wed"), (4, "Fri")):
-        y = pad_t + wd * (cell + gap) + cell / 2
-        parts.append(
-            f'<text x="{pad_l - 6}" y="{y + 3:.1f}" text-anchor="end" '
-            f'class="heatmap-day">{label}</text>'
-        )
     # Month labels above the first column of each month.
     prev_month = None
-    for wi in range(n_weeks):
-        col_monday = monday + timedelta(days=wi * 7)
-        if col_monday.month != prev_month:
-            x = pad_l + wi * (cell + gap) + cell / 2
+    for i in range(n_days):
+        day = first_day + timedelta(days=i)
+        if day.month != prev_month:
+            x = pad_l + i * pitch + pitch / 2
             parts.append(
                 f'<text x="{x:.1f}" y="{pad_t - 6}" text-anchor="middle" '
-                f'class="heatmap-month">{col_monday.strftime("%b")}</text>'
+                f'class="heatmap-month">{day.strftime("%b")}</text>'
             )
-            prev_month = col_monday.month
-    # Year-boundary hairlines: a subtle dashed separator the day the year
-    # ticks over, drawn between two adjacent week columns.
-    prev_year = None
-    for wi in range(n_weeks):
-        col_monday = monday + timedelta(days=wi * 7)
-        year = col_monday.year
-        if prev_year is not None and year != prev_year:
-            x = pad_l + wi * (cell + gap) - gap / 2
-            parts.append(
-                f'<line class="heatmap-year" x1="{x:.1f}" y1="{pad_t}" '
-                f'x2="{x:.1f}" y2="{pad_t + 7 * cell + 6 * gap}"></line>'
-            )
-        prev_year = year
-
-    for wi in range(n_weeks):
-        for wd in range(7):
-            day = monday + timedelta(days=wi * 7 + wd)
-            count = counts.get(day, 0)
-            x = pad_l + wi * (cell + gap)
-            y = pad_t + wd * (cell + gap)
-            if count == 1:
-                label = f"1 story on {day.strftime('%B %d, %Y')}"
-            elif count > 1:
-                label = f"{count} stories on {day.strftime('%B %d, %Y')}"
-            else:
-                label = f"No stories on {day.strftime('%B %d, %Y')}"
-            # Roving tabindex: the first day holds the single tab stop; arrow
+            prev_month = day.month
+    for i in range(n_days):
+        day = first_day + timedelta(days=i)
+        count = counts.get(day, 0)
+        level = max(1, round(count / max_count * rows)) if count > 0 else 0
+        if count == 1:
+            label = f"1 story on {day.strftime('%B %d, %Y')}"
+        elif count > 1:
+            label = f"{count} stories on {day.strftime('%B %d, %Y')}"
+        else:
+            label = f"No stories on {day.strftime('%B %d, %Y')}"
+        cx = pad_l + i * pitch + pitch / 2
+        for r in range(rows):
+            cy = pad_t + r * pitch + pitch / 2
+            filled = (rows - r) <= level
+            cls = f"heat heat-{shade(count)}" if filled else "heat heat-0"
+            # Roving tabindex: the first dot holds the single tab stop; arrow
             # keys move it (see the heatmap handler in app.js).
-            tab = 0 if (wi == 0 and wd == 0) else -1
+            tab = 0 if (i == 0 and r == 0) else -1
             parts.append(
-                f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" '
-                f'class="heat heat-{shade(count)}" data-date="{day.isoformat()}" '
-                f'data-count="{count}" tabindex="{tab}" aria-label="{label}"></rect>'
+                f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{radius}" '
+                f'class="{cls}" data-date="{day.isoformat()}" '
+                f'data-count="{count}" tabindex="{tab}" aria-label="{label}"></circle>'
             )
     parts.append("</svg>")
     return "\n".join(parts)

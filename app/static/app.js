@@ -1617,7 +1617,7 @@
   }
 
   /* -------------------------------------------------------------
-     Heatmap tooltip (GitHub-style) on the stats page
+     Dot-chart tooltip (halftone daily volume) on the stats page
      ------------------------------------------------------------- */
   var heatTip = document.getElementById("heat-tip");
   var heatTipShown = false;
@@ -1661,21 +1661,21 @@
   if (heatmap && heatTip) {
     document.body.appendChild(heatTip);
     heatmap.addEventListener("mouseover", function (event) {
-      var cell = event.target.closest("rect.heat");
+      var cell = event.target.closest(".heat");
       if (cell) showHeatTip(cell);
     });
     heatmap.addEventListener("mouseout", function (event) {
-      if (event.target.closest("rect.heat")) hideHeatTip();
+      if (event.target.closest(".heat")) hideHeatTip();
     });
     heatmap.addEventListener("focusin", function (event) {
-      var cell = event.target.closest("rect.heat");
+      var cell = event.target.closest(".heat");
       if (cell) showHeatTip(cell);
     });
     heatmap.addEventListener("focusout", function (event) {
-      if (event.target.closest("rect.heat")) hideHeatTip();
+      if (event.target.closest(".heat")) hideHeatTip();
     });
     heatmap.addEventListener("keydown", function (event) {
-      var cell = event.target.closest("rect.heat");
+      var cell = event.target.closest(".heat");
       if (!cell) return;
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
@@ -1693,7 +1693,7 @@
       else if (event.key === "End") move = "last";
       else return;
       event.preventDefault();
-      var cells = Array.prototype.slice.call(heatmap.querySelectorAll("rect.heat"));
+      var cells = Array.prototype.slice.call(heatmap.querySelectorAll(".heat"));
       if (!cells.length) return;
       var target = null;
       if (move === "first") target = cells[0];
@@ -1715,6 +1715,46 @@
     });
     window.addEventListener("resize", hideHeatTip);
     window.addEventListener("scroll", hideHeatTip, { passive: true });
+  }
+
+  /* -------------------------------------------------------------
+     Stats sheet tabs (/domains, /arxiv, /health): all panels render
+     visible so no-JS readers get everything stacked; with JS the
+     inactive panels hide and the tabs become a roving-tabindex tablist.
+     ------------------------------------------------------------- */
+  var sheetTabs = Array.prototype.slice.call(document.querySelectorAll(".sheet-tab"));
+  if (sheetTabs.length) {
+    var sheetPanels = Array.prototype.slice.call(document.querySelectorAll(".sheet-tabpanel"));
+    function sheetSelect(tab, focus) {
+      sheetTabs.forEach(function (t) {
+        var active = t === tab;
+        t.setAttribute("aria-selected", active ? "true" : "false");
+        t.tabIndex = active ? 0 : -1;
+      });
+      sheetPanels.forEach(function (p) {
+        p.hidden = p.getAttribute("data-tabpanel") !== tab.getAttribute("data-tab");
+      });
+      if (focus) tab.focus();
+    }
+    sheetTabs.forEach(function (tab, i) {
+      tab.addEventListener("click", function () { sheetSelect(tab, false); });
+      tab.addEventListener("keydown", function (event) {
+        var next = null;
+        if (event.key === "ArrowRight") next = sheetTabs[(i + 1) % sheetTabs.length];
+        else if (event.key === "ArrowLeft") next = sheetTabs[(i - 1 + sheetTabs.length) % sheetTabs.length];
+        else if (event.key === "Home") next = sheetTabs[0];
+        else if (event.key === "End") next = sheetTabs[sheetTabs.length - 1];
+        if (next) {
+          event.preventDefault();
+          sheetSelect(next, true);
+        }
+      });
+    });
+    var firstTab = null;
+    sheetTabs.forEach(function (t) {
+      if (!firstTab && t.getAttribute("aria-selected") === "true") firstTab = t;
+    });
+    sheetSelect(firstTab || sheetTabs[0], false);
   }
 
   /* -------------------------------------------------------------

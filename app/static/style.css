@@ -89,6 +89,8 @@
   --accent: #353431;
   --accent-deep: #191816;
   --danger: #7c231b;
+  /* Semantic gain green for week-over-week deltas (loss reuses danger). */
+  --gain: #2e6b3e;
 
   /* Frame — one responsive frame controls every outer alignment */
   --frame-inline: 75px;
@@ -121,6 +123,7 @@
   --accent: #f0eee8;
   --accent-deep: #ffffff;
   --danger: #e08d7f;
+  --gain: #a8d4ae;
 }
 
 [data-theme="pitch"] {
@@ -139,6 +142,7 @@
   --accent: #f2f0e9;
   --accent-deep: #ffffff;
   --danger: #e59588;
+  --gain: #a8d4ae;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1886,12 +1890,6 @@ a.is-dead,
    STATS
    ========================================================================== */
 
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 14px;
-  margin: 24px 0 40px;
-}
 .stat-card {
   position: relative;
   border: 1px solid var(--line);
@@ -1927,6 +1925,23 @@ a.is-dead,
   font-size: var(--text-lg);
   padding-top: 16px;
 }
+
+/* Week-over-week quote deltas, in the tabular-dashboard voice: tabular
+   numerals, ▲ gain green / ▼ danger red, em dash when there is no base. */
+.delta {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--mono-font);
+  font-size: var(--text-meta);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.delta-up { color: var(--gain); }
+.delta-down { color: var(--danger); }
+.delta-flat { color: var(--faint); }
+.wow-cell { white-space: nowrap; }
+.wow-cell .delta { margin-top: 0; }
 
 .stat-section { padding: 6px 0 0; }
 .stat-section h2 {
@@ -1989,6 +2004,7 @@ a.is-dead,
 .stat-table td:nth-child(3) { padding-right: 32px; }
 .stat-table td:nth-child(2),
 .stat-table td:nth-child(3),
+.stat-table td:nth-child(5),
 .stat-table td:last-child { text-align: right; color: var(--muted); }
 .stat-table td:first-child { display: flex; align-items: center; gap: 10px; }
 .stat-table .source-name {
@@ -2060,17 +2076,14 @@ a.is-dead,
   animation-delay: 0.15s;
 }
 .trend-chart { width: 100%; height: auto; display: block; }
-.trend-chart.heatmap { width: auto; max-width: 100%; margin: 0 auto; }
+/* The dot chart keeps its intrinsic dot pitch: it scrolls horizontally on
+   narrow screens instead of squashing dots into ellipses. */
+.trend-chart.dotchart { width: auto; max-width: none; margin: 0 auto; }
 .trend-chart text { fill: var(--faint); font-family: var(--mono-font); font-size: 10px; }
-.heatmap-day { font-size: 9px !important; }
-.heatmap-year {
-  stroke: var(--line-strong);
-  stroke-width: 1;
-  stroke-dasharray: 2 3;
-  opacity: 0.7;
-}
 .heat { stroke: none; }
-.heat-0 { stroke: var(--line); stroke-width: 1; fill: transparent; }
+/* Empty days render as faint rings, drawn slightly smaller than filled dots
+   so quiet stretches read as texture rather than grid. */
+.heat-0 { stroke: var(--line); stroke-width: 1; fill: transparent; r: 1.5; }
 .heat:hover, .heat:focus-visible { stroke: var(--ink); stroke-width: 1.5; }
 .heat-1 { fill: color-mix(in srgb, var(--ink) 22%, transparent); }
 .heat-2 { fill: color-mix(in srgb, var(--ink) 45%, transparent); }
@@ -2168,6 +2181,190 @@ a.is-dead,
 }
 .stat-table--health th, .stat-table--health td { text-align: right; }
 .stat-table--health th:first-child, .stat-table--health td:first-child { text-align: left; display: table-cell; }
+
+/* ==========================================================================
+   SHEET — the stats page in the tabular-dashboard voice: masthead, hero
+   quote with a halftone volume chart, source quote cards, and a tabbed
+   details panel. Numbers are set in the system sans (tabular) so magnitudes
+   scan like the reference sheet; labels stay mono.
+   ========================================================================== */
+.sheet-masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px 24px;
+  flex-wrap: wrap;
+  padding: 26px 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+.sheet-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono-font);
+  font-size: var(--text-ui);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.sheet-name svg { display: block; width: 18px; height: 18px; flex: 0 0 auto; }
+.sheet-sub {
+  margin-top: 4px;
+  font-family: var(--serif-font);
+  font-style: italic;
+  font-size: var(--text-md);
+  color: var(--muted);
+}
+.sheet-meta {
+  margin: 0;
+  font-family: var(--mono-font);
+  font-size: var(--text-meta);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.sheet-panel {
+  margin-top: 14px;
+  padding: 18px 20px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--ink) 2%, transparent);
+}
+.sheet-panel-title {
+  margin: 0 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono-font);
+  font-size: var(--text-ui);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sheet-quote { padding: 2px 0 0; }
+.sheet-label {
+  margin: 0;
+  font-family: var(--mono-font);
+  font-size: var(--text-meta);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.sheet-total {
+  margin: 2px 0 0;
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(2.6rem, 1.7rem + 4vw, 4rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.sheet-quote .delta { margin-top: 6px; }
+.sheet-panel .trend-chart-wrap {
+  border: none;
+  border-radius: 0;
+  padding: 14px 0 0;
+  margin: 6px 0 0;
+  animation: none;
+}
+.sheet-panels {
+  display: grid;
+  grid-template-columns: 1.08fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.sheet-note {
+  margin: -4px 0 12px;
+  font-family: var(--mono-font);
+  font-size: var(--text-meta);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.quote-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: 10px;
+}
+.quote-card {
+  min-width: 0;
+  padding: 13px 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  animation: rise 0.5s var(--ease-soft) both;
+  animation-delay: min(calc(var(--i, 0) * 0.05s), 0.3s);
+}
+.quote-tag { margin: 0 0 8px; }
+.quote-source {
+  margin: 0;
+  font-family: var(--mono-font);
+  font-size: var(--text-meta);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.quote-num {
+  margin: 2px 0 0;
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.65rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.quote-card .delta { margin-top: 4px; }
+.quote-card .stat-spark { width: 100%; height: 26px; margin-top: 10px; }
+.quote-sub {
+  margin: 8px 0 0;
+  font-family: var(--mono-font);
+  font-size: var(--text-meta);
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.sheet-tabs {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4px;
+}
+.sheet-tab {
+  padding: 8px 10px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: none;
+  font-family: var(--mono-font);
+  font-size: var(--text-meta);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  cursor: pointer;
+}
+.sheet-tab:hover { color: var(--ink); }
+.sheet-tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.sheet-subhead {
+  margin: 0 0 4px;
+  padding-top: 12px;
+  font-family: var(--mono-font);
+  font-size: var(--text-ui);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+@media (max-width: 900px) {
+  .sheet-panels { grid-template-columns: 1fr; }
+  .sheet-meta { text-align: left; }
+}
 
 /* ==========================================================================
    API DOCS
@@ -3117,6 +3314,7 @@ html[data-design-system="kami"] {
   --accent: #1b365d;
   --accent-deep: #14263f;
   --danger: #8a1f18;
+  --gain: #2e6b3e;
   --line: #d9d7ca;
   --line-strong: #bbb9ac;
   --mono-font: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -3147,6 +3345,7 @@ html[data-design-system="kami"][data-theme="dark"] {
   --accent: #9db9db;
   --accent-deep: #b8cde8;
   --danger: #e08d7f;
+  --gain: #a8d4ae;
   --line: #3c3a31;
   --line-strong: #555147;
 }
@@ -3162,6 +3361,7 @@ html[data-design-system="kami"][data-theme="pitch"] {
   --accent: #aec6e4;
   --accent-deep: #c6d9ef;
   --danger: #e59588;
+  --gain: #a8d4ae;
   --line: #2d2b25;
   --line-strong: #4b483e;
 }

@@ -30,7 +30,7 @@ from .render import (
     archive_days,
     live_site_urls,
     load_dead_links,
-    render_heatmap_svg,
+    render_dot_chart,
     render_manifest,
     render_markdown,
     render_page,
@@ -57,6 +57,7 @@ from .store import (
     site_stats,
     source_registry,
     top_domains,
+    week_over_week,
     weekly_trends,
 )
 
@@ -259,7 +260,8 @@ def stats(request: Request) -> HTMLResponse:
         "/stats/",
         stats=site_stats(DATA_DIR),
         trends=trends,
-        heatmap=render_heatmap_svg(daily_counts(DATA_DIR)),
+        dotchart=render_dot_chart(daily_counts(DATA_DIR)),
+        wows=week_over_week(trends),
         sparklines={source: sparkline_points(trends, source) for source in SOURCES},
         domains=top_domains(DATA_DIR),
         arxiv_categories=arxiv_category_counts(DATA_DIR),

@@ -1479,8 +1479,8 @@ def test_daily_counts_zero_fills_gaps(tmp_path):
     assert daily[2] == {"date": date(2026, 8, 12), "count": 1}
 
 
-def test_render_heatmap_svg_auto_fits_window(monkeypatch):
-    from app.render import render_heatmap_svg
+def test_render_dot_chart_scales_columns_to_days(monkeypatch):
+    from app.render import render_dot_chart
 
     monkeypatch.setattr("app.render.today_utc", lambda: date(2026, 8, 14))
     daily = [
@@ -1488,29 +1488,31 @@ def test_render_heatmap_svg_auto_fits_window(monkeypatch):
         {"date": date(2026, 8, 11), "count": 0},
         {"date": date(2026, 8, 12), "count": 1},
     ]
-    svg = render_heatmap_svg(daily)
-    assert 'class="trend-chart heatmap"' in svg
-    # Auto-fit starts at the Monday of the first data week and only spans the
-    # active period, not a fixed six-month window (which would be ~26 columns).
-    monday = re.search(r'data-date="(2026-\d\d-\d\d)"', svg)
-    assert monday is not None
-    assert (
-        monday.group(1) <= "2026-08-10"
-    )  # first column begins at/before first data day
-    assert "2026-08-10" in svg
+    svg = render_dot_chart(daily)
+    assert 'class="trend-chart dotchart"' in svg
+    # One column of dots per calendar day in the span, labeled by month.
+    assert svg.count('data-date="2026-08-10"') == 12
+    assert svg.count('data-date="2026-08-11"') == 12
     assert "2026-08-12" in svg
-    assert len(re.findall(r"<rect ", svg)) < 14  # a few weeks, not six months
+    assert ">Aug</text>" in svg
+    # Busy days fill dots, quiet days render faint rings.
+    assert 'class="heat heat-0"' in svg
+    assert len(re.findall(r"<circle ", svg)) == 3 * 12
 
 
-def test_render_heatmap_svg_draws_year_boundary_hairline():
-    from app.render import render_heatmap_svg
+def test_render_dot_chart_marks_peak_day():
+    from app.render import render_dot_chart
 
-    daily = [
-        {"date": date(2025, 12, 29), "count": 1},
-        {"date": date(2026, 1, 5), "count": 2},
-    ]
-    svg = render_heatmap_svg(daily)
-    assert '<line class="heatmap-year"' in svg
+    svg = render_dot_chart(
+        [
+            {"date": date(2026, 8, 10), "count": 4},
+            {"date": date(2026, 8, 11), "count": 16},
+        ]
+    )
+    # The peak day fills its whole column with the darkest dots.
+    assert svg.count('data-date="2026-08-11"') == 12
+    assert "Stories per day" in svg
+    assert 'role="img"' in svg
 
 
 def test_sparkline_points_normalizes_weekly_counts():
@@ -1653,7 +1655,7 @@ def test_stats_page_and_trends_endpoint(client, tmp_path):
 
     page = client.get("/stats/").text
     assert "Stories per day" in page
-    assert 'class="trend-chart heatmap"' in page
+    assert 'class="trend-chart dotchart"' in page
     assert 'class="heat heat-' in page
     assert "View weekly data table" in page
     assert "Top domains" in page
@@ -2774,10 +2776,10 @@ def test_maskable_icon_served_by_live_app(client):
     assert resp.content.startswith(b"\x89PNG\r\n\x1a\n")
 
 
-def test_heatmap_uses_roving_tabindex():
-    from app.render import render_heatmap_svg
+def test_dot_chart_uses_roving_tabindex():
+    from app.render import render_dot_chart
 
-    svg = render_heatmap_svg(
+    svg = render_dot_chart(
         [
             {"date": date(2026, 8, 10), "count": 2},
             {"date": date(2026, 8, 11), "count": 0},
@@ -2785,7 +2787,7 @@ def test_heatmap_uses_roving_tabindex():
         ]
     )
     assert svg.count('tabindex="0"') == 1
-    assert svg.count('tabindex="-1"') == len(re.findall(r"<rect ", svg)) - 1
+    assert svg.count('tabindex="-1"') == len(re.findall(r"<circle ", svg)) - 1
 
 
 def test_build_site_emits_maskable_icon(tmp_path):
@@ -2824,3 +2826,57 @@ def test_check_site_flags_missing_manifest_icon(tmp_path):
     (out / "static" / "icon-maskable-512.png").unlink()
     errors = check_site(out, "/catnews")
     assert any("icon-maskable-512.png" in e for e in errors)
+
+
+def test_week_over_week_computes_total_and_sources():
+    from app.store import week_over_week
+
+    weekly = [
+        {"week": "2026-W32", "counts": {"hn": 10, "arxiv": 5}, "total": 15},
+        {"week": "2026-W33", "counts": {"hn": 20, "arxiv": 5}, "total": 25},
+    ]
+    wows = week_over_week(weekly)
+    assert wows["total"] == pytest.approx(66.666, abs=0.01)
+    assert wows["sources"]["hn"] == pytest.approx(100.0)
+    assert wows["sources"]["arxiv"] == pytest.approx(0.0)
+
+
+def test_week_over_week_needs_two_nonzero_weeks():
+    from app.store import week_over_week
+
+    assert week_over_week([]) == {"total": None, "sources": {}}
+    one = [{"week": "2026-W33", "counts": {"hn": 5}, "total": 5}]
+    assert week_over_week(one) == {"total": None, "sources": {}}
+    zero_base = [
+        {"week": "2026-W32", "counts": {"hn": 0}, "total": 0},
+        {"week": "2026-W33", "counts": {"hn": 5}, "total": 5},
+    ]
+    wows = week_over_week(zero_base)
+    assert wows["total"] is None
+    assert wows["sources"]["hn"] is None
+
+
+def test_stats_page_shows_wow_deltas(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 4),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 11),
+            stories=[
+                Story(source="hn", title="B", url="https://b"),
+                Story(source="hn", title="C", url="https://c"),
+            ],
+        ),
+        tmp_path,
+    )
+    page = client.get("/stats/").text
+    assert "vs last week" in page
+    assert "delta-up" in page
+    assert "WoW" in page

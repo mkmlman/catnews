@@ -13,8 +13,8 @@ from app.og_image import render_maskable_icon, render_og_image
 from app.render import (
     archive_days,
     load_dead_links,
+    render_dot_chart,
     render_fetch_status,
-    render_heatmap_svg,
     render_json,
     render_manifest,
     render_markdown,
@@ -42,6 +42,7 @@ from app.store import (
     site_stats,
     source_registry,
     top_domains,
+    week_over_week,
     weekly_trends,
 )
 
@@ -173,7 +174,8 @@ def build_site(
             page_path="/stats/",
             stats=site_stats(data_dir, snapshots),
             trends=trends,
-            heatmap=render_heatmap_svg(daily_counts(data_dir, snapshots)),
+            dotchart=render_dot_chart(daily_counts(data_dir, snapshots)),
+            wows=week_over_week(trends),
             sparklines={source: sparkline_points(trends, source) for source in SOURCES},
             domains=top_domains(data_dir, snapshots=snapshots),
             arxiv_categories=arxiv_category_counts(data_dir, snapshots),
