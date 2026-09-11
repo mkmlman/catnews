@@ -57,7 +57,6 @@ from .store import (
     site_stats,
     source_registry,
     top_domains,
-    week_over_week,
     weekly_trends,
 )
 
@@ -261,7 +260,6 @@ def stats(request: Request) -> HTMLResponse:
         stats=site_stats(DATA_DIR),
         trends=trends,
         dotchart=render_dot_chart(daily_counts(DATA_DIR)),
-        wows=week_over_week(trends),
         sparklines={source: sparkline_points(trends, source) for source in SOURCES},
         domains=top_domains(DATA_DIR),
         arxiv_categories=arxiv_category_counts(DATA_DIR),

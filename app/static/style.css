@@ -89,8 +89,6 @@
   --accent: #353431;
   --accent-deep: #191816;
   --danger: #7c231b;
-  /* Semantic gain green for week-over-week deltas (loss reuses danger). */
-  --gain: #2e6b3e;
 
   /* Frame — one responsive frame controls every outer alignment */
   --frame-inline: 75px;
@@ -123,7 +121,6 @@
   --accent: #f0eee8;
   --accent-deep: #ffffff;
   --danger: #e08d7f;
-  --gain: #a8d4ae;
 }
 
 [data-theme="pitch"] {
@@ -142,7 +139,6 @@
   --accent: #f2f0e9;
   --accent-deep: #ffffff;
   --danger: #e59588;
-  --gain: #a8d4ae;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1926,23 +1922,6 @@ a.is-dead,
   padding-top: 16px;
 }
 
-/* Week-over-week quote deltas, in the tabular-dashboard voice: tabular
-   numerals, ▲ gain green / ▼ danger red, em dash when there is no base. */
-.delta {
-  display: block;
-  margin-top: 8px;
-  font-family: var(--mono-font);
-  font-size: var(--text-meta);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-.delta-up { color: var(--gain); }
-.delta-down { color: var(--danger); }
-.delta-flat { color: var(--faint); }
-.wow-cell { white-space: nowrap; }
-.wow-cell .delta { margin-top: 0; }
-
 .stat-section { padding: 6px 0 0; }
 .stat-section h2 {
   font-family: var(--mono-font);
@@ -2076,19 +2055,15 @@ a.is-dead,
   animation-delay: 0.15s;
 }
 .trend-chart { width: 100%; height: auto; display: block; }
-/* The dot chart keeps its intrinsic dot pitch: it scrolls horizontally on
-   narrow screens instead of squashing dots into ellipses. */
-.trend-chart.dotchart { width: auto; max-width: none; margin: 0 auto; }
+/* The dot chart bleeds to the panel edges like a printed sheet graphic:
+   fixed viewBox scales uniformly so dots stay circular at any width. */
+.trend-chart.dotchart { color: var(--ink); }
+/* Print-style axes: faint gridlines, stronger spines, mono micro ticks. */
+.chart-grid { stroke: var(--line); stroke-width: 1; }
+.chart-axis { stroke: var(--line-strong); stroke-width: 1; }
 .trend-chart text { fill: var(--faint); font-family: var(--mono-font); font-size: 10px; }
 .heat { stroke: none; }
-/* Empty days render as faint rings, drawn slightly smaller than filled dots
-   so quiet stretches read as texture rather than grid. */
-.heat-0 { stroke: var(--line); stroke-width: 1; fill: transparent; r: 1.5; }
 .heat:hover, .heat:focus-visible { stroke: var(--ink); stroke-width: 1.5; }
-.heat-1 { fill: color-mix(in srgb, var(--ink) 22%, transparent); }
-.heat-2 { fill: color-mix(in srgb, var(--ink) 45%, transparent); }
-.heat-3 { fill: color-mix(in srgb, var(--ink) 70%, transparent); }
-.heat-4 { fill: var(--ink); }
 .heat-tip {
   position: fixed;
   left: 0;
@@ -2111,35 +2086,6 @@ a.is-dead,
   from { opacity: 0; }
   to { opacity: 1; }
 }
-.trend-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 18px;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--line);
-}
-.heatmap-legend { align-items: center; }
-.heatmap-swatch {
-  width: 10px;
-  height: 10px;
-  border-radius: var(--radius-sm);
-  display: inline-block;
-  border: 1px solid var(--line);
-}
-.heatmap-swatch.heat-swatch-1 { background: color-mix(in srgb, var(--ink) 22%, transparent); border: none; }
-.heatmap-swatch.heat-swatch-2 { background: color-mix(in srgb, var(--ink) 45%, transparent); border: none; }
-.heatmap-swatch.heat-swatch-3 { background: color-mix(in srgb, var(--ink) 70%, transparent); border: none; }
-.heatmap-swatch.heat-swatch-4 { background: var(--ink); border: none; }
-.trend-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--mono-font);
-  font-size: var(--text-meta);
-  color: var(--muted);
-}
-
 .rank-list { list-style: none; }
 .rank-item {
   display: flex;
@@ -2262,13 +2208,18 @@ a.is-dead,
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
-.sheet-quote .delta { margin-top: 6px; }
 .sheet-panel .trend-chart-wrap {
   border: none;
   border-radius: 0;
   padding: 14px 0 0;
   margin: 6px 0 0;
   animation: none;
+  overflow: visible;
+}
+.sheet-chart svg {
+  width: calc(100% + 40px);
+  max-width: none;
+  margin: 0 -20px;
 }
 .sheet-panels {
   display: grid;
@@ -2321,7 +2272,6 @@ a.is-dead,
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
-.quote-card .delta { margin-top: 4px; }
 .quote-card .stat-spark { width: 100%; height: 26px; margin-top: 10px; }
 .quote-sub {
   margin: 8px 0 0;
@@ -3314,7 +3264,6 @@ html[data-design-system="kami"] {
   --accent: #1b365d;
   --accent-deep: #14263f;
   --danger: #8a1f18;
-  --gain: #2e6b3e;
   --line: #d9d7ca;
   --line-strong: #bbb9ac;
   --mono-font: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -3345,7 +3294,6 @@ html[data-design-system="kami"][data-theme="dark"] {
   --accent: #9db9db;
   --accent-deep: #b8cde8;
   --danger: #e08d7f;
-  --gain: #a8d4ae;
   --line: #3c3a31;
   --line-strong: #555147;
 }
@@ -3361,7 +3309,6 @@ html[data-design-system="kami"][data-theme="pitch"] {
   --accent: #aec6e4;
   --accent-deep: #c6d9ef;
   --danger: #e59588;
-  --gain: #a8d4ae;
   --line: #2d2b25;
   --line-strong: #4b483e;
 }

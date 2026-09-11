@@ -42,7 +42,6 @@ from app.store import (
     site_stats,
     source_registry,
     top_domains,
-    week_over_week,
     weekly_trends,
 )
 
@@ -175,7 +174,6 @@ def build_site(
             stats=site_stats(data_dir, snapshots),
             trends=trends,
             dotchart=render_dot_chart(daily_counts(data_dir, snapshots)),
-            wows=week_over_week(trends),
             sparklines={source: sparkline_points(trends, source) for source in SOURCES},
             domains=top_domains(data_dir, snapshots=snapshots),
             arxiv_categories=arxiv_category_counts(data_dir, snapshots),

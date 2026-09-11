@@ -424,36 +424,6 @@ def weekly_trends(
     return rows
 
 
-def week_over_week(weekly: list[dict]) -> dict:
-    """Percent change between the last two weeks, overall and per source.
-
-    Returns ``{"total": pct | None, "sources": {key: pct | None}}`` where each
-    pct is a float like ``+21.7``. Values are None when there are fewer than
-    two weeks of data or the previous week was zero (no meaningful base), so
-    callers render an em dash instead of a misleading number.
-    """
-    if len(weekly) < 2:
-        return {"total": None, "sources": {}}
-    prev, last = weekly[-2], weekly[-1]
-
-    def pct(new: int, old: int) -> float | None:
-        if old <= 0:
-            return None
-        return (new - old) / old * 100
-
-    keys = set(prev.get("counts", {})) | set(last.get("counts", {}))
-    return {
-        "total": pct(last.get("total", 0), prev.get("total", 0)),
-        "sources": {
-            key: pct(
-                last.get("counts", {}).get(key, 0),
-                prev.get("counts", {}).get(key, 0),
-            )
-            for key in sorted(keys)
-        },
-    }
-
-
 def daily_counts(
     data_dir: Path, snapshots: list[SourceSnapshot] | None = None
 ) -> list[dict]:

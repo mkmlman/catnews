@@ -220,30 +220,31 @@ def sparkline_points(
     }
 
 
-def render_dot_chart(daily: list[dict], rows: int = 12) -> str:
+def render_dot_chart(daily: list[dict]) -> str:
     """Halftone dot-matrix area chart of daily story counts.
 
     `daily` is the list of dicts from store.daily_counts (oldest first, one
-    entry per calendar day). Each day is one column of dots; the filled height
-    encodes that day's count relative to the peak, so busy stretches read as
-    dense ink and quiet days as faint rings — a print-like take on the same
-    data the old calendar heatmap showed.
+    entry per calendar day). Daily volumes become a continuous silhouette
+    filled edge-to-edge with ink dots; three progressively sparser pattern
+    bands dither the top edge so peaks dissolve print-like into the paper
+    instead of ending in a hard line. Faint gridlines with nice-rounded
+    counts, a baseline with month ticks, and a left spine frame the plot.
 
-    Keyboard support uses a roving tabindex: only the first day is in the tab
-    order, and arrow keys move between days by date (left/right = ±7 days,
-    up/down = ±1 day, Home/End = first/last). The client wires this up via
-    each dot's data-date attribute; the weekly data table below the chart
-    remains the screen-reader-friendly alternative for the full dataset.
-    Dots reuse the `heat` classes so the shared tooltip, focus ring, and
-    Less/More legend keep working unchanged.
+    Interaction rides on invisible per-day overlays: hovering or focusing a
+    day column shows its exact count via the shared tooltip, and arrow keys
+    move between days by date (left/right = ±7 days, up/down = ±1 day,
+    Home/End = first/last) with a roving tabindex keeping one tab stop. The
+    weekly data table below the chart remains the screen-reader-friendly
+    alternative for the full dataset.
     """
     from datetime import timedelta
 
     if not daily:
         return ""
-
     counts = {row["date"]: row["count"] for row in daily}
-    max_count = max(counts.values(), default=0) or 1
+    max_count = max(counts.values(), default=0)
+    if max_count <= 0:
+        return ""
     total = sum(counts.values())
 
     today = today_utc()
@@ -251,64 +252,135 @@ def render_dot_chart(daily: list[dict], rows: int = 12) -> str:
     last_day = max(counts)
     n_days = (last_day - first_day).days + 1
 
-    pitch, radius = 10, 2.4
-    pad_l, pad_r, pad_t, pad_b = 8, 8, 22, 8
-    width = pad_l + pad_r + n_days * pitch
-    height = pad_t + pad_b + rows * pitch
+    # Fixed viewBox scaled uniformly by CSS, so dots stay circular at any
+    # width while the chart spans the panel edge to edge.
+    width, height = 1200, 320
+    pad_left, pad_right, pad_top, pad_bottom = 48, 8, 30, 28
+    plot_l, plot_r = pad_left, width - pad_right
+    plot_t, plot_b = pad_top, height - pad_bottom
 
-    def shade(count: int) -> int:
-        if count <= 0:
-            return 0
-        ratio = count / max_count
-        if ratio > 0.75:
-            return 4
-        if ratio > 0.5:
-            return 3
-        if ratio > 0.25:
-            return 2
-        return 1
+    # Y scale snaps up to nice round ticks (0, step, 2*step) so gridlines read
+    # clean and the peak never clips: step always covers at least max / 2.
+    import math
+
+    raw_step = max_count / 2
+    mag = 10 ** math.floor(math.log10(raw_step)) if raw_step >= 1 else 1
+    norm = raw_step / mag
+    if norm <= 1:
+        nice = 1
+    elif norm <= 2:
+        nice = 2
+    elif norm <= 5:
+        nice = 5
+    else:
+        nice = 10
+    step = max(1, int(nice * mag))
+    y_top = 2 * step
+
+    def day_at(i: int):
+        return first_day + timedelta(days=i)
+
+    def x_of(i: int) -> float:
+        return plot_l + (i + 0.5) * (plot_r - plot_l) / n_days
+
+    def y_of(count: int) -> float:
+        return plot_b - (count / y_top) * (plot_b - plot_t)
+
+    curve = [(x_of(i), y_of(counts.get(day_at(i), 0))) for i in range(n_days)]
+
+    def area_path(offset_top: float, offset_bottom: float | None = None) -> str:
+        """Area between the curve shifted up by two depths (or down to the base)."""
+        top = [(x, max(0.0, y - offset_top)) for x, y in curve]
+        base = plot_b
+        d = [f"M{plot_l},{base}", f"L{plot_l},{top[0][1]:.1f}"]
+        d += [f"L{x:.1f},{y:.1f}" for x, y in top]
+        d.append(f"L{plot_r},{top[-1][1]:.1f}")
+        if offset_bottom is None:
+            d.append(f"L{plot_r},{base}")
+        else:
+            bottom = [(x, max(0.0, y - offset_bottom)) for x, y in curve]
+            d.append(f"L{plot_r},{bottom[-1][1]:.1f}")
+            d += [f"L{x:.1f},{y:.1f}" for x, y in reversed(bottom)]
+            d.append(f"L{plot_l},{bottom[0][1]:.1f}")
+        d.append("Z")
+        return " ".join(d)
 
     parts: list[str] = []
     parts.append(
-        f'<svg class="trend-chart dotchart" width="{width}" height="{height}" '
-        f'viewBox="0 0 {width} {height}" role="img" aria-label="Stories per day, '
-        f'{total} total from {first_day.isoformat()} to {today.isoformat()}" '
-        f'xmlns="http://www.w3.org/2000/svg">'
+        f'<svg class="trend-chart dotchart" viewBox="0 0 {width} {height}" role="img" '
+        f'aria-label="Stories per day, {total} total from {first_day.isoformat()} '
+        f'to {today.isoformat()}" xmlns="http://www.w3.org/2000/svg">'
     )
-    # Month labels above the first column of each month.
+    parts.append(
+        "<defs>"
+        '<pattern id="dots-dense" width="5" height="5" patternUnits="userSpaceOnUse">'
+        '<circle cx="2.5" cy="2.5" r="1.6" fill="currentColor"/></pattern>'
+        '<pattern id="dots-mid" width="7" height="7" patternUnits="userSpaceOnUse">'
+        '<circle cx="3.5" cy="3.5" r="1.4" fill="currentColor"/></pattern>'
+        '<pattern id="dots-sparse" width="10" height="10" patternUnits="userSpaceOnUse">'
+        '<circle cx="5" cy="5" r="1.2" fill="currentColor"/></pattern>'
+        "</defs>"
+    )
+    # Y gridlines + tick labels sit behind the dots; spines draw after.
+    for tick in (0, step, 2 * step):
+        ty = y_of(tick)
+        parts.append(
+            f'<line x1="{plot_l}" y1="{ty:.1f}" x2="{plot_r}" y2="{ty:.1f}" '
+            f'class="chart-grid"></line>'
+        )
+        parts.append(
+            f'<text x="{plot_l - 8}" y="{ty + 3.5:.1f}" text-anchor="end" '
+            f'class="chart-tick" aria-hidden="true">{tick:,}</text>'
+        )
+    # Dithered top edge: three bands from sparse to dense above the curve.
+    parts.append(f'<path d="{area_path(26, 15)}" fill="url(#dots-sparse)"></path>')
+    parts.append(f'<path d="{area_path(15, 6)}" fill="url(#dots-mid)"></path>')
+    parts.append(f'<path d="{area_path(6, 0)}" fill="url(#dots-dense)"></path>')
+    # Solid body of the silhouette down to the base.
+    parts.append(f'<path d="{area_path(0)}" fill="url(#dots-dense)"></path>')
+    # Spines + month ticks on the baseline.
+    parts.append(
+        f'<line x1="{plot_l}" y1="{plot_t}" x2="{plot_l}" y2="{plot_b}" '
+        f'class="chart-axis"></line>'
+    )
+    parts.append(
+        f'<line x1="{plot_l}" y1="{plot_b}" x2="{plot_r}" y2="{plot_b}" '
+        f'class="chart-axis"></line>'
+    )
     prev_month = None
     for i in range(n_days):
-        day = first_day + timedelta(days=i)
+        day = day_at(i)
         if day.month != prev_month:
-            x = pad_l + i * pitch + pitch / 2
+            tx = x_of(i)
             parts.append(
-                f'<text x="{x:.1f}" y="{pad_t - 6}" text-anchor="middle" '
-                f'class="heatmap-month">{day.strftime("%b")}</text>'
+                f'<line x1="{tx:.1f}" y1="{plot_b}" x2="{tx:.1f}" y2="{plot_b + 5}" '
+                f'class="chart-axis"></line>'
+            )
+            parts.append(
+                f'<text x="{tx:.1f}" y="{plot_b + 19}" text-anchor="middle" '
+                f'class="chart-tick" aria-hidden="true">{day.strftime("%b")}</text>'
             )
             prev_month = day.month
+
     for i in range(n_days):
-        day = first_day + timedelta(days=i)
+        day = day_at(i)
         count = counts.get(day, 0)
-        level = max(1, round(count / max_count * rows)) if count > 0 else 0
         if count == 1:
             label = f"1 story on {day.strftime('%B %d, %Y')}"
         elif count > 1:
             label = f"{count} stories on {day.strftime('%B %d, %Y')}"
         else:
             label = f"No stories on {day.strftime('%B %d, %Y')}"
-        cx = pad_l + i * pitch + pitch / 2
-        for r in range(rows):
-            cy = pad_t + r * pitch + pitch / 2
-            filled = (rows - r) <= level
-            cls = f"heat heat-{shade(count)}" if filled else "heat heat-0"
-            # Roving tabindex: the first dot holds the single tab stop; arrow
-            # keys move it (see the heatmap handler in app.js).
-            tab = 0 if (i == 0 and r == 0) else -1
-            parts.append(
-                f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{radius}" '
-                f'class="{cls}" data-date="{day.isoformat()}" '
-                f'data-count="{count}" tabindex="{tab}" aria-label="{label}"></circle>'
-            )
+        # Roving tabindex: the first day holds the single tab stop; arrow
+        # keys move it (see the heatmap handler in app.js).
+        tab = 0 if i == 0 else -1
+        day_w = (plot_r - plot_l) / n_days
+        parts.append(
+            f'<rect x="{plot_l + i * day_w:.1f}" y="{plot_t}" '
+            f'width="{day_w:.1f}" height="{plot_b - plot_t}" fill="transparent" '
+            f'class="heat" data-date="{day.isoformat()}" '
+            f'data-count="{count}" tabindex="{tab}" aria-label="{label}"></rect>'
+        )
     parts.append("</svg>")
     return "\n".join(parts)
 

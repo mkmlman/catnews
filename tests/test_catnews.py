@@ -1490,14 +1490,20 @@ def test_render_dot_chart_scales_columns_to_days(monkeypatch):
     ]
     svg = render_dot_chart(daily)
     assert 'class="trend-chart dotchart"' in svg
-    # One column of dots per calendar day in the span, labeled by month.
-    assert svg.count('data-date="2026-08-10"') == 12
-    assert svg.count('data-date="2026-08-11"') == 12
+    # One invisible overlay per calendar day drives hover, focus, and keys.
+    assert svg.count('data-date="2026-08-10"') == 1
+    assert svg.count('data-date="2026-08-11"') == 1
     assert "2026-08-12" in svg
+    assert len(re.findall(r"<rect ", svg)) == 3
+    # The silhouette is a few pattern-filled paths, not thousands of dots.
+    assert svg.count("<path ") == 4
+    assert "dots-dense" in svg and "dots-mid" in svg and "dots-sparse" in svg
+    # Print-style axes: three gridlines with round tick labels, two spines,
+    # and one month tick for the single-month span.
+    assert svg.count('class="chart-grid"') == 3
+    assert svg.count('class="chart-axis"') == 3
     assert ">Aug</text>" in svg
-    # Busy days fill dots, quiet days render faint rings.
-    assert 'class="heat heat-0"' in svg
-    assert len(re.findall(r"<circle ", svg)) == 3 * 12
+    assert ">0</text>" in svg
 
 
 def test_render_dot_chart_marks_peak_day():
@@ -1509,10 +1515,30 @@ def test_render_dot_chart_marks_peak_day():
             {"date": date(2026, 8, 11), "count": 16},
         ]
     )
-    # The peak day fills its whole column with the darkest dots.
-    assert svg.count('data-date="2026-08-11"') == 12
+    # The peak day's column reaches near the top of the fixed viewBox.
+    assert svg.count('data-date="2026-08-11"') == 1
     assert "Stories per day" in svg
     assert 'role="img"' in svg
+
+
+def test_dot_chart_ticks_snap_up_so_peak_never_clips():
+    from app.render import render_dot_chart
+
+    # Peak of 60 → raw step 30 → nice step 50, top tick 100: round labels
+    # with headroom instead of clipping at an awkward 60.
+    svg = render_dot_chart(
+        [
+            {"date": date(2026, 8, 10), "count": 60},
+            {"date": date(2026, 8, 11), "count": 12},
+        ]
+    )
+    assert ">0</text>" in svg
+    assert ">50</text>" in svg
+    assert ">100</text>" in svg
+    # Single-story peak still gets integer ticks, not fractions.
+    small = render_dot_chart([{"date": date(2026, 8, 10), "count": 1}])
+    assert ">2</text>" in small
+    assert "0.5" not in small
 
 
 def test_sparkline_points_normalizes_weekly_counts():
@@ -1656,7 +1682,7 @@ def test_stats_page_and_trends_endpoint(client, tmp_path):
     page = client.get("/stats/").text
     assert "Stories per day" in page
     assert 'class="trend-chart dotchart"' in page
-    assert 'class="heat heat-' in page
+    assert 'class="heat"' in page
     assert "View weekly data table" in page
     assert "Top domains" in page
     assert "arxiv.org" in page
@@ -2787,7 +2813,7 @@ def test_dot_chart_uses_roving_tabindex():
         ]
     )
     assert svg.count('tabindex="0"') == 1
-    assert svg.count('tabindex="-1"') == len(re.findall(r"<circle ", svg)) - 1
+    assert svg.count('tabindex="-1"') == len(re.findall(r"<rect ", svg)) - 1
 
 
 def test_build_site_emits_maskable_icon(tmp_path):
@@ -2828,35 +2854,7 @@ def test_check_site_flags_missing_manifest_icon(tmp_path):
     assert any("icon-maskable-512.png" in e for e in errors)
 
 
-def test_week_over_week_computes_total_and_sources():
-    from app.store import week_over_week
-
-    weekly = [
-        {"week": "2026-W32", "counts": {"hn": 10, "arxiv": 5}, "total": 15},
-        {"week": "2026-W33", "counts": {"hn": 20, "arxiv": 5}, "total": 25},
-    ]
-    wows = week_over_week(weekly)
-    assert wows["total"] == pytest.approx(66.666, abs=0.01)
-    assert wows["sources"]["hn"] == pytest.approx(100.0)
-    assert wows["sources"]["arxiv"] == pytest.approx(0.0)
-
-
-def test_week_over_week_needs_two_nonzero_weeks():
-    from app.store import week_over_week
-
-    assert week_over_week([]) == {"total": None, "sources": {}}
-    one = [{"week": "2026-W33", "counts": {"hn": 5}, "total": 5}]
-    assert week_over_week(one) == {"total": None, "sources": {}}
-    zero_base = [
-        {"week": "2026-W32", "counts": {"hn": 0}, "total": 0},
-        {"week": "2026-W33", "counts": {"hn": 5}, "total": 5},
-    ]
-    wows = week_over_week(zero_base)
-    assert wows["total"] is None
-    assert wows["sources"]["hn"] is None
-
-
-def test_stats_page_shows_wow_deltas(client, tmp_path):
+def test_stats_page_has_no_trend_deltas(client, tmp_path):
     save_snapshot(
         SourceSnapshot(
             source="hn",
@@ -2877,6 +2875,10 @@ def test_stats_page_shows_wow_deltas(client, tmp_path):
         tmp_path,
     )
     page = client.get("/stats/").text
-    assert "vs last week" in page
-    assert "delta-up" in page
-    assert "WoW" in page
+    assert "WoW" not in page
+    assert "vs prior 7 days" not in page
+    assert "vs last week" not in page
+    assert "delta-up" not in page
+    assert "delta-down" not in page
+    # The quote itself stays: tabular total with thousands separators.
+    assert 'class="sheet-total"' in page

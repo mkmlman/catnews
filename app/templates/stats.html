@@ -14,22 +14,11 @@
   <h2 class="sheet-panel-title">Stories per day</h2>
   <div class="sheet-quote">
     <p class="sheet-label">Stories</p>
-    <p class="sheet-total{% if wows.total is not none %} {{ 'delta-up' if wows.total >= 0 else 'delta-down' }}{% endif %}">{{ "{:,}".format(stats.total_stories) }}</p>
-    {% if wows.total is not none %}<p class="delta {{ 'delta-up' if wows.total >= 0 else 'delta-down' }}">{{ "▲" if wows.total >= 0 else "▼" }} {{ "%+.1f" % wows.total }}% vs last week</p>
-    {% else %}<p class="delta delta-flat">— vs last week</p>{% endif %}
+    <p class="sheet-total">{{ "{:,}".format(stats.total_stories) }}</p>
   </div>
   {% if dotchart %}
   <div class="trend-chart-wrap sheet-chart">{{ dotchart | safe }}
     <div class="heat-tip" id="heat-tip" role="tooltip" hidden></div>
-    <div class="trend-legend heatmap-legend">
-      <span class="trend-legend-item">Less</span>
-      <span class="heatmap-swatch"></span>
-      <span class="heatmap-swatch heat-swatch-1"></span>
-      <span class="heatmap-swatch heat-swatch-2"></span>
-      <span class="heatmap-swatch heat-swatch-3"></span>
-      <span class="heatmap-swatch heat-swatch-4"></span>
-      <span class="trend-legend-item">More</span>
-    </div>
     <details class="stat-details stat-trends-data">
       <summary>View weekly data table</summary>
       <div class="stat-detail-block stat-trends-table-wrap">
@@ -69,9 +58,6 @@
         <p class="quote-tag"><span class="badge badge-{{ source }}">{{ source_tags.get(source, source) }}</span></p>
         <p class="quote-source">{{ source_labels.get(source, source) }}</p>
         <p class="quote-num">{{ "{:,}".format(count) }}</p>
-        {% set delta = wows.sources.get(source) %}
-        {% if delta is not none %}<p class="delta {{ 'delta-up' if delta >= 0 else 'delta-down' }}">{{ "▲" if delta >= 0 else "▼" }} {{ "%+.1f" % delta }}% WoW</p>
-        {% else %}<p class="delta delta-flat">— WoW</p>{% endif %}
         {% set series = sparklines.get(source) %}
         {% if series and series.points %}
         <svg class="stat-spark" viewBox="0 0 100 28" preserveAspectRatio="none" role="img" aria-label="{{ source_labels.get(source, source) }} weekly story trend">
