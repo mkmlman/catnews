@@ -2061,12 +2061,15 @@ a.is-dead,
 /* Print-style axes: dotted gridlines, stronger spines, mono micro ticks. */
 .chart-grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 1 5; stroke-linecap: round; }
 .chart-axis { stroke: var(--line-strong); stroke-width: 1; stroke-linecap: round; }
-/* Hover/focus node riding the silhouette surface. */
-.chart-marker { fill: var(--ink); stroke: var(--paper); stroke-width: 2; pointer-events: none; }
+/* Hover/focus node riding the silhouette surface; glides between days
+   where geometry transitions are supported, jumps elsewhere. */
+.chart-marker { fill: var(--ink); stroke: var(--paper); stroke-width: 2; pointer-events: none; transition: cx 0.18s var(--ease-soft), cy 0.18s var(--ease-soft); }
 .chart-marker[hidden] { display: none; }
 .trend-chart text { fill: var(--faint); font-family: var(--mono-font); font-size: 10px; }
 .heat { stroke: none; }
-.heat:hover, .heat:focus-visible { stroke: var(--ink); stroke-width: 1.5; }
+/* Mouse users get the marker node + tooltip; keyboard users additionally
+   get a full-column outline so the focused day is unmistakable. */
+.heat:focus-visible { stroke: var(--ink); stroke-width: 1.5; }
 .heat-tip {
   position: fixed;
   left: 0;
@@ -2308,6 +2311,7 @@ a.is-dead,
   letter-spacing: 0.04em;
   color: var(--muted);
   cursor: pointer;
+  transition: color 0.15s ease, border-color 0.2s ease;
 }
 .sheet-tab:hover { color: var(--ink); }
 .sheet-tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
@@ -2321,6 +2325,24 @@ a.is-dead,
   letter-spacing: 0.08em;
   color: var(--muted);
 }
+/* Quiet discoverability hint under the chart. */
+.chart-hint {
+  margin: 10px 0 0;
+  font-family: var(--mono-font);
+  font-size: var(--text-meta);
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+.chart-hint kbd {
+  font-family: inherit;
+  font-size: 0.92em;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0 5px;
+}
+/* Tab panels crossfade on switch (retriggered from sheetSelect). */
+.sheet-tabpanel.switching { animation: fade-in 0.22s var(--ease-soft) both; }
 @media (max-width: 900px) {
   .sheet-panels { grid-template-columns: 1fr; }
   .sheet-meta { text-align: left; }
@@ -3252,6 +3274,9 @@ a.is-dead,
   .rank-fill,
   .stat-spark polyline { stroke: CanvasText; }
   .stat-spark .spark-dot { fill: CanvasText; stroke: Canvas; }
+  .chart-grid { stroke: GrayText; }
+  .chart-axis { stroke: CanvasText; }
+  .chart-marker { fill: CanvasText; stroke: Canvas; }
   .badge, .chip, .hide-read { forced-color-adjust: auto; }
   a, button, summary, [tabindex]:focus-visible { forced-color-adjust: auto; }
 }

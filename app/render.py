@@ -251,6 +251,10 @@ def render_dot_chart(daily: list[dict]) -> str:
     first_day = min(counts)
     last_day = max(counts)
     n_days = (last_day - first_day).days + 1
+    if n_days < 2:
+        # A single day is a data point, not a trend; the hero quote and the
+        # weekly table below already carry it.
+        return ""
 
     # Fixed viewBox scaled uniformly by CSS, so dots stay circular at any
     # width while the chart spans the panel edge to edge.
@@ -297,6 +301,9 @@ def render_dot_chart(daily: list[dict]) -> str:
         samples = list(curve)
     else:
         extended = [curve[0]] + curve + [curve[-1]]
+        # Long archives sample coarser: ~1.5px resolution is plenty smooth at
+        # 1200 wide and keeps the markup light.
+        per = 8 if n_days <= 150 else 2
         for s in range(len(curve) - 1):
             p0, p1, p2, p3 = (
                 extended[s],
@@ -312,8 +319,8 @@ def render_dot_chart(daily: list[dict]) -> str:
                 p2[0] - (p3[0] - p1[0]) / 6,
                 p2[1] - (p3[1] - p1[1]) / 6,
             )
-            for k in range(8):
-                t = k / 8
+            for k in range(per):
+                t = k / per
                 mt = 1 - t
                 x = (
                     mt**3 * p1[0]
@@ -350,9 +357,11 @@ def render_dot_chart(daily: list[dict]) -> str:
 
     parts: list[str] = []
     parts.append(
-        f'<svg class="trend-chart dotchart" viewBox="0 0 {width} {height}" role="img" '
+        f'<svg class="trend-chart dotchart" width="{width}" height="{height}" '
+        f'viewBox="0 0 {width} {height}" role="img" '
         f'aria-label="Stories per day, {total} total from {first_day.isoformat()} '
-        f'to {today.isoformat()}" xmlns="http://www.w3.org/2000/svg">'
+        f'to {today.isoformat()}. Use left and right arrows to explore days." '
+        f'xmlns="http://www.w3.org/2000/svg">'
     )
     parts.append(
         "<defs>"
@@ -366,13 +375,15 @@ def render_dot_chart(daily: list[dict]) -> str:
         '<circle cx="6.5" cy="6.5" r="1.1" fill="currentColor"/></pattern>'
         "</defs>"
     )
-    # Y gridlines + tick labels sit behind the dots; spines draw after.
+    # Y gridlines + tick labels sit behind the dots; the zero line is left
+    # to the baseline spine so the corner stays crisp. Spines draw after.
     for tick in (0, step, 2 * step):
         ty = y_of(tick)
-        parts.append(
-            f'<line x1="{plot_l}" y1="{ty:.1f}" x2="{plot_r}" y2="{ty:.1f}" '
-            f'class="chart-grid"></line>'
-        )
+        if tick != 0:
+            parts.append(
+                f'<line x1="{plot_l}" y1="{ty:.1f}" x2="{plot_r}" y2="{ty:.1f}" '
+                f'class="chart-grid"></line>'
+            )
         parts.append(
             f'<text x="{plot_l - 8}" y="{ty + 3.5:.1f}" text-anchor="end" '
             f'class="chart-tick" aria-hidden="true">{tick:,}</text>'

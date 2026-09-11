@@ -1663,7 +1663,7 @@
   var chartMarker = null;
 
   function parkMarker() {
-    if (chartMarker) chartMarker.hidden = true;
+    if (chartMarker) chartMarker.setAttribute("hidden", "hidden");
   }
 
   function moveMarker(cell) {
@@ -1677,7 +1677,10 @@
     var w = parseFloat(cell.getAttribute("width")) || 0;
     chartMarker.setAttribute("cx", x + w / 2);
     chartMarker.setAttribute("cy", y);
-    chartMarker.hidden = false;
+    /* removeAttribute, not `.hidden = false`: SVG elements share no
+       `hidden` IDL with HTML, so property assignment would silently keep
+       the marker hidden forever. */
+    chartMarker.removeAttribute("hidden");
   }
 
   var heatmap = document.querySelector(".trend-chart.dotchart");
@@ -1776,7 +1779,15 @@
         t.tabIndex = active ? 0 : -1;
       });
       sheetPanels.forEach(function (p) {
-        p.hidden = p.getAttribute("data-tabpanel") !== tab.getAttribute("data-tab");
+        var show = p.getAttribute("data-tabpanel") === tab.getAttribute("data-tab");
+        p.hidden = !show;
+        if (show) {
+          /* Replay the crossfade on every switch (skipped globally under
+             prefers-reduced-motion). */
+          p.classList.remove("switching");
+          void p.offsetWidth;
+          p.classList.add("switching");
+        }
       });
       if (focus) tab.focus();
     }

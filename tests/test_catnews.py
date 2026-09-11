@@ -1499,9 +1499,9 @@ def test_render_dot_chart_scales_columns_to_days(monkeypatch):
     assert svg.count("<path ") == 5
     assert "dots-dense" in svg and "dots-mid" in svg
     assert "dots-sparse" in svg and "dots-fine" in svg
-    # Print-style axes: three gridlines with round tick labels, two spines,
-    # and one month tick for the single-month span.
-    assert svg.count('class="chart-grid"') == 3
+    # Print-style axes: two gridlines (zero is the baseline spine) with
+    # round tick labels, two spines, and one month tick for the span.
+    assert svg.count('class="chart-grid"') == 2
     assert svg.count('class="chart-axis"') == 3
     assert ">Aug</text>" in svg
     assert ">0</text>" in svg
@@ -1557,7 +1557,12 @@ def test_dot_chart_ticks_snap_up_so_peak_never_clips():
     assert ">50</text>" in svg
     assert ">100</text>" in svg
     # Single-story peak still gets integer ticks, not fractions.
-    small = render_dot_chart([{"date": date(2026, 8, 10), "count": 1}])
+    small = render_dot_chart(
+        [
+            {"date": date(2026, 8, 10), "count": 1},
+            {"date": date(2026, 8, 11), "count": 0},
+        ]
+    )
     assert ">2</text>" in small
     assert "0.5" not in small
 
@@ -2941,3 +2946,90 @@ def test_chart_entrance_is_progressive_enhancement():
     assert "sheetChart" in js and "is-in" in js
     assert "@keyframes chart-in" in css
     assert ".sheet-chart.is-in svg" in css
+
+
+def test_chart_hint_and_explorable_aria(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 3),
+            stories=[Story(source="hn", title="B", url="https://b")],
+        ),
+        tmp_path,
+    )
+    page = client.get("/stats/").text
+    assert "Hover any day for its count" in page
+    assert "Use left and right arrows to explore days." in page
+
+
+def test_tab_switch_replays_panel_fade():
+    js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    assert "switching" in js
+    assert ".sheet-tabpanel.switching" in css
+
+
+def test_dot_chart_needs_a_span_not_a_point():
+    from app.render import render_dot_chart
+
+    assert render_dot_chart([]) == ""
+    assert render_dot_chart([{"date": date(2026, 8, 10), "count": 5}]) == ""
+    assert (
+        render_dot_chart(
+            [
+                {"date": date(2026, 8, 10), "count": 0},
+                {"date": date(2026, 8, 11), "count": 0},
+            ]
+        )
+        == ""
+    )
+
+
+def test_dot_chart_stays_light_on_long_spans():
+    from datetime import timedelta
+
+    from app.render import render_dot_chart
+
+    start = date(2025, 9, 1)
+    daily = [
+        {"date": start + timedelta(days=i), "count": (i * 7) % 40 + 1}
+        for i in range(400)
+    ]
+    svg = render_dot_chart(daily)
+    assert len(re.findall(r"<rect ", svg)) == 400
+    # The silhouette body is the last dense path; coarse sampling on long
+    # spans keeps it near a thousand segments, not several thousand.
+    bodies = re.findall(r'<path d="([^"]+)" fill="url\(#dots-dense\)"></path>', svg)
+    assert len(bodies) == 2
+    assert len(re.findall(r"L[\d.]+,[\d.]+", bodies[-1])) < 1200
+
+
+def test_hover_outline_reserved_for_keyboard_focus():
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    assert ".heat:focus-visible" in css
+    assert ".heat:hover" not in css
+
+
+def test_chart_marker_toggles_via_attributes():
+    # Regression: the hover node is an SVG circle, which shares no `hidden`
+    # IDL with HTML — assigning `.hidden` would silently never unhide it.
+    js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    assert 'chartMarker.removeAttribute("hidden")' in js
+    assert "chartMarker.hidden = false" not in js
+    assert "chartMarker.hidden = true" not in js
