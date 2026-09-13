@@ -1,0 +1,80 @@
+{
+  "source": "simonw",
+  "date": "2026-09-13",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Generating running routes with GPT-6 Astra and ChatGPT Work",
+      "url": "https://simonwillison.net/2026/Sep/12/astra-running-routes/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/12/astra-running-routes/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-12T23:56:42Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Here's a neat thing I had ChatGPT Work with GPT-6 Astra (Max) do this morning: I live at <my address>. Figure out 5K and 10K running routes from me that loop from my house. Use OSM data. It worked for 27 minutes and produced exactly what I'd asked for, as both an embedded visualization and downloadable GPX file and GeoJSON files. Here's that 5K route: When I asked it how it had created the route, it replied: I used Nominatim to locate the address and Overpass to download local OpenStreetMap roads and trails , then calculated the loops locally. Frustratingly, the actual code it ran and exact details of what it did weren't visible to me in the ChatGPT UI. I see this lack of transparency is an anti-feature. By the time I thought to ask for a copy of the Python code it had used, ChatGPT was unable to provide it. This appears to be because the thread had been compacted. I think any LLM system",
+      "links": [
+        {
+          "title": "visualize skill",
+          "url": "https://codex-tool-reference.simonw.chatgpt.site/skills/visualize",
+          "site": "codex-tool-reference.simonw.chatgpt.site"
+        },
+        {
+          "title": "a copy of that HTML",
+          "url": "https://gist.github.com/simonw/ea652573c8ff5378b218cb10c8c5a480",
+          "site": "gist.github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "California Brown Pelican",
+      "url": "https://simonwillison.net/2026/Sep/12/sighting-399708714/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/12/sighting-399708714/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-12T21:16:09Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "California Brown Pelican, in San Mateo County, CA, US The Pacifica Pier shut down at the start of June after a crack in the concrete walkway made access to the pier unsafe. It has since been entirely taken over by pelicans! Tags: wildlife",
+      "links": [
+        {
+          "title": "Pacifica Pier",
+          "url": "https://en.wikipedia.org/wiki/Pacifica_Pier",
+          "site": "en.wikipedia.org"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Paul Ford",
+      "url": "https://simonwillison.net/2026/Sep/12/paul-ford/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/12/paul-ford/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-12T18:00:21Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "For a while, I must admit, it looked as if software developer roles like mine were done for. How could we fight against tireless robots? But our industry is slowly realizing that making truly cutting-edge software still requires humans to think and work together, to maximize their skill sets and to practice their respective crafts. A.I. can write very good software, but it also makes it easy to do someone else’s job badly, which is part of why all those projects fail. Now that everyone can code, it’s become clearer why many shouldn’t. — Paul Ford , A.I. Was Supposed to Give Us New Killer Apps. What Happened? Tags: paul-ford , generative-ai , deep-blue , ai , llms",
+      "links": [
+        {
+          "title": "Paul Ford",
+          "url": "https://www.nytimes.com/2026/09/12/opinion/ai-software-coding-apps.html",
+          "site": "nytimes.com"
+        }
+      ]
+    }
+  ]
+}

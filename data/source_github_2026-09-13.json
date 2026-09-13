@@ -1,0 +1,40 @@
+{
+  "source": "github",
+  "date": "2026-09-13",
+  "stories": [
+    {
+      "source": "github",
+      "title": "tokentab — A CLI that reads Claude Code, Codex, and Gemini CLI session logs and works out how much they cost, by model, project, and day.",
+      "url": "https://github.com/crwdla/tokentab",
+      "author": "crwdla",
+      "external_id": "crwdla/tokentab",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-07T17:18:31Z",
+      "score": 663,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "A CLI that reads Claude Code, Codex, and Gemini CLI session logs and works out how much they cost, by model, project, and day.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "rizqinrr/viserys-agent",
+      "url": "https://github.com/rizqinrr/viserys-agent",
+      "author": "rizqinrr",
+      "external_id": "rizqinrr/viserys-agent",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-12T16:51:29Z",
+      "score": 627,
+      "comments": null,
+      "hn_url": null,
+      "snippet": null,
+      "links": []
+    }
+  ]
+}
