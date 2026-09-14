@@ -1,0 +1,67 @@
+{
+  "source": "simonw",
+  "date": "2026-09-14",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "commit-rewriter 0.1",
+      "url": "https://simonwillison.net/2026/Sep/14/commit-rewriter/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/14/commit-rewriter/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-14T00:28:10Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: commit-rewriter 0.1 I built this little web app the other day to help edit the commit messages for the Datasette security releases . The initial commits were full of coding agent cruft and references to issue IDs from our private repository, so they weren't fit for publication. If you want to edit the commit messages for a repository you can run it like this: uvx commit-rewriter path/to/repo Omit the path if you are already in the directory for that repo. When you submit your edits the tool creates a timestamped branch of your current repo state - to allow you to revert if you need to - and then rewrites every commit from the first one you edited to the most recent. Tags: git , projects , python , ai-assisted-programming",
+      "links": [
+        {
+          "title": "commit-rewriter 0.1",
+          "url": "https://github.com/simonw/commit-rewriter/releases/tag/0.1",
+          "site": "github.com"
+        },
+        {
+          "title": "Datasette security releases",
+          "url": "https://datasette.io/blog/2026/september-security-releases/",
+          "site": "datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "shot-scraper 1.12",
+      "url": "https://simonwillison.net/2026/Sep/13/shot-scraper/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/13/shot-scraper/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-13T23:58:14Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: shot-scraper 1.12 I've added WebP support to my shot-scraper screenshot automation tool. You can now take a WebP screenshot of a web page like this: shot-scraper https://simonwillison.net -o screenshot.webp --quality 80 The --quality option sets the quality - without that option the WebP file will be lossless. In my experience WebP screenshots are almost always significantly smaller in file size than their JPEG or PNG equivalents. See the PR for some examples. I shipped this feature so I could use it to generate the screenshot for my new commit-rewriter tool . Tags: playwright , shot-scraper",
+      "links": [
+        {
+          "title": "shot-scraper 1.12",
+          "url": "https://github.com/simonw/shot-scraper/releases/tag/1.12",
+          "site": "github.com"
+        },
+        {
+          "title": "shot-scraper",
+          "url": "https://shot-scraper.datasette.io/",
+          "site": "shot-scraper.datasette.io"
+        },
+        {
+          "title": "the PR",
+          "url": "https://github.com/simonw/shot-scraper/pull/210",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
