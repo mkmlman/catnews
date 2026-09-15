@@ -1,0 +1,120 @@
+{
+  "source": "simonw",
+  "date": "2026-09-15",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "The contagion of fear",
+      "url": "https://simonwillison.net/2026/Sep/14/the-contagion-of-fear/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/14/the-contagion-of-fear/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-14T21:18:13Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "The contagion of fear Bryan Cantrill responds to the tweet by former Anthropic employee Jacob Coxon confirming that many Anthropic researchers believe AI \"could kill us all by the end of the decade\". Bryan shares a story of his own youthful mistakes causing unjustified panic among less technical peers, and warns against doing the same: These ghoulish claims strike brazenly at the hearth, and given the obvious importance of AI, it is unsurprising that they have leapt into the mainstream, with people asking the natural question: how would that happen? The answers always rely on hand-wavy extrapolation into the future; for example, Jacob Coxon cites \"hacking critical infrastructure\" and \"extinction-level bioweapons\" without further elaboration. But Coxon is not an expert on critical infrastructure, nor on bioweapons — nor, for that matter, on extinction. [...] That said, we should not expec",
+      "links": [
+        {
+          "title": "The contagion of fear",
+          "url": "https://bcantrill.dtrace.org/2026/09/13/the-contagion-of-fear/",
+          "site": "bcantrill.dtrace.org"
+        },
+        {
+          "title": "tweet by former Anthropic employee Jacob Coxon",
+          "url": "https://x.com/hilbertspaess/status/2097476203863224394",
+          "site": "x.com"
+        },
+        {
+          "title": "how would that happen?",
+          "url": "https://www.youtube.com/watch?v=kwPxjBJamVs",
+          "site": "youtube.com"
+        },
+        {
+          "title": "starting at 51m44s",
+          "url": "https://oxide-and-friends.transistor.fm/episodes/the-open-weight-revolution-with-simon-willison/transcript#t=51m44s",
+          "site": "oxide-and-friends.transistor.fm"
+        },
+        {
+          "title": "57m04s",
+          "url": "https://oxide-and-friends.transistor.fm/episodes/the-open-weight-revolution-with-simon-willison/transcript#t=57m4s",
+          "site": "oxide-and-friends.transistor.fm"
+        },
+        {
+          "title": "Lobste.rs",
+          "url": "https://lobste.rs/s/1ifr5f/contagion_fear",
+          "site": "lobste.rs"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "What blog posts influenced your thinking the most?",
+      "url": "https://simonwillison.net/2026/Sep/14/influences/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/14/influences/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-14T20:21:48Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on What blog posts influenced your thinking the most? — Lobste.rs. An early Joel Spolsky one for me was The Law of Leaky Abstractions . I read that near the start of my career and it's encouraged me to always be looking for improved understanding of the layers under where I'm working, just in case one of those abstractions leaks. A more recent one, from 2018, is Migrations: the sole scalable fix to tech debt by Will Larson. I absolutely love his idea that migrations (e.g. replacing one service with a new one, or switching database engines, or whatever) are part and parcel of software engineering and are a skill that you should invest in and get good at, not avoid or treat as special one-offs. The Engineer/Manager Pendulum by Charity Majors was hugely influential for me. I was stuck in engineering management and worried that if I switched back to being an \"Individual Contributo",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://lobste.rs/s/lbavmm/what_blog_posts_influenced_your_thinking#c_4fxnwn",
+          "site": "lobste.rs"
+        },
+        {
+          "title": "What blog posts influenced your thinking the most?",
+          "url": "https://lobste.rs/s/lbavmm/what_blog_posts_influenced_your_thinking",
+          "site": "lobste.rs"
+        },
+        {
+          "title": "The Law of Leaky Abstractions",
+          "url": "https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/",
+          "site": "joelonsoftware.com"
+        },
+        {
+          "title": "Migrations: the sole scalable fix to tech debt",
+          "url": "https://lethain.com/migrations/",
+          "site": "lethain.com"
+        },
+        {
+          "title": "The Engineer/Manager Pendulum",
+          "url": "https://charity.wtf/p/the-engineer-manager-pendulum",
+          "site": "charity.wtf"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Laurie Voss",
+      "url": "https://simonwillison.net/2026/Sep/14/laurie-voss/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/14/laurie-voss/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-14T14:34:29Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "The cost of writing code collapsed, and the cost of reviewing, fixing and operating it is following, and I'm assuming it gets there. What's left of making software is finding out what people actually want, defining it precisely, and making it pleasant to use. That cost is per piece of software and doesn't transfer, so as the amount of software goes to infinity, which it will because there's no ceiling on demand, that cost becomes the whole job. — Laurie Voss , We are all Product Engineers now Tags: laurie-voss , generative-ai , agentic-engineering , ai , llms , deep-blue , careers",
+      "links": [
+        {
+          "title": "Laurie Voss",
+          "url": "https://seldo.com/posts/we-are-all-product-engineers-now/",
+          "site": "seldo.com"
+        }
+      ]
+    }
+  ]
+}
