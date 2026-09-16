@@ -1,0 +1,57 @@
+{
+  "source": "github",
+  "date": "2026-09-16",
+  "stories": [
+    {
+      "source": "github",
+      "title": "ai-sucks-butt — If you think AI sucks, star the repo.",
+      "url": "https://github.com/ai-sucks-butt/ai-sucks-butt",
+      "author": "ai-sucks-butt",
+      "external_id": "ai-sucks-butt/ai-sucks-butt",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-14T04:02:58Z",
+      "score": 1034,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "If you think AI sucks, star the repo.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "page-mascot — A mascot that watches the cursor and blinks when you poke it",
+      "url": "https://github.com/nilbuild/page-mascot",
+      "author": "nilbuild",
+      "external_id": "nilbuild/page-mascot",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-14T06:55:59Z",
+      "score": 587,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "A mascot that watches the cursor and blinks when you poke it",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "llm-master — 大模型（LLM）全栈学习路线与中文教程🔥：覆盖 Prompt Engineering、RAG、AI Agent、MCP、微调、模型部署、Transformer、AI 编程与大厂面试，从入门到生产实践。",
+      "url": "https://github.com/youngyangyang04/llm-master",
+      "author": "youngyangyang04",
+      "external_id": "youngyangyang04/llm-master",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-12T07:33:31Z",
+      "score": 546,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "大模型（LLM）全栈学习路线与中文教程🔥：覆盖 Prompt Engineering、RAG、AI Agent、MCP、微调、模型部署、Transformer、AI 编程与大厂面试，从入门到生产实践。",
+      "links": []
+    }
+  ]
+}

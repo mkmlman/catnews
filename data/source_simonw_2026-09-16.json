@@ -1,0 +1,49 @@
+{
+  "source": "simonw",
+  "date": "2026-09-16",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Gemini Live audio",
+      "url": "https://simonwillison.net/2026/Sep/15/gemini-live/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/15/gemini-live/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-15T22:47:07Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Tool: Gemini Live audio Google released Gemini 3.8 Live and 3.8 Live Extended Thinking today - two new speech-to-speech models that are a similar shape to OpenAI's GPT-Live family. I pointed GPT-6 Astra Extra High at the documentation and had it build me this web UI for trying out the new models. You can select a model and voice preset, enter an optional system prompt and then start a voice conversation through your browser, including the ability to interrupt the model while it is talking. The implementation uses no libraries. It connects to the wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent?key=... WebSocket endpoint and uses a Web Audio API AudioContext for both capture and playback. Here's the Gemini Live tutorial for getting started with that WebSockets API. Tags: google , tools , websockets , generative-ai , llms",
+      "links": [
+        {
+          "title": "Gemini 3.8 Live and 3.8 Live Extended Thinking",
+          "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-8-live-gemini-3-8-live-extended-thinking/",
+          "site": "blog.google"
+        },
+        {
+          "title": "GPT-Live",
+          "url": "https://openai.com/index/introducing-gpt-live/",
+          "site": "openai.com"
+        },
+        {
+          "title": "had it build me this web UI",
+          "url": "https://gist.github.com/simonw/067b7430c5b1f743af9419b0184c38ef",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "implementation",
+          "url": "https://github.com/simonw/tools/blob/main/gemini-live.html",
+          "site": "github.com"
+        },
+        {
+          "title": "the Gemini Live tutorial",
+          "url": "https://ai.google.dev/gemini-api/docs/live-api/get-started-websocket",
+          "site": "ai.google.dev"
+        }
+      ]
+    }
+  ]
+}
