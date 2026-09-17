@@ -1,0 +1,133 @@
+{
+  "source": "simonw",
+  "date": "2026-09-17",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "datasette 1.0a40",
+      "url": "https://simonwillison.net/2026/Sep/16/datasette/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/16/datasette/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-16T23:51:43Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette 1.0a40 Same security fix as 0.65.5 , plus some neat new features and bug fixes: Plugins can now launch and manage background tasks using the new datasette.add_background_task() method. Thanks, Alex Garcia . I've migrated Datasette to httpx2 for features like the internal datasette.client.get() method. A whole lot of bug fixes , many of them stemming from a recent effort to triage issues for a 1.0 stable release. Tags: security , datasette",
+      "links": [
+        {
+          "title": "datasette 1.0a40",
+          "url": "https://github.com/simonw/datasette/releases/tag/1.0a40",
+          "site": "github.com"
+        },
+        {
+          "title": "datasette.add_background_task()",
+          "url": "https://docs.datasette.io/en/latest/internals.html#datasette-add-background-task",
+          "site": "docs.datasette.io"
+        },
+        {
+          "title": "Alex Garcia",
+          "url": "https://alexgarcia.xyz/",
+          "site": "alexgarcia.xyz"
+        },
+        {
+          "title": "httpx2",
+          "url": "https://github.com/pydantic/httpx2",
+          "site": "github.com"
+        },
+        {
+          "title": "bug fixes",
+          "url": "https://docs.datasette.io/en/latest/changelog.html#a40-2026-09-16",
+          "site": "docs.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette 0.65.5",
+      "url": "https://simonwillison.net/2026/Sep/16/datasette-2/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/16/datasette-2/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-16T23:51:08Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette 0.65.5 Security fix for an issue where a trailing newline in a requested table name could bypass table permissions and expose private rows, reported by dpfkdlemtp in GHSA-h547-rmjf-5m2m . Tags: security , datasette",
+      "links": [
+        {
+          "title": "datasette 0.65.5",
+          "url": "https://github.com/simonw/datasette/releases/tag/0.65.5",
+          "site": "github.com"
+        },
+        {
+          "title": "dpfkdlemtp",
+          "url": "https://github.com/dpfkdlemtp",
+          "site": "github.com"
+        },
+        {
+          "title": "GHSA-h547-rmjf-5m2m",
+          "url": "https://github.com/simonw/datasette/security/advisories/GHSA-h547-rmjf-5m2m",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Claude Cowork and chat are now one Claude",
+      "url": "https://simonwillison.net/2026/Sep/16/one-claude/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/16/one-claude/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-16T18:09:49Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Claude Cowork and chat are now one Claude In hopefully good news for anyone who, like me, was increasingly confused at Cowork v.s. Claude v.s. Claude Code: Starting today, Claude Cowork and chat are merging into one Claude. Bring a quick question, or hand over a report due at noon, and Claude takes it from there, even after you’ve closed your laptop. [...] This is rolling out to Pro and Max plans first, in the Claude app on web, desktop, and mobile over the coming weeks to existing and new users on these plans. I guess this means Claude is becoming a general agent in its own right. Echoes of OpenAI renaming their Codex desktop app to ChatGPT a few weeks ago. On the one hand, this saves me some work, in that I was planning to finally figure out the boundaries between Cowork and regular Claude and write a follow-up to my piece on Understanding ChatGPT Work . I have a hunch that figuring ou",
+      "links": [
+        {
+          "title": "Claude Cowork and chat are now one Claude",
+          "url": "https://claude.com/blog/cowork-is-now-claude",
+          "site": "claude.com"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49729412",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Mustafa Suleyman",
+      "url": "https://simonwillison.net/2026/Sep/16/mustafa-suleyman/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/16/mustafa-suleyman/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-16T16:00:54Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "We should not treat models as though they have feelings, preferences, rights, or any entitlement to our welfare. Consciousness is the foundation of our ethical, legal, and political systems. To invite another entity to share any flavor of these rights isn’t justified by the evidence and will make the AI containment and alignment challenge even harder. — Mustafa Suleyman , A warning about ‘model welfare’ Tags: ai-ethics , generative-ai , ai , microsoft , llms",
+      "links": [
+        {
+          "title": "Mustafa Suleyman",
+          "url": "https://mustafa-suleyman.ai/a-warning-about-model-welfare",
+          "site": "mustafa-suleyman.ai"
+        }
+      ]
+    }
+  ]
+}
