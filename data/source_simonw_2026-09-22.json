@@ -1,0 +1,195 @@
+{
+  "source": "simonw",
+  "date": "2026-09-22",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Jev introduces a new shape of LLM - System One, aka Decision Models",
+      "url": "https://simonwillison.net/2026/Sep/21/jev/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/21/jev/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-21T23:09:20Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Last week TypeSafe AI unveiled Jev , their first example of a new category of model that they are calling \"System One models\" (I'm with Maggie Appleton, I think \"decision models\" is a better name for these). Jev is an interesting variant on the usual LLM format: it still accepts text inputs, but instead of text output it returns floating point numbers corresponding to categories, yes/no questions, ratings, and associated confidence scores. TypeSafe describe Jev like this: Think of Jev as a frontier-intelligence function call: unstructured state in, typed probabilistic decisions out. It's also very fast, and really cheap . Regular LLMs are priced in terms of input and output tokens, with output generally charged at significantly higher rates. Jev charges only for input - output is free - and the input price of their first model is $0.042 per million tokens - cheaper even than OpenAI's GPT",
+      "links": [
+        {
+          "title": "TypeSafe AI",
+          "url": "https://typesafe.ai/",
+          "site": "typesafe.ai"
+        },
+        {
+          "title": "Jev",
+          "url": "https://typesafe.ai/blog/introducing-system-one-models-and-jev",
+          "site": "typesafe.ai"
+        },
+        {
+          "title": "a better name",
+          "url": "https://twitter.com/Mappletons/status/2101560333441610133",
+          "site": "twitter.com"
+        },
+        {
+          "title": "are priced",
+          "url": "https://www.llm-prices.com",
+          "site": "llm-prices.com"
+        },
+        {
+          "title": "GPT-5 Nano",
+          "url": "https://developers.openai.com/api/docs/models/gpt-5-nano",
+          "site": "developers.openai.com"
+        },
+        {
+          "title": "confirmed on Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49717558#49718407",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "Bernoulli distribution",
+          "url": "https://en.wikipedia.org/wiki/Bernoulli_distribution",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "Cupertino",
+          "url": "https://en.wikipedia.org/wiki/Cupertino,_California",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "East Palo Alto",
+          "url": "https://en.wikipedia.org/wiki/East_Palo_Alto,_California",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "jevchat",
+          "url": "https://github.com/kyle-pena-nlp/jevchat/",
+          "site": "github.com"
+        },
+        {
+          "title": "ericpruitt on Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49778162#49778423",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "jev-leftpad",
+          "url": "https://github.com/f/jev-leftpad",
+          "site": "github.com"
+        },
+        {
+          "title": "left-pad",
+          "url": "https://www.npmjs.com/package/left-pad",
+          "site": "npmjs.com"
+        },
+        {
+          "title": "a choice query",
+          "url": "https://github.com/f/jev-leftpad/blob/4f405354de756cc372826d19aa8dfbee2b675778/src/index.js#L9-L30",
+          "site": "github.com"
+        },
+        {
+          "title": "jev-2048",
+          "url": "https://gist.github.com/cablehead/bdf9ad946ceb26d9008976e49c9bfbbb",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "the 2048 sliding puzzle game",
+          "url": "https://simple-jev.featherless.ai/cool-demo/2048/",
+          "site": "simple-jev.featherless.ai"
+        },
+        {
+          "title": "Kev",
+          "url": "https://github.com/jaredpalmer/kev",
+          "site": "github.com"
+        },
+        {
+          "title": "accompanying Hacker News thread",
+          "url": "https://news.ycombinator.com/item?id=49783999",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "JevBench",
+          "url": "https://benchmarkheaven.com/jev-models",
+          "site": "benchmarkheaven.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Cloudflare Python Workers are now generally available",
+      "url": "https://simonwillison.net/2026/Sep/21/cloudflare-python-worker/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/21/cloudflare-python-worker/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-21T22:25:44Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Cloudflare Python Workers are now generally available After a two year preview, Cloudflare's support for running Python code in their server-side Workers platform is now stable: \"Python is now a first-class, fully supported language on the Cloudflare Developer Platform\". A neat thing about this is how it works. Cloudflare are running Python compiled to WebAssembly via Pyodide in their V8-based workerd runtime. This comes with some limitations, documented here - most notably both multiprocessing and threading are non-functional in the WebAssembly VM. One particularly interesting detail of this is the local development environment story - their pywrangler development tool (confusingly packaged as workers-py on PyPI) runs a full local simulation of their stack, including executing code with Pyodide in WebAssembly in V8 in a 123MB workerd binary, which for me ended up in node_modules/@cloudf",
+      "links": [
+        {
+          "title": "Cloudflare Python Workers are now generally available",
+          "url": "https://blog.cloudflare.com/python-workers-ga/",
+          "site": "blog.cloudflare.com"
+        },
+        {
+          "title": "workerd",
+          "url": "https://github.com/cloudflare/workerd",
+          "site": "github.com"
+        },
+        {
+          "title": "documented here",
+          "url": "https://developers.cloudflare.com/workers/languages/python/stdlib/",
+          "site": "developers.cloudflare.com"
+        },
+        {
+          "title": "pywrangler",
+          "url": "https://developers.cloudflare.com/workers/languages/python/#the-pywrangler-cli-tool",
+          "site": "developers.cloudflare.com"
+        },
+        {
+          "title": "workers-py",
+          "url": "https://pypi.org/project/workers-py/",
+          "site": "pypi.org"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49787142",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "MCP was always a bad idea?",
+      "url": "https://simonwillison.net/2026/Sep/20/hn-49779718/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/20/hn-49779718/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-20T20:24:41Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on MCP was always a bad idea? — Hacker News. This article entirely misses the value that MCP brings today. Sure, there's almost no reason to use MCPs if you are running a full-blown terminal agent (Claude Code, Codex, Meta Muse, OpenClaw etc) with unfettered internet access - just let it call APIs directly. If you want to operate something that's less YOLO than that, you'll find yourself wanting: Control over exactly which external services it can access A way to handle authentication that doesn't allow the agent to directly access API keys A sensible UI to allow users to connect and authenticate further services Strong audit logging for what's going on MCP makes all of that so much easier to provide. Thinking MCP is obsolete because full coding agents don't need it misses out on all of the other things we might want to build. Tags: hacker-news , model-context-protocol",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://news.ycombinator.com/item?id=49779329#49779718",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "MCP was always a bad idea?",
+          "url": "https://news.ycombinator.com/item?id=49779329",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    }
+  ]
+}

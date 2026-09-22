@@ -1,31 +1,30 @@
 {
-  "date": "2026-09-21",
+  "date": "2026-09-22",
   "sources": {
     "hn": {
       "state": "ok",
-      "snapshot_date": "2026-09-21",
+      "snapshot_date": "2026-09-22",
       "stories": 25
-    },
-    "arxiv": {
-      "state": "stale",
-      "snapshot_date": "2026-09-07",
-      "stories": 15,
-      "error": "Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=cat%3Acs.AI+OR+cat%3Acs.CL+OR+cat%3Acs.LG+OR+cat%3Acs.SE+OR+cat%3Acs.DB+OR+cat%3Acs.CR+OR+cat%3Acs.DC+OR+cat%3Acs.NE&sortBy=submittedDate&sortOrder=d"
     },
     "github": {
       "state": "ok",
-      "snapshot_date": "2026-09-21",
+      "snapshot_date": "2026-09-22",
       "stories": 15
-    },
-    "registerspill": {
-      "state": "ok",
-      "snapshot_date": "2026-09-21",
-      "stories": 10
     },
     "simonw": {
       "state": "ok",
-      "snapshot_date": "2026-09-21",
+      "snapshot_date": "2026-09-22",
       "stories": 20
+    },
+    "arxiv": {
+      "state": "skipped",
+      "snapshot_date": "2026-09-07",
+      "stories": 15
+    },
+    "registerspill": {
+      "state": "skipped",
+      "snapshot_date": "2026-09-21",
+      "stories": 1
     }
   }
 }
