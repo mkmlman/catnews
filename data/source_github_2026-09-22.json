@@ -1,0 +1,23 @@
+{
+  "source": "github",
+  "date": "2026-09-22",
+  "stories": [
+    {
+      "source": "github",
+      "title": "jev-chat-jarvis — 装在手机上的对话副驾：在微信 / QQ / X / 飞书里读懂对方、给出候选回复、一键填入输入框，发不发由你。非侵入，只读屏幕，不 hook 不改包。",
+      "url": "https://github.com/jev-chat/jev-chat-jarvis",
+      "author": "jev-chat",
+      "external_id": "jev-chat/jev-chat-jarvis",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-21T11:12:53Z",
+      "score": 2984,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "装在手机上的对话副驾：在微信 / QQ / X / 飞书里读懂对方、给出候选回复、一键填入输入框，发不发由你。非侵入，只读屏幕，不 hook 不改包。",
+      "links": []
+    }
+  ]
+}
