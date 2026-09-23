@@ -1,0 +1,249 @@
+{
+  "source": "simonw",
+  "date": "2026-09-23",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "SF October 14th: A Birds of a Feather Session on Agentic Engineering",
+      "url": "https://simonwillison.net/2026/Sep/23/bof-agentic-engineering/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/23/bof-agentic-engineering/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-23T02:53:19Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "SF October 14th: A Birds of a Feather Session on Agentic Engineering I'm hosting an evening event with Jesse Vincent in San Francisco on Wednesday 14th October for people who are building weird and interesting things with and on top of coding agents. Think of it as an agentic show-and-tell: ​Compare notes with other builders and experimenters on things you’re trying, what you're learning, and what you haven’t figured out yet. We’re especially interested in work you haven’t discussed publicly, odd experiments, or unfinished projects that don’t have an obvious market. ​Expect one flowing conversation with an informal show-and-tell. Sharing something you’re working on is encouraged but no presentation is required. This isn't about product pitches, it's about much earlier explorations than that. This agentic AI stuff is weird! Let's celebrate and lean into that weirdness. Tags: events , ai ,",
+      "links": [
+        {
+          "title": "SF October 14th: A Birds of a Feather Session on Agentic Enginee",
+          "url": "https://luma.com/vxuiuyvg",
+          "site": "luma.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Claude Opus 5.5, GPT-6 Sol, GPT-6 Luna, and a new price war",
+      "url": "https://simonwillison.net/2026/Sep/22/opus-and-sol-and-luna/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/22/opus-and-sol-and-luna/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-22T23:46:41Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Yesterday was Grok 4.7 ( pelicans ) and MiMo v2.6 Flash/Pro ( more pelicans ). Today Anthropic released Claude Opus 5.5 , and around an hour later OpenAI released GPT-6 Sol and GPT-6 Luna . It's going to take a while to get a good read on all of these new models, but here are my impressions so far. GPT-6 Sol and Luna are half the price of their GPT-5.6 equivalents GPT-5.6 Luna was already my favorite model for building applications against, because it combined excellent performance with being really cheap . Somehow GPT-6 Luna is half the price of that again - and GPT-6 Sol had a similar reduction compared to GPT-5.6 Sol. Here's what the pricing landscape looks like today: Model Input Cached input Output GPT-6 Luna $0.10/M $0.01/M $0.50/M GPT-5.6 Luna $0.20/M $0.02/M $1.20/M Grok 4.7 $2/M $0.50/M $6/M GPT-6 Sol $2/M $0.20/M $10/M GPT-5.6 Terra $2/M $0.20/M $12/M Claude Opus 5.5 $4/M $0.20",
+      "links": [
+        {
+          "title": "Grok 4.7",
+          "url": "https://x.ai/news/grok-4-7",
+          "site": "x.ai"
+        },
+        {
+          "title": "pelicans",
+          "url": "https://news.ycombinator.com/item?id=49788838#49790209",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "MiMo v2.6 Flash/Pro",
+          "url": "https://mimo.xiaomi.com/mimo-v2-6",
+          "site": "mimo.xiaomi.com"
+        },
+        {
+          "title": "more pelicans",
+          "url": "https://news.ycombinator.com/item?id=49792730#49793480",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "released Claude Opus 5.5",
+          "url": "https://www.anthropic.com/claude-opus-5-5",
+          "site": "anthropic.com"
+        },
+        {
+          "title": "released GPT-6 Sol and GPT-6 Luna",
+          "url": "https://openai.com/index/introducing-gpt-6-sol-and-luna/",
+          "site": "openai.com"
+        },
+        {
+          "title": "Thariq Shihipar",
+          "url": "https://twitter.com/trq212/status/2102437686967738431",
+          "site": "twitter.com"
+        },
+        {
+          "title": "better at Blender",
+          "url": "https://twitter.com/alexalbert__/status/2102466523164274839",
+          "site": "twitter.com"
+        },
+        {
+          "title": "$2.56",
+          "url": "https://www.llm-prices.com/#it=27&ot=128000&sel=claude-opus-5-5",
+          "site": "llm-prices.com"
+        },
+        {
+          "title": "agent.datasette.io",
+          "url": "https://agent.datasette.io/",
+          "site": "agent.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm 0.36",
+      "url": "https://simonwillison.net/2026/Sep/22/llm/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/22/llm/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-22T18:48:37Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm 0.36 New OpenAI models: gpt-6-sol for GPT-6 Sol and gpt-6-luna for GPT-6 Luna . #1702 Model plugins can now declare supports_conversation = False for models that only accept single-turn prompts. LLM raises llm.ConversationNotSupported when these models receive assistant or tool history, and llm chat rejects them before starting a session. See Models that do not support conversations . The first plugin to use this is llm-typesafe . #1692 Reasoning traces in the Markdown output of llm logs are now wrapped in <details><summary> tags. #1701 Plus bug fixes from five new contributors . Tags: openai , llm",
+      "links": [
+        {
+          "title": "llm 0.36",
+          "url": "https://github.com/simonw/llm/releases/tag/0.36",
+          "site": "github.com"
+        },
+        {
+          "title": "GPT-6 Sol",
+          "url": "https://developers.openai.com/api/docs/models/gpt-6-sol",
+          "site": "developers.openai.com"
+        },
+        {
+          "title": "GPT-6 Luna",
+          "url": "https://developers.openai.com/api/docs/models/gpt-6-luna",
+          "site": "developers.openai.com"
+        },
+        {
+          "title": "#1702",
+          "url": "https://github.com/simonw/llm/issues/1702",
+          "site": "github.com"
+        },
+        {
+          "title": "Models that do not support conversations",
+          "url": "https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#advanced-model-plugins-conversations",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "llm-typesafe",
+          "url": "https://github.com/simonw/llm-typesafe",
+          "site": "github.com"
+        },
+        {
+          "title": "#1692",
+          "url": "https://github.com/simonw/llm/issues/1692",
+          "site": "github.com"
+        },
+        {
+          "title": "#1701",
+          "url": "https://github.com/simonw/llm/issues/1701",
+          "site": "github.com"
+        },
+        {
+          "title": "bug fixes from five new contributors",
+          "url": "https://llm.datasette.io/en/stable/changelog.html#v0-36",
+          "site": "llm.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting @therealcornpop",
+      "url": "https://simonwillison.net/2026/Sep/22/therealcornpop/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/22/therealcornpop/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-22T18:03:21Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Hey, you know it's like super obvious if you're using AI to write your scripts for TikTok and YouTube, right? [...] It's not just the general AI-isms of \"it's not X, it's Y\", or the rule of three, or the really weird broken staccato-like way of writing where you just say a lot of things with all these punctuation marks. and it sounds really deep, but it's not. It's the lack of anything . It's the lack of a definitive sort of spear of your voice. It's the fact I can tell you don't have opinions about the thing that you're talking about. — @therealcornpop , on TikTok Tags: tiktok , ai , ai-misuse",
+      "links": [
+        {
+          "title": "@therealcornpop",
+          "url": "https://www.tiktok.com/@therealcornpop/video/7687243097801051422",
+          "site": "tiktok.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-anthropic 0.29",
+      "url": "https://simonwillison.net/2026/Sep/22/llm-anthropic/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/22/llm-anthropic/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-22T17:14:55Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-anthropic 0.29 Adds support for Claude Opus 5.5 : llm -m claude-opus-5.5 \"prompt goes here\" Tags: llm , anthropic",
+      "links": [
+        {
+          "title": "llm-anthropic 0.29",
+          "url": "https://github.com/simonw/llm-anthropic/releases/tag/0.29",
+          "site": "github.com"
+        },
+        {
+          "title": "Claude Opus 5.5",
+          "url": "https://www.anthropic.com/claude-opus-5-5",
+          "site": "anthropic.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-typesafe 0.1a0",
+      "url": "https://simonwillison.net/2026/Sep/22/llm-typesafe/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/22/llm-typesafe/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-22T15:54:16Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-typesafe 0.1a0 I built this new plugin for LLM to add support for TypeSafe AI's new Jev model . Install it like this: llm install llm-typesafe Then set an API key ( get one here , the waitlist seems to move pretty fast): llm keys set typesafe # Paste key And now you can ask yes/no \"noul\" questions like this: llm -m jev 'Please refund my last payment.' \\ -s 'Does this message explicitly request a refund?' Output: {\"type\": \"noul\", \"noul\": 0.99} Or choice questions like this: cat message.txt | llm -m jev \\ -s ' Which team should handle this message? If billing and technical issues both occur, choose billing. ' \\ -o answer_type choice \\ -o criteria ' { \"billing\":\"Charges, invoices, payments, or refunds\", \"technical\":\"Problems installing or using the product\", \"other\":\"Neither category fits\" } ' Or scoring questions like this: cat report.txt | llm -m jev \\ -s ' How reproducible i",
+      "links": [
+        {
+          "title": "llm-typesafe 0.1a0",
+          "url": "https://github.com/simonw/llm-typesafe/releases/tag/0.1a0",
+          "site": "github.com"
+        },
+        {
+          "title": "LLM",
+          "url": "https://llm.datasette.io/",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "get one here",
+          "url": "https://console.typesafe.ai/",
+          "site": "console.typesafe.ai"
+        },
+        {
+          "title": "the README",
+          "url": "https://github.com/simonw/llm-typesafe/blob/main/README.md",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
