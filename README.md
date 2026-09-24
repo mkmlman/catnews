@@ -288,6 +288,7 @@ env vars remain available:
 | `CATNEWS_REPO_URL` | `https://github.com/mkmlman/catnews` | Source link shown in the header/footer; set it so a fork points at its own repository |
 | `CATNEWS_FETCH_ATTEMPTS` | `3` | Attempts for transient fetch failures |
 | `CATNEWS_FETCH_BACKOFF_SECONDS` | `1.0` | Initial exponential retry delay |
+| `CATNEWS_GITHUB_TOKEN` (`GITHUB_TOKEN` fallback) | `` (unauthenticated) | GitHub API token: 5000 req/hr instead of 60; set for reliable GitHub fetches |
 
 Register Spill is pinned to Mondays (`weekday: 0` in `sources.yaml`): it is only fetched
 when at least 7 days have elapsed *and* it is Monday.

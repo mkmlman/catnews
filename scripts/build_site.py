@@ -25,6 +25,7 @@ from app.render import (
     render_service_worker,
     render_sitemap,
     render_source_rss,
+    search_index_sharded,
     site_version,
     snapshot_nav,
     sparkline_points,
@@ -261,6 +262,8 @@ def build_site(
         ),
     )
     write(api / "search.json", render_search_index(snapshots))
+    for year, records in search_index_sharded(snapshots).items():
+        write(api / f"search-{year}.json", render_json(records))
     write(
         api / "dead-links.json",
         render_json(sorted(dead_urls.values(), key=lambda r: r["url"])),

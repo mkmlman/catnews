@@ -63,12 +63,29 @@ from .store import (
 app = FastAPI(title="catnews", description="catnews — a curated digest.")
 
 
-@functools.lru_cache(maxsize=512)
+@app.middleware("http")
+async def cache_headers(request: Request, call_next):
+    """Cache policy for the dev server (Pages serves static files as-is).
+
+    API + feeds change daily: short shared cache. Versioned static assets
+    and OG cards are immutable for a day.
+    """
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith("/api/") or path.endswith((".rss", ".json")):
+        response.headers.setdefault("Cache-Control", "public, max-age=300")
+    elif path.startswith("/static/"):
+        response.headers.setdefault("Cache-Control", "public, max-age=86400, immutable")
+    return response
+
+
+@functools.lru_cache(maxsize=64)
 def _edition_card(source: str, day: str, count: int) -> bytes:
     """Per-snapshot Open Graph card, cached by (source, date, story count).
 
     `day` is an ISO date string so the cache key is hashable; a source that
-    changes its snapshot count re-renders the card.
+    changes its snapshot count re-renders the card. Capped at 64 entries
+    (~3MB) so the dev server can't grow unbounded over a long archive.
     """
     accent = source_accent_rgb(source)
     return render_og_image(
@@ -295,6 +312,7 @@ def not_found(request: Request) -> HTMLResponse:
 
 
 @app.get("/api/sources")
+@app.get("/api/sources.json")
 def api_sources() -> list[SourceSnapshot]:
     return load_all_snapshots(DATA_DIR)
 
@@ -313,10 +331,6 @@ def api_source(source: str) -> SourceSnapshot:
 
 
 @app.get("/api/sources/{source}/{day}.json")
-def api_source_day_json(source: str, day: date) -> SourceSnapshot:
-    return api_source_day(source, day)
-
-
 @app.get("/api/sources/{source}/{day}")
 def api_source_day(source: str, day: date) -> SourceSnapshot:
     snap = load_snapshot(source, day, DATA_DIR)
@@ -328,7 +342,8 @@ def api_source_day(source: str, day: date) -> SourceSnapshot:
 
 
 @app.get("/api/digest")
-def api_digest() -> SourceSnapshot | dict:
+@app.get("/api/digest.json")
+def api_digest() -> dict:
     digest = combined_digest(DATA_DIR)
     if digest is None:
         raise HTTPException(
@@ -338,39 +353,33 @@ def api_digest() -> SourceSnapshot | dict:
     return digest.model_dump(mode="json")
 
 
-@app.get("/api/digest.json")
-def api_digest_json() -> SourceSnapshot | dict:
-    return api_digest()
-
-
 @app.get("/api/stories")
+@app.get("/api/stories.json")
 def api_stories(
     source: str | None = Query(default=None),
+    limit: int = Query(default=200, ge=1, le=1000),
+    offset: int = Query(default=0, ge=0),
 ) -> list[Story]:
+    """All archived stories, newest snapshot first, paginated.
+
+    Static build emits the full list as ``api/stories.json``; the live
+    server paginates so a year-long archive can't OOM a client.
+    """
     if source is not None and source not in SOURCES:
         raise HTTPException(status_code=404, detail=f"Unknown source {source!r}.")
     stories = [s for snap in load_all_snapshots(DATA_DIR) for s in snap.stories]
     if source:
         stories = [s for s in stories if s.source == source]
-    return stories
-
-
-@app.get("/api/stories.json")
-def api_stories_json(
-    source: str | None = Query(default=None),
-) -> list[Story]:
-    return api_stories(source)
+    return stories[offset : offset + limit]
 
 
 @app.get("/api/search.json")
-def api_search_json() -> list[dict[str, str]]:
-    """Compact deduplicated search records for the client-side archive search."""
-    return search_index(load_all_snapshots(DATA_DIR))
-
-
 @app.get("/api/search")
-def api_search() -> list[dict[str, str]]:
-    return api_search_json()
+def api_search_json(
+    limit: int = Query(default=500, ge=1, le=5000),
+) -> list[dict[str, str]]:
+    """Compact deduplicated search records for the client-side archive search."""
+    return search_index(load_all_snapshots(DATA_DIR))[:limit]
 
 
 @app.get("/api/dead-links")
@@ -384,33 +393,21 @@ def api_dead_links() -> list[dict]:
 
 
 @app.get("/api/stats")
+@app.get("/api/stats.json")
 def api_stats() -> dict:
     return site_stats(DATA_DIR).model_dump(mode="json")
 
 
-@app.get("/api/stats.json")
-def api_stats_json() -> dict:
-    return api_stats()
-
-
 @app.get("/api/trends")
+@app.get("/api/trends.json")
 def api_trends() -> list[dict]:
     return weekly_trends(DATA_DIR)
 
 
-@app.get("/api/trends.json")
-def api_trends_json() -> list[dict]:
-    return api_trends()
-
-
 @app.get("/api/fetch-status.json")
+@app.get("/api/fetch-status")
 def api_fetch_status_json() -> dict:
     return fetch_status(DATA_DIR)
-
-
-@app.get("/api/fetch-status")
-def api_fetch_status() -> dict:
-    return api_fetch_status_json()
 
 
 @app.get("/api/sources.json")

@@ -254,6 +254,8 @@ def latest_stories(
     reached.
     """
     cap = limit if limit is not None else int(SOURCES.get(source, {}).get("limit", 20))
+    if cap is not None and cap <= 0:
+        return []
     seen: set[str] = set()
     merged: list[Story] = []
     for snapshot_date in reversed(list_snapshot_dates(source, data_dir)):
@@ -269,7 +271,7 @@ def latest_stories(
             if (story.external_id or story.url) not in fresh:
                 continue
             merged.append(story)
-            if cap and len(merged) >= cap:
+            if cap is not None and len(merged) >= cap:
                 return merged
         seen |= fresh
     return merged

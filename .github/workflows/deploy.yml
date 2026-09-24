@@ -43,11 +43,15 @@ jobs:
         run: |
           git config user.name "catnews bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/
+          # Stage snapshots first: fetch-status.json changes every run (new
+          # date) even when nothing was due, so it must not trigger a PR
+          # on its own — only commit when snapshots actually changed.
+          git add data/source_*.json
           if git diff --cached --quiet; then
             echo "No new digests; nothing to commit."
             exit 0
           fi
+          git add data/fetch-status.json
           git commit -m "digest: $(date +%Y-%m-%d)"
           branch="digest-${GITHUB_RUN_NUMBER}"
           git push origin "HEAD:refs/heads/${branch}"
@@ -84,7 +88,11 @@ jobs:
         run: uv run pytest
 
   deploy:
-    needs: lint
+    # Sequenced after archive so the scheduled run doesn't double-fetch:
+    # archive merges fresh snapshots first, deploy builds from them. On push
+    # runs archive is skipped, so deploy proceeds once lint passes.
+    needs: [lint, archive]
+    if: ${{ always() && needs.lint.result == 'success' && (needs.archive.result == 'success' || needs.archive.result == 'skipped') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

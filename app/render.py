@@ -15,7 +15,6 @@ from .config import (
     SOURCE_TAGS,
     badge_css,
     palette_entries,
-    today_utc,
 )
 from .models import Digest, SourceSnapshot
 
@@ -247,7 +246,6 @@ def render_dot_chart(daily: list[dict]) -> str:
         return ""
     total = sum(counts.values())
 
-    today = today_utc()
     first_day = min(counts)
     last_day = max(counts)
     n_days = (last_day - first_day).days + 1
@@ -360,7 +358,7 @@ def render_dot_chart(daily: list[dict]) -> str:
         f'<svg class="trend-chart dotchart" width="{width}" height="{height}" '
         f'viewBox="0 0 {width} {height}" role="img" '
         f'aria-label="Stories per day, {total} total from {first_day.isoformat()} '
-        f'to {today.isoformat()}. Use left and right arrows to explore days." '
+        f'to {last_day.isoformat()}. Use left and right arrows to explore days." '
         f'xmlns="http://www.w3.org/2000/svg">'
     )
     parts.append(
@@ -473,9 +471,10 @@ def search_index(snapshots: list[SourceSnapshot]) -> list[dict[str, str]]:
     story, so it gets a much smaller artifact instead.
 
     Note: this index grows ~50 records/day and is fetched whole on the first
-    search. When api/search.json crosses ~1 MB, shard it by year (or "recent +
-    older") and lazy-load shards from the client's searchStories() before
-    adding more fields here (fuller text inflates every shard at once).
+    search. Year shards (api/search-YYYY.json, see search_index_sharded) are
+    emitted alongside it so the client can switch to lazy-loading shards once
+    api/search.json crosses ~1 MB — before adding more fields here (fuller
+    text inflates every shard at once).
     """
     records: dict[str, dict[str, str]] = {}
     for snapshot in snapshots:
@@ -494,6 +493,38 @@ def search_index(snapshots: list[SourceSnapshot]) -> list[dict[str, str]]:
                     record[field] = value
             records[key] = record
     return list(records.values())
+
+
+def search_index_sharded(
+    snapshots: list[SourceSnapshot],
+) -> dict[str, list[dict[str, str]]]:
+    """Group the deduplicated search index by year for lazy-loading.
+
+    Returns ``{year: records}`` using each record's snapshot date. The static
+    build emits these as ``api/search-YYYY.json`` alongside the combined
+    ``api/search.json`` (kept for backward compat). Clients should fetch the
+    combined index while it stays small, then switch to loading only the
+    years they need once it crosses ~1 MB.
+    """
+    by_year: dict[str, dict[str, dict[str, str]]] = {}
+    for snapshot in snapshots:
+        year = str(snapshot.date.year)
+        bucket = by_year.setdefault(year, {})
+        for story in snapshot.stories:
+            identity = story.external_id or story.url
+            key = f"{story.source}:{identity}"
+            record = {
+                "source": story.source,
+                "title": story.title,
+                "url": story.url,
+                "date": snapshot.date.isoformat(),
+            }
+            for field in ("author", "summary", "snippet", "why_read"):
+                value = getattr(story, field)
+                if value:
+                    record[field] = value
+            bucket[key] = record
+    return {year: list(bucket.values()) for year, bucket in sorted(by_year.items())}
 
 
 def render_search_index(snapshots: list[SourceSnapshot]) -> str:
@@ -753,8 +784,18 @@ def live_site_urls(snapshots: list) -> list[str]:
     ]
     latest_by_source: dict[str, SourceSnapshot] = {}
     for snap in snapshots:
-        latest_by_source[snap.source] = snap
-        urls.append(f"./archive/{snap.source}/{snap.date.isoformat()}/")
+        prev = latest_by_source.get(snap.source)
+        if prev is None or snap.date > prev.date:
+            latest_by_source[snap.source] = snap
+    # Only the latest edition per source is precached: precaching every
+    # historical snapshot would grow sw.js unbounded and risk blowing the
+    # browser's cache.addAll() limits after a year of daily digests.
+    # Older editions still work offline via the network-first fetch handler
+    # once visited.
+    urls.extend(
+        f"./archive/{source}/{snap.date.isoformat()}/"
+        for source, snap in sorted(latest_by_source.items())
+    )
     urls.extend(f"./api/sources/{source}.json" for source in latest_by_source)
     return list(dict.fromkeys(urls))
 

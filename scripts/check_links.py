@@ -86,8 +86,24 @@ def classify_status(status: int | None) -> str:
     return "error"
 
 
+def _retry_after_seconds(response: httpx.Response, attempt: int) -> float:
+    """Delay before retrying a 429, honoring Retry-After (capped at 60s)."""
+    raw = response.headers.get("Retry-After")
+    if raw:
+        try:
+            return max(0.0, min(float(raw), 60.0))
+        except ValueError:
+            pass
+    return BACKOFF * (attempt + 1)
+
+
 def check_url(client: httpx.Client, record: dict) -> dict:
-    """HEAD-check one URL, retrying transient failures."""
+    """HEAD-check one URL, retrying transient failures.
+
+    The 405 fallback uses a streamed GET capped at 64KB so a large page
+    can't blow memory. 429s are retried with Retry-After; other 4xx
+    (403 bot-block, 401 auth wall) still break immediately.
+    """
     url = record["url"]
     last_status: int | None = None
     error: str | None = None
@@ -95,22 +111,34 @@ def check_url(client: httpx.Client, record: dict) -> dict:
         try:
             response = client.head(url)
             if response.status_code == 405:
-                response = client.get(url, follow_redirects=True)
+                with client.stream("GET", url, follow_redirects=True) as streamed:
+                    # Drain at most 64KB to confirm the page serves content.
+                    for _ in streamed.iter_bytes(chunk_size=8192):
+                        break
+                    streamed.raise_for_status()
+                    return {
+                        **record,
+                        "status": streamed.status_code,
+                        "error": None,
+                    }
             response.raise_for_status()
             return {**record, "status": response.status_code, "error": None}
         except httpx.HTTPStatusError as exc:
             last_status = exc.response.status_code
             if last_status in (404, 410, 451):
                 break
-            # Other 4xx (403 bot-block, 429 rate limit, 401 auth wall) mean the
-            # page exists but won't answer this checker — retrying won't help.
+            if last_status == 429 and attempt < RETRIES:
+                time.sleep(_retry_after_seconds(exc.response, attempt))
+                continue
+            # Other 4xx (403 bot-block, 401 auth wall) mean the page exists
+            # but won't answer this checker — retrying won't help.
             if 400 <= last_status < 500:
                 break
             if attempt < RETRIES:
                 time.sleep(BACKOFF * (attempt + 1))
                 continue
         except httpx.HTTPError as exc:
-            error = type(exc).__name__
+            error = f"{type(exc).__name__}: {exc}"[:200]
             if attempt < RETRIES:
                 time.sleep(BACKOFF * (attempt + 1))
                 continue

@@ -1479,10 +1479,9 @@ def test_daily_counts_zero_fills_gaps(tmp_path):
     assert daily[2] == {"date": date(2026, 8, 12), "count": 1}
 
 
-def test_render_dot_chart_scales_columns_to_days(monkeypatch):
+def test_render_dot_chart_scales_columns_to_days():
     from app.render import render_dot_chart
 
-    monkeypatch.setattr("app.render.today_utc", lambda: date(2026, 8, 14))
     daily = [
         {"date": date(2026, 8, 10), "count": 2},
         {"date": date(2026, 8, 11), "count": 0},
@@ -1505,6 +1504,8 @@ def test_render_dot_chart_scales_columns_to_days(monkeypatch):
     assert svg.count('class="chart-axis"') == 3
     assert ">Aug</text>" in svg
     assert ">0</text>" in svg
+    # aria-label spans the data range, not today.
+    assert "to 2026-08-12" in svg
 
 
 def test_render_dot_chart_marks_peak_day():

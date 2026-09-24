@@ -3,4 +3,6 @@ __pycache__/
 *.pyc
 .pytest_cache/
 site/
+site_local/
+catnews
 preview/

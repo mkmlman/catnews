@@ -188,20 +188,45 @@
   var previousScrollY = window.scrollY;
   var headerIsCompact = false;
 
-  function paintStickyOffsets() {
+  function measureStickyOffsets() {
     if (!headerEl) return;
     /* Both mobile headers occupy space while the filters stay sticky. */
     var h = headerEl.offsetHeight;
     document.documentElement.style.setProperty("--header-h", h + "px");
   }
 
+  var stickyRaf = 0;
+  function paintStickyOffsets() {
+    if (!headerEl || stickyRaf) return;
+    /* Coalesce bursts (resize, theme flips) into one measure per frame. */
+    stickyRaf = window.requestAnimationFrame(function () {
+      stickyRaf = 0;
+      measureStickyOffsets();
+    });
+  }
+
+  var headerTrackGen = 0;
+  function trackHeaderHeight() {
+    /* Follow the header through its 0.25s compact transition frame by
+       frame. Offset snapshots alone can't do this: a toggle-time read is
+       pre-transition (stale), ResizeObserver delivery is too coarse, and
+       the old blind 280ms re-measure left the bar lagging behind, then
+       snapping once. */
+    var gen = ++headerTrackGen;
+    var start = window.performance ? window.performance.now() : 0;
+    function frame(now) {
+      if (gen !== headerTrackGen || !headerEl) return;
+      measureStickyOffsets();
+      if (now - start < 320) window.requestAnimationFrame(frame);
+    }
+    window.requestAnimationFrame(frame);
+  }
+
   function setHeaderCompact(compact) {
     if (!headerEl || headerIsCompact === compact) return;
     headerIsCompact = compact;
     headerEl.classList.toggle("is-compact", compact);
-    paintStickyOffsets();
-    /* Keep the sticky bar aligned through the padding transition. */
-    window.setTimeout(paintStickyOffsets, 280);
+    trackHeaderHeight();
   }
 
   function paintHeaderScrim() {
@@ -253,10 +278,25 @@
      ------------------------------------------------------------- */
   var progressBar = document.getElementById("scroll-progress");
 
+  var progressRaf = 0;
   function paintProgress() {
     if (!progressBar) return;
-    var max = document.documentElement.scrollHeight - window.innerHeight;
-    progressBar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + "%";
+    /* Coalesce scroll bursts into one update per frame. */
+    if (progressRaf) return;
+    var schedule =
+      window.requestAnimationFrame ||
+      function (cb) {
+        cb();
+      };
+    progressRaf = schedule(function () {
+      progressRaf = 0;
+      if (!progressBar) return;
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+      /* Clamp: rubber-band overscroll (negative or past-max scrollY) must
+         never collapse the bar or push it past full width. */
+      progressBar.style.width = Math.min(100, Math.max(0, pct)) + "%";
+    });
   }
   window.addEventListener("scroll", paintProgress, { passive: true });
   window.addEventListener("resize", paintProgress);
@@ -781,6 +821,9 @@
       }
     }
     announceFilterCount(matched, visible);
+    /* Showing/hiding cards changes the page height with no scroll event —
+       repaint the reading progress hairline so it never goes stale. */
+    paintProgress();
   }
 
   function resetFilters() {

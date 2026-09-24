@@ -43,6 +43,7 @@ class LinkParser(HTMLParser):
 
     def feed_file(self, path: Path) -> None:
         self.current_file = path
+        self.reset()
         self.feed(path.read_text(encoding="utf-8"))
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
@@ -114,6 +115,12 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
                 json.loads(path.read_text(encoding="utf-8"))
             except (OSError, ValueError) as exc:
                 errors.append(f"invalid JSON {relative}: {exc}")
+
+    for shard in sorted((site_dir / "api").glob("search-*.json")):
+        try:
+            json.loads(shard.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            errors.append(f"invalid JSON api/{shard.name}: {exc}")
 
     feed = site_dir / "feed.rss"
     if feed.is_file():

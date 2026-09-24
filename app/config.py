@@ -137,12 +137,24 @@ FETCH_ATTEMPTS = max(1, _env_int("CATNEWS_FETCH_ATTEMPTS", 3))
 FETCH_BACKOFF_SECONDS = max(0.0, _env_float("CATNEWS_FETCH_BACKOFF_SECONDS", 1.0))
 
 
+SOURCE_KEY_PATTERN = "^[a-z0-9_]+$"
+
+# Compiled once for source-key validation at load time.
+import re as _re
+
+_SOURCE_KEY_RE = _re.compile(SOURCE_KEY_PATTERN)
+
+
 def load_sources(path: Path | None = None) -> dict[str, dict]:
     """Read source definitions from sources.yaml.
 
     Each source may set: key, label, tag, type (api|rss), url (for rss),
     cadence_days, limit, weekday, color. Unknown keys are preserved so hosts
     can add their own metadata, but only the above are interpreted.
+
+    Keys must match ``^[a-z0-9_]+$`` (lowercase alphanumerics + underscore)
+    so they stay valid in snapshot filenames, URLs, and CSS classes.
+    Invalid keys are skipped with a warning instead of crashing the build.
     """
     path = path or SOURCES_FILE
     if path.exists():
@@ -154,6 +166,12 @@ def load_sources(path: Path | None = None) -> dict[str, dict]:
             for entry in entries:
                 key = str(entry.get("key", "")).strip()
                 if not key:
+                    continue
+                if not _SOURCE_KEY_RE.match(key):
+                    print(
+                        f"[catnews] warning: skipping source with invalid key {key!r} "
+                        "(must match ^[a-z0-9_]+$)"
+                    )
                     continue
                 cfg = {**defaults, **entry, "key": key}
                 # An explicit YAML null must fall back to the default too.
@@ -194,6 +212,23 @@ def _apply_env_overrides(sources: dict[str, dict]) -> dict[str, dict]:
 
 SOURCES = _apply_env_overrides(SOURCES)
 
+
+def reload_sources(path: Path | None = None) -> dict[str, dict]:
+    """Re-read source definitions (yaml + env overrides) into the module globals.
+
+    Config is loaded at import for the static build's simplicity, which bakes
+    ``SOURCES``/``SOURCE_LABELS``/``SOURCE_TAGS`` at startup. Call this after
+    changing ``sources.yaml`` or cadence/limit env vars in a long-lived
+    process (tests, dev server) instead of reimporting. Returns the new
+    ``SOURCES`` mapping.
+    """
+    global SOURCES, SOURCE_LABELS, SOURCE_TAGS
+    SOURCES = _apply_env_overrides(load_sources(path))
+    SOURCE_LABELS = {k: v.get("label") or k for k, v in SOURCES.items()}
+    SOURCE_TAGS = {k: v.get("tag") or k for k, v in SOURCES.items()}
+    return SOURCES
+
+
 WEEKDAYS = (
     "Monday",
     "Tuesday",
@@ -211,10 +246,11 @@ def cadence_label(key: str) -> str:
     days = cfg["cadence_days"]
     if days == 1:
         return "daily"
-    if (weekday := cfg.get("weekday")) is not None:
-        if isinstance(weekday, int) and 0 <= weekday < 7:
-            return f"weekly · {WEEKDAYS[weekday]}"
-        cfg["weekday"] = None
+    weekday = cfg.get("weekday")
+    if isinstance(weekday, int) and 0 <= weekday < 7:
+        return f"weekly · {WEEKDAYS[weekday]}"
+    # Invalid weekday: fall through to the generic label without mutating
+    # the config (previous versions cleared it here as a side effect).
     if days == 7:
         return "weekly"
     return f"every {days} days"
@@ -234,11 +270,27 @@ def palette_entries() -> list[dict[str, str]]:
     ]
 
 
+def _lighten_for_dark(hex_color: str, amount: float = 0.45) -> str:
+    """Lighten a hex color towards white so it stays readable on dark themes.
+
+    Custom ``color:`` overrides are authored against the light paper
+    background; reusing them verbatim in dark mode can fail contrast.
+    Named CSS colors can't be adjusted, so they pass through unchanged.
+    """
+    rgb = hex_rgb(hex_color)
+    if rgb is None:
+        return hex_color
+    lightened = tuple(round(c + (255 - c) * amount) for c in rgb)
+    return "#{:02x}{:02x}{:02x}".format(*lightened)
+
+
 def badge_color(key: str) -> tuple[str, str, str, str]:
     """The badge palette entry for a source (light/dark foreground + background)."""
     cfg = SOURCES[key]
     if override := cfg.get("color"):
-        return (override, override, override, override)
+        override_str = str(override)
+        dark_fg = _lighten_for_dark(override_str)
+        return (override_str, override_str, dark_fg, dark_fg)
     try:
         return PALETTE[list(SOURCES).index(key) % len(PALETTE)]
     except ValueError:

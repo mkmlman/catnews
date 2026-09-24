@@ -4,6 +4,8 @@ from datetime import date, datetime
 
 from pydantic import BaseModel, Field
 
+SOURCE_PATTERN = "^[a-z0-9_]+$"
+
 
 class Source(str):
     """Valid source key: lowercase alphanumerics with underscores.
@@ -11,9 +13,12 @@ class Source(str):
     Sources are user-configurable via sources.yaml, so this stays a loose
     pattern rather than a fixed enumeration; pydantic applies it to the
     `source` fields below.
+
+    Kept for backward compatibility — new code should import
+    ``SOURCE_PATTERN`` directly.
     """
 
-    _pattern = "^[a-z0-9_]+$"
+    _pattern = SOURCE_PATTERN
 
 
 class CuratedLink(BaseModel):
@@ -30,8 +35,8 @@ class Story(BaseModel):
     """A single curated story in a digest."""
 
     source: str = Field(
-        description="Where the story came from: hn | arxiv | github",
-        pattern=Source._pattern,
+        description="Where the story came from: hn | arxiv | github | rss source key",
+        pattern=SOURCE_PATTERN,
     )
     title: str
     url: str
@@ -69,12 +74,11 @@ class Story(BaseModel):
     def to_markdown(self) -> str:
         """Render the story as a markdown block (matches the /api/story md output)."""
         author = self.author or "unknown"
-        lines = [f"By {author}"]
+        lines = [f"## [{self.title}]({self.url})", "", f"By {author}"]
         if self.why_read:
             lines.append(f"**Why read:** {self.why_read}")
         if self.authors:
             lines.append(f"**Authors:** {', '.join(self.authors)}")
-        lines.append(f"## [{self.title}]({self.url})")
         if self.summary:
             lines.append(self.summary)
         return "\n\n".join(lines)
@@ -97,7 +101,7 @@ class Digest(BaseModel):
 class SourceSnapshot(BaseModel):
     """One fetch of a single source, archived under data/source_<name>_<date>.json."""
 
-    source: str = Field(pattern=Source._pattern)
+    source: str = Field(pattern=SOURCE_PATTERN)
     date: date
     stories: list[Story]
 

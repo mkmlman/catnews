@@ -129,11 +129,22 @@ def _anchor_text(fragment: str) -> str:
 
 def _is_social_profile(url: str, host: str) -> bool:
     """Skip bare profile/handle links (e.g. x.com/username) that are inline
-    mentions rather than curated content, but keep status/post links."""
+    mentions rather than curated content, but keep status/post links.
+
+    Mastodon post URLs look like /@user/<numeric-id>, so a two-segment
+    path ending in a numeric id is a post, not a profile. Bluesky profile
+    URLs (/profile/<handle>) and X intent links (/i/...) stay skipped.
+    """
     if host not in _SOCIAL_HOSTS:
         return False
     parts = [p for p in urlparse(url).path.split("/") if p]
-    return bool(len(parts) <= 2 and "status" not in parts)
+    if "status" in parts:
+        return False
+    if len(parts) == 2 and parts[0].startswith("@") and parts[1].isdigit():
+        return False
+    return len(parts) == 1 or (
+        len(parts) == 2 and parts[0].lower() in ("profile", "i", "intent")
+    )
 
 
 def _entry_links(
