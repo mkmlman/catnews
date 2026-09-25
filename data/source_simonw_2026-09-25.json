@@ -1,0 +1,62 @@
+{
+  "source": "simonw",
+  "date": "2026-09-25",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "commit-rewriter 0.2",
+      "url": "https://simonwillison.net/2026/Sep/24/commit-rewriter/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/24/commit-rewriter/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-24T20:06:53Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: commit-rewriter 0.2 Support for branches other than the default branch. Use uvx commit-rewriter --branch other to run against another branch. #3 Tags: git",
+      "links": [
+        {
+          "title": "commit-rewriter 0.2",
+          "url": "https://github.com/simonw/commit-rewriter/releases/tag/0.2",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette 1.0a41",
+      "url": "https://simonwillison.net/2026/Sep/24/datasette/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/24/datasette/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-24T19:15:23Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette 1.0a41 Alec Garcia added support for OpenTelemetry to Datasette in this release. I've also refactored all of Datasette's modal dialogs to a single Web Component, which is now documented for other plugins to use . Tags: javascript , datasette , web-components , alex-garcia , opentelemetry",
+      "links": [
+        {
+          "title": "datasette 1.0a41",
+          "url": "https://github.com/simonw/datasette/releases/tag/1.0a41",
+          "site": "github.com"
+        },
+        {
+          "title": "support for OpenTelemetry",
+          "url": "https://docs.datasette.io/en/latest/internals.html#internals-telemetry",
+          "site": "docs.datasette.io"
+        },
+        {
+          "title": "documented for other plugins to use",
+          "url": "https://docs.datasette.io/en/latest/javascript_plugins.html#javascript-plugins-modals",
+          "site": "docs.datasette.io"
+        }
+      ]
+    }
+  ]
+}
