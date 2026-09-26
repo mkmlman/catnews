@@ -40,8 +40,8 @@ let config = {
 }
 // catnews: sync paper background with theme
 function syncFluidPaper(){
-  var isDark = document.documentElement.getAttribute('data-theme')==='dark' || document.documentElement.getAttribute('data-theme')==='pitch';
-  config.BACK_COLOR = isDark ? {r:26,g:26,b:26} : {r:250,g:249,b:246};
+  var theme = document.documentElement.getAttribute('data-theme');
+  config.BACK_COLOR = theme === 'pitch' ? {r:13,g:12,b:10} : theme === 'dark' ? {r:26,g:26,b:26} : {r:250,g:249,b:246};
 }
 syncFluidPaper();
 new MutationObserver(syncFluidPaper).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
@@ -68,6 +68,13 @@ if (!gl) { canvas.hidden = true; return; }
 
 if (isMobile()) {
     config.DYE_RESOLUTION = 512;
+}
+if (
+    (navigator.connection && navigator.connection.saveData) ||
+    window.innerWidth < 560
+) {
+    config.BLOOM = false;
+    config.SUNRAYS = false;
 }
 if (!ext.supportLinearFiltering) {
     config.DYE_RESOLUTION = 512;
@@ -1391,7 +1398,12 @@ function correctRadius (radius) {
 }
 
 function fluidVisible() {
-    return canvas && !canvas.hidden && canvas.style.display !== 'none';
+    if (!canvas || canvas.hidden || canvas.style.display === 'none') return false;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+    try {
+      if (getComputedStyle(canvas).display === 'none') return false;
+    } catch (e) {}
+    return true;
 }
 
 function fluidTypingTarget(target) {
@@ -1403,7 +1415,7 @@ function fluidTypingTarget(target) {
 
 window.addEventListener('mousedown', e => {
     if (!fluidVisible()) return;
-    if (e.target && e.target.closest && e.target.closest('a, button, summary, input, select, textarea')) return;
+    if (e.target && e.target.closest && e.target.closest('a, button, summary, input, select, textarea, label, [role="button"], .chip')) return;
     let posX = scaleByPixelRatio(e.clientX !== undefined ? e.clientX : e.offsetX);
     let posY = scaleByPixelRatio(e.clientY !== undefined ? e.clientY : e.offsetY);
     let pointer = pointers.find(p => p.id == -1);
@@ -1447,7 +1459,7 @@ window.addEventListener('touchmove', e => {
         let posY = scaleByPixelRatio(touches[i].pageY);
         updatePointerMoveData(pointer, posX, posY);
     }
-}, false);
+}, { passive: true });
 
 window.addEventListener('touchend', e => {
     const touches = e.changedTouches;
@@ -1461,10 +1473,14 @@ window.addEventListener('touchend', e => {
 
 window.addEventListener('keydown', e => {
     if (fluidTypingTarget(e.target)) return;
+    // Don't hijack Space on buttons/links — that's activation, not canvas play.
+    if (e.target && e.target.closest && e.target.closest('a, button, [role="button"], input, select, textarea')) return;
     if (e.code === 'KeyP')
         config.PAUSED = !config.PAUSED;
-    if (e.key === ' ')
+    if (e.key === ' ') {
+        e.preventDefault();
         splatStack.push(parseInt(Math.random() * 20) + 5);
+    }
 });
 
 function updatePointerDownData (pointer, id, posX, posY) {

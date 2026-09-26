@@ -16,10 +16,23 @@ def today_utc() -> date:
     return datetime.now(UTC).date()
 
 
-BASE_URL = os.environ.get("CATNEWS_BASE_URL", "http://localhost:8000")
+BASE_URL = os.environ.get("CATNEWS_BASE_URL", "http://localhost:8000").rstrip("/")
 # URL prefix the site is served under, e.g. "/catnews" for a GitHub Pages
 # project site. Empty string means the site is served from the domain root.
-BASE_PATH = os.environ.get("CATNEWS_BASE_PATH", "").rstrip("/")
+# Normalized to "" or "/..." (leading slash enforced) so template links
+# never render as relative `catnews/static/...`.
+_raw_base_path = os.environ.get("CATNEWS_BASE_PATH", "").rstrip("/")
+if _raw_base_path and not _raw_base_path.startswith("/"):
+    print(
+        f"[catnews] warning: CATNEWS_BASE_PATH should start with '/': {_raw_base_path!r}"
+    )
+    _raw_base_path = "/" + _raw_base_path
+BASE_PATH = _raw_base_path
+if BASE_PATH and not BASE_URL.endswith(BASE_PATH):
+    print(
+        f"[catnews] warning: CATNEWS_BASE_URL {BASE_URL!r} does not end with "
+        f"CATNEWS_BASE_PATH {BASE_PATH!r}; canonical URLs may drop the subpath."
+    )
 
 # Source-code link shown in the header/footer; override so a fork points at
 # its own repository instead of the original.
@@ -139,6 +152,12 @@ FETCH_BACKOFF_SECONDS = max(0.0, _env_float("CATNEWS_FETCH_BACKOFF_SECONDS", 1.0
 
 SOURCE_KEY_PATTERN = "^[a-z0-9_]+$"
 
+# Single source of truth lives in app.models; alias here so config and
+# models can't drift (previously duplicated).
+from .models import SOURCE_PATTERN as _MODEL_SOURCE_PATTERN
+
+SOURCE_KEY_PATTERN = _MODEL_SOURCE_PATTERN
+
 # Compiled once for source-key validation at load time.
 import re as _re
 
@@ -158,12 +177,26 @@ def load_sources(path: Path | None = None) -> dict[str, dict]:
     """
     path = path or SOURCES_FILE
     if path.exists():
-        data = yaml.safe_load(path.read_text()) or {}
+        try:
+            data = yaml.safe_load(path.read_text()) or {}
+        except (OSError, yaml.YAMLError) as exc:
+            print(f"[catnews] warning: could not parse {path}: {exc}")
+            return {k: dict(v) for k, v in _BUILTIN_SOURCES.items()}
         entries = data.get("sources") or []
+        if not isinstance(entries, list):
+            print(f"[catnews] warning: 'sources' must be a list in {path}")
+            return {k: dict(v) for k, v in _BUILTIN_SOURCES.items()}
         if entries:
             defaults = data.get("defaults") or {}
+            if not isinstance(defaults, dict):
+                defaults = {}
             sources: dict[str, dict] = {}
             for entry in entries:
+                if not isinstance(entry, dict):
+                    print(
+                        f"[catnews] warning: skipping non-mapping source entry: {entry!r}"
+                    )
+                    continue
                 key = str(entry.get("key", "")).strip()
                 if not key:
                     continue
@@ -175,12 +208,37 @@ def load_sources(path: Path | None = None) -> dict[str, dict]:
                     continue
                 cfg = {**defaults, **entry, "key": key}
                 # An explicit YAML null must fall back to the default too.
-                cadence_days = cfg.get("cadence_days")
-                cfg["cadence_days"] = 1 if cadence_days is None else int(cadence_days)
-                limit = cfg.get("limit")
-                cfg["limit"] = 20 if limit is None else int(limit)
+                try:
+                    cadence_days = cfg.get("cadence_days")
+                    cfg["cadence_days"] = (
+                        1 if cadence_days is None else int(cadence_days)
+                    )
+                except (TypeError, ValueError):
+                    print(
+                        f"[catnews] warning: invalid cadence_days for {key!r}; using 1"
+                    )
+                    cfg["cadence_days"] = 1
+                try:
+                    limit = cfg.get("limit")
+                    cfg["limit"] = 20 if limit is None else int(limit)
+                except (TypeError, ValueError):
+                    print(f"[catnews] warning: invalid limit for {key!r}; using 20")
+                    cfg["limit"] = 20
+                if cfg["cadence_days"] < 1:
+                    print(f"[catnews] warning: clamping cadence_days to 1 for {key!r}")
+                    cfg["cadence_days"] = 1
+                if cfg["limit"] < 1:
+                    print(f"[catnews] warning: clamping limit to 1 for {key!r}")
+                    cfg["limit"] = 1
                 cfg["label"] = str(cfg.get("label") or key)
                 cfg["tag"] = str(cfg.get("tag") or key)
+                source_type = cfg.get("type")
+                if source_type not in {"builtin", "rss", "api"}:
+                    print(
+                        f"[catnews] warning: unknown type {source_type!r} for {key!r}"
+                    )
+                if cfg.get("type") == "rss" and not cfg.get("url"):
+                    print(f"[catnews] warning: rss source {key!r} has no url")
                 weekday = cfg.get("weekday")
                 if weekday is not None:
                     try:
@@ -205,8 +263,12 @@ def _apply_env_overrides(sources: dict[str, dict]) -> dict[str, dict]:
     """Preserve the historical per-source cadence/limit env overrides."""
     for key, cfg in sources.items():
         prefix = key.upper()
-        cfg["cadence_days"] = _env_int(f"CATNEWS_CADENCE_{prefix}", cfg["cadence_days"])
-        cfg["limit"] = _env_int(f"CATNEWS_LIMIT_{prefix}", cfg["limit"])
+        cadence = _env_int(f"CATNEWS_CADENCE_{prefix}", cfg["cadence_days"])
+        limit = _env_int(f"CATNEWS_LIMIT_{prefix}", cfg["limit"])
+        # Clamp so 0/negative values can't silently empty a source or
+        # make everything always due.
+        cfg["cadence_days"] = max(1, cadence)
+        cfg["limit"] = max(1, limit)
     return sources
 
 

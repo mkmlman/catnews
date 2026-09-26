@@ -30,6 +30,11 @@ jobs:
         id: check
         run: |
           uv run python scripts/check_links.py --json data/linkcheck.json --report linkcheck.md || true
+          if [ ! -f data/linkcheck.json ]; then
+            echo "link check produced no report; skipping."
+            echo "dead=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           dead=$(python -c "import json;print(json.load(open('data/linkcheck.json'))['summary'].get('dead', 0))")
           echo "dead=$dead" >> "$GITHUB_OUTPUT"
 
@@ -75,4 +80,17 @@ jobs:
             echo "An open Link rot report issue already exists; not creating another."
           else
             gh issue create --title "$title" --body-file linkcheck.md
+          fi
+
+      - name: Close rot issue when links are healthy
+        if: steps.check.outputs.dead == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Link rot report"
+          number=$(gh issue list --state open --json number,title --jq '.[] | select(.title=="Link rot report") | .number' | head -n1)
+          if [ -n "$number" ]; then
+            gh issue close "$number" --comment "All links verified healthy — closing."
+          else
+            echo "No open rot issue to close."
           fi

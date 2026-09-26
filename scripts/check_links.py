@@ -100,9 +100,9 @@ def _retry_after_seconds(response: httpx.Response, attempt: int) -> float:
 def check_url(client: httpx.Client, record: dict) -> dict:
     """HEAD-check one URL, retrying transient failures.
 
-    The 405 fallback uses a streamed GET capped at 64KB so a large page
-    can't blow memory. 429s are retried with Retry-After; other 4xx
-    (403 bot-block, 401 auth wall) still break immediately.
+    The 405 fallback uses a streamed GET reading only the first 8KB chunk
+    so a large page can't blow memory. 429s are retried with Retry-After;
+    other 4xx (403 bot-block, 401 auth wall) still break immediately.
     """
     url = record["url"]
     last_status: int | None = None
@@ -176,8 +176,10 @@ def check_links(
         for future in as_completed(futures):
             result = future.result()
             result["state"] = classify_status(result.get("status"))
+            # Record final URL after redirects when available for debugging.
             results.append(result)
-    results.sort(key=lambda r: (r["state"], r["domain"]))
+    # Deterministic order so linkcheck.json doesn't churn on thread timing.
+    results.sort(key=lambda r: (r["state"], r["domain"], r["url"]))
     return results
 
 
@@ -192,7 +194,7 @@ def render_markdown_report(results: list[dict]) -> str:
     lines = [
         "# Link rot report",
         "",
-        f"Generated {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}.",
+        f"Generated {datetime.now(UTC).date().isoformat()}.",
         "",
     ]
     counts = summarize(results)
@@ -291,12 +293,14 @@ def main() -> None:
 
     if args.json_out:
         report = {
-            "generated": datetime.now(UTC).isoformat(),
+            # Date-only granularity: identical results produce identical files
+            # so the weekly workflow only opens a PR when links actually change.
+            "generated": datetime.now(UTC).date().isoformat(),
             "summary": counts,
             "checked": len(results),
             "results": results,
         }
-        args.json_out.write_text(json.dumps(report, indent=2) + "\n")
+        args.json_out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     if args.report:
         args.report.write_text(render_markdown_report(results))
         print(f"[catnews] markdown report -> {args.report}")

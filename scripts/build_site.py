@@ -89,7 +89,11 @@ def build_site(
     dead_urls = load_dead_links(linkcheck or (data_dir / "linkcheck.json"))
 
     digest = combined_digest(data_dir)
-    assert digest is not None  # guaranteed: snapshots exist above
+    if digest is None:
+        raise SystemExit(
+            "No stories in snapshots — archive is empty. "
+            "Refetch or check data/source_*.json."
+        )
 
     # Per-edition Open Graph cards for every snapshot page (content-addressed
     # by source + date so each day shares a unique card).
@@ -199,6 +203,8 @@ def build_site(
             base_path=base_path,
             base_url=base_url,
             page_path="/api/",
+            sample_story=digest.stories[0] if digest.stories else None,
+            sample_date=digest.date,
         ),
     )
     # Styled GitHub Pages 404 (served for any missing path)
@@ -229,11 +235,16 @@ def build_site(
         write(out_dir / "api" / "stories.md", render_markdown(digest))
 
     # Per-source feeds: one stream per source with a snapshot, e.g. /feed-hn.rss.
-    # snapshots are ordered ascending by date, so the last per source is newest.
+    # snapshots are date-ordered per source (see store.load_all_snapshots:
+    # grouped by source, ascending by date), so the last per source is newest.
     # The feed shows the merged latest top-N (see store.latest_stories) rather
     # than just the newest delta-only snapshot, so subscribers keep receiving a
     # full stream even for rolling sources.
-    latest_by_source = {snap.source: snap for snap in snapshots}
+    latest_by_source: dict[str, SourceSnapshot] = {}
+    for snap in snapshots:
+        prev = latest_by_source.get(snap.source)
+        if prev is None or snap.date > prev.date:
+            latest_by_source[snap.source] = snap
     for source, snapshot in latest_by_source.items():
         merged = SourceSnapshot(
             source=source,

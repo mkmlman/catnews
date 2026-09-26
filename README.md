@@ -284,7 +284,7 @@ env vars remain available:
 | `CATNEWS_DATA_DIR` | `./data` | Where snapshots live (`source_<name>_<date>.json`) |
 | `CATNEWS_CADENCE_<KEY>` | per-source | Min days between fetches per source (uppercase key) |
 | `CATNEWS_LIMIT_<KEY>` | per-source | Per-source story caps (uppercase key) |
-| `CATNEWS_BASE_PATH` | `` (root) | URL prefix for the dev server (`` for localhost, `/catnews` for Pages) |
+| `CATNEWS_BASE_PATH` | `` (root) | URL prefix for the static Pages build (`` for localhost, `/catnews` for Pages); dev server always serves from `/` |
 | `CATNEWS_REPO_URL` | `https://github.com/mkmlman/catnews` | Source link shown in the header/footer; set it so a fork points at its own repository |
 | `CATNEWS_FETCH_ATTEMPTS` | `3` | Attempts for transient fetch failures |
 | `CATNEWS_FETCH_BACKOFF_SECONDS` | `1.0` | Initial exponential retry delay |

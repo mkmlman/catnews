@@ -35,28 +35,42 @@ def load_curation(day: date, data_dir: Path) -> dict:
     """Load optional curation overrides from data/curation_YYYY-MM-DD.json.
 
     Shape: {"stories": {"<source>:<external_id>": {"why_read": "...", "summary": "..."}}}
+    Returns {} on missing/malformed files so schema drift can't crash a fetch.
     """
     path = data_dir / f"curation_{day.isoformat()}.json"
     if not path.exists():
         return {}
     try:
         data = json.loads(path.read_text())
-        return data.get("stories", {})
     except (json.JSONDecodeError, OSError):
         print(f"[catnews] warning: could not parse curation file {path}")
         return {}
+    if not isinstance(data, dict):
+        print(f"[catnews] warning: curation file {path} must be an object")
+        return {}
+    stories = data.get("stories", {})
+    if stories is None:
+        return {}
+    if not isinstance(stories, dict):
+        print(f"[catnews] warning: curation 'stories' must be an object in {path}")
+        return {}
+    return stories
 
 
 def apply_curation(stories: list[Story], curation: dict) -> list[Story]:
+    if not isinstance(curation, dict):
+        return stories
     for story in stories:
         key = f"{story.source}:{story.external_id}" if story.external_id else story.url
         overrides = curation.get(key) or curation.get(story.url)
-        if not overrides:
+        if not isinstance(overrides, dict) or not overrides:
             continue
-        if "why_read" in overrides:
-            story.why_read = overrides["why_read"]
-        if "summary" in overrides:
-            story.summary = overrides["summary"]
+        why = overrides.get("why_read")
+        if isinstance(why, str) and why.strip():
+            story.why_read = why
+        summary = overrides.get("summary")
+        if isinstance(summary, str) and summary.strip():
+            story.summary = summary
     return stories
 
 
@@ -158,6 +172,10 @@ async def build_with_status(
         if isinstance(result, BaseException):
             last = last_fetched(source, data_dir)
             stale_snapshot = load_latest_snapshot(source, data_dir)
+            # A corrupt latest file yields a date with no readable data —
+            # report unavailable, not stale.
+            if last and stale_snapshot is None:
+                last = None
             statuses[source] = {
                 "state": "stale" if last else "unavailable",
                 "snapshot_date": last.isoformat() if last else None,

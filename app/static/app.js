@@ -292,10 +292,10 @@
       progressRaf = 0;
       if (!progressBar) return;
       var max = document.documentElement.scrollHeight - window.innerHeight;
-      var pct = max > 0 ? (window.scrollY / max) * 100 : 0;
-      /* Clamp: rubber-band overscroll (negative or past-max scrollY) must
-         never collapse the bar or push it past full width. */
-      progressBar.style.width = Math.min(100, Math.max(0, pct)) + "%";
+      var pct = max > 0 ? window.scrollY / max : 0;
+      /* Clamp: rubber-band overscroll must never collapse or overfill. */
+      pct = Math.min(1, Math.max(0, pct));
+      progressBar.style.transform = "scaleX(" + pct + ")";
     });
   }
   window.addEventListener("scroll", paintProgress, { passive: true });
@@ -542,8 +542,17 @@
   function paintToTop() {
     if (!toTopBtn) return;
     var show = window.scrollY > 480;
-    toTopBtn.hidden = !show;
-    toTopBtn.classList.toggle("is-visible", show);
+    if (show) {
+      if (toTopBtn.hidden) toTopBtn.hidden = false;
+      requestAnimationFrame(function () {
+        toTopBtn.classList.add("is-visible");
+      });
+    } else {
+      toTopBtn.classList.remove("is-visible");
+      window.setTimeout(function () {
+        if (!toTopBtn.classList.contains("is-visible")) toTopBtn.hidden = true;
+      }, 220);
+    }
   }
 
   if (toTopBtn) {
@@ -1091,6 +1100,10 @@
   document.addEventListener("keydown", function (event) {
     // Let native controls keep their default keys: the shortcut layer must not
     // hijack Enter on buttons/links/<details>, tab from form fields, etc.
+    // Also stay quiet while a modal dialog is open.
+    var helpOpen = helpDialog && !helpDialog.hidden;
+    var installOpen = installDialog && !installDialog.hidden;
+    if (helpOpen || installOpen) return;
     var target = event.target;
     if (
       target &&
@@ -1783,7 +1796,21 @@
       target.focus();
     });
     window.addEventListener("resize", hideHeatTip);
-    window.addEventListener("scroll", hideHeatTip, { passive: true });
+    // Hiding on scroll keeps a fixed tooltip from drifting off its day
+    // column; throttle via rAF so chart scrolling doesn't thrash.
+    var heatHideQueued = false;
+    window.addEventListener(
+      "scroll",
+      function () {
+        if (heatHideQueued) return;
+        heatHideQueued = true;
+        requestAnimationFrame(function () {
+          heatHideQueued = false;
+          hideHeatTip();
+        });
+      },
+      { passive: true }
+    );
   }
 
   /* Chart entrance: the sheet rises into view the first time it scrolls
@@ -2539,6 +2566,10 @@
     function oceanVisible() {
       if (canvas.hidden || canvas.style.display === "none") return false;
       if (root.getAttribute("data-design-system") === "kami") return false;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+      try {
+        if (getComputedStyle(canvas).display === "none") return false;
+      } catch (e) {}
       return true;
     }
     function sync() {

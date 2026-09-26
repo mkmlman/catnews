@@ -173,6 +173,11 @@ def fetch_status(data_dir: Path) -> dict:
             snapshot_date = snapshot.date
         if state == "ok" and snapshot is None:
             state = "unavailable"
+        raw_stories = entry.get("stories", len(snapshot.stories) if snapshot else 0)
+        try:
+            stories_count = int(raw_stories)  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            stories_count = len(snapshot.stories) if snapshot else 0
 
         labels = {
             "ok": "Current",
@@ -187,7 +192,7 @@ def fetch_status(data_dir: Path) -> dict:
             "state": state,
             "state_label": labels[state],
             "snapshot_date": snapshot_date,
-            "stories": entry.get("stories", len(snapshot.stories) if snapshot else 0),
+            "stories": stories_count,
             "detail": str(entry.get("error", ""))[:240],
             "is_issue": state in {"stale", "unavailable"},
         }

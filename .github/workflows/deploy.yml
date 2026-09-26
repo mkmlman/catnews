@@ -113,6 +113,15 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
+      - name: Update to latest main (archive may have merged)
+        # Scheduled runs start at the schedule SHA; archive merges fresh
+        # snapshots in parallel. Pull so deploy builds committed data
+        # instead of refetching the same sources and risking divergence.
+        run: |
+          git fetch origin main
+          git checkout main 2>/dev/null || git checkout -B main origin/main
+          git pull --ff-only origin main || true
+
       - name: Fetch today's digest
         run: uv run python scripts/fetch_digest.py
 
@@ -120,7 +129,7 @@ jobs:
         run: uv run python scripts/build_site.py --base-path "$BASE_PATH" --base-url "$BASE_URL"
 
       - name: Validate static site
-        run: uv run python scripts/check_site.py --site site --base-path "$BASE_PATH"
+        run: uv run python scripts/check_site.py --site site --base-path "$BASE_PATH" --base-url "$BASE_URL"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1

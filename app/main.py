@@ -68,14 +68,27 @@ async def cache_headers(request: Request, call_next):
     """Cache policy for the dev server (Pages serves static files as-is).
 
     API + feeds change daily: short shared cache. Versioned static assets
-    and OG cards are immutable for a day.
+    and OG cards are immutable for a day. NOTE: the dev server serves from
+    `/` — `CATNEWS_BASE_PATH` only prefixes template links for the static
+    Pages build, it does not remount dev routes (see README config).
     """
     response = await call_next(request)
     path = request.url.path
-    if path.startswith("/api/") or path.endswith((".rss", ".json")):
+    if path == "/sw.js":
+        # Service workers must revalidate per navigation or updates stick.
+        response.headers.setdefault("Cache-Control", "no-cache")
+    elif (
+        path == "/api"
+        or path.startswith("/api/")
+        or path.endswith((".rss", ".json", ".xml", ".txt"))
+    ):
         response.headers.setdefault("Cache-Control", "public, max-age=300")
     elif path.startswith("/static/"):
         response.headers.setdefault("Cache-Control", "public, max-age=86400, immutable")
+    elif path.endswith((".js", ".css")) or "text/html" in response.headers.get(
+        "content-type", ""
+    ):
+        response.headers.setdefault("Cache-Control", "no-cache")
     return response
 
 
@@ -171,7 +184,11 @@ def _wants_json_404(path: str) -> bool:
     """
     if path.startswith("/api/") or path == "/api":
         return True
-    if path.startswith(("/feed", "/static/og/")):
+    if (
+        path == "/feed"
+        or path == "/feed.rss"
+        or path.startswith(("/feed-", "/static/og/"))
+    ):
         return True
     return path.endswith((".json", ".rss", ".xml", ".txt", ".js", ".png", ".svg"))
 
@@ -182,9 +199,11 @@ async def not_found_page(request: Request, exc: StarletteHTTPException) -> Respo
 
     Without this, mistyped page URLs on the live app return FastAPI's raw
     ``{"detail": "Not Found"}`` even though a friendly 404 template exists.
-    Non-404 errors pass through untouched.
+    Only 404s are handled here — other errors propagate untouched.
     """
-    if exc.status_code != 404 or _wants_json_404(request.url.path):
+    if exc.status_code != 404:
+        raise exc
+    if _wants_json_404(request.url.path):
         return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
     return HTMLResponse(
         render_page(
@@ -408,11 +427,6 @@ def api_trends() -> list[dict]:
 @app.get("/api/fetch-status")
 def api_fetch_status_json() -> dict:
     return fetch_status(DATA_DIR)
-
-
-@app.get("/api/sources.json")
-def api_sources_json() -> list[SourceSnapshot]:
-    return api_sources()
 
 
 # --- Markdown / RSS --------------------------------------------------------

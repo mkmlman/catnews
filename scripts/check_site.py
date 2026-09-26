@@ -29,12 +29,17 @@ REQUIRED_FILES = (
     "api/stats.json",
     "api/trends.json",
     "api/fetch-status.json",
+    "api/dead-links.json",
     "api/stories.md",
 )
 
 
 class LinkParser(HTMLParser):
-    """Collect navigable local references from generated HTML."""
+    """Collect navigable local references from generated HTML.
+
+    Beyond href/src, also collects og:image / twitter:image meta content,
+    so a broken social card fails validation instead of shipping silently.
+    """
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -47,17 +52,31 @@ class LinkParser(HTMLParser):
         self.feed(path.read_text(encoding="utf-8"))
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        del tag
+        attr_dict = dict(attrs)
         for name, value in attrs:
             if name in {"href", "src"} and value:
                 self.references.append((self.current_file, value))
+        if tag == "meta":
+            prop = (attr_dict.get("property") or attr_dict.get("name") or "").lower()
+            if prop in {"og:image", "twitter:image"}:
+                content = attr_dict.get("content")
+                if content:
+                    self.references.append((self.current_file, content))
 
 
 def _local_target(
-    reference: str, source: Path, site_dir: Path, base_path: str
+    reference: str, source: Path, site_dir: Path, base_path: str, base_url: str = ""
 ) -> Path | None:
     parsed = urlparse(reference)
-    if parsed.scheme or parsed.netloc or reference.startswith(("#", "mailto:", "tel:")):
+    # Absolute URLs on the same site (canonical, og:image) still map to files.
+    if parsed.scheme or parsed.netloc:
+        if not base_url:
+            return None
+        base_parsed = urlparse(base_url.rstrip("/"))
+        if (parsed.scheme, parsed.netloc) != (base_parsed.scheme, base_parsed.netloc):
+            return None
+        # Fall through with path below after same-origin check.
+    elif reference.startswith(("#", "mailto:", "tel:")):
         return None
 
     path = parsed.path
@@ -89,15 +108,52 @@ def _exists_as_page(path: Path) -> bool:
     return False
 
 
-def check_site(site_dir: Path, base_path: str = "") -> list[str]:
+def check_site(site_dir: Path, base_path: str = "", base_url: str = "") -> list[str]:
     """Return validation errors; an empty list means the artifact is healthy."""
     errors: list[str] = []
     if not site_dir.is_dir():
         return [f"site directory does not exist: {site_dir}"]
+    if not base_url:
+        # Derive same-origin base for absolute URL checks from sitemap/canonical.
+        try:
+            from xml.etree import ElementTree as _ET
+
+            _sm = _ET.parse(site_dir / "sitemap.xml")
+            for _el in _sm.iter():
+                if _el.tag.endswith("loc") and _el.text:
+                    _p = urlparse(_el.text.strip())
+                    base_url = f"{_p.scheme}://{_p.netloc}"
+                    break
+        except (OSError, ValueError):
+            base_url = ""
 
     for relative in REQUIRED_FILES:
         if not (site_dir / relative).is_file():
             errors.append(f"missing required file: {relative}")
+
+    # Per-source artifacts grow with the archive — every source with a
+    # built snapshot must have a feed and latest JSON. (Don't require all
+    # configured SOURCES: tests and fresh checkouts may build a subset.)
+    try:
+        _sources_path = site_dir / "api" / "sources.json"
+        if _sources_path.is_file():
+            import json as _json
+
+            _built = _json.loads(_sources_path.read_text(encoding="utf-8"))
+            _built_keys = {
+                s.get("source")
+                for s in _built
+                if isinstance(s, dict) and s.get("source")
+            }
+            for _key in sorted(_built_keys):
+                if not (site_dir / f"feed-{_key}.rss").is_file():
+                    errors.append(f"missing required file: feed-{_key}.rss")
+                if not (site_dir / "api" / "sources" / f"{_key}.json").is_file():
+                    errors.append(f"missing required file: api/sources/{_key}.json")
+                if not list((site_dir / "static" / "og" / _key).glob("*.png")):
+                    errors.append(f"missing OG cards: static/og/{_key}/*.png")
+    except (OSError, ValueError):
+        pass
 
     for relative in (
         "manifest.json",
@@ -108,6 +164,7 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
         "api/stats.json",
         "api/trends.json",
         "api/fetch-status.json",
+        "api/dead-links.json",
     ):
         path = site_dir / relative
         if path.is_file():
@@ -115,6 +172,15 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
                 json.loads(path.read_text(encoding="utf-8"))
             except (OSError, ValueError) as exc:
                 errors.append(f"invalid JSON {relative}: {exc}")
+
+    for source_json in sorted((site_dir / "api" / "sources").glob("*.json")):
+        try:
+            json.loads(source_json.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            errors.append(f"invalid JSON api/sources/{source_json.name}: {exc}")
+
+    if not list((site_dir / "static" / "og" / "home").glob("*.png")):
+        errors.append("missing OG cards: static/og/home/*.png")
 
     for shard in sorted((site_dir / "api").glob("search-*.json")):
         try:
@@ -137,9 +203,32 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
     sitemap = site_dir / "sitemap.xml"
     if sitemap.is_file():
         try:
-            ElementTree.fromstring(sitemap.read_bytes())
+            root = ElementTree.fromstring(sitemap.read_bytes())
+            # Validate every <loc> resolves to a built page.
+            for loc in root.iter():
+                if not loc.tag.endswith("loc") or not loc.text:
+                    continue
+                url = loc.text.strip()
+                parsed = urlparse(url)
+                path = parsed.path or "/"
+                bp = base_path.rstrip("/")
+                if bp and (path == bp or path.startswith(bp + "/")):
+                    path = path[len(bp) :] or "/"
+                rel = path.lstrip("/")
+                target = site_dir / rel if rel else site_dir / "index.html"
+                if target.is_dir():
+                    target = target / "index.html"
+                if not target.is_file():
+                    errors.append(f"sitemap points to missing page: {url}")
         except (OSError, ElementTree.ParseError) as exc:
             errors.append(f"invalid sitemap.xml: {exc}")
+
+    # Feed XSL must ship alongside feeds or browsers show raw XML.
+    if (
+        list(site_dir.glob("feed*.rss"))
+        and not (site_dir / "static" / "feed.xsl").is_file()
+    ):
+        errors.append("missing required file: static/feed.xsl (referenced by feeds)")
 
     manifest_path = site_dir / "manifest.json"
     if manifest_path.is_file():
@@ -180,7 +269,7 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
 
     for source, reference in parser.references:
         try:
-            target = _local_target(reference, source, site_dir, base_path)
+            target = _local_target(reference, source, site_dir, base_path, base_url)
         except ValueError as exc:
             errors.append(str(exc))
             continue
@@ -212,13 +301,21 @@ def check_site(site_dir: Path, base_path: str = "") -> list[str]:
             errors.append(
                 "service worker should lazy-fetch ./api/search.json, not precache it"
             )
-        for rel in (
-            "./api/digest.json",
-            "./index.html",
-            "./feed.rss",
-        ):
+        for rel in ("./api/digest.json", "./feed.rss"):
             if f'"{rel}"' in precache:
                 errors.append(f"service worker should not precache mutable file {rel}")
+        # NOTE: "./index.html" is intentionally NOT precached (mutable daily
+        # digest) — the network-first handler runtime-caches it on first
+        # online visit.
+        # Every precached URL must exist, or cache.addAll() rejects install.
+        for token in re.findall(r'"(\./[^"]+)"', precache):
+            rel = token[2:]
+            if rel.endswith("/"):
+                target = site_dir / rel / "index.html"
+            else:
+                target = site_dir / rel
+            if not target.is_file():
+                errors.append(f"service worker precaches missing file: {token}")
     return errors
 
 
@@ -228,8 +325,9 @@ def main() -> None:
     parser.add_argument(
         "--base-path", default="", help="Pages URL prefix, e.g. /catnews"
     )
+    parser.add_argument("--base-url", default="", help="Canonical site URL")
     args = parser.parse_args()
-    errors = check_site(args.site, args.base_path)
+    errors = check_site(args.site, args.base_path, args.base_url)
     if errors:
         for error in errors:
             print(f"[catnews] ERROR: {error}", file=sys.stderr)

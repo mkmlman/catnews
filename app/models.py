@@ -7,20 +7,6 @@ from pydantic import BaseModel, Field
 SOURCE_PATTERN = "^[a-z0-9_]+$"
 
 
-class Source(str):
-    """Valid source key: lowercase alphanumerics with underscores.
-
-    Sources are user-configurable via sources.yaml, so this stays a loose
-    pattern rather than a fixed enumeration; pydantic applies it to the
-    `source` fields below.
-
-    Kept for backward compatibility — new code should import
-    ``SOURCE_PATTERN`` directly.
-    """
-
-    _pattern = SOURCE_PATTERN
-
-
 class CuratedLink(BaseModel):
     """A link curated inside a story (e.g. a Register Spill newsletter post)."""
 

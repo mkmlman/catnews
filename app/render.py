@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import html
 import json
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -80,15 +81,21 @@ def load_dead_links(path: Path) -> dict[str, dict]:
         results = report.get("results", [])
     except (ValueError, OSError, AttributeError):
         return {}
-    return {
-        record["url"]: record
-        for record in results
-        if (
-            isinstance(record, dict)
-            and record.get("state") == "dead"
-            and record.get("status") in (404, 410, 451)
-        )
-    }
+    if not isinstance(results, list):
+        return {}
+    dead: dict[str, dict] = {}
+    for record in results:
+        try:
+            if (
+                isinstance(record, dict)
+                and record.get("state") == "dead"
+                and record.get("status") in (404, 410, 451)
+                and isinstance(record.get("url"), str)
+            ):
+                dead[record["url"]] = record
+        except (KeyError, TypeError):
+            continue
+    return dead
 
 
 _env = Environment(
@@ -123,12 +130,14 @@ def render_page(
 ) -> str:
     """Render a template to a full HTML string. Works for the live app and static builds.
 
-    `page_path` is the URL path (including base_path) used for the canonical
-    og:url, e.g. "/catnews/archive/" or "/archive/hn/2026-08-02/".
+    `page_path` is root-relative (e.g. "/archive/"); `base_url` already
+    includes the base_path (e.g. "https://example.com/catnews"), so the
+    canonical og:url is `base_url + page_path`.
     `og_image` is an absolute social-card URL; it falls back to the classic
     brand card when omitted.
     """
     template = _env.get_template(name)
+    clean_base = base_url.rstrip("/")
     return template.render(
         app_name=APP_NAME,
         source_labels=SOURCE_LABELS,
@@ -137,10 +146,10 @@ def render_page(
         badge_css=badge_css(),
         palette=palette_entries(),
         base_path=base_path,
-        base_url=base_url,
+        base_url=clean_base,
         page_path=page_path,
-        og_url=f"{base_url}{page_path}",
-        og_image=og_image or f"{base_url}/static/og.png",
+        og_url=f"{clean_base}{page_path}",
+        og_image=og_image or f"{clean_base}/static/og.png",
         repo_url=REPO_URL,
         asset_version=static_asset_version(),
         story_anchor=story_anchor,
@@ -689,6 +698,10 @@ def walk_site_urls(out_dir: Path, max_bytes: int = 0) -> list[str]:
     for path in sorted(out_dir.rglob("*")):
         if not path.is_file() or path.name == "sw.js":
             continue
+        if path.name == "LDR_LLL1_0.png":
+            continue
+        if path.name.endswith("-LICENSE"):
+            continue
         if max_bytes and path.stat().st_size > max_bytes:
             continue
         rel = path.relative_to(out_dir).as_posix()
@@ -708,7 +721,8 @@ def walk_site_urls(out_dir: Path, max_bytes: int = 0) -> list[str]:
 
 def render_robots(base_url: str) -> str:
     """Robots.txt: allow all crawlers, point to the sitemap."""
-    return f"User-agent: *\nAllow: /\nSitemap: {base_url}/sitemap.xml\n"
+    clean = base_url.rstrip("/")
+    return f"User-agent: *\nAllow: /\nSitemap: {clean}/sitemap.xml\n"
 
 
 def render_sitemap(base_url: str, snapshots: list) -> str:
@@ -717,20 +731,21 @@ def render_sitemap(base_url: str, snapshots: list) -> str:
     Each URL carries a `<lastmod>` derived from the data it shows: snapshot
     pages use their own date, the shared pages the newest snapshot date.
     """
+    clean = base_url.rstrip("/")
     newest = max((s.date for s in snapshots), default=date(1970, 1, 1))
     shared = [
-        f"{base_url}/",
-        f"{base_url}/archive/",
-        f"{base_url}/design/",
-        f"{base_url}/stats/",
-        f"{base_url}/sources/",
-        f"{base_url}/api/",
+        f"{clean}/",
+        f"{clean}/archive/",
+        f"{clean}/design/",
+        f"{clean}/stats/",
+        f"{clean}/sources/",
+        f"{clean}/api/",
     ]
     entries = [
         f"  <url><loc>{u}</loc><lastmod>{newest}</lastmod></url>" for u in shared
     ]
     entries += [
-        f"  <url><loc>{base_url}/archive/{snap.source}/{snap.date.isoformat()}/</loc>"
+        f"  <url><loc>{clean}/archive/{snap.source}/{snap.date.isoformat()}/</loc>"
         f"<lastmod>{snap.date}</lastmod></url>"
         for snap in snapshots
     ]
@@ -742,7 +757,7 @@ def render_sitemap(base_url: str, snapshots: list) -> str:
     )
 
 
-def site_version(out_dir: Path) -> str:
+def site_version(out_dir: Path, max_bytes: int = 2_000_000) -> str:
     """Return a content fingerprint for a generated static site.
 
     Only stable files are fingerprinted (see ``_sw_stable``): mutable digest,
@@ -750,14 +765,21 @@ def site_version(out_dir: Path) -> str:
     are ignored so the fingerprint — and therefore the service worker cache
     name — survives daily data refreshes. The service worker uses it as its
     cache name; a stable name means returning browsers do not re-download the
-    entire precache every day.
+    entire precache every day. Files larger than `max_bytes` are also skipped
+    so the fingerprint matches `walk_site_urls(max_bytes=...)` precaching.
     """
     digest = hashlib.sha256()
     for path in sorted(out_dir.rglob("*")):
         if not path.is_file() or path.name == "sw.js":
             continue
+        if path.name == "LDR_LLL1_0.png":
+            continue
+        if path.name.endswith("-LICENSE"):
+            continue
         rel = path.relative_to(out_dir).as_posix()
         if not _sw_stable(rel):
+            continue
+        if max_bytes and path.stat().st_size > max_bytes:
             continue
         digest.update(rel.encode("utf-8"))
         digest.update(path.read_bytes())
@@ -772,9 +794,17 @@ def live_site_urls(snapshots: list) -> list[str]:
     # fallback (caches.match("./index.html")) hits on the live app too.
     urls = ["./", "./index.html"]
     for path in sorted(STATIC_DIR.rglob("*")):
-        if path.is_file():
-            urls.append("./static/" + path.relative_to(STATIC_DIR).as_posix())
+        if not path.is_file():
+            continue
+        if path.name == "LDR_LLL1_0.png":
+            continue
+        if path.name.endswith("-LICENSE"):
+            continue
+        if path.stat().st_size > 2_000_000:
+            continue
+        urls.append("./static/" + path.relative_to(STATIC_DIR).as_posix())
     urls += [
+        "./404.html",
         "./archive/",
         "./stats/",
         "./sources/",
@@ -796,7 +826,10 @@ def live_site_urls(snapshots: list) -> list[str]:
         f"./archive/{source}/{snap.date.isoformat()}/"
         for source, snap in sorted(latest_by_source.items())
     )
-    urls.extend(f"./api/sources/{source}.json" for source in latest_by_source)
+    # NOTE: per-source latest JSON (./api/sources/<source>.json) is mutable
+    # (changes on every fetch), so it is deliberately NOT precached — the
+    # network-first fetch handler runtime-caches it on demand, matching the
+    # static build's `_sw_stable` exclusion.
     return list(dict.fromkeys(urls))
 
 
@@ -833,12 +866,23 @@ def _with_feed_stylesheet(xml: str) -> str:
 
 
 def render_rss(digest: Digest, base_url: str) -> str:
+    clean_base = base_url.rstrip("/")
     fg = FeedGenerator()
-    fg.id(f"{base_url}/")
+    fg.id(clean_base + "/")
     fg.title(APP_NAME)
-    fg.link(href=base_url, rel="alternate")
+    fg.link(href=clean_base, rel="alternate")
+    fg.link(href=f"{clean_base}/feed.rss", rel="self")
     fg.subtitle("catnews — latest across all sources.")
     fg.language("en")
+    newest_published = max(
+        (s.published for s in digest.stories if s.published), default=None
+    )
+    if newest_published is not None:
+        fg.updated(_aware(newest_published))
+    else:
+        fg.updated(
+            datetime(digest.date.year, digest.date.month, digest.date.day, tzinfo=UTC)
+        )
 
     # Feed readers expect a single newest-first stream, but the digest
     # interleaves sources round-robin so no source dominates the site. Sort the
@@ -854,7 +898,9 @@ def render_rss(digest: Digest, base_url: str) -> str:
 
     for story in stories:
         entry = fg.add_entry(order="append")
-        entry.id(story.url)
+        # Per-edition GUID so an updated story with the same URL does not
+        # collapse in readers across daily editions.
+        entry.id(f"{story.url}#{digest.date.isoformat()}")
         entry.title(story.title)
         entry.link(href=story.url)
         entry.author({"name": story.author or "unknown"})
@@ -862,11 +908,15 @@ def render_rss(digest: Digest, base_url: str) -> str:
             entry.published(_aware(story.published))
         parts = []
         if story.why_read:
-            parts.append(f"<p><strong>Why read:</strong> {story.why_read}</p>")
+            parts.append(
+                f"<p><strong>Why read:</strong> {html.escape(story.why_read)}</p>"
+            )
         if story.summary:
-            parts.append(f"<p>{story.summary}</p>")
+            parts.append(f"<p>{html.escape(story.summary)}</p>")
         if story.hn_url:
-            parts.append(f'<p>Discuss on <a href="{story.hn_url}">Hacker News</a></p>')
+            parts.append(
+                f'<p>Discuss on <a href="{html.escape(story.hn_url, quote=True)}">Hacker News</a></p>'
+            )
         entry.content("".join(parts), type="html")
 
     return _with_feed_stylesheet(fg.rss_str(pretty=True).decode("utf-8"))
@@ -892,6 +942,17 @@ def render_source_rss(source: str, snapshot, base_url: str, feed_url: str) -> st
     )
     fg.subtitle(f"{label} — latest {tag} stories on {APP_NAME}.")
     fg.language("en")
+    newest_published = max(
+        (s.published for s in snapshot.stories if s.published), default=None
+    )
+    if newest_published is not None:
+        fg.updated(_aware(newest_published))
+    else:
+        fg.updated(
+            datetime(
+                snapshot.date.year, snapshot.date.month, snapshot.date.day, tzinfo=UTC
+            )
+        )
 
     stories = sorted(
         snapshot.stories,
@@ -904,7 +965,7 @@ def render_source_rss(source: str, snapshot, base_url: str, feed_url: str) -> st
 
     for story in stories:
         entry = fg.add_entry(order="append")
-        entry.id(story.url)
+        entry.id(f"{story.url}#{snapshot.date.isoformat()}")
         entry.title(story.title)
         entry.link(href=story.url)
         entry.author({"name": story.author or "unknown"})
@@ -912,11 +973,15 @@ def render_source_rss(source: str, snapshot, base_url: str, feed_url: str) -> st
             entry.published(_aware(story.published))
         parts = []
         if story.why_read:
-            parts.append(f"<p><strong>Why read:</strong> {story.why_read}</p>")
+            parts.append(
+                f"<p><strong>Why read:</strong> {html.escape(story.why_read)}</p>"
+            )
         if story.summary:
-            parts.append(f"<p>{story.summary}</p>")
+            parts.append(f"<p>{html.escape(story.summary)}</p>")
         if story.hn_url:
-            parts.append(f'<p>Discuss on <a href="{story.hn_url}">Hacker News</a></p>')
+            parts.append(
+                f'<p>Discuss on <a href="{html.escape(story.hn_url, quote=True)}">Hacker News</a></p>'
+            )
         entry.content("".join(parts), type="html")
 
     return _with_feed_stylesheet(fg.rss_str(pretty=True).decode("utf-8"))

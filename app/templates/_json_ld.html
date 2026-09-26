@@ -29,7 +29,11 @@
       "@type": "ListItem",
       "position": {{ loop.index }},
       "name": {{ label | tojson }}{% if href %},
-      "item": {{ (base_url ~ href) | tojson }}{% endif %}
+      {# href already includes base_path (e.g. "/catnews/") while base_url #}
+      {# already ends with base_path — strip the duplication. #}
+      {% set clean = href %}
+      {% if base_path and href == base_path %}{% set clean = "/" %}{% elif base_path and href.startswith(base_path ~ "/") %}{% set clean = href[base_path|length:] %}{% endif %}
+      "item": {{ (base_url.rstrip("/") + clean) | tojson }}{% endif %}
     }{{ "," if not loop.last }}
     {% endfor %}
   ]
