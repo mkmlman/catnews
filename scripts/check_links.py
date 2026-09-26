@@ -46,15 +46,23 @@ def collect_story_urls(stories: list[dict]) -> list[dict]:
     seen: set[str] = set()
     records: list[dict] = []
     for story in stories:
+        if not isinstance(story, dict):
+            continue
         candidates = [story.get("url"), story.get("hn_url")]
-        for link in story.get("links", []) or []:
-            candidates.append(link.get("url"))
+        raw_links = story.get("links", []) or []
+        if isinstance(raw_links, list):
+            for link in raw_links:
+                if isinstance(link, dict):
+                    candidates.append(link.get("url"))
         for url in candidates:
-            if not url:
+            if not url or not isinstance(url, str):
                 continue
             if url in seen:
                 continue
-            parsed = urlparse(url)
+            try:
+                parsed = urlparse(url)
+            except (ValueError, TypeError):
+                continue
             if parsed.scheme not in {"http", "https"} or not parsed.netloc:
                 continue
             seen.add(url)
@@ -106,23 +114,38 @@ def check_url(client: httpx.Client, record: dict) -> dict:
     """
     url = record["url"]
     last_status: int | None = None
+    final_url: str = url
     error: str | None = None
     for attempt in range(RETRIES + 1):
         try:
             response = client.head(url)
+            try:
+                final_url = str(response.url)
+            except (ValueError, AttributeError):
+                pass
             if response.status_code == 405:
                 with client.stream("GET", url, follow_redirects=True) as streamed:
-                    # Drain at most 64KB to confirm the page serves content.
+                    # Read only the first 8KB chunk to confirm liveness.
                     for _ in streamed.iter_bytes(chunk_size=8192):
                         break
                     streamed.raise_for_status()
+                    try:
+                        final_url = str(streamed.url)
+                    except (ValueError, AttributeError):
+                        pass
                     return {
                         **record,
                         "status": streamed.status_code,
+                        "final_url": final_url,
                         "error": None,
                     }
             response.raise_for_status()
-            return {**record, "status": response.status_code, "error": None}
+            return {
+                **record,
+                "status": response.status_code,
+                "final_url": final_url,
+                "error": None,
+            }
         except httpx.HTTPStatusError as exc:
             last_status = exc.response.status_code
             if last_status in (404, 410, 451):
@@ -142,7 +165,7 @@ def check_url(client: httpx.Client, record: dict) -> dict:
             if attempt < RETRIES:
                 time.sleep(BACKOFF * (attempt + 1))
                 continue
-    return {**record, "status": last_status, "error": error}
+    return {**record, "status": last_status, "final_url": final_url, "error": error}
 
 
 def check_links(

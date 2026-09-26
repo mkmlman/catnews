@@ -292,7 +292,7 @@ def build_site(
     write(api / "fetch-status.json", render_fetch_status(fetch_status(data_dir)))
 
     # SEO: robots.txt + sitemap.xml
-    write(out_dir / "robots.txt", render_robots(base_url))
+    write(out_dir / "robots.txt", render_robots(base_url, base_path))
     write(out_dir / "sitemap.xml", render_sitemap(base_url, snapshots))
 
     # PWA: manifest + service worker. Precaches only the stable app shell
@@ -348,7 +348,11 @@ def main() -> None:
     args = parser.parse_args()
 
     data_dir = args.data_dir or (Path(__file__).resolve().parent.parent / "data")
-    build_site(data_dir, args.out, args.base_path, args.base_url, args.linkcheck)
+    base_url = args.base_url.rstrip("/")
+    base_path = args.base_path.rstrip("/") or ""
+    if base_path and not base_path.startswith("/"):
+        base_path = "/" + base_path
+    build_site(data_dir, args.out, base_path, base_url, args.linkcheck)
 
 
 if __name__ == "__main__":

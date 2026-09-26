@@ -2,6 +2,7 @@
 {% block title %}{{ app_name }} | Not found{% endblock %}
 {% block robots %}<meta name="robots" content="noindex">{% endblock %}
 {% block canonical %}{% endblock %}
+{% block og_url %}{% endblock %}
 {% block content %}
 <section class="page-header">
   {{ crumbs([("Home", base_path ~ "/"), ("Not found", None)]) }}

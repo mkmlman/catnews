@@ -311,6 +311,11 @@ def combined_digest(data_dir: Path, day: date | None = None) -> Digest | None:
 
     The digest is dated from the newest snapshot actually archived, so a
     published page never claims a later date than its own data.
+
+    Empty-archive contract: returns None when there are no stories. The live
+    home page synthesizes an empty edition for a friendly first-run; the
+    static build exits (Pages needs data), and feed/digest endpoints 404
+    while search returns [].
     """
     per_source: list[list[Story]] = []
     latest: date | None = None

@@ -80,6 +80,7 @@ async def cache_headers(request: Request, call_next):
     elif (
         path == "/api"
         or path.startswith("/api/")
+        or path == "/feed"
         or path.endswith((".rss", ".json", ".xml", ".txt"))
     ):
         response.headers.setdefault("Cache-Control", "public, max-age=300")
@@ -180,17 +181,14 @@ def _wants_json_404(path: str) -> bool:
 
     API routes, feeds, and crawler/build artifacts keep their JSON 404s so
     clients can handle them programmatically; everything else is a page
-    navigation and gets the pretty 404 page.
+    navigation and gets the pretty 404 page. Generated OG images are
+    excluded — image consumers get the brand fallback PNG instead.
     """
     if path.startswith("/api/") or path == "/api":
         return True
-    if (
-        path == "/feed"
-        or path == "/feed.rss"
-        or path.startswith(("/feed-", "/static/og/"))
-    ):
+    if path == "/feed" or path == "/feed.rss" or path.startswith("/feed-"):
         return True
-    return path.endswith((".json", ".rss", ".xml", ".txt", ".js", ".png", ".svg"))
+    return path.endswith((".json", ".rss", ".xml", ".txt", ".js", ".svg"))
 
 
 @app.exception_handler(StarletteHTTPException)
@@ -200,9 +198,20 @@ async def not_found_page(request: Request, exc: StarletteHTTPException) -> Respo
     Without this, mistyped page URLs on the live app return FastAPI's raw
     ``{"detail": "Not Found"}`` even though a friendly 404 template exists.
     Only 404s are handled here — other errors propagate untouched.
+    Missing OG cards fall back to the brand card so image consumers
+    still get a valid PNG.
     """
     if exc.status_code != 404:
         raise exc
+    if request.url.path.startswith("/static/og/") and request.url.path.endswith(".png"):
+        fallback = Path(__file__).resolve().parent / "static" / "og.png"
+        if fallback.is_file():
+            return Response(
+                content=fallback.read_bytes(),
+                media_type="image/png",
+                status_code=404,
+                headers={"Cache-Control": "public, max-age=300"},
+            )
     if _wants_json_404(request.url.path):
         return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
     return HTMLResponse(
@@ -324,6 +333,8 @@ def design_system(request: Request) -> HTMLResponse:
 
 @app.get("/404.html", response_class=HTMLResponse)
 def not_found(request: Request) -> HTMLResponse:
+    # Direct hits to the built 404 file are a real file (200); unknown
+    # paths still 404 via the exception handler below.
     return page(request, "404.html", "/404/")
 
 
@@ -483,7 +494,7 @@ def sitemap() -> Response:
 
 @app.get("/robots.txt")
 def robots() -> PlainTextResponse:
-    return PlainTextResponse(render_robots(BASE_URL))
+    return PlainTextResponse(render_robots(BASE_URL, BASE_PATH))
 
 
 @app.get("/manifest.json")

@@ -308,7 +308,8 @@
   var footerToTop = document.getElementById("footer-to-top");
   if (footerToTop) {
     footerToTop.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
     });
   }
 
@@ -559,7 +560,8 @@
     window.addEventListener("scroll", paintToTop, { passive: true });
     window.addEventListener("resize", paintToTop);
     toTopBtn.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
     });
     paintToTop();
   }
@@ -1886,7 +1888,8 @@
      Stats: share/rank bars grow in from zero when scrolled into view
      ------------------------------------------------------------- */
   var statBars = document.querySelectorAll(".share-fill, .rank-fill");
-  if (statBars.length && "IntersectionObserver" in window) {
+  var statReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (statBars.length && "IntersectionObserver" in window && !statReduce) {
     statBars.forEach(function (bar) {
       var target = bar.style.width;
       bar.style.width = "0%";

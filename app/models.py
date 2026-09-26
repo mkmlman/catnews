@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 SOURCE_PATTERN = "^[a-z0-9_]+$"
 
@@ -24,8 +24,8 @@ class Story(BaseModel):
         description="Where the story came from: hn | arxiv | github | rss source key",
         pattern=SOURCE_PATTERN,
     )
-    title: str
-    url: str
+    title: str = Field(min_length=1)
+    url: str = Field(min_length=1)
     author: str | None = Field(
         default=None,
         description="Attribution shown next to the source, e.g. the HN submitter",
@@ -56,6 +56,16 @@ class Story(BaseModel):
         default_factory=list,
         description="Curated links inside the story, credited to their origin sites",
     )
+
+    @field_validator("url", "hn_url", check_fields=False)
+    @classmethod
+    def _reject_unsafe_url(cls, value):
+        if value is None:
+            return value
+        lowered = value.strip().lower()
+        if lowered.startswith(("javascript:", "data:", "vbscript:")):
+            raise ValueError("unsafe URL scheme")
+        return value
 
     def to_markdown(self) -> str:
         """Render the story as a markdown block (matches the /api/story md output)."""

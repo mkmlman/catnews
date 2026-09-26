@@ -108,6 +108,35 @@ def _exists_as_page(path: Path) -> bool:
     return False
 
 
+def _check_rss(path: Path, errors: list[str]) -> None:
+    """Well-formedness plus feed-reader essentials: self link, date, GUIDs."""
+    root = ElementTree.fromstring(path.read_bytes())
+    NS = {"atom": "http://www.w3.org/2005/Atom"}
+    if root.find("channel/atom:link[@rel='self']", NS) is None:
+        errors.append(f"RSS {path.name} missing atom self link")
+    channel = root.find("channel")
+    if channel is not None:
+        has_date = (
+            channel.find("lastBuildDate") is not None
+            or channel.find("updated") is not None
+            or channel.find("pubDate") is not None
+        )
+        if not has_date:
+            errors.append(f"RSS {path.name} missing channel date")
+        guids: list[str] = []
+        for item in channel.findall("item"):
+            title = item.find("title")
+            guid = item.find("guid")
+            if title is None or not (title.text or "").strip():
+                errors.append(f"RSS {path.name} has item without title")
+            if guid is None or not (guid.text or "").strip():
+                errors.append(f"RSS {path.name} has item without guid")
+            elif guid.text:
+                guids.append(guid.text.strip())
+        if len(set(guids)) != len(guids):
+            errors.append(f"RSS {path.name} has duplicate guids")
+
+
 def check_site(site_dir: Path, base_path: str = "", base_url: str = "") -> list[str]:
     """Return validation errors; an empty list means the artifact is healthy."""
     errors: list[str] = []
@@ -191,12 +220,12 @@ def check_site(site_dir: Path, base_path: str = "", base_url: str = "") -> list[
     feed = site_dir / "feed.rss"
     if feed.is_file():
         try:
-            ElementTree.fromstring(feed.read_bytes())
+            _check_rss(feed, errors)
         except (OSError, ElementTree.ParseError) as exc:
             errors.append(f"invalid RSS feed: {exc}")
     for source_feed in sorted(site_dir.glob("feed-*.rss")):
         try:
-            ElementTree.fromstring(source_feed.read_bytes())
+            _check_rss(source_feed, errors)
         except (OSError, ElementTree.ParseError):
             errors.append(f"invalid RSS feed: {source_feed.name}")
 
@@ -282,7 +311,7 @@ def check_site(site_dir: Path, base_path: str = "", base_url: str = "") -> list[
     if sw.is_file():
         sw_text = sw.read_text(encoding="utf-8")
         # Inspect only the PRECACHE array, not the whole worker (its offline
-        # fallback references ./index.html regardless of what it precaches).
+        # fallback references ./ regardless of what it precaches).
         import re
 
         match = re.search(r"PRECACHE = \[(.*?)\];", sw_text, re.DOTALL)
@@ -302,6 +331,12 @@ def check_site(site_dir: Path, base_path: str = "", base_url: str = "") -> list[
                 "service worker should lazy-fetch ./api/search.json, not precache it"
             )
         for rel in ("./api/digest.json", "./feed.rss"):
+            if f'"{rel}"' in precache:
+                errors.append(f"service worker should not precache mutable file {rel}")
+        # NOTE: api/index.html embeds the latest sample story (daily) but
+        # stays precached as app shell per existing tests; sitemap.xml is
+        # never precached (mutable) so a hit here means a build regression.
+        for rel in ("./sitemap.xml",):
             if f'"{rel}"' in precache:
                 errors.append(f"service worker should not precache mutable file {rel}")
         # NOTE: "./index.html" is intentionally NOT precached (mutable daily

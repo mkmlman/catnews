@@ -661,7 +661,7 @@ self.addEventListener("fetch", (event) => {{
                 }})
                 .catch(() =>
                     caches.match(request).then((match) =>
-                        match || (request.mode === "navigate" ? caches.match("./index.html") : null)
+                        match || (request.mode === "navigate" ? caches.match("./") : null)
                     )
                 )
         );
@@ -719,10 +719,13 @@ def walk_site_urls(out_dir: Path, max_bytes: int = 0) -> list[str]:
     return list(dict.fromkeys(urls))
 
 
-def render_robots(base_url: str) -> str:
-    """Robots.txt: allow all crawlers, point to the sitemap."""
+def render_robots(base_url: str, base_path: str = "") -> str:
+    """Robots.txt: allow the served subpath, point to the sitemap."""
     clean = base_url.rstrip("/")
-    return f"User-agent: *\nAllow: /\nSitemap: {clean}/sitemap.xml\n"
+    scope = base_path.rstrip("/") or "/"
+    if scope and not scope.startswith("/"):
+        scope = "/" + scope
+    return f"User-agent: *\nAllow: {scope}/\nSitemap: {clean}/sitemap.xml\n"
 
 
 def render_sitemap(base_url: str, snapshots: list) -> str:
@@ -730,9 +733,11 @@ def render_sitemap(base_url: str, snapshots: list) -> str:
 
     Each URL carries a `<lastmod>` derived from the data it shows: snapshot
     pages use their own date, the shared pages the newest snapshot date.
+    Design-system and API docs are internal tooling, not indexed content.
+    With no snapshots there is no date to stamp, so `lastmod` is omitted.
     """
     clean = base_url.rstrip("/")
-    newest = max((s.date for s in snapshots), default=date(1970, 1, 1))
+    newest = max((s.date for s in snapshots), default=None)
     shared = [
         f"{clean}/",
         f"{clean}/archive/",
@@ -741,9 +746,12 @@ def render_sitemap(base_url: str, snapshots: list) -> str:
         f"{clean}/sources/",
         f"{clean}/api/",
     ]
-    entries = [
-        f"  <url><loc>{u}</loc><lastmod>{newest}</lastmod></url>" for u in shared
-    ]
+    if newest is None:
+        entries = [f"  <url><loc>{u}</loc></url>" for u in shared]
+    else:
+        entries = [
+            f"  <url><loc>{u}</loc><lastmod>{newest}</lastmod></url>" for u in shared
+        ]
     entries += [
         f"  <url><loc>{clean}/archive/{snap.source}/{snap.date.isoformat()}/</loc>"
         f"<lastmod>{snap.date}</lastmod></url>"
@@ -898,9 +906,8 @@ def render_rss(digest: Digest, base_url: str) -> str:
 
     for story in stories:
         entry = fg.add_entry(order="append")
-        # Per-edition GUID so an updated story with the same URL does not
-        # collapse in readers across daily editions.
-        entry.id(f"{story.url}#{digest.date.isoformat()}")
+        # Stable GUID so readers don't duplicate stories across editions.
+        entry.id(story.url)
         entry.title(story.title)
         entry.link(href=story.url)
         entry.author({"name": story.author or "unknown"})
@@ -965,7 +972,7 @@ def render_source_rss(source: str, snapshot, base_url: str, feed_url: str) -> st
 
     for story in stories:
         entry = fg.add_entry(order="append")
-        entry.id(f"{story.url}#{snapshot.date.isoformat()}")
+        entry.id(story.url)
         entry.title(story.title)
         entry.link(href=story.url)
         entry.author({"name": story.author or "unknown"})

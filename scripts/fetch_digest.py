@@ -83,7 +83,12 @@ async def fetch_one(
     *,
     apply_curation_overrides: bool = True,
 ) -> SourceSnapshot:
-    fn = get_fetcher(SOURCES[source])
+    try:
+        fn = get_fetcher(SOURCES[source])
+    except KeyError as exc:
+        # Unknown type:key is a config error, not transient — fail fast
+        # so build_with_status marks the source stale/unavailable.
+        raise RuntimeError(str(exc)) from exc
     for attempt in range(1, FETCH_ATTEMPTS + 1):
         try:
             stories = (await fn(client))[:limit]

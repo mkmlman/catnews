@@ -28,8 +28,12 @@ def main() -> None:
     args = parser.parse_args()
 
     data_dir = args.data_dir or Path(__file__).resolve().parent.parent / "data"
-    build_site(data_dir, args.site, args.base_path, args.base_url)
-    errors = check_site(args.site, args.base_path)
+    base_url = args.base_url.rstrip("/")
+    base_path = args.base_path.rstrip("/") or ""
+    if base_path and not base_path.startswith("/"):
+        base_path = "/" + base_path
+    build_site(data_dir, args.site, base_path, base_url)
+    errors = check_site(args.site, base_path, base_url)
     if errors:
         for error in errors:
             print(f"[catnews] ERROR: {error}", file=sys.stderr)
