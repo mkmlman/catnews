@@ -1,0 +1,68 @@
+{
+  "source": "simonw",
+  "date": "2026-09-26",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting John Gruber",
+      "url": "https://simonwillison.net/2026/Sep/25/john-gruber/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/25/john-gruber/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-25T17:22:01Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Muse is getting a lot of attention — including mine — because it’s both groundbreaking technically (each user gets their own entire persistent Linux VM running in Meta’s cloud) and because it’s packaged in an easy-to-install easy-to-use way. It’s literally presented as a cute mascot . It’s the first consumer-accessible agentic AI system, and Meta has truly done an amazing job with that. But it’s a genuinely open question whether consumers have any understanding what this means. If you buy a power saw that can cut your fingers off, you are almost certainly aware that you are buying a power saw that can sever your fingers. [...] I don’t think people realize how powerful — and thus dangerous — Muse is, especially if it’s running on your Mac. — John Gruber , Muse Looks Cute, but Looks are Deceiving Tags: meta , ai , llms , general-agents , generative-ai , john-gruber , muse-agent , muse",
+      "links": [
+        {
+          "title": "a cute mascot",
+          "url": "https://daringfireball.net/linked/2026/09/24/song-meta-muse-cute",
+          "site": "daringfireball.net"
+        },
+        {
+          "title": "John Gruber",
+          "url": "https://daringfireball.net/linked/2026/09/25/aten-muse",
+          "site": "daringfireball.net"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Northern Gannet, Great Blue Heron, California Brown Pelican",
+      "url": "https://simonwillison.net/2026/Sep/25/sighting-403293902/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/25/sighting-403293902/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-25T02:07:04Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Northern Gannet, Great Blue Heron, California Brown Pelican, in Monterey Bay National Marine Sanctuary, CA, US, CA New 200-800mm Canon EF lens got me my best photo of Morris yet. They really like hanging out under that sign in the harbor! Tags: photography , wildlife",
+      "links": []
+    },
+    {
+      "source": "simonw",
+      "title": "Note on 24th September 2026",
+      "url": "https://simonwillison.net/2026/Sep/24/harder/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/24/harder/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-24T23:31:08Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "The more time I spend working with coding agents, the more convinced I am that they make software engineering even harder. We can do amazing things with them, but unlocking their full potential requires extraordinary discipline and knowledge. Tags: coding-agents , ai , llms",
+      "links": []
+    }
+  ]
+}
