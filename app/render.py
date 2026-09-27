@@ -56,6 +56,24 @@ def _sw_stable(rel: str) -> bool:
     return not (rel.startswith("api/") and rel != "api/index.html")
 
 
+WAYBACK_LATEST = "https://web.archive.org/web/2/"
+
+
+def wayback_url(url: str) -> str:
+    """Return a Wayback Machine rescue link for a story that rotted.
+
+    The ``/web/2/`` timestamp looks like a typo but is intentional and
+    verified: the Wayback Machine treats an unparseable timestamp as
+    "nearest capture" and 302s to the most recent snapshot of that URL
+    (e.g. ``/web/2/https://example.com/`` -> ``/web/20260926020229/...``).
+    The documented ``/web/*/`` form is avoided because it opens the
+    interactive calendar instead of the capture itself, and a hardcoded
+    year would silently miss captures outside it. Centralized here so
+    both the story link and its curated-link rows stay identical.
+    """
+    return WAYBACK_LATEST + url
+
+
 def story_anchor(story) -> str:
     """Stable DOM id for a story card — the target of shareable #story-… links.
 
@@ -153,6 +171,7 @@ def render_page(
         repo_url=REPO_URL,
         asset_version=static_asset_version(),
         story_anchor=story_anchor,
+        wayback_url=wayback_url,
         **context,
     )
 
@@ -448,8 +467,11 @@ def render_dot_chart(daily: list[dict]) -> str:
             f'tabindex="{tab}" aria-label="{label}"></rect>'
         )
     # Hover/focus node riding the silhouette; parked by the client on the
-    # active day column (hidden until then).
-    parts.append('<circle class="chart-marker" r="4.5" hidden="hidden"></circle>')
+    # active day column (hidden until then). cx/cy stay at the origin so
+    # the client only has to set a CSS transform — see .chart-marker.
+    parts.append(
+        '<circle class="chart-marker" r="4.5" cx="0" cy="0" hidden="hidden"></circle>'
+    )
     parts.append("</svg>")
     return "\n".join(parts)
 
@@ -543,6 +565,35 @@ def render_search_index(snapshots: list[SourceSnapshot]) -> str:
     )
 
 
+def render_search_shard_index(years: dict[str, list[dict[str, str]]]) -> str:
+    """Serialize the shard-directory the client uses to pick a load strategy.
+
+    A tiny manifest (``api/search-index.json``) so the browser can decide
+    between the combined index and per-year shards without probing for
+    404s: ``records`` below the ~1 MB budget means one combined fetch,
+    above it the client lazy-loads ``search-<year>.json`` per year.
+    """
+    records = sum(len(rows) for rows in years.values())
+    combined_bytes = len(
+        json.dumps(
+            [row for rows in years.values() for row in rows],
+            ensure_ascii=False,
+            separators=(",", ":"),
+        )
+    )
+    return render_json(
+        {
+            "shards": sorted(years),
+            "records": records,
+            "combined_bytes": combined_bytes,
+            # Same threshold the build and README document; the client
+            # switches to shards once the combined index is not worth one
+            # blocking download.
+            "shard_threshold_bytes": 1_000_000,
+        }
+    )
+
+
 def render_json(data: object) -> str:
     """Serialize a generated API artifact compactly and deterministically."""
     return json.dumps(data, ensure_ascii=False, separators=(",", ":"), default=str)
@@ -583,6 +634,21 @@ def render_manifest() -> str:
             {
                 "src": "./static/favicon-180.png",
                 "sizes": "180x180",
+                "type": "image/png",
+                "purpose": "any",
+            },
+            # Chrome's installability bar needs a 192px and a 512px raster
+            # marked "any"; without them the manifest stays un-installable
+            # even though a maskable icon is present.
+            {
+                "src": "./static/icon-192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any",
+            },
+            {
+                "src": "./static/icon-512.png",
+                "sizes": "512x512",
                 "type": "image/png",
                 "purpose": "any",
             },
@@ -733,7 +799,9 @@ def render_sitemap(base_url: str, snapshots: list) -> str:
 
     Each URL carries a `<lastmod>` derived from the data it shows: snapshot
     pages use their own date, the shared pages the newest snapshot date.
-    Design-system and API docs are internal tooling, not indexed content.
+    The design-system page is internal tooling and is deliberately left out
+    (it also ships `noindex`, so listing it would contradict itself). The
+    API docs stay in — they are public documentation worth indexing.
     With no snapshots there is no date to stamp, so `lastmod` is omitted.
     """
     clean = base_url.rstrip("/")
@@ -741,7 +809,6 @@ def render_sitemap(base_url: str, snapshots: list) -> str:
     shared = [
         f"{clean}/",
         f"{clean}/archive/",
-        f"{clean}/design/",
         f"{clean}/stats/",
         f"{clean}/sources/",
         f"{clean}/api/",

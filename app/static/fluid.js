@@ -888,7 +888,11 @@ let bloomFramebuffers = [];
 let sunrays;
 let sunraysTemp;
 
-let ditheringTexture = createTextureAsync('LDR_LLL1_0.png');
+// The dithering tile ships under static/, which is not the document root
+// once the site is served from a subpath (e.g. /catnews/) — a bare
+// "LDR_LLL1_0.png" would 404 there and quietly kill the bloom dithering.
+const CATNEWS_BASE = (window.CATNEWS && window.CATNEWS.basePath) || '';
+let ditheringTexture = createTextureAsync(CATNEWS_BASE + '/static/LDR_LLL1_0.png');
 
 const blurProgram            = new Program(blurVertexShader, blurShader);
 const copyProgram            = new Program(baseVertexShader, copyShader);

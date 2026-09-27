@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import re
+import struct
+from collections import Counter
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
@@ -34,6 +37,10 @@ from app.store import (
     weekly_trends,
 )
 from scripts.fetch_digest import due_sources
+
+APP_DIR = Path(__file__).resolve().parent.parent / "app"
+DATA_DIR = APP_DIR.parent / "data"
+INDEX_TEMPLATE = (APP_DIR / "templates" / "index.html").read_text()
 
 SAMPLE_HIT = {
     "objectID": "49138188",
@@ -786,9 +793,24 @@ def test_build_site_copies_all_static_assets(tmp_path):
     build_site(tmp_path, out, "/catnews", "https://example.com")
 
     app_static = Path(__file__).resolve().parent.parent / "app" / "static"
-    for name in ("favicon.svg", "style.css"):
+    # Non-text assets are copied verbatim...
+    for name in ("favicon.svg", "favicon-32.png", "feed.xsl"):
         assert (out / "static" / name).read_bytes() == (app_static / name).read_bytes()
     assert (out / "static" / "fonts").is_dir()
+    # ...while the shipped CSS/JS are minified in the output only. They
+    # must still be valid and still carry every rule, so the build
+    # stripping comments is checked by rule count rather than bytes.
+    shipped_css = (out / "static" / "style.css").read_text()
+    assert len(shipped_css) < len((app_static / "style.css").read_text())
+    assert "@media print" in shipped_css
+    assert shipped_css.count("@media") == (app_static / "style.css").read_text().count(
+        "@media"
+    )
+    assert (out / "static" / "app.js").stat().st_size < (
+        app_static / "app.js"
+    ).stat().st_size
+    # The readable source of truth is never rewritten by the build.
+    assert (app_static / "style.css").read_text().lstrip().startswith("/*")
     assert (out / "static" / "favicon.svg").exists()
     assert not (out / "stale-page.html").exists()
     assert (out / "api" / "search.json").exists()
@@ -1896,6 +1918,10 @@ def test_stats_sparkline_has_role_img_not_aria_hidden(client, tmp_path):
         'class="stat-spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"'
         not in page
     )
+    # The viewBox is stretched to the card width, so the end marker is a
+    # vertical rule (crisp at any width) rather than a dot (an ellipse).
+    assert 'class="spark-rule"' in page
+    assert "spark-dot" not in page
 
 
 def test_api_page_gives_every_endpoint_copy_affordances(client, tmp_path):
@@ -2006,8 +2032,627 @@ def test_sitemap_includes_lastmod(tmp_path):
     out = tmp_path / "site"
     build_site(tmp_path, out, "/catnews", "https://example.com")
     sitemap = (out / "sitemap.xml").read_text()
-    assert sitemap.count("<lastmod>") == 7  # 6 shared pages + 1 snapshot
+    assert sitemap.count("<lastmod>") == 6  # 5 shared pages + 1 snapshot
     assert "<lastmod>2026-08-02</lastmod>" in sitemap
+    # The design system is internal tooling and ships noindex, so listing it
+    # would contradict itself.
+    assert "/design/" not in sitemap
+    assert "/api/" in sitemap
+
+
+def test_hero_reports_the_oldest_source_not_an_impossible_date():
+    # Regression: the hero guarded on `latest_snapshot < digest.date`, but both
+    # are the max over the same per-source snapshot dates, so the "through …"
+    # note could never render. An edition merges each source's *latest* stories,
+    # so the honest range is the oldest contributing snapshot.
+    from app.store import combined_digest, fetch_status
+
+    digest = combined_digest(DATA_DIR)
+    status = fetch_status(DATA_DIR)
+    assert digest is not None
+    assert "latest_snapshot < digest.date" not in re.sub(
+        r"\{#.*?#\}", "", INDEX_TEMPLATE, flags=re.DOTALL
+    )
+    assert "oldest_snapshot < digest.date" in INDEX_TEMPLATE
+    assert "since " in INDEX_TEMPLATE
+    # The invariant the old guard got wrong, stated directly.
+    assert status["latest_snapshot"] <= digest.date
+    assert status["oldest_snapshot"] <= status["latest_snapshot"]
+
+
+def test_every_page_has_exactly_one_h1(client):
+    # The stats sheet rendered its wordmark as a <p>, leaving the page with no
+    # top-level heading at all — the only page on the site in that state.
+    for path in ("/", "/archive/", "/sources/", "/stats/", "/api/", "/design/"):
+        page = client.get(path).text
+        assert page.count("<h1") == 1, (path, page.count("<h1"))
+
+
+def test_overdue_source_is_reported_as_an_issue(tmp_path):
+    # "skipped" only records what the last run decided, so a weekly source can
+    # read as on-schedule forever after it silently stops being fetched (e.g. an
+    # upstream outage on its single weekday). Age it against the cadence.
+    stale = date(2026, 8, 2)
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=stale,
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    # A report dated well after the cadence window, still saying "skipped".
+    save_fetch_report(
+        date(2026, 9, 25),
+        tmp_path,
+        {"hn": {"state": "skipped", "snapshot_date": stale.isoformat()}},
+    )
+    status = fetch_status(tmp_path)
+    hn = status["sources"]["hn"]
+    assert hn["state"] == "stale"
+    assert hn["is_issue"] is True
+    assert status["has_issues"] is True
+    assert "cadence" in hn["detail"]
+
+
+def test_source_within_cadence_stays_on_schedule(tmp_path):
+    # The other half of the overdue rule: a weekly source 4 days into a 7-day
+    # cadence is on schedule and must not be flagged.
+    recent = date(2026, 9, 21)
+    save_snapshot(
+        SourceSnapshot(
+            source="registerspill",
+            date=recent,
+            stories=[Story(source="registerspill", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    save_fetch_report(
+        date(2026, 9, 25),
+        tmp_path,
+        {
+            "registerspill": {
+                "state": "skipped",
+                "snapshot_date": recent.isoformat(),
+            }
+        },
+    )
+    row = fetch_status(tmp_path)["sources"]["registerspill"]
+    assert row["state"] == "skipped"
+    assert row["is_issue"] is False
+
+
+def test_fetch_status_exposes_oldest_snapshot(tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    save_snapshot(
+        SourceSnapshot(
+            source="arxiv",
+            date=date(2026, 8, 10),
+            stories=[Story(source="arxiv", title="B", url="https://b")],
+        ),
+        tmp_path,
+    )
+    status = fetch_status(tmp_path)
+    assert status["oldest_snapshot"] == date(2026, 8, 2)
+    assert status["latest_snapshot"] == date(2026, 8, 10)
+
+
+def test_og_card_blobs_follow_the_badge_palette():
+    # The share card used to hardcode its blob colors, so a palette re-tune for
+    # contrast left the card showing colors the site no longer used.
+    from app.config import PALETTE
+    from app.og_image import _paw_colors, hex_rgb
+
+    blobs = _paw_colors()
+    assert len(blobs) == 4
+    for (_, got), (expected, *_rest) in zip(blobs, PALETTE):
+        assert got == hex_rgb(expected)
+
+
+def test_dead_css_is_gone():
+    # These rules survived a redesign that replaced their markup. They cost
+    # bytes on every page and mislead the next reader into wiring them up.
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    for dead in (
+        ".share-bar",
+        ".share-cell",
+        ".share-pct",
+        ".share-fill",
+        ".stat-table--health",
+        ".spark-cell",
+        ".source-name",
+        ".story-links-credit",
+        ".edition-label",
+        ".ds-eyebrow",
+        ".ds-type-display",
+        ".header-actions",
+        ".stat-section",
+        ".visually-hidden",
+        # Semantic text-size aliases nothing consumed.
+        "--text-xs:",
+        "--text-sm:",
+        "--text-title:",
+        "--text-hero:",
+    ):
+        assert dead not in css, dead
+    # The one live bar animation must still be wired in JS.
+    app_js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    assert 'querySelectorAll(".rank-fill")' in app_js
+    assert ".share-fill" not in app_js
+
+
+def test_every_css_token_is_consumed():
+    # An unread custom property is a promise the stylesheet never keeps.
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    # Only count real declarations: `.hero--ticks` is a class, not a token.
+    declared = set(re.findall(r"(?m)^\s*(--[a-z0-9-]+)\s*:", css))
+    consumed = set(re.findall(r"var\((--[a-z0-9-]+)", css))
+    assert declared - consumed == set(), declared - consumed
+
+
+def test_footer_controllers_are_not_duplicated_inline():
+    # The theme menu and design toggle only act on interaction, so re-parsing
+    # them on all 382 pages bought nothing.
+    base = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
+    ).read_text()
+    app_js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    assert 'id="theme-menu"' in base
+    assert 'getElementById("theme-menu")' in app_js
+    assert 'getElementById("design-toggle")' in app_js
+    # No second copy left inline.
+    inline = "\n".join(re.findall(r"<script>(.*?)</script>", base, re.DOTALL))
+    assert "theme-menu" not in inline
+    assert "design-toggle" not in inline
+    # The theme bootstrap must stay inline or the first paint flashes light.
+    assert "catnewsSetTheme" in inline
+    # window.CATNEWS is defined before the deferred app.js is fetched, since
+    # app.js reads CFG.basePath at load.
+    assert base.index("window.CATNEWS") < base.index("static/app.js")
+
+
+def test_manifest_offers_installable_icon_sizes():
+    # Chrome refuses to offer installation unless the manifest declares a
+    # 192px and a 512px raster with purpose "any" (a maskable icon alone is
+    # not enough), so the generated set must cover all three entries.
+    import json
+
+    from app.render import render_manifest
+
+    icons = json.loads(render_manifest())["icons"]
+    any_icons = {i["sizes"]: i for i in icons if i["purpose"] == "any"}
+    assert "192x192" in any_icons
+    assert "512x512" in any_icons
+    assert any(i["purpose"] == "maskable" for i in icons)
+
+
+def test_app_icon_renders_valid_png_at_install_sizes():
+    from app.og_image import render_app_icon, render_maskable_icon
+
+    for size in (192, 512):
+        png = render_app_icon(size)
+        assert png.startswith(b"\x89PNG\r\n\x1a\n")
+        width, height = struct.unpack(">II", png[16:24])
+        assert (width, height) == (size, size)
+    maskable = render_maskable_icon()
+    assert maskable.startswith(b"\x89PNG\r\n\x1a\n")
+
+
+def test_build_site_emits_install_icon_sizes(tmp_path):
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+    for name in ("icon-192.png", "icon-512.png", "icon-maskable-512.png"):
+        assert (out / "static" / name).read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+
+    from scripts.check_site import check_site
+
+    assert check_site(out, "/catnews") == []
+
+
+def test_live_app_serves_install_icon_sizes(client):
+    from app.config import DATA_DIR  # noqa: F401  (client fixture sets the data dir)
+
+    for path in ("/static/icon-192.png", "/static/icon-512.png"):
+        response = client.get(path)
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "image/png"
+        assert response.content.startswith(b"\x89PNG\r\n\x1a\n")
+
+
+def test_wayback_url_targets_nearest_capture():
+    from app.render import wayback_url
+
+    # "/web/2/" is a valid "nearest capture" timestamp on the Wayback
+    # Machine, not a year: it 302s to the most recent snapshot. Centralized
+    # so the story link and its curated links cannot drift apart.
+    assert (
+        wayback_url("https://example.com/a")
+        == "https://web.archive.org/web/2/https://example.com/a"
+    )
+
+
+def test_search_shard_directory_lists_every_shard(tmp_path):
+    from app.render import render_search_shard_index, search_index_sharded
+    from scripts.build_site import build_site
+
+    for day in (date(2025, 12, 30), date(2026, 8, 2)):
+        save_snapshot(
+            SourceSnapshot(
+                source="hn",
+                date=day,
+                stories=[Story(source="hn", title=f"A {day}", url=f"https://{day}")],
+            ),
+            tmp_path,
+        )
+    out = tmp_path / "site"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+
+    directory = json.loads((out / "api" / "search-index.json").read_text())
+    # The dev server returns the same artifact as the static build.
+    assert directory == json.loads(
+        render_search_shard_index(search_index_sharded(load_all_snapshots(tmp_path)))
+    )
+    assert directory["shards"] == ["2025", "2026"]
+    assert directory["records"] > 0
+    assert directory["shard_threshold_bytes"] == 1_000_000
+    assert directory["combined_bytes"] > 0
+
+    # Every advertised shard must exist and hold records, and the combined
+    # count must match the sum of the shards.
+    total = 0
+    for year in directory["shards"]:
+        records = json.loads((out / "api" / f"search-{year}.json").read_text())
+        assert isinstance(records, list) and records
+        total += len(records)
+    assert total == directory["records"]
+
+    from scripts.check_site import check_site
+
+    assert check_site(out, "/catnews") == []
+
+
+def test_check_site_flags_unlisted_search_shard(tmp_path):
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+    (out / "api" / "search-1999.json").write_text("[]")
+
+    from scripts.check_site import check_site
+
+    errors = check_site(out, "/catnews")
+    assert any("search-1999.json" in e for e in errors)
+
+
+def test_check_site_flags_missing_install_icon_sizes(tmp_path):
+    from scripts.build_site import build_site
+
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    out = tmp_path / "site"
+    build_site(tmp_path, out, "/catnews", "https://example.com")
+    (out / "static" / "icon-192.png").unlink()
+
+    from scripts.check_site import check_site
+
+    errors = check_site(out, "/catnews")
+    assert any("icon-192.png" in e for e in errors)
+
+
+def test_live_app_serves_search_shards(client, tmp_path):
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 2),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    directory = client.get("/api/search-index.json")
+    assert directory.status_code == 200
+    assert "2026" in directory.json()["shards"]
+
+    shard = client.get("/api/search-2026.json")
+    assert shard.status_code == 200
+    assert shard.json()[0]["title"] == "A"
+    # An unknown year 404s so the client falls back to the combined index.
+    assert client.get("/api/search-1999.json").status_code == 404
+    assert client.get("/api/search-notayear.json").status_code == 404
+
+
+def test_client_search_prefers_shards_above_the_budget():
+    app_js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    # The combined index grows ~50 records/day; the client reads the
+    # directory and switches to per-year shards once it is not worth one
+    # blocking download, keeping the combined file as the fallback.
+    assert 'loadJson("/api/search-index.json")' in app_js
+    assert 'loadJson("/api/search-" + year + ".json")' in app_js
+    assert "shard_threshold_bytes" in app_js
+    assert 'return loadJson("/api/search.json");' in app_js
+
+
+def test_client_preloads_design_font_without_duplicating_serif():
+    base = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
+    ).read_text()
+    # Source Serif is preloaded declaratively in <head>; injecting it again
+    # from JS fires duplicate preload warnings.
+    assert base.count("sourceserif4-latin-normal.woff2") == 1
+    assert base.count("sourceserif4-latin-italic.woff2") == 1
+    assert "preloads.push(" not in base
+
+
+def test_theme_readout_paints_from_the_footer_controller():
+    base = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
+    ).read_text()
+    app_js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    # The head script sets data-theme but runs before the footer exists, so
+    # the visible value has to be painted once the footer controller runs —
+    # otherwise a stored dark/pitch/auto theme still reads "LIGHT".
+    assert 'id="theme-value"' in base
+    assert 'getElementById("theme-value")' in app_js
+    assert "prefers-color-scheme: dark" in app_js
+    # An "auto" readout has to name the resolved theme, not just "AUTO".
+    assert "AUTO · DARK" in app_js
+
+
+def test_footer_toggles_are_labelled_readouts():
+    base = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
+    ).read_text()
+    # "◐" and "DESIGN · DEP" gave no clue what a tri-state control did.
+    assert 'id="ocean-toggle-value"' in base
+    assert 'class="ctl-key">BG<' in base
+    assert 'class="ctl-key">STYLE<' in base
+    assert 'class="ctl-key">THEME<' in base
+    assert "\u25d0" not in base
+
+
+def test_design_toggle_label_matches_the_default_design_system():
+    base = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
+    ).read_text()
+    # The head script defaults to Kami; a hardcoded DEP label flashed the
+    # wrong design on every first visit.
+    assert 'id="design-toggle-label">KAMI<' in base
+
+
+def test_favicon_icons_are_toggleable_for_manual_themes():
+    base = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "base.html"
+    ).read_text()
+    # The <link> icons follow prefers-color-scheme and cannot know about a
+    # local theme override, so one of each pair is toggled by script.
+    assert 'id="favicon-light"' in base
+    assert 'id="favicon-dark"' in base
+    assert 'getElementById("favicon-dark")' in base
+
+
+def test_story_title_keeps_full_text_in_the_tooltip():
+    story = (
+        Path(__file__).resolve().parent.parent / "app" / "templates" / "_story.html"
+    ).read_text()
+    # The title is clamped to three lines; a dead-link status must win the
+    # single title attribute, and the full text must still be recoverable.
+    assert "{% if dead %}" in story
+    assert 'title="{{ story.title }}"{% endif %}' in story
+    assert "unreachable when last checked" in story
+
+
+def test_arrow_keys_do_not_navigate_away_from_the_chart():
+    app_js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    # Left/right drive previous/next edition page-wide, which stole the
+    # dot chart's day-to-day navigation.
+    assert '.closest(".trend-chart .heat")' in app_js
+
+
+def test_deep_link_scroll_measures_chrome_first():
+    app_js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    # --header-h starts unset, so a #story- link on a cold page scrolled the
+    # card underneath the masthead.
+    focus = app_js.split("function focusStoryHash()", 1)[1]
+    assert "measureStickyOffsets();" in focus.split("window.scrollTo", 1)[0]
+
+
+def test_ocean_skips_rendering_under_reduced_motion():
+    app_js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    # CSS hides the canvas anyway, so raymarching it burns a GPU on pixels
+    # nobody can see. The check must precede getContext.
+    block = app_js.split('document.getElementById("ocean")', 1)[1].split("})();", 1)[0]
+    early = block.index("if (reduceQuery.matches)")
+    assert early < block.index('canvas.getContext("webgl"')
+
+
+def test_fluid_dither_texture_uses_base_path():
+    fluid_js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "fluid.js"
+    ).read_text()
+    # A bare "LDR_LLL1_0.png" resolves against the document root, so it
+    # 404'd whenever the site is served from a subpath.
+    assert "createTextureAsync(CATNEWS_BASE + '/static/LDR_LLL1_0.png')" in fluid_js
+    assert "window.CATNEWS" in fluid_js
+
+
+def test_search_results_carry_source_and_date():
+    app_js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    # A title-only result gave no clue which edition a hit came from.
+    assert 'class="search-result-when"' in app_js
+    assert "formatShortDate(story.date)" in app_js
+
+
+def test_mobile_filter_bar_is_a_single_row():
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    phone = css.split("@media (max-width: 560px)", 1)[1]
+    row = phone.split(".filter-row {", 1)[1].split("}", 1)[0]
+    # The bar is no longer pinned on phones (that was ~200px of chrome on a
+    # short viewport), so the two stacked rows collapse into one.
+    assert "grid-template-areas: none;" in row
+    assert "grid-template-columns: none;" in row
+
+
+def test_filters_do_not_pin_without_js():
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    # --header-h is measured in JS; without it `top: 0` slid the bar under
+    # the fixed masthead.
+    assert ".no-js .filters { position: static; }" in css
+
+
+def test_print_keeps_edition_nav_and_link_targets():
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    print_block = css.split("@media print", 1)[1]
+    # A sheet of stories with no date or source is just a list of links.
+    hidden = print_block.split("display: none !important;", 1)[0]
+    assert ".snapshot-nav" not in hidden
+    assert ".story-link[href]::after" in print_block
+    assert ".discuss[href]::after" in print_block
+    assert ".story-foot { padding-top: 6px; }" in print_block
+
+
+def test_build_minifies_only_the_output_artifact():
+    from scripts.build_site import minify_css, minify_js
+
+    # A `//` inside a string is not a comment.
+    assert "'http://x//y'" in minify_js("var url = 'http://x//y';\n")
+    assert '"a//b"' in minify_js('var s = "a//b";\n')
+    # Nor is one inside a template literal or a regex literal.
+    assert "`x//y`" in minify_js("var t = `x//y`;\n")
+    assert r"/a\/b/g" in minify_js(r"var r = /a\/b/g;" + "\n")
+    # Nor is a `/` that divides.
+    assert "a / b" in minify_js("var d = a / b;\n")
+    # Real comments go, both inline and block.
+    assert minify_js("var a = 1; // trailing\n") == "var a = 1;\n"
+    assert minify_js("// only\nvar b = 2;\n") == "var b = 2;\n"
+    assert minify_js("/* banner\n   more */\nvar c = 3;\n") == "var c = 3;\n"
+    # Blank-line runs collapse instead of stacking up.
+    assert minify_js("\n\n\nvar d = 4;\n\n\n") == "var d = 4;\n"
+
+    css = minify_css("/* note */\n.a { color: red; }\n\n.b { color: blue; }\n")
+    assert "note" not in css
+    assert ".a { color: red; }" in css
+    assert ".b { color: blue; }" in css
+
+
+def test_minified_js_keeps_every_string_and_regex():
+    from scripts.build_site import minify_js
+
+    for name in ("app.js", "fluid.js"):
+        source = (
+            Path(__file__).resolve().parent.parent / "app" / "static" / name
+        ).read_text()
+        out = minify_js(source)
+        assert out, name
+        assert len(out) < len(source), name
+        for pattern in (r'"(?:[^"\\\n]|\\.)*"', r"'(?:[^'\\\n]|\\.)*'", r"`[^`]*`"):
+            # Every literal the minified file still uses must be present in
+            # the source the same number of times: a mis-detected comment
+            # truncates a literal, which is exactly what a count mismatch
+            # catches. Source-only literals are expected — those are strings
+            # that lived inside a comment and were dropped on purpose.
+            surviving = Counter(re.findall(pattern, out))
+            original = Counter(re.findall(pattern, source))
+            assert surviving <= original, (name, surviving - original)
+        # The elements the code drives must be untouched.
+        for pattern in (
+            r'getElementById\("([^"]+)"\)',
+            r'addEventListener\("([^"]+)"\)',
+            r'localStorage\.(?:get|set)Item\("([^"]+)"\)',
+        ):
+            assert sorted(set(re.findall(pattern, source))) == sorted(
+                set(re.findall(pattern, out))
+            ), (name, pattern)
+
+
+def test_minified_css_keeps_every_declaration_shape():
+    from scripts.build_site import minify_css
+
+    source = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    out = minify_css(source)
+    # Whitespace between CSS tokens is load-bearing, so only comments and
+    # empty lines are removed: braces, at-rules, custom properties, url()
+    # and font stacks must all be byte-identical.
+    for pattern in (
+        r"@media[^{]+",
+        r"var\(--[a-z-]+",
+        r"url\([^)]*\)",
+        r"font-family:\s*[^;]+;",
+        r'content:\s*("[^"\n]*"|\'[^\'\n]*\')',
+    ):
+        assert sorted(re.findall(pattern, source)) == sorted(
+            re.findall(pattern, out)
+        ), pattern
+    assert source.count("{") == out.count("{") == source.count("}")
+    assert len(out) < len(source)
+
+
+def test_build_shell_keeps_readable_source_by_default():
+    from scripts.build_site import minify_js
+
+    # Minification is opt-out, and app/static/ is never rewritten.
+    source = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    assert "catnews client-side enhancements" in source
+    assert minify_js(source) != source
 
 
 def test_manifest_theme_color_matches_page_background():
@@ -2487,13 +3132,17 @@ def test_build_site_stamps_dead_link_badges(tmp_path):
     assert 'href="https://gone-story"' in home and 'class="is-dead"' in home
     assert 'class="discuss is-dead" href="https://gone-discussion"' in home
     assert 'rel="noopener noreferrer" class="is-dead"' in home
-    # Confirmed-gone links get a Wayback Machine rescue link.
-    assert (
-        'class="story-archived" href="https://web.archive.org/web/2/https://gone-story"'
-        in home
+    # Confirmed-gone links get a Wayback Machine rescue link. The odd
+    # "/web/2/" timestamp is deliberate (Wayback resolves it to the
+    # nearest capture) and comes from the shared wayback_url helper.
+    from app.render import wayback_url
+
+    assert wayback_url("https://gone-story") == (
+        "https://web.archive.org/web/2/https://gone-story"
     )
+    assert f'class="story-archived" href="{wayback_url("https://gone-story")}"' in home
     assert (
-        'class="story-archived-link" href="https://web.archive.org/web/2/https://gone-inner"'
+        f'class="story-archived-link" href="{wayback_url("https://gone-inner")}"'
         in home
     )
     dead_api = json.loads((out / "api" / "dead-links.json").read_text())
@@ -2923,7 +3572,11 @@ def test_dot_chart_marks_curve_points_for_hover_node():
     # Each day overlay pins the hover node's curve height; one parked marker.
     assert svg.count("data-y=") == 2
     assert svg.count('class="chart-marker"') == 1
-    assert svg.split('class="chart-marker"')[1].startswith(' r="4.5" hidden="hidden">')
+    # The node's geometry stays at the origin; the client parks it with a
+    # CSS transform so the move can actually transition.
+    assert svg.split('class="chart-marker"')[1].startswith(
+        ' r="4.5" cx="0" cy="0" hidden="hidden">'
+    )
 
 
 def test_chart_client_wires_live_svg_class():
@@ -3023,6 +3676,35 @@ def test_hover_outline_reserved_for_keyboard_focus():
     ).read_text()
     assert ".heat:focus-visible" in css
     assert ".heat:hover" not in css
+
+
+def test_chart_marker_is_moved_by_transform_not_geometry():
+    # cx/cy are SVG geometry attributes, so transitioning them animated
+    # nothing and the node jumped between days. The marker is now parked
+    # with a CSS transform and its geometry stays at the origin.
+    from app.render import render_dot_chart
+
+    svg = render_dot_chart(
+        [
+            {"date": date(2026, 8, 10), "count": 3},
+            {"date": date(2026, 8, 11), "count": 9},
+        ]
+    )
+    assert 'class="chart-marker" r="4.5" cx="0" cy="0" hidden="hidden"' in svg
+
+    css = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
+    ).read_text()
+    marker = css.split(".chart-marker {", 1)[1].split("}", 1)[0]
+    assert "transition: cx" not in marker
+    assert "transition: transform" in marker
+
+    js = (
+        Path(__file__).resolve().parent.parent / "app" / "static" / "app.js"
+    ).read_text()
+    assert 'chartMarker.style.transform = "translate("' in js
+    assert 'chartMarker.setAttribute("cx"' not in js
+    assert 'chartMarker.setAttribute("cy"' not in js
 
 
 def test_chart_marker_toggles_via_attributes():

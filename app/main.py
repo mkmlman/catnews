@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import json
 from datetime import date
 from pathlib import Path
 
@@ -24,7 +25,7 @@ from .config import (
     today_utc,
 )
 from .models import Digest, SourceSnapshot, Story
-from .og_image import render_maskable_icon, render_og_image
+from .og_image import render_app_icon, render_maskable_icon, render_og_image
 from .render import (
     app_version,
     archive_days,
@@ -36,10 +37,12 @@ from .render import (
     render_page,
     render_robots,
     render_rss,
+    render_search_shard_index,
     render_service_worker,
     render_sitemap,
     render_source_rss,
     search_index,
+    search_index_sharded,
     sparkline_points,
 )
 from .store import (
@@ -164,6 +167,31 @@ def maskable_icon() -> Response:
     """
     return Response(
         content=render_maskable_icon(),
+        media_type="image/png",
+        headers={"Cache-Control": "public, max-age=86400, immutable"},
+    )
+
+
+@app.get("/static/icon-192.png")
+def app_icon_192() -> Response:
+    """192px "any" PWA icon.
+
+    Chrome will not offer installation without a 192px and a 512px raster
+    marked "any", so the dev server renders them on demand exactly as it
+    does the maskable icon. Registered before the /static mount.
+    """
+    return Response(
+        content=render_app_icon(192),
+        media_type="image/png",
+        headers={"Cache-Control": "public, max-age=86400, immutable"},
+    )
+
+
+@app.get("/static/icon-512.png")
+def app_icon_512() -> Response:
+    """512px "any" PWA icon — the larger half of Chrome's install pair."""
+    return Response(
+        content=render_app_icon(512),
         media_type="image/png",
         headers={"Cache-Control": "public, max-age=86400, immutable"},
     )
@@ -410,6 +438,30 @@ def api_search_json(
 ) -> list[dict[str, str]]:
     """Compact deduplicated search records for the client-side archive search."""
     return search_index(load_all_snapshots(DATA_DIR))[:limit]
+
+
+@app.get("/api/search-index.json")
+def api_search_index() -> dict:
+    """Shard directory the client reads to pick combined-vs-sharded search."""
+    return json.loads(
+        render_search_shard_index(search_index_sharded(load_all_snapshots(DATA_DIR)))
+    )
+
+
+@app.get("/api/search-{year}.json")
+def api_search_shard(year: str) -> list[dict[str, str]]:
+    """One year shard of the search index (api/search-2026.json).
+
+    Mirrors the static build so the browser's shard-first loader behaves
+    the same on the dev server; unknown years 404 and the client falls back
+    to the combined index.
+    """
+    if not year.isdigit():
+        raise HTTPException(status_code=404, detail=f"Unknown shard {year!r}.")
+    records = search_index_sharded(load_all_snapshots(DATA_DIR)).get(year)
+    if records is None:
+        raise HTTPException(status_code=404, detail=f"No search shard for {year}.")
+    return records
 
 
 @app.get("/api/dead-links")

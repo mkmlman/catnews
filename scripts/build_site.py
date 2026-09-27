@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -9,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.config import SOURCE_LABELS, SOURCES, source_accent_rgb
 from app.models import SourceSnapshot
-from app.og_image import render_maskable_icon, render_og_image
+from app.og_image import render_app_icon, render_maskable_icon, render_og_image
 from app.render import (
     archive_days,
     load_dead_links,
@@ -22,6 +23,7 @@ from app.render import (
     render_robots,
     render_rss,
     render_search_index,
+    render_search_shard_index,
     render_service_worker,
     render_sitemap,
     render_source_rss,
@@ -68,12 +70,231 @@ def write(path: Path, content: str | bytes) -> None:
     path.open(mode).write(content)
 
 
+def _skip_regex(source: str, start: int) -> int:
+    """Return the index just past a regex literal beginning at `start`.
+
+    Called only when the caller has already established that a `/` here
+    opens a regex rather than dividing two values.
+    """
+    i = start + 1
+    length = len(source)
+    in_class = False
+    while i < length:
+        ch = source[i]
+        if ch == "\\":
+            i += 2
+            continue
+        if ch == "[":
+            in_class = True
+        elif ch == "]":
+            in_class = False
+        elif ch == "\n":
+            # Unterminated — treat the `/` as a plain operator instead.
+            return start + 1
+        elif ch == "/" and not in_class:
+            i += 1
+            while i < length and source[i].isalpha():
+                i += 1
+            return i
+        i += 1
+    return start + 1
+
+
+# Words after which a `/` must be a regex, not a division. Anything else
+# ending in an identifier, literal, or closing bracket means division.
+_REGEX_PRECEDING_WORDS = frozenset(
+    {
+        "return",
+        "typeof",
+        "instanceof",
+        "in",
+        "of",
+        "new",
+        "delete",
+        "void",
+        "do",
+        "else",
+        "yield",
+        "await",
+        "case",
+        "throw",
+    }
+)
+
+
+def _regex_can_start_here(source: str, index: int) -> bool:
+    """True if the `/` at `index` may open a regex literal.
+
+    Decided from the previous significant character: after an operator,
+    bracket, comma, or statement start a `/` is a regex; after an
+    identifier, number, or closing bracket it is division.
+    """
+    i = index - 1
+    while i >= 0 and source[i].isspace():
+        i -= 1
+    if i < 0:
+        return True
+    ch = source[i]
+    if ch.isalnum() or ch in "_$)]}'\"":
+        # Could still be a keyword that permits a regex (`return /x/`).
+        end = i + 1
+        start = i
+        while start >= 0 and (source[start].isalnum() or source[start] in "_$"):
+            start -= 1
+        return source[start + 1 : end] in _REGEX_PRECEDING_WORDS
+    return True
+
+
+def minify_js(source: str) -> str:
+    """Strip JS comments and trailing whitespace without breaking strings.
+
+    A single left-to-right scan that tracks whether it is inside a string,
+    template, or regex literal, so a `//` in a URL, a shader string, or a
+    character class is never mistaken for a comment. Comments become
+    nothing, and a line left empty is dropped — which is also what removes
+    the vertical whitespace from the source. Everything else (indentation,
+    line breaks inside expressions) is preserved, so this can never change
+    what the code does.
+    """
+    out: list[str] = []
+    buf: list[str] = []
+    i = 0
+    length = len(source)
+
+    def end_line() -> None:
+        line = "".join(buf).rstrip()
+        buf.clear()
+        if line:
+            out.append(line)
+        elif out:
+            out.append("")
+
+    while i < length:
+        ch = source[i]
+
+        if ch in "\"'":
+            # A quoted string cannot span lines, so track it to its close.
+            quote = ch
+            buf.append(ch)
+            i += 1
+            while i < length:
+                c = source[i]
+                if c == "\\" and i + 1 < length:
+                    buf.append(source[i : i + 2])
+                    i += 2
+                    continue
+                buf.append(c)
+                i += 1
+                if c == quote or c == "\n":
+                    if c == "\n":
+                        end_line()
+                    break
+            continue
+
+        if ch == "`":
+            # Template literals may span lines and nest ${...}; copy the
+            # whole thing verbatim, including any comments inside ${}.
+            buf.append(ch)
+            i += 1
+            while i < length:
+                c = source[i]
+                if c == "\\" and i + 1 < length:
+                    buf.append(source[i : i + 2])
+                    i += 2
+                    continue
+                buf.append(c)
+                i += 1
+                if c == "`":
+                    break
+                if c == "\n":
+                    line = "".join(buf).rstrip()
+                    buf.clear()
+                    if line:
+                        out.append(line)
+                    else:
+                        out.append("")
+            continue
+
+        if ch == "/" and i + 1 < length:
+            nxt = source[i + 1]
+            if nxt == "/":
+                # Line comment: drop everything up to the newline, which the
+                # main loop then handles normally.
+                end = source.find("\n", i)
+                i = length if end == -1 else end
+                continue
+            if nxt == "*":
+                # Block comment. One that spans newlines terminates the
+                # current line, so a banner comment does not weld the
+                # following code onto the previous statement.
+                end = source.find("*/", i + 2)
+                stop = length if end == -1 else end + 2
+                if "\n" in source[i:stop]:
+                    end_line()
+                i = stop
+                continue
+            if _regex_can_start_here(source, i):
+                stop = _skip_regex(source, i)
+                buf.append(source[i:stop])
+                i = stop
+                continue
+
+        if ch == "\n":
+            end_line()
+            i += 1
+            continue
+
+        buf.append(ch)
+        i += 1
+
+    end_line()
+    while out and not out[-1]:
+        out.pop()
+    return "\n".join(out) + "\n"
+
+
+def minify_css(source: str) -> str:
+    """Strip CSS comments and collapse blank lines, keeping the cascade.
+
+    Whitespace between selectors and values is preserved because it is
+    semantically load-bearing in CSS (`a b`, `margin: 0 auto`, custom
+    property fallbacks); only comments and runs of empty lines go.
+    """
+    without_comments = re.sub(r"/\*.*?\*/", "", source, flags=re.DOTALL)
+    lines = [line.rstrip() for line in without_comments.splitlines()]
+    return "\n".join(line for line in lines if line.strip()) + "\n"
+
+
+MINIFIERS = {"app.js": minify_js, "fluid.js": minify_js, "style.css": minify_css}
+
+
+def minify_assets(static_dir: Path) -> dict[str, tuple[int, int]]:
+    """Minify the shipped CSS/JS in the output dir. Returns before/after sizes.
+
+    Only the build artifact is touched — `app/static/` stays the readable
+    source of truth, and `static_asset_version()` keeps hashing the source
+    so the cache-busting version still changes when the source changes.
+    """
+    saved: dict[str, tuple[int, int]] = {}
+    for name, minify in MINIFIERS.items():
+        path = static_dir / name
+        if not path.is_file():
+            continue
+        original = path.read_text(encoding="utf-8")
+        minified = minify(original)
+        if len(minified) < len(original):
+            path.write_text(minified, encoding="utf-8")
+            saved[name] = (len(original), len(minified))
+    return saved
+
+
 def build_site(
     data_dir: Path,
     out_dir: Path,
     base_path: str,
     base_url: str,
     linkcheck: Path | None = None,
+    args: argparse.Namespace | None = None,
 ) -> None:
     snapshots = load_all_snapshots(data_dir)
     if not snapshots:
@@ -120,11 +341,22 @@ def build_site(
         ),
     )
 
-    # Maskable PWA icon for Android adaptive launchers.
+    # PWA icons. Chrome will not offer installation without a 192px and a
+    # 512px raster marked "any"; the maskable variant covers Android
+    # adaptive launchers. All three are generated, so the build needs no
+    # image dependency and no committed binaries.
+    write(out_dir / "static/icon-192.png", render_app_icon(192))
+    write(out_dir / "static/icon-512.png", render_app_icon(512))
     write(out_dir / "static/icon-maskable-512.png", render_maskable_icon())
 
     # Static assets (style.css, fonts, favicon)
     shutil.copytree(STATIC_DIR, out_dir / "static", dirs_exist_ok=True)
+    if args is None or not getattr(args, "no_minify", False):
+        saved = minify_assets(out_dir / "static")
+        for name, (before, after) in saved.items():
+            print(
+                f"[catnews] minified static/{name}: {before // 1024}KB -> {after // 1024}KB"
+            )
 
     # Pages
     write(
@@ -273,8 +505,13 @@ def build_site(
         ),
     )
     write(api / "search.json", render_search_index(snapshots))
-    for year, records in search_index_sharded(snapshots).items():
+    shards = search_index_sharded(snapshots)
+    for year, records in shards.items():
         write(api / f"search-{year}.json", render_json(records))
+    # Tiny directory so the browser can pick a load strategy without
+    # probing for 404s: one combined fetch while it is small, per-year
+    # shards once it crosses the documented ~1 MB budget.
+    write(api / "search-index.json", render_search_shard_index(shards))
     write(
         api / "dead-links.json",
         render_json(sorted(dead_urls.values(), key=lambda r: r["url"])),
@@ -345,6 +582,11 @@ def main() -> None:
         default=None,
         help="Path to a check_links.py JSON report (default: <data-dir>/linkcheck.json)",
     )
+    parser.add_argument(
+        "--no-minify",
+        action="store_true",
+        help="Ship style.css/app.js/fluid.js unminified (readable output)",
+    )
     args = parser.parse_args()
 
     data_dir = args.data_dir or (Path(__file__).resolve().parent.parent / "data")
@@ -352,7 +594,7 @@ def main() -> None:
     base_path = args.base_path.rstrip("/") or ""
     if base_path and not base_path.startswith("/"):
         base_path = "/" + base_path
-    build_site(data_dir, args.out, base_path, base_url, args.linkcheck)
+    build_site(data_dir, args.out, base_path, base_url, args.linkcheck, args=args)
 
 
 if __name__ == "__main__":

@@ -28,8 +28,8 @@
   <meta name="theme-color" id="theme-color-meta" content="#faf9f6">
   <link rel="manifest" href="{{ base_path }}/manifest.json">
   <link rel="icon" type="image/svg+xml" href="{{ base_path }}/static/favicon.svg?v=3">
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32.png" media="(prefers-color-scheme: light)">
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
+  <link id="favicon-light" rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32.png" media="(prefers-color-scheme: light)">
+  <link id="favicon-dark" rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32-dark.png" media="(prefers-color-scheme: dark)" disabled>
   <link rel="icon" type="image/png" sizes="16x16" href="{{ base_path }}/static/favicon-16.png" media="(prefers-color-scheme: light)">
   <link rel="icon" type="image/png" sizes="16x16" href="{{ base_path }}/static/favicon-16-dark.png" media="(prefers-color-scheme: dark)">
   <link rel="apple-touch-icon" href="{{ base_path }}/static/favicon-180.png">
@@ -69,11 +69,13 @@
     (function () {
       var root = document.documentElement;
       var fonts = {{ base_path | tojson }} + "/static/fonts/";
+      /* The Source Serif faces are preloaded declaratively above, so only
+         the active design system's own face is injected here — repeating
+         the serif entries would fire duplicate preload warnings. */
       var preloads =
         root.getAttribute("data-design-system") === "kami"
           ? ["fraunces-latin-normal.woff2"]
           : ["departure-mono-regular.woff2"];
-      preloads.push("sourceserif4-latin-normal.woff2", "sourceserif4-latin-italic.woff2");
       preloads.forEach(function (file) {
         var link = document.createElement("link");
         link.rel = "preload";
@@ -122,9 +124,25 @@
                 ? (scrolledMeta ? "#121212" : darkTop)
                 : (scrolledMeta ? lightScrolled : lightTop);
         }
+        /* The readout is painted again by app.js once the footer is parsed;
+           this early pass only avoids a wrong first paint. */
         var valueEl = document.getElementById("theme-value");
         if (valueEl) {
           valueEl.textContent = stored === "auto" ? "AUTO" : theme.toUpperCase();
+        }
+        /* Keep the tab icon in step with an explicitly chosen theme. The
+           <link> tags are media-query driven, so they follow the OS and
+           cannot know about a local override. */
+        var darkIcon = document.getElementById("favicon-dark");
+        var lightIcon = document.getElementById("favicon-light");
+        if (darkIcon && lightIcon) {
+          if (theme === "dark" || theme === "pitch") {
+            darkIcon.removeAttribute("disabled");
+            lightIcon.setAttribute("disabled", "");
+          } else {
+            darkIcon.setAttribute("disabled", "");
+            lightIcon.removeAttribute("disabled");
+          }
         }
       }
       /* Deepen the browser-chrome tint once scrolled past the hero. */
@@ -168,9 +186,6 @@
         paint();
         return next;
       };
-      window.catnewsCycleTheme = function () {
-        return window.catnewsSetTheme(ORDER[(ORDER.indexOf(stored) + 1) % ORDER.length]);
-      };
       window.catnewsThemeLabel = function (state) { return LABELS[state] || LABELS.light; };
       /* Kept compatible with the earlier label contract: Switch to " + labels[next] + " theme. */
     })();
@@ -213,10 +228,10 @@
       <div class="bottom-controls">
         <a class="repo-link" href="{{ repo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub" title="Source on GitHub">{% include "github-icon.html" %}</a>
         <button class="install-btn" id="install-btn" type="button" aria-label="Install app" title="Install app">{% include "install-icon.html" %}</button>
-        <button class="ocean-toggle" id="ocean-toggle" type="button" aria-pressed="true" aria-label="Hide ocean background" title="Hide ocean background">◐</button>
-        <button class="design-toggle" id="design-toggle" type="button" aria-label="Switch to Kami design system" title="Switch to Kami design system"><span class="design-toggle-mark" aria-hidden="true"></span><span id="design-toggle-label">DESIGN · DEP</span></button>
+        <button class="ocean-toggle" id="ocean-toggle" type="button" aria-pressed="true" aria-label="Background: Ocean — switch to Fluid" title="Background: Ocean — click for Fluid">{% include "bg-icon.html" %}<span class="ctl-key">BG</span><span class="ctl-value" id="ocean-toggle-value">OCEAN</span></button>
+        <button class="design-toggle" id="design-toggle" type="button" aria-label="Switch to Departure design system" title="Switch to Departure design system"><span class="design-toggle-mark" aria-hidden="true"></span><span class="ctl-key">STYLE</span><span class="ctl-value" id="design-toggle-label">KAMI</span></button>
         <div class="theme-picker">
-          <button class="theme-toggle" id="theme-toggle" type="button" aria-haspopup="menu" aria-expanded="false" title="Theme"><span class="value" id="theme-value">LIGHT</span></button>
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-haspopup="menu" aria-expanded="false" title="Theme"><span class="ctl-key">THEME</span><span class="value" id="theme-value">LIGHT</span></button>
           <div class="theme-menu" id="theme-menu" role="menu" hidden>
             <button type="button" role="menuitemradio" aria-checked="true" data-theme-option="light">Light</button>
             <button type="button" role="menuitemradio" aria-checked="false" data-theme-option="dark">Dark</button>
@@ -227,101 +242,7 @@
       </div>
     </footer>
   </div>
-  <script>
-    (function () {
-      var btn = document.getElementById("theme-toggle");
-      var menu = document.getElementById("theme-menu");
-      if (!btn || !menu || typeof window.catnewsSetTheme !== "function") return;
-      function current() {
-        try { return localStorage.getItem("catnews-theme"); } catch (e) { return null; }
-      }
-      function paint() {
-        var cur = current();
-        btn.setAttribute("aria-expanded", String(menu.hidden === false));
-        menu.querySelectorAll("[data-theme-option]").forEach(function (option) {
-          option.setAttribute("aria-checked", String(option.dataset.themeOption === cur));
-        });
-        if (typeof window.catnewsThemeLabel === "function") {
-          var label = window.catnewsThemeLabel(cur);
-          btn.setAttribute("aria-label", label);
-        }
-      }
-      function open() { menu.hidden = false; paint(); }
-      function close() { menu.hidden = true; paint(); }
-      btn.addEventListener("click", function () {
-        if (menu.hidden) open(); else close();
-      });
-      menu.addEventListener("click", function (event) {
-        var option = event.target.closest("[data-theme-option]");
-        if (!option) return;
-        window.catnewsSetTheme(option.dataset.themeOption);
-        close();
-      });
-      menu.addEventListener("keydown", function (event) {
-        if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
-        event.preventDefault();
-        var options = Array.prototype.slice.call(
-          menu.querySelectorAll("[data-theme-option]")
-        );
-        var index = options.indexOf(document.activeElement);
-        var next =
-          index < 0
-            ? 0
-            : (index + (event.key === "ArrowDown" ? 1 : -1) + options.length) %
-              options.length;
-        options[next].focus();
-      });
-      document.addEventListener("click", function (event) {
-        if (menu.hidden || event.target.closest(".theme-picker")) return;
-        close();
-      });
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape" && !menu.hidden) {
-          close();
-          btn.focus();
-        }
-      });
-      paint();
-    })();
-  </script>
-  <script>
-    (function () {
-      var btn = document.getElementById("design-toggle");
-      var label = document.getElementById("design-toggle-label");
-      var root = document.documentElement;
-      var key = "catnews-design-system";
-      var order = ["departure", "kami"];
-      var names = { departure: "DESIGN · DEP", kami: "DESIGN · KAMI" };
-      var fullNames = { departure: "Departure", kami: "Kami" };
-      if (!btn) return;
-      function read() {
-        try {
-          var value = localStorage.getItem(key);
-          return order.indexOf(value) >= 0 ? value : "kami";
-        } catch (e) { return "kami"; }
-      }
-      function write(value) { try { localStorage.setItem(key, value); } catch (e) {} }
-      function paint() {
-        var current = read();
-        var next = order[(order.indexOf(current) + 1) % order.length];
-        if (label) label.textContent = names[current];
-        btn.setAttribute("aria-label", "Switch to " + fullNames[next] + " design system");
-        btn.title = "Switch to " + fullNames[next] + " design system";
-        btn.setAttribute("data-current-design", current);
-      }
-      btn.addEventListener("click", function () {
-        var current = read();
-        var next = order[(order.indexOf(current) + 1) % order.length];
-        root.classList.add("design-flip");
-        window.setTimeout(function () { root.classList.remove("design-flip"); }, 320);
-        write(next);
-        root.setAttribute("data-design-system", next);
-        if (typeof window.catnewsChromeMeta === "function") window.catnewsChromeMeta();
-        paint();
-      });
-      paint();
-    })();
-  </script>
+  {# window.CATNEWS must be defined before the deferred app.js runs. #}
   <script>
     window.CATNEWS = {
       basePath: {{ base_path | tojson }},
@@ -329,6 +250,9 @@
       sourceTags: {{ source_tags | tojson }}
     };
   </script>
+  {# The theme menu and design toggle moved to app.js: they only act on user
+     interaction, so they don't need to be inline, and the archive's 165 pages
+     were re-parsing ~5.5KB of controller script on every navigation. #}
   <script src="{{ base_path }}/static/app.js?v={{ asset_version }}" defer></script>
   <script src="{{ base_path }}/static/fluid.js?v={{ asset_version }}" defer></script>
   <script>

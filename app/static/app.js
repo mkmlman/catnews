@@ -303,6 +303,138 @@
   paintProgress();
 
   /* -------------------------------------------------------------
+     Theme menu — an explicit LIGHT / DARK / PITCH / AUTO picker.
+     Was inline in base.html; it only ever acts on user interaction, so
+     it lives here with the rest of the footer controllers.
+     ------------------------------------------------------------- */
+  var themeBtn = document.getElementById("theme-toggle");
+  var themeMenu = document.getElementById("theme-menu");
+  if (themeBtn && themeMenu && typeof window.catnewsSetTheme === "function") {
+    (function () {
+      function current() {
+        try { return localStorage.getItem("catnews-theme"); } catch (e) { return null; }
+      }
+      function paint() {
+        var cur = current();
+        themeBtn.setAttribute("aria-expanded", String(themeMenu.hidden === false));
+        themeMenu.querySelectorAll("[data-theme-option]").forEach(function (option) {
+          option.setAttribute(
+            "aria-checked",
+            String(option.dataset.themeOption === cur)
+          );
+        });
+        /* The head script paints data-theme before this footer exists, so
+           the visible value is set here — otherwise a stored dark/pitch/auto
+           theme still reads "LIGHT". */
+        var valueEl = document.getElementById("theme-value");
+        if (valueEl) {
+          valueEl.textContent =
+            cur === "auto"
+              ? window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "AUTO · DARK"
+                : "AUTO · LIGHT"
+              : (cur === "dark" || cur === "pitch" ? cur.toUpperCase() : "LIGHT");
+        }
+        if (typeof window.catnewsThemeLabel === "function") {
+          themeBtn.setAttribute("aria-label", window.catnewsThemeLabel(cur));
+        }
+      }
+      function open() { themeMenu.hidden = false; paint(); }
+      function close() { themeMenu.hidden = true; paint(); }
+
+      themeBtn.addEventListener("click", function () {
+        if (themeMenu.hidden) open(); else close();
+      });
+      themeMenu.addEventListener("click", function (event) {
+        var option = event.target.closest("[data-theme-option]");
+        if (!option) return;
+        window.catnewsSetTheme(option.dataset.themeOption);
+        close();
+      });
+      themeMenu.addEventListener("keydown", function (event) {
+        if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+        event.preventDefault();
+        var options = Array.prototype.slice.call(
+          themeMenu.querySelectorAll("[data-theme-option]")
+        );
+        var index = options.indexOf(document.activeElement);
+        var next =
+          index < 0
+            ? 0
+            : (index + (event.key === "ArrowDown" ? 1 : -1) + options.length) %
+              options.length;
+        options[next].focus();
+      });
+      document.addEventListener("click", function (event) {
+        if (themeMenu.hidden || event.target.closest(".theme-picker")) return;
+        close();
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !themeMenu.hidden) {
+          close();
+          themeBtn.focus();
+        }
+      });
+      /* An "auto" readout has to follow the OS while the page is open. */
+      if (window.matchMedia) {
+        var autoMq = window.matchMedia("(prefers-color-scheme: dark)");
+        var onAutoChange = function () { if (current() === "auto") paint(); };
+        if (autoMq.addEventListener) autoMq.addEventListener("change", onAutoChange);
+        else if (autoMq.addListener) autoMq.addListener(onAutoChange);
+      }
+      paint();
+    })();
+  }
+
+  /* -------------------------------------------------------------
+     Design-system toggle (Departure <-> Kami). Also inline before; it
+     only flips an attribute and re-reads the chrome tint.
+     ------------------------------------------------------------- */
+  var designBtn = document.getElementById("design-toggle");
+  if (designBtn) {
+    (function () {
+      var label = document.getElementById("design-toggle-label");
+      var root = document.documentElement;
+      var key = "catnews-design-system";
+      var order = ["departure", "kami"];
+      var names = { departure: "DEP", kami: "KAMI" };
+      var fullNames = { departure: "Departure", kami: "Kami" };
+      function read() {
+        try {
+          var value = localStorage.getItem(key);
+          return order.indexOf(value) >= 0 ? value : "kami";
+        } catch (e) { return "kami"; }
+      }
+      function nextOf(current) {
+        return order[(order.indexOf(current) + 1) % order.length];
+      }
+      function paint() {
+        var current = read();
+        var next = nextOf(current);
+        if (label) label.textContent = names[current];
+        designBtn.setAttribute(
+          "aria-label",
+          "Switch to " + fullNames[next] + " design system"
+        );
+        designBtn.title = "Switch to " + fullNames[next] + " design system";
+        designBtn.setAttribute("data-current-design", current);
+      }
+      designBtn.addEventListener("click", function () {
+        var next = nextOf(read());
+        root.classList.add("design-flip");
+        window.setTimeout(function () { root.classList.remove("design-flip"); }, 320);
+        try { localStorage.setItem(key, next); } catch (e) {}
+        root.setAttribute("data-design-system", next);
+        if (typeof window.catnewsChromeMeta === "function") {
+          window.catnewsChromeMeta();
+        }
+        paint();
+      });
+      paint();
+    })();
+  }
+
+  /* -------------------------------------------------------------
      Footer: back to top + keyboard-shortcuts help dialog
      ------------------------------------------------------------- */
   var footerToTop = document.getElementById("footer-to-top");
@@ -1044,6 +1176,10 @@
     target.classList.remove("is-link-target");
     void target.offsetWidth;
     target.classList.add("is-link-target");
+    /* Measure the chrome synchronously: --header-h starts unset, so a
+       deep link arriving on a cold page would scroll the card under the
+       masthead by the header's height. */
+    measureStickyOffsets();
     var headerOffset = 0;
     var hProp = getComputedStyle(document.documentElement).getPropertyValue("--header-h");
     if (hProp) headerOffset = parseFloat(hProp) || 0;
@@ -1132,6 +1268,12 @@
       return;
     }
     if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      /* The stats dot chart owns the arrow keys while a day has focus —
+         without this the page-level "previous/next edition" shortcut
+         navigates away mid-inspection. */
+      if (event.target && event.target.closest && event.target.closest(".trend-chart .heat")) {
+        return;
+      }
       if (!event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
         var editionLink = document.querySelector(
           ".snapshot-nav-link[rel='" +
@@ -1200,17 +1342,55 @@
     showSearchResults();
   }
 
+  function loadJson(path) {
+    return fetch(BASE + path).then(function (res) {
+      if (!res.ok) throw new Error("not available");
+      return res.json();
+    });
+  }
+
+  /* The archive's search index grows ~50 records/day, so the build also
+     emits per-year shards plus a tiny api/search-index.json directory.
+     When the combined index is still small (the common case) one fetch
+     wins; once it crosses the documented ~1 MB budget the shards are
+     loaded in parallel instead, and the combined file stays the fallback
+     for the dev server and any older build. */
+  function loadShards() {
+    return loadJson("/api/search-index.json")
+      .then(function (index) {
+        var shards = (index && index.shards) || [];
+        var limit = Number(index && index.shard_threshold_bytes) || 0;
+        var combined = Number(index && index.combined_bytes) || 0;
+        if (!shards.length || (limit && combined <= limit)) return loadJson("/api/search.json");
+        return Promise.all(
+          shards.map(function (year) {
+            return loadJson("/api/search-" + year + ".json");
+          })
+        ).then(function (parts) {
+          var merged = [];
+          parts.forEach(function (part) {
+            if (Array.isArray(part)) merged = merged.concat(part);
+          });
+          /* A partial merge is worse than the single combined file: fall
+             back if any shard came back empty or malformed. */
+          if (!merged.length || merged.length !== (index.records || merged.length)) {
+            return loadJson("/api/search.json");
+          }
+          return merged;
+        });
+      })
+      .catch(function () {
+        return loadJson("/api/search.json");
+      });
+  }
+
   function loadStories(cb) {
     if (storiesCache) {
       cb(storiesCache);
       return;
     }
     var seq = ++searchSeq;
-    fetch(BASE + "/api/search.json")
-      .then(function (res) {
-        if (!res.ok) throw new Error("not available");
-        return res.json();
-      })
+    loadShards()
       .then(function (stories) {
         if (seq !== searchSeq) return;
         storiesCache = stories;
@@ -1492,9 +1672,25 @@
         text.innerHTML = markText(story.title, tokens);
         var sub = document.createElement("span");
         sub.className = "search-result-sub";
+        /* A bare title gives no clue which edition a hit came from, so the
+           source and date lead and the curation note follows. */
+        var context = [];
+        var sourceTag = CFG.sourceTags[story.source] || story.source || "";
+        if (sourceTag) context.push(sourceTag);
+        if (story.date) context.push(formatShortDate(story.date));
         var authorPart = story.author ? markText(story.author, tokens) : "";
         var whyPart = story.why_read ? markText(excerptAround(story.why_read, tokens), tokens) : "";
-        sub.innerHTML = whyPart ? (authorPart ? authorPart + " · " : "") + whyPart : authorPart;
+        var contextHtml = context
+          .map(function (part, i) {
+            return i === context.length - 1
+              ? '<span class="search-result-when">' + escapeHtml(part) + "</span>"
+              : escapeHtml(part);
+          })
+          .join(" · ");
+        var detail = [];
+        if (authorPart) detail.push(authorPart);
+        if (whyPart) detail.push(whyPart);
+        sub.innerHTML = contextHtml + (detail.length ? " — " + detail.join(" · ") : "");
         if (whyPart && story.why_read && story.why_read.length > 92) sub.title = story.why_read;
         a.appendChild(tag);
         a.appendChild(text);
@@ -1717,7 +1913,9 @@
   }
 
   /* Ink node riding the silhouette: parked on the active day column's
-     curve surface (data-y) whenever its tooltip shows. */
+     curve surface (data-y) whenever its tooltip shows. Moved with a CSS
+     transform rather than cx/cy — those are SVG attributes, so setting
+     them per mousemove cannot be transitioned and the node jumped. */
   var chartMarker = null;
 
   function parkMarker() {
@@ -1733,8 +1931,7 @@
     if (y === null) return;
     var x = parseFloat(cell.getAttribute("x")) || 0;
     var w = parseFloat(cell.getAttribute("width")) || 0;
-    chartMarker.setAttribute("cx", x + w / 2);
-    chartMarker.setAttribute("cy", y);
+    chartMarker.style.transform = "translate(" + (x + w / 2) + "px," + y + "px)";
     /* removeAttribute, not `.hidden = false`: SVG elements share no
        `hidden` IDL with HTML, so property assignment would silently keep
        the marker hidden forever. */
@@ -1887,7 +2084,7 @@
   /* -------------------------------------------------------------
      Stats: share/rank bars grow in from zero when scrolled into view
      ------------------------------------------------------------- */
-  var statBars = document.querySelectorAll(".share-fill, .rank-fill");
+  var statBars = document.querySelectorAll(".rank-fill");
   var statReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (statBars.length && "IntersectionObserver" in window && !statReduce) {
     statBars.forEach(function (bar) {
@@ -2013,13 +2210,24 @@
   (function () {
     var canvas = document.getElementById("ocean");
     if (!canvas || !canvas.getContext) return;
+    var root = document.documentElement;
+    var reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    /* CSS already hides the canvas under reduced motion, so raymarching it
+       every frame burns a GPU for pixels nobody can see. Checked before
+       the context is created so no WebGL resources are allocated either;
+       the background toggle in the footer still works, it just paints
+       nothing until the preference is turned off. */
+    if (reduceQuery.matches) {
+      canvas.hidden = true;
+      canvas.style.display = "none";
+      canvas.className = canvas.className.replace(/\bshader-ready\b/, "");
+      return;
+    }
     var gl =
       canvas.getContext("webgl", { antialias: false }) ||
       canvas.getContext("experimental-webgl", { antialias: false });
     if (!gl) return;
 
-    var root = document.documentElement;
-    var reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     /* Shared projection constants — JS mirrors them so pointer ripples
        land exactly where the shader puts the water. */
@@ -2028,8 +2236,7 @@
     var WATER_DEPTH = 1.0;
     var CAMERA_HEIGHT = 1.5;
 
-    var QUALITY_SETTINGS = {
-      low: { scale: 0.25, lowDpiScale: 0.425, raymarchSteps: 20, waveIterRaymarch: 4, waveIterNormal: 16, fbmOctaves: 2 },
+    var QUALITY_SETTINGS = {      low: { scale: 0.25, lowDpiScale: 0.425, raymarchSteps: 20, waveIterRaymarch: 4, waveIterNormal: 16, fbmOctaves: 2 },
       medium: { scale: 0.35, lowDpiScale: 0.595, raymarchSteps: 24, waveIterRaymarch: 6, waveIterNormal: 16, fbmOctaves: 3 },
       high: { scale: 0.4, lowDpiScale: 0.68, raymarchSteps: 32, waveIterRaymarch: 8, waveIterNormal: 16, fbmOctaves: 4 }
     };
@@ -2633,10 +2840,13 @@
       }
       var label = showOcean ? "Ocean" : showFluid ? "Fluid" : "Off";
       var next = showOcean ? "fluid" : showFluid ? "off" : "ocean";
-      btn.textContent = showOcean ? "◐" : showFluid ? "≈" : "○";
+      /* Spelled out rather than a bare glyph: the cycle is three states
+         deep and "◐" gave no clue what it did. */
+      var valueEl = document.getElementById("ocean-toggle-value");
+      if (valueEl) valueEl.textContent = label.toUpperCase();
       btn.setAttribute("aria-pressed", state !== "off" ? "true" : "false");
       btn.setAttribute("aria-label", "Background: " + label + " — switch to " + next);
-      btn.title = "Background: " + label + " — click for " + next + "";
+      btn.title = "Background: " + label + " — click for " + next;
       try { localStorage.setItem(key, state); localStorage.setItem(legacyKey, showOcean ? "on" : "off"); } catch (e) {}
     }
     var cur = read();

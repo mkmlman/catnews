@@ -41,13 +41,16 @@ _FONT: dict[str, tuple[str, ...]] = {
     " ": ("00000", "00000", "00000", "00000", "00000", "00000", "00000"),
 }
 
-# Paw blobs echoing the catnews mark, in the source badge palette.
-_PAWS: list[tuple[int, tuple[int, int, int]]] = [
-    (180, (0x9C, 0x4D, 0x14)),
-    (416, (0x2E, 0x6B, 0x3E)),
-    (784, (0x20, 0x50, 0x7A)),
-    (1020, (0x8A, 0x1F, 0x18)),
-]
+# Paw blobs echoing the catnews mark. Their colors come from the badge
+# palette at draw time (see `_paws`) so a re-tuned palette can't leave the
+# share card showing colors the site no longer uses.
+_PAW_X = (180, 416, 784, 1020)
+_PAW_FALLBACK = (
+    (0x7A, 0x3C, 0x10),
+    (0x8A, 0x1F, 0x18),
+    (0x3B, 0x3E, 0x37),
+    (0x20, 0x50, 0x7A),
+)
 
 
 def hex_rgb(value: str) -> tuple[int, int, int] | None:
@@ -96,14 +99,14 @@ class _Canvas:
                 self.set_px(x, y, color)
 
     def text(self, text: str, scale: int, y0: int, color) -> None:
-        glyph_w, glyph_h, spacing = 5, 7, 1
-        total = len(text) * glyph_w * scale + (len(text) - 1) * spacing * scale
+        glyph_w, glyph_h = 5, 7
+        total = self.text_width(text, scale)
         x = (self.w - total) // 2
         for idx, ch in enumerate(text):
             glyph = _FONT.get(ch.upper())
             if glyph is None:
                 continue
-            gx = x + idx * (glyph_w + spacing) * scale
+            gx = x + idx * (glyph_w + 1) * scale
             for gy in range(glyph_h):
                 for gxx in range(glyph_w):
                     if glyph[gy][gxx] != "1":
@@ -113,6 +116,13 @@ class _Canvas:
                     for sy in range(scale):
                         for sx in range(scale):
                             self.set_px(ox + sx, oy + sy, color)
+
+    def text_width(self, text: str, scale: int) -> int:
+        """Advance width of `text` at `scale` (1px inter-glyph tracking)."""
+        glyph_w, spacing = 5, 1
+        if not text:
+            return 0
+        return len(text) * glyph_w * scale + (len(text) - 1) * spacing * scale
 
     def png(self) -> bytes:
         raw = b"".join(b"\x00" + bytes(row) for row in self.rows)
@@ -132,12 +142,65 @@ def _chunk(tag: bytes, data: bytes) -> bytes:
     )
 
 
+def _paw_colors() -> list[tuple[int, tuple[int, int, int]]]:
+    """Blob x-position and color for each paw, read from the badge palette.
+
+    Importing PALETTE rather than repeating hexes keeps the share card in
+    step with the badges on the site: when a palette entry is re-tuned for
+    contrast, the card follows instead of drifting to a stale color.
+
+    The import is deferred because `config` imports `hex_rgb` from this
+    module, so a top-level import back would be circular.
+    """
+    from .config import PALETTE
+
+    colors = [rgb for entry in PALETTE if (rgb := hex_rgb(entry[0])) is not None]
+    if len(colors) < len(_PAW_X):
+        colors = list(_PAW_FALLBACK)
+    return [(x, colors[index % len(colors)]) for index, x in enumerate(_PAW_X)]
+
+
 def _paws(canvas: _Canvas) -> None:
-    for cx, color in _PAWS:
+    for cx, color in _paw_colors():
         canvas.fill_ellipse(cx, 548, 46, 46, color)
 
 
 ICON_SIZE = 512
+
+# Paw geometry in the 512px reference frame, relative to its centre:
+# one pad and three toes. Shared by every raster icon and the maskable
+# variant so they always ship the same mark.
+_PAD = (0, 56, 92, 76)
+_TOES = ((-106, -58, 37), (0, -98, 37), (106, -58, 37))
+
+
+def _draw_paw(canvas: _Canvas, cx: int, cy: int, scale: float, color) -> None:
+    """Draw the catnews paw centred on (cx, cy), scaled to `scale`."""
+
+    def px(value: float) -> int:
+        return round(value * scale)
+
+    pad_dx, pad_dy, pad_rx, pad_ry = _PAD
+    canvas.fill_ellipse(
+        cx + px(pad_dx), cy + px(pad_dy), max(1, px(pad_rx)), max(1, px(pad_ry)), color
+    )
+    for toe_dx, toe_dy, toe_r in _TOES:
+        radius = max(1, px(toe_r))
+        canvas.fill_ellipse(cx + px(toe_dx), cy + px(toe_dy), radius, radius, color)
+
+
+def render_app_icon(size: int = ICON_SIZE) -> bytes:
+    """Render a square app icon (paper ground, ink paw) at `size`.
+
+    Used for the manifest's "any" purpose entries, which Chrome requires
+    at 192px and 512px before it will offer installation. The mark fills
+    the canvas the way a normal (unmaskable) launcher tile expects; the
+    maskable variant below keeps the same artwork inside the safe zone.
+    """
+    canvas = _Canvas(size, size)
+    canvas.fill_rect(0, 0, size - 1, size - 1, PAPER)
+    _draw_paw(canvas, size // 2, size // 2, size / ICON_SIZE, INK)
+    return canvas.png()
 
 
 def render_maskable_icon() -> bytes:
@@ -148,9 +211,7 @@ def render_maskable_icon() -> bytes:
     """
     canvas = _Canvas(ICON_SIZE, ICON_SIZE)
     canvas.fill_rect(0, 0, ICON_SIZE - 1, ICON_SIZE - 1, PAPER)
-    canvas.fill_ellipse(256, 312, 92, 76, INK)
-    for toe_cx, toe_cy in ((150, 198), (256, 158), (362, 198)):
-        canvas.fill_ellipse(toe_cx, toe_cy, 37, 37, INK)
+    _draw_paw(canvas, 256, 256, 1.0, INK)
     return canvas.png()
 
 
@@ -175,11 +236,17 @@ def render_og_image(
     if captioned:
         wordmark_y0 = (HEIGHT - glyph_h * _WORDMARK_SCALE) // 2 - 120
         accent_rgb = accent or INK
-        # Accent rule under the wordmark.
+        # Accent rule under the wordmark, sized to the wordmark's optical
+        # width so the card reads as one centered block.
         rule_h = 5
         rule_y = wordmark_y0 + glyph_h * _WORDMARK_SCALE + 40
+        rule_half = max(64, canvas.text_width(_TEXT, _WORDMARK_SCALE) // 2 - 40)
         canvas.fill_rect(
-            WIDTH // 2 - 64, rule_y, WIDTH // 2 + 64, rule_y + rule_h, accent_rgb
+            WIDTH // 2 - rule_half,
+            rule_y,
+            WIDTH // 2 + rule_half,
+            rule_y + rule_h,
+            accent_rgb,
         )
         canvas.text(_TEXT, _WORDMARK_SCALE, wordmark_y0, INK)
         if date_line:

@@ -4,7 +4,10 @@
     <span class="badge badge-{{ story.source }}">{{ source_tags.get(story.source, story.source) }}</span>
     {% if story.score is not none %}<span class="story-score">{% if story.source == "github" %}★{% else %}▲{% endif %} {{ story.score }}</span>{% endif %}
   </div>
-  <h2 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener noreferrer"{% if dl.get(story.url) %} class="is-dead" title="This link was unreachable when last checked (HTTP {{ dl.get(story.url).status }})"{% endif %}>{{ story.title }}</a></h2>
+  {# The title is clamped to three lines, so carry the full text in the
+     tooltip — but a confirmed-dead link's status wins as the explanation. #}
+  {% set dead = dl.get(story.url) %}
+  <h2 class="story-title"><a href="{{ story.url }}" target="_blank" rel="noopener noreferrer"{% if dead %} class="is-dead" title="{{ story.title }} — unreachable when last checked (HTTP {{ dead.status }})"{% else %} title="{{ story.title }}"{% endif %}>{{ story.title }}</a></h2>
   {% if story.authors %}<p class="story-by">By {{ story.authors | join(", ") }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}</p>
   {% else %}<p class="story-by">By {{ story.author or "Unknown" }}{% if story.published %} · <time datetime="{{ story.published.isoformat() }}">{{ story.published.strftime("%b %d, %Y") }}</time>{% endif %}{% if story.comments is not none %} · {{ story.comments }} comments{% endif %}</p>{% endif %}
   {% if story.why_read %}<p class="story-why-read"><strong>Why read:</strong> {{ story.why_read }}</p>{% endif %}
@@ -18,7 +21,7 @@
       {% for link in story.links %}
       <li>
         <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer"{% if dl.get(link.url) %} class="is-dead" title="This link was unreachable when last checked (HTTP {{ dl.get(link.url).status }})"{% endif %}>{{ link.title }}</a>
-        {% if dl.get(link.url) %}<a class="story-archived-link" href="https://web.archive.org/web/2/{{ link.url }}" target="_blank" rel="noopener noreferrer" title="Open an archived copy on the Wayback Machine">archive ↗</a><span class="story-links-site is-dead">dead</span>{% elif link.site %}<span class="story-links-site">{{ link.site }}</span>{% endif %}
+        {% if dl.get(link.url) %}<a class="story-archived-link" href="{{ wayback_url(link.url) }}" target="_blank" rel="noopener noreferrer" title="Open an archived copy on the Wayback Machine">archive ↗</a><span class="story-links-site is-dead">dead</span>{% elif link.site %}<span class="story-links-site">{{ link.site }}</span>{% endif %}
       </li>
       {% endfor %}
     </ol>
@@ -27,7 +30,7 @@
   <div class="story-foot">
     <a class="story-link" href="{{ story.url }}" target="_blank" rel="noopener noreferrer" aria-label="Read: {{ story.title }} (opens in new tab)">Read</a>
     {% if story.hn_url %}<a class="discuss{% if dl.get(story.hn_url) %} is-dead{% endif %}" href="{{ story.hn_url }}" target="_blank" rel="noopener noreferrer" aria-label="Discuss: {{ story.title }} (opens in new tab)"{% if dl.get(story.hn_url) %} title="This discussion link was unreachable when last checked (HTTP {{ dl.get(story.hn_url).status }})"{% endif %}>Discuss ›</a>{% endif %}
-    {% if dl.get(story.url) %}<a class="story-archived" href="https://web.archive.org/web/2/{{ story.url }}" target="_blank" rel="noopener noreferrer" title="Open an archived copy on the Wayback Machine">Archived ↗</a>{% endif %}
+    {% if dl.get(story.url) %}<a class="story-archived" href="{{ wayback_url(story.url) }}" target="_blank" rel="noopener noreferrer" title="Open an archived copy on the Wayback Machine">Archived ↗</a>{% endif %}
     {% if dl.get(story.url) %}<span class="story-dead">Dead link</span>{% endif %}
   </div>
 </article>

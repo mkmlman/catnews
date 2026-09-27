@@ -26,11 +26,15 @@ REQUIRED_FILES = (
     "api/sources.json",
     "api/stories.json",
     "api/search.json",
+    "api/search-index.json",
     "api/stats.json",
     "api/trends.json",
     "api/fetch-status.json",
     "api/dead-links.json",
     "api/stories.md",
+    "static/icon-192.png",
+    "static/icon-512.png",
+    "static/icon-maskable-512.png",
 )
 
 
@@ -190,6 +194,7 @@ def check_site(site_dir: Path, base_path: str = "", base_url: str = "") -> list[
         "api/sources.json",
         "api/stories.json",
         "api/search.json",
+        "api/search-index.json",
         "api/stats.json",
         "api/trends.json",
         "api/fetch-status.json",
@@ -211,11 +216,42 @@ def check_site(site_dir: Path, base_path: str = "", base_url: str = "") -> list[
     if not list((site_dir / "static" / "og" / "home").glob("*.png")):
         errors.append("missing OG cards: static/og/home/*.png")
 
+    # Chrome only offers PWA installation when the manifest carries a
+    # 192px and a 512px raster marked "any" (plus a maskable icon), so
+    # assert the sizes rather than only the file names.
+    for rel in (
+        "static/icon-192.png",
+        "static/icon-512.png",
+        "static/icon-maskable-512.png",
+    ):
+        if not (site_dir / rel).is_file():
+            errors.append(f"missing required file: {rel}")
+
     for shard in sorted((site_dir / "api").glob("search-*.json")):
         try:
-            json.loads(shard.read_text(encoding="utf-8"))
+            records = json.loads(shard.read_text(encoding="utf-8"))
         except (OSError, ValueError) as exc:
             errors.append(f"invalid JSON api/{shard.name}: {exc}")
+            continue
+        # search-index.json is the shard directory, not a record list;
+        # every search-YYYY.json must be a list of records and must be
+        # advertised there, or the client would never load it.
+        if shard.name == "search-index.json":
+            continue
+        if not isinstance(records, list):
+            errors.append(f"api/{shard.name} is not a list of search records")
+            continue
+        directory_path = site_dir / "api" / "search-index.json"
+        if directory_path.is_file():
+            try:
+                directory = json.loads(directory_path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                directory = {}
+            year = shard.stem.removeprefix("search-")
+            if year not in (directory.get("shards") or []):
+                errors.append(
+                    f"api/{shard.name} is not listed in api/search-index.json"
+                )
 
     feed = site_dir / "feed.rss"
     if feed.is_file():
@@ -272,6 +308,24 @@ def check_site(site_dir: Path, base_path: str = "", base_url: str = "") -> list[
             icons = manifest.get("icons") or []
             if not icons:
                 errors.append("manifest.json defines no icons")
+            # Chrome's installability bar: a 192px and a 512px raster
+            # marked "any", plus a maskable icon for Android launchers.
+            any_sizes = {
+                icon.get("sizes")
+                for icon in icons
+                if isinstance(icon, dict) and icon.get("purpose") == "any"
+            }
+            for required in ("192x192", "512x512"):
+                if required not in any_sizes:
+                    errors.append(
+                        f"manifest.json has no {required} icon with purpose 'any' "
+                        "(Chrome will not offer installation)"
+                    )
+            if not any(
+                isinstance(icon, dict) and icon.get("purpose") == "maskable"
+                for icon in icons
+            ):
+                errors.append("manifest.json defines no maskable icon")
             for icon in icons:
                 src = icon.get("src") if isinstance(icon, dict) else None
                 if not src:

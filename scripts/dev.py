@@ -25,6 +25,11 @@ def main() -> None:
     parser.add_argument("--base-url", default="http://127.0.0.1:8080/catnews")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8080)
+    parser.add_argument(
+        "--no-minify",
+        action="store_true",
+        help="Skip CSS/JS minification so the preview output is readable",
+    )
     args = parser.parse_args()
 
     data_dir = args.data_dir or Path(__file__).resolve().parent.parent / "data"
@@ -32,7 +37,7 @@ def main() -> None:
     base_path = args.base_path.rstrip("/") or ""
     if base_path and not base_path.startswith("/"):
         base_path = "/" + base_path
-    build_site(data_dir, args.site, base_path, base_url)
+    build_site(data_dir, args.site, base_path, base_url, args=args)
     errors = check_site(args.site, base_path, base_url)
     if errors:
         for error in errors:

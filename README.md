@@ -37,12 +37,15 @@ quotes from it. See the [Sources](/sources/) page for what we curate.
   generated at build time with no image dependencies.
 - **Per-source RSS feeds** — `feed-<source>.rss` (e.g. `feed-hn.rss`, `feed-arxiv.rss`)
   in addition to the combined `feed.rss`, so readers can subscribe to just one section.
-- **APIs**: JSON (`/api/sources`, `/api/sources/<source>`, `/api/sources/<source>/<date>`, `/api/digest`, `/api/stories`, `/api/search.json`, `/api/stats`), **Markdown** (`/api/stories.md`), and **RSS** (`/feed.rss`).
+- **APIs**: JSON (`/api/sources`, `/api/sources/<source>`, `/api/sources/<source>/<date>`, `/api/digest`, `/api/stories`, `/api/search.json`, `/api/search-index.json`, `/api/stats`), **Markdown** (`/api/stories.md`), and **RSS** (`/feed.rss`).
 - **Link-rot checks** — `scripts/check_links.py` HEAD-checks every external story URL
   and a weekly workflow files a report issue when links have died. The same report
   is committed to `main`, and the site styles cards whose links are confirmed gone
   with a **"Dead link"** badge (so a rotted HN thread or withdrawn paper is obvious
-  before you click it).
+  before you click it). Dead links also get a Wayback Machine rescue link.
+- **Installable PWA** — generated 192px/512px/maskable icons, a manifest, and an
+  app-shell service worker. The first-visit font set is preloaded without duplicates,
+  and the day's pages stay browsable offline.
 - **Curation** hooks to add *"Why read"* notes to stories.
 
 ## Quickstart
@@ -73,9 +76,25 @@ app/
 scripts/
   fetch_digest.py  cadence-aware fetch (one snapshot per source)
   build_site.py    render a static site into site/
+  check_site.py    validate a built site before publishing
+  check_links.py   HEAD-check every archived URL (link rot)
+  gen_og.py        regenerate the committed fallback share card (see below)
+  dev.py           build + validate + serve a local preview
 sources.yaml       source definitions — the single file a host edits
 data/              source_<name>_<date>.json snapshots
 .github/workflows/ deploy.yml (archive + lint + deploy to Pages)
+```
+
+### The fallback share card
+
+`app/static/og.png` is the brand-only card used as the `og:image` for pages that
+don't have their own edition card (sources, stats, api, design, archive, 404) and
+as the fallback for a missing per-edition card. It is the one raster in the repo
+that the build does *not* generate, because it is not date- or source-specific.
+Regenerate it after editing the wordmark or the paw mark in `app/og_image.py`:
+
+```sh
+uv run python scripts/gen_og.py
 ```
 
 ## Adding a source
@@ -128,7 +147,23 @@ The 12 badge colors, in assignment order (source #1 → ember, #2 → clay, ...)
 
 The palette lives in `PALETTE` in `app/config.py` (each entry also carries matching
 light and dark theme background tints). Badges cycle back to ember for the 13th
-source onward.
+source onward. The share card's paw blobs read the same palette at draw time, so
+re-tuning a color for contrast updates the card too.
+
+## Source freshness
+
+`fetch_status()` ages every source against its own `cadence_days`, so a source is
+only reported `skipped` ("on schedule") while its newest snapshot is still inside
+its cadence window. Once it goes past that — because an upstream failed on the one
+weekday a weekly source is allowed to fetch, say — it flips to `stale` and counts
+as an issue on the home banner and `/sources/`. The last run's own verdict is not
+enough: it only describes the run that just happened, and can report a source
+healthy for as long as nothing re-checks the age.
+
+Because an edition merges each source's *latest* stories rather than one day's
+worth, the home hero names the **oldest** contributing snapshot (`since <date>`)
+when it predates the edition date, so a digest built on a 3-week-old arXiv pull
+doesn't claim to be entirely from today.
 
 ## How stories are selected
 
@@ -158,6 +193,13 @@ The site can be built as a fully static bundle and served for free from GitHub P
 uv run python scripts/build_site.py --base-path /catnews --base-url https://mkmlman.github.io/catnews
 ```
 
+The build minifies the shipped `style.css`, `app.js`, and `fluid.js` in the output
+directory only — `app/static/` stays the readable source, and `asset_version`
+still fingerprints that source so the cache-busting query changes with it. Pass
+`--no-minify` (also on `catnews-dev`) when you want to read the built files.
+Minification is comment/whitespace removal only: string, template, and regex
+literals are preserved byte-for-byte, which the test suite asserts.
+
 The CI workflow derives `base-path` and `base-url` from the repository
 (`/<repo>` and `https://<owner>.github.io/<repo>`), so a fork deploys to its own
 Pages URL without editing the workflow.
@@ -166,7 +208,8 @@ This renders `site/` with plain HTML pages (home, archive, per-snapshot archive 
 stats), `feed.rss` plus per-source `feed-<source>.rss` feeds, per-edition Open Graph
 cards under `static/og/<source>/<date>.png`, and static JSON/Markdown API files
 (`api/sources.json`, `api/stories.json`, `api/digest.json`, `api/stats.json`,
-`api/fetch-status.json`, `api/dead-links.json`, `api/stories.md`). The fetch-status
+`api/fetch-status.json`, `api/dead-links.json`, `api/search.json`,
+`api/search-index.json`, `api/stories.md`). The fetch-status
 artifact records whether each source was current, stale, unavailable, or skipped on
 the last fetch run; the dead-links artifact feeds the "Dead link" badges whenever
 the weekly link-rot report is present under `data/linkcheck.json`.
@@ -207,16 +250,23 @@ fetched within their window), and the static build mirrors the main API endpoint
 as files — e.g. `/api/sources` → `api/sources.json`. The dev server
 (`uvicorn app.main:app`) additionally serves live routes like
 `/api/sources/<source>/<date>` and `/archive/<source>/<date>/`.
-The static build also emits compact per-source JSON files under `api/sources/`, `api/search.json`
-(the deduplicated index used by archive search), and `api/fetch-status.json` (the last
-build-time source health report). Each deployment job has only the GitHub permissions it
+The static build also emits compact per-source JSON files under `api/sources/`, the
+deduplicated search index (`api/search.json` plus per-year shards and the
+`api/search-index.json` directory), and `api/fetch-status.json` (the last
+build-time source health report). The dev server serves the same shard routes, so the
+browser's search loader behaves identically in both. Each deployment job has only the GitHub permissions it
 needs: archive can write digests and PRs, lint can read the repository, and deploy can
 publish Pages.
 
-**Search index scaling:** `api/search.json` grows ~50 records/day and is fetched whole
-when a search is first opened. Plan to shard it by year (or recent + older) and lazy-load
-shards once it crosses ~1 MB — the sharding hook is documented at `search_index()` in
-`app/render.py`.
+**Search index scaling:** `api/search.json` grows ~50 records/day. The build emits
+per-year shards (`api/search-2026.json`) plus a tiny directory (`api/search-index.json`)
+recording the shard list, the record count, the combined size, and the ~1 MB threshold.
+The browser reads the directory on the first search and fetches either the one combined
+index or all year shards in parallel; `api/search.json` stays the fallback for the dev
+server and older builds, so search never breaks mid-migration. Note that
+`api/stories.json` and `api/sources.json` are full-archive files (~1.2 MB each today
+and growing), unlike the live server, which paginates `/api/stories` — prefer the
+search index or the per-source endpoints for new integrations.
 
 ## Curation
 
@@ -263,6 +313,11 @@ downloaded at most weekly).
 uv run pytest
 uv run python scripts/check_site.py --site site --base-path /catnews
 ```
+
+`check_site.py` also asserts what a reader can actually see: installable icon
+sizes, the 192/512 install pair in `manifest.json`, that every search shard is
+advertised in the directory, and that no local reference, canonical URL, or
+`og:image` 404s.
 
 Lint and type checks (also enforced in CI by the `lint` job, which gates deploys):
 

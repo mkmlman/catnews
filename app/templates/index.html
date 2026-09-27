@@ -28,7 +28,11 @@
       <h1 class="hero-title"><span class="sr-only">{{ app_name }} digest — </span><span>{{ digest.date.strftime("%B") }}</span> <span>{{ digest.date.strftime("%d") }}</span> <small>{{ digest.date.strftime("%Y") }}</small></h1>
     </div>
     <div class="hero-edition">
-      <p class="edition-sub"><span>{{ digest.stories | length }} stor{{ "y" if digest.stories | length == 1 else "ies" }}</span><span class="edition-divider" aria-hidden="true">·</span><span>{{ source_tags | length }} sources</span>{% if freshness.latest_snapshot and freshness.latest_snapshot < digest.date %}<span class="edition-divider" aria-hidden="true">·</span><span>through {{ freshness.latest_snapshot.strftime("%b %d") }}</span>{% endif %}</p>
+      {# An edition merges each source's latest stories, so it spans a date
+         range, not one day. Naming the oldest contributing source is the
+         honest cue — the previous `latest_snapshot < digest.date` guard could
+         never be true, because both are the max over the same snapshots. #}
+      <p class="edition-sub"><span>{{ digest.stories | length }} stor{{ "y" if digest.stories | length == 1 else "ies" }}</span><span class="edition-divider" aria-hidden="true">·</span><span>{{ source_tags | length }} sources</span>{% if freshness.oldest_snapshot and freshness.oldest_snapshot < digest.date %}<span class="edition-divider" aria-hidden="true">·</span><span>since {{ freshness.oldest_snapshot.strftime("%b %d") }}</span>{% endif %}</p>
       <div class="hero-ticks" aria-hidden="true">
         {% for key in source_tags %}<span class="badge-{{ key }}"></span>{% endfor %}
       </div>

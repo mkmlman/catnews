@@ -157,6 +157,10 @@ def fetch_status(data_dir: Path) -> dict:
     report_sources = report.get("sources")
     if not isinstance(report_sources, dict):
         report_sources = {}
+    report_date = _status_date(report.get("date"))
+    # Age every source against the report's own date, falling back to today so
+    # a checkout with no report still gets a meaningful overdue check.
+    reference = report_date or today_utc()
 
     sources: dict[str, dict] = {}
     for source, cfg in SOURCES.items():
@@ -173,6 +177,15 @@ def fetch_status(data_dir: Path) -> dict:
             snapshot_date = snapshot.date
         if state == "ok" and snapshot is None:
             state = "unavailable"
+        # A source only counts as on-schedule while its snapshot is still
+        # within cadence. "skipped" records what the *last* fetch run decided,
+        # so a weekly source can read as healthy for days after it silently
+        # stopped being fetched (e.g. an upstream outage on its one weekday).
+        overdue_by = 0
+        if snapshot_date is not None:
+            overdue_by = (reference - snapshot_date).days - int(cfg["cadence_days"])
+        if overdue_by > 0 and state in {"ok", "skipped"}:
+            state = "stale"
         raw_stories = entry.get("stories", len(snapshot.stories) if snapshot else 0)
         try:
             stories_count = int(raw_stories)  # type: ignore[arg-type]
@@ -186,6 +199,12 @@ def fetch_status(data_dir: Path) -> dict:
             "skipped": "On schedule",
             "unknown": "No fetch report",
         }
+        detail = str(entry.get("error", ""))[:240]
+        if state == "stale" and overdue_by > 0 and not detail:
+            detail = (
+                f"No fetch in {overdue_by + int(cfg['cadence_days'])} days "
+                f"(cadence {cfg['cadence_days']}d)."
+            )
         sources[source] = {
             "key": source,
             "label": cfg["label"],
@@ -193,7 +212,7 @@ def fetch_status(data_dir: Path) -> dict:
             "state_label": labels[state],
             "snapshot_date": snapshot_date,
             "stories": stories_count,
-            "detail": str(entry.get("error", ""))[:240],
+            "detail": detail,
             "is_issue": state in {"stale", "unavailable"},
         }
 
@@ -201,10 +220,15 @@ def fetch_status(data_dir: Path) -> dict:
         row["snapshot_date"] for row in sources.values() if row["snapshot_date"]
     ]
     latest_snapshot = max(snapshot_dates) if snapshot_dates else None
-    report_date = _status_date(report.get("date"))
+    oldest_snapshot = min(snapshot_dates) if snapshot_dates else None
     return {
         "date": report_date,
         "latest_snapshot": latest_snapshot,
+        # The oldest snapshot still feeding the edition. A digest merges each
+        # source's latest stories, so the edition spans a range: arXiv is
+        # weekly while HN is daily, and on any given day the slowest source
+        # decides how far back the edition really reaches.
+        "oldest_snapshot": oldest_snapshot,
         "has_issues": any(row["is_issue"] for row in sources.values()),
         "sources": sources,
     }

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ app_name }} | Design System{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
 {% block og_description %}How {{ app_name }} looks and why — tokens, type, and components.{% endblock %}
 {% block content %}
 <section class="page-header">
@@ -282,7 +283,9 @@
       <p class="ds-hint">transparent paper · hairline border · 4px radius · mono 0.78rem</p>
       <div class="ds-demo">
         <pre class="code-block">$ uv run python scripts/build_site.py --base-path {{ base_path or "/catnews" }}
-[catnews] built 4 snapshots (65 stories) -> site/</pre>
+[catnews] built 4 snapshots (65 stories) -> site/
+[catnews] minified static/app.js: 96KB -> 71KB
+[catnews] minified static/style.css: 104KB -> 78KB</pre>
       </div>
     </div>
   </div>

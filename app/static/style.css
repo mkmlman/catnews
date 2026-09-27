@@ -46,30 +46,17 @@
   /* Primitive scale */
   --font-size-xs: 0.8125rem;
   --font-size-sm: 0.9375rem;
-  --font-size-md: 1.0625rem;
-  --font-size-lg: 1.25rem;
-  --font-size-xl: 1.375rem;
   --font-size-2xl: 1.625rem;
   --font-size-3xl: 2.25rem;
 
-  /* Semantic aliases used by page components. Keeping these alongside the
-     primitive names prevents a missing token from silently falling back to
-     inherited text sizing. */
-  --text-xs: var(--font-size-xs);
-  --text-sm: var(--font-size-sm);
-  --text-md: var(--font-size-md);
-  --text-lg: var(--font-size-lg);
-  --text-xl: var(--font-size-xl);
-  --text-2xl: var(--font-size-2xl);
-  --text-3xl: var(--font-size-3xl);
-
-  /* Roles */
+  /* Roles — the only text-size tokens components reference. Aliases were
+     removed when they proved unread (nothing consumed them while the
+     primitives were right there); add a role here only when a component
+     genuinely needs to name one. */
   --text-ui: var(--font-size-xs);
   --text-meta: var(--font-size-xs);
   --text-form: var(--font-size-sm);
   --text-body: var(--font-size-sm);
-  --text-title: var(--font-size-lg);
-  --text-hero: clamp(1.375rem, 0.875rem + 1.5vw, 2.25rem);
   --leading-ui: 1.4;
   --leading-body: 1.6;
   --leading-tight: 1.15;
@@ -351,8 +338,7 @@ main:focus { outline: none; }
 }
 .skip-link:focus { transform: translateY(0); }
 
-.sr-only,
-.visually-hidden {
+.sr-only {
   position: absolute !important;
   width: 1px !important;
   height: 1px !important;
@@ -834,9 +820,8 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
-  min-height: 32px;
-  font-size: 0.95rem;
+  gap: 5px;
+  font-size: var(--text-ui);
 }
 
 /* Theme toggle — an explicit labeled switch, e.g. LIGHT ▸ DARK ▸ PITCH */
@@ -1390,6 +1375,12 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   font-variant-numeric: tabular-nums;
 }
 
+/* The sticky filter bar is pinned below the masthead via --header-h, which
+   is measured in JS. Without JS that variable is unset, so the bar would
+   pin to top:0 and slide under the fixed header — keep it in normal flow
+   instead, which is always correct, just not sticky. */
+.no-js .filters { position: static; }
+
 .no-matches {
   display: flex;
   flex-direction: column;
@@ -1427,7 +1418,9 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
 .stories {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 14px;
+  /* 16px breathes between cards without pushing the grid past three
+     columns inside the 1280px frame (3×280 + 2×16 = 872 < 1130). */
+  gap: 16px;
   padding: 8px 0;
   min-width: 0;
 }
@@ -1442,7 +1435,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 18px 20px;
+  padding: 20px 22px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   /* Light frost: keeps type clean where the ocean or star field shows
@@ -1607,14 +1600,6 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   margin-left: 6px;
   color: var(--faint);
 }
-.story-links-credit {
-  margin: 8px 0 0;
-  font-family: var(--serif-font);
-  font-style: italic;
-  font-size: var(--text-meta);
-  color: var(--muted);
-  text-wrap: pretty;
-}
 .story-link {
   font-family: var(--mono-font);
   font-size: var(--text-meta);
@@ -1684,6 +1669,9 @@ a.is-dead,
 .story-top .story-score { margin-left: auto; }
 .story-top .badge { min-width: 0; }
 .story:not(.has-score) .story-top .badge { margin-right: auto; }
+/* Save/copy sit quietly in the card corner: muted and hairline-thin until
+   the card is hovered or the button itself is focused, so 85 cards don't
+   read as 170 competing controls. Still a 44px touch target. */
 .save-toggle, .copy-toggle {
   display: inline-flex;
   align-items: center;
@@ -1691,14 +1679,29 @@ a.is-dead,
   min-width: 44px;
   min-height: 44px;
   padding: 4px 5px;
-  border: 1px solid var(--line);
+  border: 1px solid transparent;
   border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--muted);
+  color: var(--faint);
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+  opacity: 0.55;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    background-color 0.15s,
+    opacity 0.15s;
 }
 .save-toggle svg, .copy-toggle svg { display: block; fill: none; }
+.story:hover .save-toggle,
+.story:hover .copy-toggle,
+.story:focus-within .save-toggle,
+.story:focus-within .copy-toggle,
+.save-toggle:focus-visible,
+.copy-toggle:focus-visible {
+  opacity: 1;
+  color: var(--muted);
+  border-color: var(--line);
+}
 .save-toggle:hover, .copy-toggle:hover { color: var(--ink); border-color: var(--ink); }
 .save-toggle[aria-pressed="true"] {
   color: var(--paper);
@@ -1996,33 +1999,11 @@ a.is-dead,
 .stat-table td:nth-child(5),
 .stat-table td:last-child { text-align: right; color: var(--muted); }
 .stat-table td:first-child { display: flex; align-items: center; gap: 10px; }
-.stat-table .source-name {
-  font-family: var(--serif-font);
-  font-size: var(--text-md);
-  font-variant-caps: all-small-caps;
-  color: var(--ink);
-}
 .stat-table tbody tr { transition: background-color 0.18s ease; }
 .stat-table tbody tr:hover { background: color-mix(in srgb, var(--ink) 3%, transparent); }
 
 .trend-week-tag { display: block; color: var(--faint); font-size: 0.68rem; }
-.share-cell { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
-.share-bar {
-  flex: 1;
-  max-width: 120px;
-  height: 4px;
-  border-radius: 0;
-  background: var(--line);
-  overflow: hidden;
-}
-.share-fill {
-  display: block;
-  height: 100%;
-  background: var(--ink);
-  opacity: 0.85;
-}
-.share-fill, .rank-fill { transition: width 0.8s var(--ease-soft); }
-.share-pct { min-width: 44px; text-align: right; font-size: var(--text-meta); }
+.rank-fill { transition: width 0.8s var(--ease-soft); }
 
 .stat-spark {
   display: block;
@@ -2043,12 +2024,15 @@ a.is-dead,
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.stat-spark .spark-dot {
-  fill: var(--ink);
-  stroke: var(--paper);
-  stroke-width: 2.4;
+/* The end of the series is a vertical rule rather than a dot: the SVG is
+   stretched to the card width (preserveAspectRatio="none"), which would
+   squash a round dot into an ellipse. A line with a non-scaling stroke
+   stays the same weight at any card width. */
+.stat-spark .spark-rule {
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linecap: butt;
 }
-.spark-cell { padding-right: 4px; padding-left: 12px; }
 .stat-table tbody tr .stat-spark { transition: opacity 0.25s ease, transform 0.25s ease; }
 .stat-table tbody tr:hover .stat-spark { transform: scale(1.04); }
 .stat-table tbody:has(tr:hover) tr:not(:hover) .stat-spark { opacity: 0.4; }
@@ -2071,9 +2055,18 @@ a.is-dead,
 /* Print-style axes: dotted gridlines, stronger spines, mono micro ticks. */
 .chart-grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 1 5; stroke-linecap: round; }
 .chart-axis { stroke: var(--line-strong); stroke-width: 1; stroke-linecap: round; }
-/* Hover/focus node riding the silhouette surface; glides between days
-   where geometry transitions are supported, jumps elsewhere. */
-.chart-marker { fill: var(--ink); stroke: var(--paper); stroke-width: 2; pointer-events: none; transition: cx 0.18s var(--ease-soft), cy 0.18s var(--ease-soft); }
+/* Hover/focus node riding the silhouette surface. `cx`/`cy` are SVG
+   geometry attributes, not CSS properties, so transitioning them here
+   animated nothing — the node is repositioned with a transform instead,
+   which does transition and keeps the attribute values at the origin. */
+.chart-marker {
+  fill: var(--ink);
+  stroke: var(--paper);
+  stroke-width: 2;
+  pointer-events: none;
+  transform: translate(0, 0);
+  transition: transform 0.18s var(--ease-soft), opacity 0.12s ease;
+}
 .chart-marker[hidden] { display: none; }
 .trend-chart text { fill: var(--faint); font-family: var(--mono-font); font-size: 10px; }
 .heat { stroke: none; }
@@ -2144,8 +2137,6 @@ a.is-dead,
   font-size: var(--text-meta);
   color: var(--muted);
 }
-.stat-table--health th, .stat-table--health td { text-align: right; }
-.stat-table--health th:first-child, .stat-table--health td:first-child { text-align: left; display: table-cell; }
 
 /* ==========================================================================
    SHEET — the stats page in the tabular-dashboard voice: masthead, hero
@@ -2162,12 +2153,16 @@ a.is-dead,
   padding: 26px 0 14px;
   border-bottom: 1px solid var(--line);
 }
-.sheet-name {
+/* An h1, so the universal reset's `margin: 0` keeps the masthead flush
+   while the document still has a top-level heading. */
+h1.sheet-name {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  margin: 0;
   font-family: var(--mono-font);
   font-size: var(--text-ui);
+  font-weight: 400;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink);
@@ -2506,14 +2501,6 @@ a.is-dead,
    ========================================================================== */
 
 .ds-hero { padding: 18px 0 6px; text-align: center; animation: rise 0.5s var(--ease-soft) both; }
-.ds-eyebrow {
-  font-family: var(--mono-font);
-  font-size: var(--text-meta);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  margin: 0 0 10px;
-}
 .ds-title {
   font-family: var(--serif-font);
   font-style: italic;
@@ -2709,13 +2696,6 @@ a.is-dead,
   color: var(--muted);
 }
 .ds-type-sample { color: var(--ink); overflow-wrap: break-word; }
-.ds-type-display {
-  font-family: var(--serif-font);
-  font-style: italic;
-  font-weight: 400;
-  font-size: var(--font-size-2xl);
-  line-height: 1.15;
-}
 .ds-type-h1 {
   font-family: var(--serif-font);
   font-style: italic;
@@ -2962,6 +2942,11 @@ a.is-dead,
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
   }
+  /* Phones already spend ~200px of a short viewport on fixed chrome (a
+     two-row masthead plus a two-row filter bar), and any scroll intent is
+     "read the stories". Only the desktop bar is worth pinning. */
+  .filters,
+  html[data-design-system="kami"] .filters { position: static; }
   .stories { grid-template-columns: repeat(2, 1fr); }
 
   /* Mobile menu: full-screen paper panel with right-aligned links */
@@ -3027,7 +3012,6 @@ a.is-dead,
   .wordmark { grid-area: wordmark; }
   .site-header > .search { grid-area: search; margin-left: 0; width: 100%; }
   .site-header .site-nav { grid-area: actions; flex-direction: row; align-items: center; }
-  .header-actions { grid-area: actions; flex-wrap: nowrap; }
   .js .site-nav { grid-area: actions; }
   /* Without JS the links stay visible and flow onto their own row. */
   .no-js .site-header {
@@ -3047,44 +3031,47 @@ a.is-dead,
   }
   .search input[type="search"]:focus { width: auto; }
   .search-results { width: 100%; }
-  .share-bar { display: none; }
 
-  .filter-scroll { width: 100%; overflow: hidden; }
-  .filters { padding: 10px 0; }
+  .filter-scroll { width: 100%; overflow: visible; }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .source-options { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  /* The bar is no longer pinned here, so the two rows (source chips, then
+     actions) collapse into one scrollable row instead of stacking. */
   .filter-row {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-areas: "label sources" "actions actions";
+    display: flex;
+    grid-template-columns: none;
+    grid-template-areas: none;
     align-items: center;
-    gap: 8px 6px;
-    overflow: visible;
+    gap: 8px;
+    overflow: hidden;
     flex-wrap: nowrap;
   }
   .filter-row::-webkit-scrollbar { display: none; }
   .source-options { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .source-options::-webkit-scrollbar { display: none; }
   .filter-label {
-    grid-area: label;
     margin-right: 0;
   }
   .source-options {
-    grid-area: sources;
     min-width: 0;
-    scroll-snap-type: x mandatory;
+    flex: 1 1 auto;
+    scroll-snap-type: x proximity;
     scroll-padding-inline: 6px;
     -webkit-overflow-scrolling: touch;
   }
   .source-options .chip { scroll-snap-align: start; }
   .filter-actions {
-    grid-area: actions;
-    width: 100%;
+    width: auto;
+    flex-shrink: 0;
     justify-content: flex-start;
     gap: 4px;
-    overflow-x: auto;
+    overflow: visible;
     scrollbar-width: none;
     margin-left: 0;
-    padding-top: 8px;
-    border-top: 1px solid var(--line);
+    padding-top: 0;
+    padding-left: 8px;
+    border-top: 0;
+    border-left: 1px solid var(--line);
   }
   .filter-actions::-webkit-scrollbar { display: none; }
   .source-options .chip,
@@ -3093,6 +3080,7 @@ a.is-dead,
     min-height: 40px;
   }
   .filter-row--sources { padding-right: 0; }
+  .filters { padding: 10px 0; }
   .filter-scroll-cue {
     display: block;
     position: absolute;
@@ -3166,14 +3154,13 @@ a.is-dead,
   .archive-day-list { grid-template-columns: minmax(0, 1fr); }
   .archive-day-item { min-width: 0; }
 
-  .stat-section { overflow-x: auto; }
-  .stat-section h2 { padding-right: 12px; }
-  .stat-table { font-size: 0.84rem; min-width: 340px; }
-  .stat-table th:first-child, .stat-table td:first-child { gap: 6px; }
+  /* The trends table is the one wide grid on the page; let it scroll inside
+     its own panel instead of forcing the whole page sideways. */
+  .stat-trends-table-wrap { overflow-x: auto; }
+  .stat-trends-table-wrap .stat-table { min-width: 340px; }
   .stat-table th, .stat-table td { padding: 12px 4px; }
   .stat-table th:nth-child(3),
   .stat-table td:nth-child(3) { padding-right: 4px; }
-  .share-pct { min-width: 0; }
 
   .ds-title { font-size: var(--font-size-2xl); }
   .ds-family-grid { grid-template-columns: 1fr; }
@@ -3291,10 +3278,9 @@ a.is-dead,
 @media (forced-colors: active) {
   body::after { display: none; }
   .scroll-progress,
-  .share-fill,
   .rank-fill,
   .stat-spark polyline { stroke: CanvasText; }
-  .stat-spark .spark-dot { fill: CanvasText; stroke: Canvas; }
+  .stat-spark .spark-rule { stroke: CanvasText; }
   .chart-grid { stroke: GrayText; }
   .chart-axis { stroke: CanvasText; }
   .chart-marker { fill: CanvasText; stroke: Canvas; }
@@ -3329,7 +3315,6 @@ html[data-design-system="kami"] {
   --text-meta: 0.8rem;
   --text-form: 0.92rem;
   --text-body: 17px;
-  --text-title: 1.22rem;
   --frame-inline: 24px;
   --frame-block: 0px;
   --frame-content-top: 0px;
@@ -3428,6 +3413,27 @@ html[data-design-system="kami"] .wordmark svg {
 }
 html[data-design-system="kami"] .scroll-progress { background: var(--accent); }
 html[data-design-system="kami"] .theme-menu button { border-radius: var(--radius-pill); }
+
+/* Footer toggles read as labelled readouts ("BG OCEAN", "STYLE KAMI",
+   "THEME LIGHT") rather than bare glyphs, so the tri-state background
+   cycle and the design switch are self-describing. The value is what
+   changes; the key is the stable label that stays put. */
+.ctl-key {
+  color: var(--faint);
+  letter-spacing: 0.08em;
+}
+.ctl-key::after {
+  content: "·";
+  margin-left: 6px;
+  color: var(--line-strong);
+}
+.ctl-value { color: var(--ink); }
+.ocean-toggle .ctl-value { min-width: 4.5em; text-align: left; }
+.design-toggle .ctl-value { min-width: 3.5em; text-align: left; }
+.theme-toggle .value { min-width: 4em; text-align: left; }
+.ocean-toggle,
+.design-toggle,
+.theme-toggle { gap: 5px; }
 html[data-design-system="kami"] .site-nav {
   grid-area: nav;
   justify-self: end;
@@ -3526,11 +3532,6 @@ html[data-design-system="kami"] .bottom-controls { justify-content: flex-end; }
 html[data-design-system="kami"] .hero {
   padding: 22px 0 10px;
   text-align: center;
-}
-html[data-design-system="kami"] .edition-label {
-  color: var(--accent);
-  font-family: var(--mono-font);
-  letter-spacing: 0.22em;
 }
 html[data-design-system="kami"] .edition-sub {
   color: var(--muted);
@@ -3844,6 +3845,10 @@ html[data-design-system="kami"] .ds-comp {
    entrance, keep its metadata scannable, and make recovery from an empty
    filter state obvious.
    ======================================================================== */
+/* The hero is an editorial masthead, not a centered poster: the date sets
+   the left margin and the edition metadata hangs off its right edge on the
+   same baseline. The generic `.hero` stays centered for any centered
+   variant; only the ticks variant is explicitly left-aligned. */
 .hero--ticks {
   padding: 30px 0 26px;
   text-align: left;
@@ -3852,7 +3857,7 @@ html[data-design-system="kami"] .ds-comp {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
-  gap: 48px;
+  gap: 32px;
 }
 .hero-copy { min-width: 0; }
 .hero-title {
@@ -3888,6 +3893,7 @@ html[data-design-system="kami"] .ds-comp {
 .hero-edition {
   align-self: end;
   min-width: 0;
+  max-width: 42ch;
   text-align: right;
 }
 .hero-edition .edition-sub {
@@ -3896,6 +3902,7 @@ html[data-design-system="kami"] .ds-comp {
   flex-wrap: wrap;
   gap: 4px 8px;
   line-height: 1.45;
+  text-wrap: balance;
 }
 .edition-divider { color: var(--faint); }
 .hero-edition .hero-ticks {
@@ -3961,8 +3968,7 @@ html[data-design-system="kami"] .ds-comp {
   .help-dialog,
   .copy-toast,
   .edition-toast,
-  .hero-ticks,
-  .snapshot-nav { display: none !important; }
+  .hero-ticks { display: none !important; }
   .container {
     min-height: 0;
     max-width: none;
@@ -3985,16 +3991,35 @@ html[data-design-system="kami"] .ds-comp {
     color: #000;
   }
   .badge, .story-dead, .story-archived, .story-archived-link { color: #000; border-color: #666; }
+  /* Print the edition nav: a sheet of stories with no date or source is
+     just a list of links. Nav buttons stay (they are the page address),
+     interactive chips and scroll-only cues go. */
+  .snapshot-nav {
+    position: static;
+    margin: 0 0 18px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 8px;
+  }
+  .snapshot-nav-link { color: #000; min-height: 0; padding: 0; }
+  .snapshot-nav-spacer { display: none; }
   .sheet-panels { grid-template-columns: 1fr; }
   .sheet-tabpanel[hidden] { display: block; }
   .stat-table { min-width: 0; }
-  .story-foot, .save-toggle, .copy-toggle, .endpoint-tools, .heat-tip { display: none !important; }
+  .save-toggle, .copy-toggle, .export-saved, .endpoint-tools, .heat-tip { display: none !important; }
   .story.is-read { opacity: 1; }
-  .story-title a {
-    color: inherit;
+  .story.is-selected { box-shadow: none; background: #fff; }
+  .story-foot { padding-top: 6px; }
+  /* Paper has no hover: the archived copy (and, where present, the
+     discussion thread) is the whole point of the Read/Discuss row, so
+     keep it and print its target like the title. */
+  .story-link, .discuss, .story-archived { color: #000; }
+  .story-title a, .story-link, .discuss, .story-archived {
     text-decoration: none;
   }
-  .story-title a::after {
+  .story-title a::after,
+  .story-link[href]::after,
+  .discuss[href]::after,
+  .story-archived[href]::after {
     content: " (" attr(href) ")";
     font-family: var(--mono-font);
     font-size: 0.72rem;
