@@ -29,10 +29,10 @@
   <link rel="manifest" href="{{ base_path }}/manifest.json">
   <link rel="icon" type="image/svg+xml" href="{{ base_path }}/static/favicon.svg?v=3">
   <link id="favicon-light" rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32.png" media="(prefers-color-scheme: light)">
-  <link id="favicon-dark" rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32-dark.png" media="(prefers-color-scheme: dark)" disabled>
+  <link id="favicon-dark" rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/static/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/png" sizes="16x16" href="{{ base_path }}/static/favicon-16.png" media="(prefers-color-scheme: light)">
   <link rel="icon" type="image/png" sizes="16x16" href="{{ base_path }}/static/favicon-16-dark.png" media="(prefers-color-scheme: dark)">
-  <link rel="apple-touch-icon" href="{{ base_path }}/static/favicon-180.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ base_path }}/static/favicon-180.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="catnews">
@@ -42,18 +42,20 @@
   {% block robots %}{% endblock %}
   {% block canonical %}<link rel="canonical" href="{{ og_url }}">{% endblock %}
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{% block feed_alt %}{{ base_url }}/feed.rss{% endblock %}">
+  {% block feed_extra %}{% endblock %}
 
   <!-- Open Graph -->
   <meta property="og:site_name" content="catnews">
   <meta property="og:locale" content="en_US">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  {% block og_extra %}{% endblock %}
   <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
   <meta property="og:description" content="{% block og_description %}{{ site_description }}{% endblock %}">
   {% block og_url %}<meta property="og:url" content="{{ og_url }}">{% endblock %}
   <meta property="og:image" content="{{ og_image }}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="{% block og_image_alt %}{{ app_name }} edition card: the date and story count on a paper background.{% endblock %}">
+  <meta property="og:image:alt" content="{% block og_image_alt %}{{ self.og_title() }} — {{ app_name }} edition card.{% endblock %}">
 
   <!-- Twitter card -->
   <meta name="twitter:card" content="summary_large_image">
@@ -132,16 +134,19 @@
         }
         /* Keep the tab icon in step with an explicitly chosen theme. The
            <link> tags are media-query driven, so they follow the OS and
-           cannot know about a local override. */
+           cannot know about a local override. We swap hrefs instead of
+           toggling disabled, which is ignored on link elements. */
         var darkIcon = document.getElementById("favicon-dark");
         var lightIcon = document.getElementById("favicon-light");
-        if (darkIcon && lightIcon) {
+        var darkHref = darkIcon ? darkIcon.getAttribute("href") : null;
+        var lightHref = lightIcon ? lightIcon.getAttribute("href") : null;
+        if (darkIcon && lightIcon && darkHref && lightHref) {
           if (theme === "dark" || theme === "pitch") {
-            darkIcon.removeAttribute("disabled");
-            lightIcon.setAttribute("disabled", "");
+            darkIcon.media = "all";
+            lightIcon.media = "not all";
           } else {
-            darkIcon.setAttribute("disabled", "");
-            lightIcon.removeAttribute("disabled");
+            darkIcon.media = "not all";
+            lightIcon.media = "all";
           }
         }
       }
@@ -164,7 +169,6 @@
         { passive: true }
       );
       paintChromeMeta();
-      paint();
       if (stored === "auto") {
         mql.addEventListener("change", function (e) {
           theme = e.matches ? "dark" : "light";
@@ -200,8 +204,9 @@
     <header class="site-header">
       <a class="wordmark" href="{{ base_path }}/">{% include "cat-logo.html" %}<span>{{ app_name }}</span></a>
       <div class="search" id="search" role="search">
-        <input type="search" id="search-input" placeholder="Search" aria-label="Search the archive" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" autocomplete="off">
-        <div class="search-results" id="search-results" role="listbox" aria-label="Search results" hidden></div>
+        <label class="sr-only" for="search-input">Search the archive</label>
+        <input type="search" id="search-input" placeholder="Search archive…" aria-label="Search the archive" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls="search-results" aria-expanded="false" autocomplete="off">
+        <div class="search-results" id="search-results" hidden></div>
       </div>
       <nav class="site-nav" aria-label="Primary navigation">
         <button class="menu-trigger" id="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">Menu</button>

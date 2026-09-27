@@ -50,6 +50,7 @@ def parse_created_at(value: str | None):
     if not value:
         return None
     try:
-        return datetime.fromisoformat(value)
+        # Algolia emits trailing Z which fromisoformat cannot parse on 3.11.
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))  # noqa: FURB162
     except ValueError:
         return None

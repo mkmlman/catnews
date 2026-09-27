@@ -2,7 +2,7 @@
 
 > What's worth reading.
 
-A curated digest of stories from **Hacker News**, **arXiv**, **GitHub**, and **Register Spill**, built with Python + FastAPI.
+A curated digest of stories from **Hacker News**, **arXiv**, **GitHub**, **Register Spill**, and **Simon Willison**, built with Python + FastAPI.
 
 Sources are config-driven — anyone can host their own digest of any blog, newsletter,
 or RSS feed by editing a single `sources.yaml` file.
@@ -15,7 +15,7 @@ The code in this repository is released under the [MIT License](LICENSE) — do 
 
 The **curated content** it pulls in (newsletters, articles, papers, repos) remains
 the property of its respective authors and sources; catnews merely links to and
-quotes from it. See the [Sources](/sources/) page for what we curate.
+quotes from it. See the [Sources](https://mkmlman.github.io/catnews/sources/) page for what we curate.
 
 ```
  /\_/\
@@ -37,7 +37,7 @@ quotes from it. See the [Sources](/sources/) page for what we curate.
   generated at build time with no image dependencies.
 - **Per-source RSS feeds** — `feed-<source>.rss` (e.g. `feed-hn.rss`, `feed-arxiv.rss`)
   in addition to the combined `feed.rss`, so readers can subscribe to just one section.
-- **APIs**: JSON (`/api/sources`, `/api/sources/<source>`, `/api/sources/<source>/<date>`, `/api/digest`, `/api/stories`, `/api/search.json`, `/api/search-index.json`, `/api/stats`), **Markdown** (`/api/stories.md`), and **RSS** (`/feed.rss`).
+- **APIs**: JSON (`/api/sources`, `/api/sources/<source>`, `/api/digest`, `/api/stories`, `/api/search.json`, `/api/search-index.json` + per-year `api/search-YYYY.json`, `/api/stats`, `/api/trends.json`, `/api/fetch-status.json`, `/api/dead-links.json`), **Markdown** (`/api/stories.md`), and **RSS** (`/feed.rss`).
 - **Link-rot checks** — `scripts/check_links.py` HEAD-checks every external story URL
   and a weekly workflow files a report issue when links have died. The same report
   is committed to `main`, and the site styles cards whose links are confirmed gone
@@ -82,7 +82,7 @@ scripts/
   dev.py           build + validate + serve a local preview
 sources.yaml       source definitions — the single file a host edits
 data/              source_<name>_<date>.json snapshots
-.github/workflows/ deploy.yml (archive + lint + deploy to Pages)
+.github/workflows/ deploy.yml (archive + lint + deploy to Pages) + linkcheck.yml (weekly link-rot report)
 ```
 
 ### The fallback share card
@@ -368,26 +368,4 @@ machine-readable report to `data/linkcheck.json` (via a PR, like the digests), w
 the next build turns into "Dead link" badges — 404/410/451 responses only, so a 403
 bot-block is never branded dead while it is still serving people.
 
-## Repo ops (how GitHub is configured)
-
-Public repo, only the owner (`mkmlman`) has write access; everyone else can only
-clone, fork, and open PRs.
-
-**Branch ruleset — "protect main"** (Settings → Rules, or REST):
-- `main` requires changes to come through a PR; branch deletion and force-push are blocked.
-- Owner (admin role) bypasses everything; the GitHub Actions bot does **not** bypass —
-  PR merges are used instead so no token is needed.
-
-**Key gotchas learned:**
-- `GITHUB_TOKEN` cannot push to a PR-protected branch on a personal repo, and it
-  cannot be added to a ruleset bypass list. To archive digests automatically, the
-  workflow pushes to a `digest-*` branch and `gh pr merge --squash` it — a PR merge
-  satisfies the "changes via PR" rule, so no PAT is required.
-- The `gh` CLI in workflows needs `env: GH_TOKEN: ${{ github.token }}`.
-- "Allow GitHub Actions to create and approve pull requests" (Settings → Actions →
-  General → Workflow permissions) is **off by default** for personal repos and must
-  be enabled, or the bot's PR creation fails with
-  `GitHub Actions is not permitted to create or approve pull requests`.
-- The workflow commit step is gated with `if: github.event_name != 'push'` so the
-  PR merge's own push-triggered run doesn't re-commit (prevents infinite loops).
-- Wiki is disabled; Issues and forking remain enabled.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for repo ops (branch rules, PAT-less digest merges, workflow gotchas).

@@ -176,107 +176,12 @@ function supportRenderTextureFormat (gl, internalFormat, format, type) {
     return status == gl.FRAMEBUFFER_COMPLETE;
 }
 
-function startGUI () {
-    var gui = new dat.GUI({ width: 300 });
-    gui.add(config, 'DYE_RESOLUTION', { 'high': 1024, 'medium': 512, 'low': 256, 'very low': 128 }).name('quality').onFinishChange(initFramebuffers);
-    gui.add(config, 'SIM_RESOLUTION', { '32': 32, '64': 64, '128': 128, '256': 256 }).name('sim resolution').onFinishChange(initFramebuffers);
-    gui.add(config, 'DENSITY_DISSIPATION', 0, 4.0).name('density diffusion');
-    gui.add(config, 'VELOCITY_DISSIPATION', 0, 4.0).name('velocity diffusion');
-    gui.add(config, 'PRESSURE', 0.0, 1.0).name('pressure');
-    gui.add(config, 'CURL', 0, 50).name('vorticity').step(1);
-    gui.add(config, 'SPLAT_RADIUS', 0.01, 1.0).name('splat radius');
-    gui.add(config, 'SHADING').name('shading').onFinishChange(updateKeywords);
-    gui.add(config, 'COLORFUL').name('colorful');
-    gui.add(config, 'PAUSED').name('paused').listen();
-
-    gui.add({ fun: () => {
-        splatStack.push(parseInt(Math.random() * 20) + 5);
-    } }, 'fun').name('Random splats');
-
-    let bloomFolder = gui.addFolder('Bloom');
-    bloomFolder.add(config, 'BLOOM').name('enabled').onFinishChange(updateKeywords);
-    bloomFolder.add(config, 'BLOOM_INTENSITY', 0.1, 2.0).name('intensity');
-    bloomFolder.add(config, 'BLOOM_THRESHOLD', 0.0, 1.0).name('threshold');
-
-    let sunraysFolder = gui.addFolder('Sunrays');
-    sunraysFolder.add(config, 'SUNRAYS').name('enabled').onFinishChange(updateKeywords);
-    sunraysFolder.add(config, 'SUNRAYS_WEIGHT', 0.3, 1.0).name('weight');
-
-    let captureFolder = gui.addFolder('Capture');
-    captureFolder.addColor(config, 'BACK_COLOR').name('background color');
-    captureFolder.add(config, 'TRANSPARENT').name('transparent');
-    captureFolder.add({ fun: captureScreenshot }, 'fun').name('take screenshot');
-
-    if (isMobile())
-        gui.close();
-}
+// startGUI and screenshot helpers removed for catnews — dev-only dat.gui
+// and capture paths are never used in production (TRANSPARENT is always
+// false). Keeping them would ship dead code on every page.
 
 function isMobile () {
     return /Mobi|Android/i.test(navigator.userAgent);
-}
-
-function captureScreenshot () {
-    let res = getResolution(config.CAPTURE_RESOLUTION);
-    let target = createFBO(res.width, res.height, ext.formatRGBA.internalFormat, ext.formatRGBA.format, ext.halfFloatTexType, gl.NEAREST);
-    render(target);
-
-    let texture = framebufferToTexture(target);
-    texture = normalizeTexture(texture, target.width, target.height);
-
-    let captureCanvas = textureToCanvas(texture, target.width, target.height);
-    let datauri = captureCanvas.toDataURL();
-    downloadURI('fluid.png', datauri);
-    URL.revokeObjectURL(datauri);
-}
-
-function framebufferToTexture (target) {
-    gl.bindFramebuffer(gl.FRAMEBUFFER, target.fbo);
-    let length = target.width * target.height * 4;
-    let texture = new Float32Array(length);
-    gl.readPixels(0, 0, target.width, target.height, gl.RGBA, gl.FLOAT, texture);
-    return texture;
-}
-
-function normalizeTexture (texture, width, height) {
-    let result = new Uint8Array(texture.length);
-    let id = 0;
-    for (let i = height - 1; i >= 0; i--) {
-        for (let j = 0; j < width; j++) {
-            let nid = i * width * 4 + j * 4;
-            result[nid + 0] = clamp01(texture[id + 0]) * 255;
-            result[nid + 1] = clamp01(texture[id + 1]) * 255;
-            result[nid + 2] = clamp01(texture[id + 2]) * 255;
-            result[nid + 3] = clamp01(texture[id + 3]) * 255;
-            id += 4;
-        }
-    }
-    return result;
-}
-
-function clamp01 (input) {
-    return Math.min(Math.max(input, 0), 1);
-}
-
-function textureToCanvas (texture, width, height) {
-    let captureCanvas = document.createElement('canvas');
-    let ctx = captureCanvas.getContext('2d');
-    captureCanvas.width = width;
-    captureCanvas.height = height;
-
-    let imageData = ctx.createImageData(width, height);
-    imageData.data.set(texture);
-    ctx.putImageData(imageData, 0, 0);
-
-    return captureCanvas;
-}
-
-function downloadURI (filename, uri) {
-    let link = document.createElement('a');
-    link.download = filename;
-    link.href = uri;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 }
 
 class Material {
@@ -459,23 +364,8 @@ const colorShader = compileShader(gl.FRAGMENT_SHADER, `
     }
 `);
 
-const checkerboardShader = compileShader(gl.FRAGMENT_SHADER, `
-    precision highp float;
-    precision highp sampler2D;
-
-    varying vec2 vUv;
-    uniform sampler2D uTexture;
-    uniform float aspectRatio;
-
-    #define SCALE 25.0
-
-    void main () {
-        vec2 uv = floor(vUv * SCALE * vec2(aspectRatio, 1.0));
-        float v = mod(uv.x + uv.y, 2.0);
-        v = v * 0.1 + 0.8;
-        gl_FragColor = vec4(vec3(v), 1.0);
-    }
-`);
+// Checkerboard transparency preview removed — TRANSPARENT is always false
+// in catnews, so the opaque BACK_COLOR path below is the only one used.
 
 const displayShaderSource = `
     precision highp float;
@@ -898,7 +788,6 @@ const blurProgram            = new Program(blurVertexShader, blurShader);
 const copyProgram            = new Program(baseVertexShader, copyShader);
 const clearProgram           = new Program(baseVertexShader, clearShader);
 const colorProgram           = new Program(baseVertexShader, colorShader);
-const checkerboardProgram    = new Program(baseVertexShader, checkerboardShader);
 const bloomPrefilterProgram  = new Program(baseVertexShader, bloomPrefilterShader);
 const bloomBlurProgram       = new Program(baseVertexShader, bloomBlurShader);
 const bloomFinalProgram      = new Program(baseVertexShader, bloomFinalShader);
@@ -1101,8 +990,9 @@ function updateKeywords () {
 }
 
 updateKeywords();
-initFramebuffers();
-multipleSplats(parseInt(Math.random() * 20) + 5);
+// Lazy-init FBOs on first visible frame — allocating 1024px dye buffers at
+// load wastes GPU memory while the ocean shader is active and fluid hidden.
+var fluidInitialized = false;
 
 let lastUpdateTime = Date.now();
 let colorUpdateTimer = 0.0;
@@ -1113,6 +1003,11 @@ function update () {
         lastUpdateTime = Date.now();
         setTimeout(function () { requestAnimationFrame(update); }, 500);
         return;
+    }
+    if (!fluidInitialized) {
+        initFramebuffers();
+        multipleSplats(parseInt(Math.random() * 20) + 5);
+        fluidInitialized = true;
     }
     const dt = calcDeltaTime();
     if (resizeCanvas())
@@ -1241,30 +1136,16 @@ function render (target) {
         blur(sunrays, sunraysTemp, 1);
     }
 
-    if (target == null || !config.TRANSPARENT) {
-        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-        gl.enable(gl.BLEND);
-    }
-    else {
-        gl.disable(gl.BLEND);
-    }
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.BLEND);
 
-    if (!config.TRANSPARENT)
-        drawColor(target, normalizeColor(config.BACK_COLOR));
-    if (target == null && config.TRANSPARENT)
-        drawCheckerboard(target);
+    drawColor(target, normalizeColor(config.BACK_COLOR));
     drawDisplay(target);
 }
 
 function drawColor (target, color) {
     colorProgram.bind();
     gl.uniform4f(colorProgram.uniforms.color, color.r, color.g, color.b, 1);
-    blit(target);
-}
-
-function drawCheckerboard (target) {
-    checkerboardProgram.bind();
-    gl.uniform1f(checkerboardProgram.uniforms.aspectRatio, canvas.width / canvas.height);
     blit(target);
 }
 
@@ -1611,7 +1492,7 @@ function hashCode (s) {
 };
 // catnews integration — expose fluid control for background toggle (ocean/fluid/off)
 window.catnewsFluid = {
-  show: function(){ canvas.hidden = false; canvas.style.display = ''; canvas.classList.add('is-visible'); if (typeof resizeCanvas === 'function' && typeof initFramebuffers === 'function'){ resizeCanvas(); initFramebuffers(); } },
+  show: function(){ canvas.hidden = false; canvas.style.display = ''; canvas.classList.add('is-visible'); if (typeof resizeCanvas === 'function' && typeof initFramebuffers === 'function'){ resizeCanvas(); initFramebuffers(); fluidInitialized = true; } },
   hide: function(){ canvas.hidden = true; canvas.style.display = 'none'; canvas.classList.remove('is-visible'); },
   splat: function(x,y,dx,dy){ splat(x,y,dx,dy, generateColor()); },
   get config(){ return config; },

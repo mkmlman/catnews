@@ -46,6 +46,9 @@
   /* Primitive scale */
   --font-size-xs: 0.8125rem;
   --font-size-sm: 0.9375rem;
+  --font-size-md: 1.0625rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.375rem;
   --font-size-2xl: 1.625rem;
   --font-size-3xl: 2.25rem;
 
@@ -57,6 +60,10 @@
   --text-meta: var(--font-size-xs);
   --text-form: var(--font-size-sm);
   --text-body: var(--font-size-sm);
+  --text-md: var(--font-size-md);
+  --text-lg: var(--font-size-lg);
+  --text-xl: var(--font-size-xl);
+  --text-2xl: var(--font-size-2xl);
   --leading-ui: 1.4;
   --leading-body: 1.6;
   --leading-tight: 1.15;
@@ -64,7 +71,7 @@
   /* Day palette — warm paper, ink text */
   --paper: #faf9f6;
   --chrome-surface: 250, 249, 246;
-  --card: #faf9f6;
+  --card: #fdfcf7;
   --ink: #353431;
   --ink-soft: rgba(53, 52, 49, 0.86);
   --muted: #57554c;
@@ -95,7 +102,7 @@
 
   --paper: #1a1a1a;
   --chrome-surface: 26, 26, 26;
-  --card: #1a1a1a;
+  --card: #222220;
   --ink: #f0eee8;
   --ink-soft: rgba(240, 238, 232, 0.90);
   --muted: rgba(240, 238, 232, 0.78);
@@ -113,7 +120,7 @@
 
   --paper: #0d0c0a;
   --chrome-surface: 13, 12, 10;
-  --card: #0d0c0a;
+  --card: #161511;
   --ink: #f2f0e9;
   --ink-soft: rgba(242, 240, 233, 0.91);
   --muted: rgba(242, 240, 233, 0.80);
@@ -805,7 +812,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   white-space: nowrap;
 }
 .bottom-controls a:hover,
-.bottom-controls button:hover { color: var(--ink); text-decoration: none; }
+.bottom-controls button:hover { color: var(--ink); text-decoration: underline dotted; }
 .bottom-controls .repo-link svg {
   display: block;
   width: 15px;
@@ -1212,7 +1219,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   background: var(--paper);
-  box-shadow: 0 10px 18px -18px var(--ink);
+  box-shadow: 0 10px 18px -18px color-mix(in srgb, var(--ink) 18%, transparent);
   /* NOTE: keep `top` un-transitioned — --header-h is tracked frame by frame
      through the header's compact transition (see trackHeaderHeight in
      app.js), so any transition here only adds lag-then-snap. */
@@ -1439,13 +1446,18 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   border: 1px solid var(--line);
   border-radius: var(--radius);
   /* Light frost: keeps type clean where the ocean or star field shows
-     through the reading veil, while staying far from opaque. */
-  background: rgba(var(--chrome-surface), 0.6);
+     through the reading veil, while staying far from opaque. Dark themes
+     use a denser wash so shimmer never sits behind body text. */
+  background: color-mix(in srgb, var(--card) 82%, transparent);
   transition: background-color 0.18s, border-color 0.18s;
   animation: rise 0.5s var(--ease-soft) both;
   animation-delay: min(calc(var(--i, 0) * 0.04s), 0.36s);
   content-visibility: auto;
   contain-intrinsic-size: auto 180px;
+}
+[data-theme="dark"] .story,
+[data-theme="pitch"] .story {
+  background: color-mix(in srgb, var(--card) 92%, transparent);
 }
 @keyframes rise {
   from { opacity: 0; transform: translateY(8px); }
@@ -1616,19 +1628,28 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   display: inline-block;
   transition: transform 0.18s ease;
 }
-.story-link:hover { text-decoration: none; }
+.story-link:hover { text-decoration: underline dotted; }
 .story-link:hover::after,
 .story-link:focus-visible::after { transform: translateX(3px); }
 .discuss {
   font-family: var(--mono-font);
   font-size: var(--text-meta);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--muted);
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   padding: 8px 0;
 }
-.discuss:hover { color: var(--ink); }
+.discuss::after {
+  content: " \2192";
+  display: inline-block;
+  transition: transform 0.18s ease;
+}
+.discuss:hover { color: var(--ink); text-decoration: underline dotted; }
+.discuss:hover::after,
+.discuss:focus-visible::after { transform: translateX(3px); }
 
 /* Dead links */
 .story-dead {
@@ -1692,6 +1713,9 @@ a.is-dead,
     opacity 0.15s;
 }
 .save-toggle svg, .copy-toggle svg { display: block; fill: none; }
+@media (hover: none) {
+  .save-toggle, .copy-toggle { opacity: 1; }
+}
 .story:hover .save-toggle,
 .story:hover .copy-toggle,
 .story:focus-within .save-toggle,
@@ -2970,6 +2994,8 @@ h1.sheet-name {
     background: rgb(var(--chrome-surface));
     animation: mobileMenuPanelIn 0.24s var(--ease-soft) both;
   }
+  body:has(.nav-open) { overflow: hidden; }
+  body.nav-open { overflow: hidden; }
   .js .nav-open .menu-trigger { position: relative; z-index: 2; }
   @keyframes mobileMenuPanelIn {
     from { opacity: 0; transform: translateY(-6px); }
@@ -3039,8 +3065,6 @@ h1.sheet-name {
      actions) collapse into one scrollable row instead of stacking. */
   .filter-row {
     display: flex;
-    grid-template-columns: none;
-    grid-template-areas: none;
     align-items: center;
     gap: 8px;
     overflow: hidden;
@@ -3071,7 +3095,6 @@ h1.sheet-name {
     padding-top: 0;
     padding-left: 8px;
     border-top: 0;
-    border-left: 1px solid var(--line);
   }
   .filter-actions::-webkit-scrollbar { display: none; }
   .source-options .chip,
@@ -3115,8 +3138,8 @@ h1.sheet-name {
   }
   .story .save-toggle,
   .story .copy-toggle {
-    min-width: 36px;
-    min-height: 36px;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .source-details { flex-direction: column; align-items: stretch; }
@@ -3173,18 +3196,11 @@ h1.sheet-name {
   .ds-task { white-space: normal; }
 
   /* Footer stacks below content on small screens */
-  .site-footer-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-  }
-  .footer-left { max-width: 100%; }
-  .bottom-controls { flex-wrap: wrap; gap: 12px; }
-  .to-top { right: 14px; bottom: 14px; width: 36px; height: 36px; }
+  .to-top { right: 14px; bottom: 14px; }
 
   .endpoint-row { flex-direction: column; align-items: stretch; gap: 6px; }
   .endpoint-tools { align-self: flex-start; }
-  .endpoint-tools .icon-btn { width: 36px; height: 36px; }
+  .endpoint-tools .icon-btn { width: 44px; height: 44px; }
   .endpoint-code {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
@@ -3214,11 +3230,6 @@ h1.sheet-name {
   .story-top {
     flex-wrap: wrap;
     gap: 6px;
-  }
-  .story .save-toggle,
-  .story .copy-toggle {
-    min-width: 34px;
-    min-height: 34px;
   }
 }
 
@@ -3296,7 +3307,7 @@ h1.sheet-name {
    compact sticky header. The default stylesheet above is the Departure mode.
    ======================================================================== */
 html[data-design-system="kami"] {
-  color-scheme: light;
+  color-scheme: light dark;
   --paper: #f5f4ed;
   --chrome-surface: 245, 244, 237;
   --card: #fdfcf7;

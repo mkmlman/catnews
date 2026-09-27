@@ -60,6 +60,7 @@
     installReturnFocus = null;
     closeWithFade(installDialog, function () {
       installDialog.hidden = true;
+      setInert(false);
       if (target && typeof target.focus === "function") target.focus();
     });
   }
@@ -90,8 +91,10 @@
   function setNavOpen(open) {
     if (!navToggle || !siteHeader || !primaryNav) return;
     siteHeader.classList.toggle("nav-open", open);
+    document.body.classList.toggle("nav-open", open);
     navToggle.setAttribute("aria-expanded", open ? "true" : "false");
     navToggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+    navToggle.textContent = open ? "Close" : "Menu";
     paintStickyOffsets();
   }
 
@@ -110,10 +113,26 @@
     });
   }
 
+  function setInert(open) {
+    var container = document.querySelector(".container");
+    if (!container) return;
+    if (open) {
+      container.setAttribute("inert", "");
+      container.setAttribute("aria-hidden", "true");
+    } else {
+      var anyOpen = (installDialog && !installDialog.hidden) || (helpDialog && !helpDialog.hidden);
+      if (!anyOpen) {
+        container.removeAttribute("inert");
+        container.removeAttribute("aria-hidden");
+      }
+    }
+  }
+
   function showInstallDialog() {
     if (!installDialog) return;
     installReturnFocus = document.activeElement;
     installDialog.hidden = false;
+    setInert(true);
     if (installDialogClose) installDialogClose.focus();
   }
 
@@ -453,6 +472,7 @@
     if (!helpDialog) return;
     helpReturnFocus = document.activeElement;
     helpDialog.hidden = false;
+    setInert(true);
     if (helpDialogClose) helpDialogClose.focus();
   }
 
@@ -462,6 +482,7 @@
     helpReturnFocus = null;
     closeWithFade(helpDialog, function () {
       helpDialog.hidden = true;
+      setInert(false);
       if (target && typeof target.focus === "function") target.focus();
     });
   }
@@ -689,6 +710,8 @@
   }
 
   if (toTopBtn) {
+    toTopBtn.setAttribute("aria-label", "Scroll back to top");
+    toTopBtn.setAttribute("title", "Scroll back to top");
     window.addEventListener("scroll", paintToTop, { passive: true });
     window.addEventListener("resize", paintToTop);
     toTopBtn.addEventListener("click", function () {
@@ -713,11 +736,13 @@
     card.classList.toggle("is-read", read.has(url));
     var btn = card.querySelector(".save-toggle");
     if (btn) {
-      btn.setAttribute("aria-pressed", saved.has(url) ? "true" : "false");
+      var isSaved = saved.has(url);
+      btn.setAttribute("aria-pressed", isSaved ? "true" : "false");
       btn.setAttribute(
         "aria-label",
-        saved.has(url) ? "Remove from saved" : "Save for later"
+        isSaved ? "Remove from saved" : "Save for later"
       );
+      btn.title = isSaved ? "Remove from saved" : "Save for later";
     }
   }
 
@@ -969,7 +994,7 @@
     paintProgress();
   }
 
-  function resetFilters() {
+  function resetFilters(event) {
     if (!filtersEl) return;
     filtersTouched = true;
     state.source = "All";
@@ -980,6 +1005,9 @@
     persistFilterState();
     syncFilterUrl();
     applyFilters();
+    // Only steal focus when invoked via keyboard — mouse users stay put.
+    var viaKeyboard = !event || (event.detail === 0);
+    if (!viaKeyboard) return;
     var allChip = filtersEl.querySelector('[data-source="All"]');
     if (allChip) allChip.focus();
   }
@@ -1224,12 +1252,8 @@
     if (index >= 0 && list[index]) {
       selectedIndex = index;
       list[index].classList.add("is-selected");
-      list[index].scrollIntoView({
-        block: "nearest",
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "auto"
-          : "smooth",
-      });
+      // Instant scroll: smooth queues animations on rapid j/k holds.
+      list[index].scrollIntoView({ block: "nearest", behavior: "auto" });
     } else {
       selectedIndex = -1;
     }
@@ -1335,15 +1359,18 @@
   function renderLoadingRow() {
     if (!searchResults) return;
     searchResults.innerHTML = "";
+    searchResults.removeAttribute("role");
+    searchResults.removeAttribute("aria-label");
     var row = document.createElement("div");
     row.className = "search-result search-result--loading";
+    row.setAttribute("role", "status");
     row.textContent = "Searching the archive…";
     searchResults.appendChild(row);
     showSearchResults();
   }
 
   function loadJson(path) {
-    return fetch(BASE + path).then(function (res) {
+    return fetch(BASE + path, { cache: "force-cache" }).then(function (res) {
       if (!res.ok) throw new Error("not available");
       return res.json();
     });
@@ -1535,8 +1562,8 @@
   }
 
   function paintFacets() {
-    if (!searchResults || !storiesCache) return;
-    var old = searchResults.querySelector(".search-facets");
+    if (!searchEl || !storiesCache) return;
+    var old = searchEl.querySelector(".search-facets");
     if (old) old.remove();
 
     var bar = document.createElement("div");
@@ -1577,24 +1604,17 @@
     });
     bar.appendChild(select);
 
-    if (searchResults.children.length) {
-      searchResults.insertBefore(bar, searchResults.firstChild);
-    } else {
-      searchResults.appendChild(bar);
-    }
+    // Facets live outside the listbox so AT sees only options inside it.
+    searchEl.insertBefore(bar, searchResults);
   }
 
   function paintActiveResult() {
     var items = searchResults.querySelectorAll("a.search-result");
     items.forEach(function (el, i) {
       el.classList.toggle("is-active", i === activeSearchIndex);
-      el.setAttribute("aria-selected", i === activeSearchIndex ? "true" : "false");
     });
     if (activeSearchIndex >= 0 && items[activeSearchIndex]) {
-      items[activeSearchIndex].scrollIntoView({ block: "nearest" });
-      searchInput.setAttribute("aria-activedescendant", items[activeSearchIndex].id);
-    } else {
-      searchInput.removeAttribute("aria-activedescendant");
+      items[activeSearchIndex].scrollIntoView({ block: "nearest", behavior: "auto" });
     }
   }
 
@@ -1628,12 +1648,21 @@
   function renderResults() {
     var query = searchInput.value.trim();
     var tokens = normalize(query).split(/\s+/).filter(Boolean);
+    // Gate on cache: fast typing before shards resolve must show loading, not "No matches".
+    if (!storiesCache && query) {
+      renderLoadingRow();
+      return;
+    }
     searchResults.innerHTML = "";
+    // Listbox must contain only options — hints use status role.
+    searchResults.setAttribute("role", "listbox");
+    searchResults.setAttribute("aria-label", "Search results");
     activeSearchIndex = -1;
     paintFacets();
     if (!query) {
       var hint = document.createElement("div");
       hint.className = "search-result search-result--none";
+      hint.setAttribute("role", "status");
       var total = storiesCache ? storiesCache.length : "";
       hint.textContent = total ? "Type to search " + total + " stories — try python, llm, hugging face" : "Type to search the archive…";
       hint.id = "search-result-hint";
@@ -1647,6 +1676,7 @@
     if (!hits.length) {
       var none = document.createElement("div");
       none.className = "search-result search-result--none";
+      none.setAttribute("role", "status");
       none.textContent = searchUnavailable
         ? "Search unavailable — try again later."
         : "No matches.";

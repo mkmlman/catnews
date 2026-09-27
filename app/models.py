@@ -62,10 +62,19 @@ class Story(BaseModel):
     def _reject_unsafe_url(cls, value):
         if value is None:
             return value
-        lowered = value.strip().lower()
+        from urllib.parse import urlsplit
+
+        stripped = value.strip()
+        lowered = stripped.lower()
         if lowered.startswith(("javascript:", "data:", "vbscript:")):
             raise ValueError("unsafe URL scheme")
-        return value
+        try:
+            parts = urlsplit(stripped)
+        except ValueError:
+            raise ValueError("invalid URL")
+        if parts.scheme.lower() not in ("http", "https") or not parts.netloc:
+            raise ValueError("URL must be absolute http(s)")
+        return stripped
 
     def to_markdown(self) -> str:
         """Render the story as a markdown block (matches the /api/story md output)."""

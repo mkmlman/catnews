@@ -61,13 +61,32 @@ def clean_output_dir(out_dir: Path) -> None:
     forbidden = {Path("/").resolve(), Path.cwd().resolve(), Path.home().resolve()}
     if resolved in forbidden:
         raise SystemExit(f"Refusing to clean broad build output path: {out_dir}")
+    # Refuse to wipe source/data dirs or tmp caches.
+    data_dir = (Path(__file__).resolve().parent.parent / "data").resolve()
+    if resolved == data_dir or data_dir in resolved.parents:
+        raise SystemExit(f"Refusing to clean inside data dir: {out_dir}")
+    if resolved.name not in (
+        "site",
+        "site_local",
+        "preview",
+        "catnews",
+        "dist",
+        "public",
+    ):
+        print(f"[catnews] warning: cleaning non-standard output dir {out_dir}")
     shutil.rmtree(out_dir)
 
 
 def write(path: Path, content: str | bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    mode = "wb" if isinstance(content, bytes) else "w"
-    path.open(mode).write(content)
+    if isinstance(content, bytes):
+        tmp = path.with_suffix(path.suffix + ".tmp")
+        tmp.write_bytes(content)
+        tmp.replace(path)
+    else:
+        tmp = path.with_suffix(path.suffix + ".tmp")
+        tmp.write_text(content, encoding="utf-8")
+        tmp.replace(path)
 
 
 def _skip_regex(source: str, start: int) -> int:
@@ -594,6 +613,11 @@ def main() -> None:
     base_path = args.base_path.rstrip("/") or ""
     if base_path and not base_path.startswith("/"):
         base_path = "/" + base_path
+    if base_path and not base_url.endswith(base_path):
+        print(
+            f"[catnews] warning: --base-url {base_url!r} does not end with "
+            f"--base-path {base_path!r}; canonical URLs may drop the subpath."
+        )
     build_site(data_dir, args.out, base_path, base_url, args.linkcheck, args=args)
 
 

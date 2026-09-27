@@ -4,12 +4,12 @@
 {% block canonical %}{% endblock %}
 {% block og_url %}{% endblock %}
 {% block content %}
-<section class="page-header">
+<section class="page-header" aria-labelledby="notfound-heading">
   {{ crumbs([("Home", base_path ~ "/"), ("Not found", None)]) }}
-  <h1>Not found</h1>
+  <h1 id="notfound-heading">Not found</h1>
   <p class="muted">That page doesn't exist (error 404).</p>
 </section>
-<section class="no-matches" aria-label="Page not found">
+<section class="no-matches" aria-label="Suggestions">
   {% include "cat-logo.html" %}
   <p>Nothing curled up here.</p>
   <p><a href="{{ base_path }}/">Back to today's digest</a> · Browse the <a href="{{ base_path }}/archive/">archive</a> or press <kbd>/</kbd> to search.</p>

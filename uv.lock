@@ -55,14 +55,6 @@ dev = [
     { name = "ty" },
 ]
 
-[package.dev-dependencies]
-dev = [
-    { name = "httpx" },
-    { name = "pytest" },
-    { name = "ruff" },
-    { name = "ty" },
-]
-
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
@@ -78,14 +70,6 @@ requires-dist = [
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.32" },
 ]
 provides-extras = ["dev"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "httpx" },
-    { name = "pytest", specifier = ">=8.0" },
-    { name = "ruff", specifier = ">=0.16.1" },
-    { name = "ty", specifier = ">=0.0.65" },
-]
 
 [[package]]
 name = "certifi"

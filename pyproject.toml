@@ -24,14 +24,7 @@ dev = [
 [project.scripts]
 catnews-fetch = "scripts.fetch_digest:main"
 catnews-dev = "scripts.dev:main"
-
-[dependency-groups]
-dev = [
-    "pytest>=8.0",
-    "httpx",
-    "ruff>=0.16.1",
-    "ty>=0.0.65",
-]
+catnews-build = "scripts.build_site:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

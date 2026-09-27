@@ -59,7 +59,7 @@ def hex_rgb(value: str) -> tuple[int, int, int] | None:
     Returns None when the value is not a hex color (e.g. a named CSS color
     like "rebeccapurple"), so callers can fall back instead of crashing.
     """
-    hexstr = str(value).strip("#").strip()
+    hexstr = str(value).strip().lstrip("#").strip()
     if len(hexstr) == 3:
         hexstr = "".join(ch * 2 for ch in hexstr)
     if len(hexstr) != 6:
@@ -83,6 +83,8 @@ class _Canvas:
             self.rows[y][x * 4 : x * 4 + 4] = bytes((*color, 255))
 
     def fill_ellipse(self, cx: int, cy: int, rx: int, ry: int, color) -> None:
+        if rx <= 0 or ry <= 0:
+            return
         for dy in range(-ry, ry + 1):
             y = cy + dy
             if not (0 <= y < self.h):
@@ -156,7 +158,8 @@ def _paw_colors() -> list[tuple[int, tuple[int, int, int]]]:
 
     colors = [rgb for entry in PALETTE if (rgb := hex_rgb(entry[0])) is not None]
     if len(colors) < len(_PAW_X):
-        colors = list(_PAW_FALLBACK)
+        # Pad with fallback instead of discarding good entries.
+        colors = colors + list(_PAW_FALLBACK)
     return [(x, colors[index % len(colors)]) for index, x in enumerate(_PAW_X)]
 
 

@@ -7,6 +7,7 @@
 #   - builtin: a dedicated fetcher shipped in app/fetchers/ — JSON APIs
 #     (hn, arxiv, github)
 #   - rss    : any blog/newsletter with a feed URL (Substack, Ghost, ...)
+#   - api    : alias for builtin (custom JSON endpoint, see config.load_sources)
 #
 # Optional per-source fields:
 #   weekday: 0-6 (Mon-Sun) — only fetch on that weekday
@@ -65,12 +66,3 @@ sources:
     extract_links: true
     cadence_days: 1
     limit: 20
-
-  # Example — any blog with RSS:
-  # - key: escflat
-  #   label: Escaping Flatland
-  #   tag: Henrik
-  #   type: rss
-  #   url: https://www.henrikkarlsson.xyz/feed
-  #   cadence_days: 7
-  #   limit: 10

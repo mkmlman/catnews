@@ -80,6 +80,6 @@ def parse_created_at(value: str | None):
     if not value:
         return None
     try:
-        return datetime.fromisoformat(value)
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))  # noqa: FURB162
     except ValueError:
         return None

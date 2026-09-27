@@ -235,7 +235,8 @@ def test_json_ld_macros_and_block_wired():
     snapshot = (APP_DIR / "templates" / "snapshot.html").read_text()
     assert "{% block json_ld %}{% endblock %}" in base
     assert '"@type": "WebSite"' in index
-    assert '"@type": "SearchAction"' in index
+    # SearchAction removed: fragment targets are rejected by Google.
+    assert '"@type": "SearchAction"' not in index
     json_ld = (APP_DIR / "templates" / "_json_ld.html").read_text()
     assert '"@type": "ListItem"' in json_ld
     assert "application/ld+json" in json_ld

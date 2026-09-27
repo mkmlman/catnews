@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import os
+import re as _re
 from datetime import UTC, date, datetime
 from pathlib import Path
 
 import yaml
 
+from .models import SOURCE_PATTERN as _MODEL_SOURCE_PATTERN
 from .og_image import hex_rgb
 
 APP_NAME = "catnews"
@@ -122,10 +124,10 @@ _BUILTIN_SOURCES: dict[str, dict] = {
     },
     "simonw": {
         "label": "Simon Willison",
-        "tag": "SimonW",
+        "tag": "simonw",
         "type": "rss",
         "url": "https://simonwillison.net/atom/everything/",
-        "extract_links": False,
+        "extract_links": True,
         "cadence_days": 1,
         "limit": 20,
     },
@@ -135,14 +137,24 @@ _BUILTIN_SOURCES: dict[str, dict] = {
 def _env_int(name: str, default: int) -> int:
     try:
         return int(os.environ[name])
-    except (KeyError, ValueError):
+    except KeyError:
+        return default
+    except ValueError:
+        print(
+            f"[catnews] warning: invalid int for {name}={os.environ.get(name)!r}; using {default}"
+        )
         return default
 
 
 def _env_float(name: str, default: float) -> float:
     try:
         return float(os.environ[name])
-    except (KeyError, ValueError):
+    except KeyError:
+        return default
+    except ValueError:
+        print(
+            f"[catnews] warning: invalid float for {name}={os.environ.get(name)!r}; using {default}"
+        )
         return default
 
 
@@ -150,17 +162,11 @@ FETCH_ATTEMPTS = max(1, _env_int("CATNEWS_FETCH_ATTEMPTS", 3))
 FETCH_BACKOFF_SECONDS = max(0.0, _env_float("CATNEWS_FETCH_BACKOFF_SECONDS", 1.0))
 
 
-SOURCE_KEY_PATTERN = "^[a-z0-9_]+$"
-
 # Single source of truth lives in app.models; alias here so config and
 # models can't drift (previously duplicated).
-from .models import SOURCE_PATTERN as _MODEL_SOURCE_PATTERN
-
 SOURCE_KEY_PATTERN = _MODEL_SOURCE_PATTERN
 
 # Compiled once for source-key validation at load time.
-import re as _re
-
 _SOURCE_KEY_RE = _re.compile(SOURCE_KEY_PATTERN)
 
 
@@ -304,7 +310,9 @@ WEEKDAYS = (
 
 def cadence_label(key: str) -> str:
     """Human-readable cadence for a source, e.g. 'daily' or 'weekly · Mondays'."""
-    cfg = SOURCES[key]
+    cfg = SOURCES.get(key)
+    if cfg is None:
+        return "daily"
     days = cfg["cadence_days"]
     if days == 1:
         return "daily"
@@ -348,11 +356,26 @@ def _lighten_for_dark(hex_color: str, amount: float = 0.45) -> str:
 
 def badge_color(key: str) -> tuple[str, str, str, str]:
     """The badge palette entry for a source (light/dark foreground + background)."""
-    cfg = SOURCES[key]
+    cfg = SOURCES.get(key, {})
     if override := cfg.get("color"):
-        override_str = str(override)
+        override_str = str(override).strip()
+        rgb = hex_rgb(override_str)
+        if rgb is None:
+            # Named CSS colors pass through — OG renderer falls back to graphite.
+            return (
+                override_str,
+                f"color-mix(in srgb, {override_str} 12%, transparent)",
+                override_str,
+                f"color-mix(in srgb, {override_str} 15%, transparent)",
+            )
+        # Use override as foreground on both themes, derive readable backgrounds.
         dark_fg = _lighten_for_dark(override_str)
-        return (override_str, override_str, dark_fg, dark_fg)
+        return (
+            override_str,
+            f"color-mix(in srgb, {override_str} 12%, transparent)",
+            dark_fg,
+            f"color-mix(in srgb, {dark_fg} 15%, transparent)",
+        )
     try:
         return PALETTE[list(SOURCES).index(key) % len(PALETTE)]
     except ValueError:

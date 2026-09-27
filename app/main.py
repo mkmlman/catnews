@@ -77,7 +77,9 @@ async def cache_headers(request: Request, call_next):
     """
     response = await call_next(request)
     path = request.url.path
-    if path == "/sw.js":
+    if path.startswith("/static/"):
+        response.headers.setdefault("Cache-Control", "public, max-age=86400, immutable")
+    elif path == "/sw.js":
         # Service workers must revalidate per navigation or updates stick.
         response.headers.setdefault("Cache-Control", "no-cache")
     elif (
@@ -87,8 +89,6 @@ async def cache_headers(request: Request, call_next):
         or path.endswith((".rss", ".json", ".xml", ".txt"))
     ):
         response.headers.setdefault("Cache-Control", "public, max-age=300")
-    elif path.startswith("/static/"):
-        response.headers.setdefault("Cache-Control", "public, max-age=86400, immutable")
     elif path.endswith((".js", ".css")) or "text/html" in response.headers.get(
         "content-type", ""
     ):
@@ -97,11 +97,12 @@ async def cache_headers(request: Request, call_next):
 
 
 @functools.lru_cache(maxsize=64)
-def _edition_card(source: str, day: str, count: int) -> bytes:
-    """Per-snapshot Open Graph card, cached by (source, date, story count).
+def _edition_card(source: str, day: str, count: int, content_hash: str = "") -> bytes:
+    """Per-snapshot Open Graph card, cached by (source, date, story count, hash).
 
     `day` is an ISO date string so the cache key is hashable; a source that
-    changes its snapshot count re-renders the card. Capped at 64 entries
+    changes its snapshot count re-renders the card. Content hash busts the
+    cache when stories change but count stays the same. Capped at 64 entries
     (~3MB) so the dev server can't grow unbounded over a long archive.
     """
     accent = source_accent_rgb(source)
@@ -143,10 +144,17 @@ def og_edition_image(source: str, day: date) -> Response:
     Registered before the /static mount so it is matched first; the source
     static dir never contains these generated cards.
     """
+    if source not in SOURCES:
+        raise HTTPException(status_code=404, detail=f"Unknown source {source!r}.")
     snap = load_snapshot(source, day, DATA_DIR)
     if snap is None:
         raise HTTPException(status_code=404, detail="No such edition.")
-    png = _edition_card(source, day.isoformat(), len(snap.stories))
+    import hashlib
+
+    content_hash = hashlib.sha1(
+        "".join(s.url for s in snap.stories).encode()
+    ).hexdigest()[:8]
+    png = _edition_card(source, day.isoformat(), len(snap.stories), content_hash)
     return Response(
         content=png,
         media_type="image/png",
@@ -216,7 +224,20 @@ def _wants_json_404(path: str) -> bool:
         return True
     if path == "/feed" or path == "/feed.rss" or path.startswith("/feed-"):
         return True
-    return path.endswith((".json", ".rss", ".xml", ".txt", ".js", ".svg"))
+    return path.endswith(
+        (
+            ".json",
+            ".rss",
+            ".xml",
+            ".txt",
+            ".js",
+            ".svg",
+            ".png",
+            ".jpg",
+            ".ico",
+            ".webmanifest",
+        )
+    )
 
 
 @app.exception_handler(StarletteHTTPException)
@@ -391,6 +412,8 @@ def api_source(source: str) -> SourceSnapshot:
 @app.get("/api/sources/{source}/{day}.json")
 @app.get("/api/sources/{source}/{day}")
 def api_source_day(source: str, day: date) -> SourceSnapshot:
+    if source not in SOURCES:
+        raise HTTPException(status_code=404, detail=f"Unknown source {source!r}.")
     snap = load_snapshot(source, day, DATA_DIR)
     if snap is None:
         raise HTTPException(
@@ -425,7 +448,10 @@ def api_stories(
     """
     if source is not None and source not in SOURCES:
         raise HTTPException(status_code=404, detail=f"Unknown source {source!r}.")
-    stories = [s for snap in load_all_snapshots(DATA_DIR) for s in snap.stories]
+    snaps = load_all_snapshots(DATA_DIR)
+    # Newest snapshot first so pagination matches the docstring.
+    snaps = sorted(snaps, key=lambda s: s.date, reverse=True)
+    stories = [s for snap in snaps for s in snap.stories]
     if source:
         stories = [s for s in stories if s.source == source]
     return stories[offset : offset + limit]

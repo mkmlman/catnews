@@ -26,8 +26,16 @@ def safe_http_url(value: str | None, fallback: str | None = None) -> str | None:
         host = (parts.hostname or "").lower()
     except ValueError:
         return fallback
+    if not parts.netloc or not host:
+        return fallback
     if scheme == "http" and host in HTTPS_ONLY_HOSTS:
-        return f"https://{value[7:]}"
+        return (
+            "https://"
+            + parts.netloc
+            + parts.path
+            + (("?" + parts.query) if parts.query else "")
+            + (("#" + parts.fragment) if parts.fragment else "")
+        )
     if scheme in ("http", "https"):
         return value
     return fallback

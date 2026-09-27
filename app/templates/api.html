@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ app_name }} | API{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block canonical %}{% endblock %}
 {% block og_description %}The {{ app_name }} digest as JSON, Markdown, or RSS — no auth required.{% endblock %}
 {% block content %}
 <section class="page-header">

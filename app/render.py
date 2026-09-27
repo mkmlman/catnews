@@ -220,11 +220,11 @@ def sparkline_points(
     Maps counts onto a `width`x`height` viewBox, oldest week first, with a
     bottom baseline. Returns::
 
-        {"point"|"points": "<x,y> ...", "area": "<x,y> ...", "last": "x,y"}
+        {"points": "<x,y> ...", "area": "<x,y> ...", "last": {"x": x, "y": y}}
 
     where `points` is the trend polyline, `area` is the same polyline closed
     onto the baseline for an area fill, and `last` is the newest point (for an
-    end dot). Returns None when the source has fewer than two weeks of data.
+    end marker). Returns None when the source has fewer than two weeks of data.
     """
     vals = [row["counts"].get(source, 0) for row in weekly if "counts" in row]
     if len(vals) < 2:
@@ -366,7 +366,7 @@ def render_dot_chart(daily: list[dict]) -> str:
 
     def area_path(offset_top: float, offset_bottom: float | None = None) -> str:
         """Area between the smoothed curve shifted up by two depths (or the base)."""
-        top = [(x, max(0.0, y - offset_top)) for x, y in smooth]
+        top = [(x, max(plot_t, y - offset_top)) for x, y in smooth]
         base = plot_b
         d = [f"M{plot_l},{base}", f"L{plot_l},{top[0][1]:.1f}"]
         d += [f"L{x:.1f},{y:.1f}" for x, y in top]
@@ -374,7 +374,7 @@ def render_dot_chart(daily: list[dict]) -> str:
         if offset_bottom is None:
             d.append(f"L{plot_r},{base}")
         else:
-            bottom = [(x, max(0.0, y - offset_bottom)) for x, y in curve]
+            bottom = [(x, max(plot_t, y - offset_bottom)) for x, y in smooth]
             d.append(f"L{plot_r},{bottom[-1][1]:.1f}")
             d += [f"L{x:.1f},{y:.1f}" for x, y in reversed(bottom)]
             d.append(f"L{plot_l},{bottom[0][1]:.1f}")
@@ -464,7 +464,7 @@ def render_dot_chart(daily: list[dict]) -> str:
             f'width="{day_w:.1f}" height="{plot_b - plot_t}" fill="transparent" '
             f'class="heat" data-date="{day.isoformat()}" '
             f'data-count="{count}" data-y="{y_of(count):.1f}" '
-            f'tabindex="{tab}" aria-label="{label}"></rect>'
+            f'tabindex="{tab}" role="img" aria-label="{label}" aria-describedby="heat-tip"></rect>'
         )
     # Hover/focus node riding the silhouette; parked by the client on the
     # active day column (hidden until then). cx/cy stay at the origin so
@@ -507,6 +507,11 @@ def search_index(snapshots: list[SourceSnapshot]) -> list[dict[str, str]]:
     api/search.json crosses ~1 MB — before adding more fields here (fuller
     text inflates every shard at once).
     """
+    return _search_records(sorted(snapshots, key=lambda s: s.date))
+
+
+def _search_records(snapshots: list[SourceSnapshot]) -> list[dict[str, str]]:
+    """Build deduplicated search records, newest snapshot wins."""
     records: dict[str, dict[str, str]] = {}
     for snapshot in snapshots:
         for story in snapshot.stories:
@@ -538,7 +543,7 @@ def search_index_sharded(
     years they need once it crosses ~1 MB.
     """
     by_year: dict[str, dict[str, dict[str, str]]] = {}
-    for snapshot in snapshots:
+    for snapshot in sorted(snapshots, key=lambda s: s.date):
         year = str(snapshot.date.year)
         bucket = by_year.setdefault(year, {})
         for story in snapshot.stories:
@@ -624,6 +629,7 @@ def render_manifest() -> str:
         "id": "./",
         "background_color": "#faf9f6",
         "theme_color": "#faf9f6",
+        "categories": ["news", "technology"],
         "icons": [
             {
                 "src": "./static/favicon.svg",
@@ -682,6 +688,7 @@ def render_service_worker(urls: list[str], version: str) -> str:
     precache = ",\n    ".join(json.dumps(u) for u in urls)
     return f"""// catnews service worker — build {version}
 const CACHE = "catnews-{version}";
+const basePath = location.pathname.replace(/\\/sw\\.js$/, "");
 const PRECACHE = [
     {precache}
 ];
@@ -713,8 +720,9 @@ self.addEventListener("fetch", (event) => {{
     // only fall back to the cache when offline. Everything else is cache-first.
     if (
         request.mode === "navigate" ||
-        url.pathname.indexOf("/api/") !== -1 ||
-        url.pathname.indexOf("/manifest.json") !== -1
+        url.pathname.startsWith(basePath + "/api/") ||
+        url.pathname === basePath + "/api" ||
+        url.pathname === basePath + "/manifest.json"
     ) {{
         event.respondWith(
             fetch(request)
@@ -735,7 +743,7 @@ self.addEventListener("fetch", (event) => {{
     }}
 
     event.respondWith(
-        caches.match(request).then((cached) => {{
+        caches.match(request, {{ignoreSearch: url.pathname.startsWith(basePath + "/static/")}}).then((cached) => {{
             const fresh = fetch(request)
                 .then((response) => {{
                     if (response.ok) {{
@@ -776,12 +784,12 @@ def walk_site_urls(out_dir: Path, max_bytes: int = 0) -> list[str]:
         urls.append("./" + rel)
         if rel.endswith("/index.html"):
             urls.append("./" + rel[: -len("index.html")])
-    # Fetch-status is tiny, so it is precached for instant offline health at
-    # first visit. search.json is deliberately NOT: it grows with the archive,
-    # and the client lazy-fetches it on first search focus anyway — the
-    # network-first handler then runtime-caches it, so offline search still
-    # works once search has been used online.
-    urls += ["./api/fetch-status.json"]
+    # Fetch-status and manifest are tiny and stable, so they are precached
+    # for instant offline health at first visit. search.json/feeds are
+    # deliberately NOT: they grow with the archive, and the client
+    # lazy-fetches them on demand — the network-first handler then
+    # runtime-caches them, so offline search still works once used online.
+    urls += ["./api/fetch-status.json", "./manifest.json"]
     return list(dict.fromkeys(urls))
 
 
@@ -801,7 +809,8 @@ def render_sitemap(base_url: str, snapshots: list) -> str:
     pages use their own date, the shared pages the newest snapshot date.
     The design-system page is internal tooling and is deliberately left out
     (it also ships `noindex`, so listing it would contradict itself). The
-    API docs stay in — they are public documentation worth indexing.
+    API docs are utility pages and are also excluded to keep the sitemap
+    focused on readable content.
     With no snapshots there is no date to stamp, so `lastmod` is omitted.
     """
     clean = base_url.rstrip("/")
@@ -811,17 +820,17 @@ def render_sitemap(base_url: str, snapshots: list) -> str:
         f"{clean}/archive/",
         f"{clean}/stats/",
         f"{clean}/sources/",
-        f"{clean}/api/",
     ]
     if newest is None:
         entries = [f"  <url><loc>{u}</loc></url>" for u in shared]
     else:
+        newest_ts = f"{newest.isoformat()}T00:00:00+00:00"
         entries = [
-            f"  <url><loc>{u}</loc><lastmod>{newest}</lastmod></url>" for u in shared
+            f"  <url><loc>{u}</loc><lastmod>{newest_ts}</lastmod></url>" for u in shared
         ]
     entries += [
         f"  <url><loc>{clean}/archive/{snap.source}/{snap.date.isoformat()}/</loc>"
-        f"<lastmod>{snap.date}</lastmod></url>"
+        f"<lastmod>{snap.date.isoformat()}T00:00:00+00:00</lastmod></url>"
         for snap in snapshots
     ]
     return (
@@ -883,9 +892,8 @@ def live_site_urls(snapshots: list) -> list[str]:
         "./archive/",
         "./stats/",
         "./sources/",
-        "./api/",
+        "./manifest.json",
         "./api/fetch-status.json",
-        "./design/",
     ]
     latest_by_source: dict[str, SourceSnapshot] = {}
     for snap in snapshots:
@@ -936,7 +944,10 @@ def _with_feed_stylesheet(xml: str) -> str:
     relative because every feed lives next to static/ (locally, on Pages,
     and under the dev server).
     """
-    end = xml.index("?>") + 2
+    end = xml.find("?>")
+    if end == -1:
+        return FEED_STYLESHEET_PI + "\n" + xml
+    end += 2
     return xml[:end] + "\n" + FEED_STYLESHEET_PI + xml[end:]
 
 
@@ -973,8 +984,11 @@ def render_rss(digest: Digest, base_url: str) -> str:
 
     for story in stories:
         entry = fg.add_entry(order="append")
-        # Stable GUID so readers don't duplicate stories across editions.
-        entry.id(story.url)
+        # Opaque stable GUID so readers don't duplicate across editions and
+        # two sources sharing a URL don't collide.
+        entry.guid(
+            f"catnews:{story.source}:{story.external_id or story.url}", permalink=False
+        )
         entry.title(story.title)
         entry.link(href=story.url)
         entry.author({"name": story.author or "unknown"})
@@ -987,11 +1001,17 @@ def render_rss(digest: Digest, base_url: str) -> str:
             )
         if story.summary:
             parts.append(f"<p>{html.escape(story.summary)}</p>")
+        elif story.snippet:
+            parts.append(f"<p>{html.escape(story.snippet[:500])}</p>")
         if story.hn_url:
             parts.append(
                 f'<p>Discuss on <a href="{html.escape(story.hn_url, quote=True)}">Hacker News</a></p>'
             )
-        entry.content("".join(parts), type="html")
+        if parts:
+            entry.content("".join(parts), type="html")
+            # Plain-text description so readers without content:encoded still show text.
+            desc = story.summary or story.snippet or story.why_read or story.title
+            entry.description(desc[:1000])
 
     return _with_feed_stylesheet(fg.rss_str(pretty=True).decode("utf-8"))
 
@@ -1039,7 +1059,9 @@ def render_source_rss(source: str, snapshot, base_url: str, feed_url: str) -> st
 
     for story in stories:
         entry = fg.add_entry(order="append")
-        entry.id(story.url)
+        entry.guid(
+            f"catnews:{story.source}:{story.external_id or story.url}", permalink=False
+        )
         entry.title(story.title)
         entry.link(href=story.url)
         entry.author({"name": story.author or "unknown"})
@@ -1052,10 +1074,15 @@ def render_source_rss(source: str, snapshot, base_url: str, feed_url: str) -> st
             )
         if story.summary:
             parts.append(f"<p>{html.escape(story.summary)}</p>")
+        elif story.snippet:
+            parts.append(f"<p>{html.escape(story.snippet[:500])}</p>")
         if story.hn_url:
             parts.append(
                 f'<p>Discuss on <a href="{html.escape(story.hn_url, quote=True)}">Hacker News</a></p>'
             )
-        entry.content("".join(parts), type="html")
+        if parts:
+            entry.content("".join(parts), type="html")
+            desc = story.summary or story.snippet or story.why_read or story.title
+            entry.description(desc[:1000])
 
     return _with_feed_stylesheet(fg.rss_str(pretty=True).decode("utf-8"))

@@ -45,7 +45,7 @@ def parse_entry(entry: ET.Element) -> Story | None:
     published = None
     if published_raw:
         try:
-            published = datetime.fromisoformat(published_raw)
+            published = datetime.fromisoformat(published_raw.replace("Z", "+00:00"))  # noqa: FURB162
         except ValueError:
             pass
 

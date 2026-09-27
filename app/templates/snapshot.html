@@ -4,6 +4,8 @@
 {% block og_title %}{{ label }} · {{ snapshot.date.strftime("%B %d, %Y") }} — {{ snapshot.stories | length }} stories{% endblock %}
 {% block og_description %}{{ snapshot.stories | length }} hand-curated stories from {{ label }} on {{ snapshot.date.strftime("%B %d, %Y") }}.{% endblock %}
 {% block feed_alt %}{{ base_url }}/feed-{{ snapshot.source }}.rss{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_extra %}<meta property="article:published_time" content="{{ snapshot.date.isoformat() }}T00:00:00+00:00">{% endblock %}
 {% block json_ld %}
 {{ breadcrumbs([("Home", base_path ~ "/"), ("Archive", base_path ~ "/archive/"), (label ~ " · " ~ snapshot.date.strftime("%B %d, %Y"), None)]) }}
 {{ item_list(snapshot.stories, label ~ " — " ~ snapshot.date.strftime("%B %d, %Y")) }}
@@ -24,7 +26,8 @@
   {% else %}<span class="snapshot-nav-spacer" aria-hidden="true"></span>{% endif %}
 </nav>
 {% endif %}
-<section class="stories" aria-label="{{ label }} stories">
+<section class="stories" aria-labelledby="snapshot-heading">
+  <h1 id="snapshot-heading" class="sr-only">{{ label }} — {{ snapshot.date.strftime("%B %d, %Y") }}</h1>
   {% for story in snapshot.stories %}
   {% set outer_loop_index = loop.index0 %}
   {% include "_story.html" with context %}

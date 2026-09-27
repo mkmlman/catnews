@@ -1312,8 +1312,8 @@ def test_service_worker_serves_api_data_network_first(client, tmp_path):
     # Navigations, API data, and the manifest are all network-first (fresh
     # when online); only stable shell assets are cache-first.
     assert 'request.mode === "navigate"' in sw
-    assert 'url.pathname.indexOf("/api/") !== -1' in sw
-    assert 'url.pathname.indexOf("/manifest.json") !== -1' in sw
+    assert 'startsWith(basePath + "/api/")' in sw
+    assert 'basePath + "/manifest.json"' in sw
 
 
 def test_api_json_aliases_match_static_build(client, tmp_path):
@@ -1984,7 +1984,9 @@ def test_json_ld_structured_data_on_pages(client, tmp_path):
     home = client.get("/").text
     assert '<script type="application/ld+json">' in home
     assert '"@type": "WebSite"' in home
-    assert '"@type": "SearchAction"' in home
+    # SearchAction with fragment target was removed — Google rejects fragment
+    # search targets, so advertising it hurt SEO.
+    assert '"@type": "SearchAction"' not in home
     assert '"@type": "ItemList"' in home
     assert '"name": "HN story"' in home
     # Escaping: a crafted title must not break out of the JSON-LD payload.
@@ -2032,12 +2034,12 @@ def test_sitemap_includes_lastmod(tmp_path):
     out = tmp_path / "site"
     build_site(tmp_path, out, "/catnews", "https://example.com")
     sitemap = (out / "sitemap.xml").read_text()
-    assert sitemap.count("<lastmod>") == 6  # 5 shared pages + 1 snapshot
-    assert "<lastmod>2026-08-02</lastmod>" in sitemap
+    assert sitemap.count("<lastmod>") == 5  # 4 shared pages + 1 snapshot
+    assert "<lastmod>2026-08-02T00:00:00+00:00</lastmod>" in sitemap
     # The design system is internal tooling and ships noindex, so listing it
-    # would contradict itself.
+    # would contradict itself. API docs are utility pages, also excluded.
     assert "/design/" not in sitemap
-    assert "/api/" in sitemap
+    assert "/api/" not in sitemap
 
 
 def test_hero_reports_the_oldest_source_not_an_impossible_date():
@@ -2539,9 +2541,11 @@ def test_mobile_filter_bar_is_a_single_row():
     phone = css.split("@media (max-width: 560px)", 1)[1]
     row = phone.split(".filter-row {", 1)[1].split("}", 1)[0]
     # The bar is no longer pinned on phones (that was ~200px of chrome on a
-    # short viewport), so the two stacked rows collapse into one.
-    assert "grid-template-areas: none;" in row
-    assert "grid-template-columns: none;" in row
+    # short viewport), so the two stacked rows collapse into one flex row.
+    # Dead grid-template lines were removed — flex + nowrap is the contract.
+    assert "display: flex;" in row
+    assert "flex-wrap: nowrap;" in row
+    assert "grid-template" not in row
 
 
 def test_filters_do_not_pin_without_js():
@@ -3428,7 +3432,11 @@ def test_hex_rgb_handles_named_and_short_colors():
     config_module.SOURCES["tint"] = original
     try:
         assert source_accent_rgb("tint") == (0x3B, 0x3E, 0x37)
-        assert badge_color("tint") == ("rebeccapurple",) * 4
+        fg, bg, _dark_fg, _dark_bg = badge_color("tint")
+        # Named colors pass through as foreground with derived translucent
+        # backgrounds (never fg==bg opaque, which was unreadable).
+        assert fg == "rebeccapurple"
+        assert "color-mix" in bg
     finally:
         config_module.SOURCES.pop("tint", None)
 
