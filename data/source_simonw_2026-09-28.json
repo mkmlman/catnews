@@ -1,0 +1,276 @@
+{
+  "source": "simonw",
+  "date": "2026-09-28",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Muse AI Agent",
+      "url": "https://simonwillison.net/2026/Sep/28/muse-ai-agent/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/28/muse-ai-agent/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-28T04:01:30Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Bad news on the MX Keys Mini pickup. Usman showed up at your building around 9:15 and waited, messaged a bunch of times, and nobody came down. He left angry at 9:38 and left a negative rating. Worse, my auto-reply told him \"Yep I'm here!\" at 9:27 when you clearly weren't available, which is on me. That's a bad look and it made the no-show worse. I've sent him an apology from your account owning it and offering to try again another day. But the negative rating is real, and I should probably stop the auto-replies from claiming you're home when I can't verify that. Want me to change the pickup replies so they don't promise you're there? — Muse AI Agent , working on behalf of @matt.j.robb Tags: meta , generative-ai , muse-agent , ai , general-agents , llms",
+      "links": [
+        {
+          "title": "Muse AI Agent",
+          "url": "https://www.threads.com/share/_oWfPufYJ/",
+          "site": "threads.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "2026 in LLMs (so far)",
+      "url": "https://simonwillison.net/2026/Sep/27/2026-in-llms-so-far/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/27/2026-in-llms-so-far/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-27T23:54:15Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "On Friday I gave the closing keynote at the WeAreDevelopers World Congress North America in San Jose. I tied together the key trends from the past year into a chronological exploration of everything that happened in 2026. The video is on YouTube ; here are my annotated slides and notes to accompany the talk. And as an annotated presentation : # I'm going to give a lightning tour of everything that has happened so far in 2026. The year isn't over yet! # For me, 2026 started a couple of months earlier in November 2025. # November saw the release of two important models: Claude Opus 4.5 and GPT-5.1. As is usually the case with new models, these were incremental improvements on the models that came before them. But every now and then when a model improves, it crosses an invisible line where something that didn't really work starts working. In this case, the thing that started working was the",
+      "links": [
+        {
+          "title": "WeAreDevelopers World Congress North America",
+          "url": "https://www.wearedevelopers.com/world-congress-north-america",
+          "site": "wearedevelopers.com"
+        },
+        {
+          "title": "is on YouTube",
+          "url": "https://www.youtube.com/watch?v=GAkIytR7vcc",
+          "site": "youtube.com"
+        },
+        {
+          "title": "at this conference",
+          "url": "https://www.wearedevelopers.com/world-congress-north-america/agenda/schedule",
+          "site": "wearedevelopers.com"
+        },
+        {
+          "title": "by Kimberley Collins",
+          "url": "https://commons.wikimedia.org/wiki/File:K%C4%81k%C4%81p%C5%8D_at_Dunedin_Wildlife_Hospital.jpg",
+          "site": "commons.wikimedia.org"
+        },
+        {
+          "title": "AI psychosis",
+          "url": "https://en.wikipedia.org/wiki/AI-induced_psychosis",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "a JavaScript interpreter entirely in Python",
+          "url": "https://github.com/simonw/micro-javascript",
+          "site": "github.com"
+        },
+        {
+          "title": "MicroQuickJS",
+          "url": "https://github.com/bellard/mquickjs",
+          "site": "github.com"
+        },
+        {
+          "title": "a WebAssembly runtime in Python as well",
+          "url": "https://github.com/simonw/pwasm",
+          "site": "github.com"
+        },
+        {
+          "title": "https://simonw.github.io/micro-javascript/playground.html",
+          "url": "https://simonw.github.io/micro-javascript/playground.html",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "Pyodide",
+          "url": "https://pyodide.org/",
+          "site": "pyodide.org"
+        },
+        {
+          "title": "over 100,000 commits",
+          "url": "https://github.com/openclaw/openclaw",
+          "site": "github.com"
+        },
+        {
+          "title": "NanoClaw",
+          "url": "https://github.com/nanocoai/nanoclaw",
+          "site": "github.com"
+        },
+        {
+          "title": "IronClaw",
+          "url": "https://github.com/nearai/ironclaw",
+          "site": "github.com"
+        },
+        {
+          "title": "PicoClaw",
+          "url": "https://github.com/sipeed/picoclaw",
+          "site": "github.com"
+        },
+        {
+          "title": "Drew Breunig",
+          "url": "https://www.dbreunig.com",
+          "site": "dbreunig.com"
+        },
+        {
+          "title": "MoltBook",
+          "url": "https://www.moltbook.com/",
+          "site": "moltbook.com"
+        },
+        {
+          "title": "profiled by the New York Times on Monday",
+          "url": "https://www.nytimes.com/2026/02/02/technology/moltbook-ai-social-media.html",
+          "site": "nytimes.com"
+        },
+        {
+          "title": "bought it a month later",
+          "url": "https://www.cnbc.com/2026/03/10/meta-social-networks-ai-agents-moltbook-acquisition.html",
+          "site": "cnbc.com"
+        },
+        {
+          "title": "Software Factories and the Agentic Moment",
+          "url": "https://factory.strongdm.ai",
+          "site": "factory.strongdm.ai"
+        },
+        {
+          "title": "the Dark Factory",
+          "url": "https://www.danshapiro.com/blog/2026/01/the-five-levels-from-spicy-autocomplete-to-the-software-factory/",
+          "site": "danshapiro.com"
+        },
+        {
+          "title": "First kākāpō chick in four years hatches on Valentine's Day",
+          "url": "https://www.doc.govt.nz/news/media-releases/2026-media-releases/first-kakapo-chick-in-four-years-hatches-on-valentines-day/",
+          "site": "doc.govt.nz"
+        },
+        {
+          "title": "tweeted a video",
+          "url": "https://x.com/JeffDean/status/2024525132266688757",
+          "site": "x.com"
+        },
+        {
+          "title": "came out three weeks ago",
+          "url": "https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/",
+          "site": "about.fb.com"
+        },
+        {
+          "title": "How the OpenClaw Frenzy Is Testing China’s AI Commitment",
+          "url": "https://www.thewirechina.com/2026/03/29/how-the-openclaw-frenzy-is-testing-chinas-ai-commitment/",
+          "site": "thewirechina.com"
+        },
+        {
+          "title": "The Enthusiasm and Anxiety Behind China’s OpenClaw Craze",
+          "url": "https://www.sixthtone.com/news/1018393",
+          "site": "sixthtone.com"
+        },
+        {
+          "title": "GPT-2",
+          "url": "https://en.wikipedia.org/wiki/GPT-2",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "Rerum novarum",
+          "url": "https://en.wikipedia.org/wiki/Rerum_novarum",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "noted",
+          "url": "https://twitter.com/quinnypig/status/2058960462256210268",
+          "site": "twitter.com"
+        },
+        {
+          "title": "shut down user registrations",
+          "url": "https://twitter.com/maciejmensfeld/status/2054164602577940619",
+          "site": "twitter.com"
+        },
+        {
+          "title": "the US government shut it down",
+          "url": "https://www.anthropic.com/news/fable-mythos-access",
+          "site": "anthropic.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "S3 Is the Future, S3 Is the Past",
+      "url": "https://simonwillison.net/2026/Sep/27/hn-49871741/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/27/hn-49871741/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-27T23:09:19Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on S3 Is the Future, S3 Is the Past — Hacker News. One thing I find notable about S3 today is that, while it used to drop in price reasonably often, there hasn't been a price drop in a full decade : 2006-03-14 $0.150/GB-month 2010-11-01 $0.140/GB-month 2012-02-01 $0.125/GB-month 2012-12-01 $0.095/GB-month 2014-02-01 $0.085/GB-month 2014-04-01 $0.030/GB-month 2016-12-01 $0.023/GB-month Today it's still $0.023/GB-month. Tags: amazon-web-services , s3",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://news.ycombinator.com/item?id=49851693#49871741",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "S3 Is the Future, S3 Is the Past",
+          "url": "https://news.ycombinator.com/item?id=49851693",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Bluesky reply bot checker",
+      "url": "https://simonwillison.net/2026/Sep/27/bluesky-bot-check/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/27/bluesky-bot-check/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-27T18:41:44Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Tool: Bluesky reply bot checker Automated reply bots on Twitter are a scourge - as someone with a decent number of followers I attract a swarm of these, such that anything I post there attracts dozens of mindless automated replies. They've started manifesting on Bluesky as well. Unlike Twitter, Bluesky still has a freely available and useful API. The lack of such a thing doesn't slow down the bots, but it does make investigating them a lot more frustrating. So I had Opus 5.5 vibe code this tool , which examines any Bluesky profile for evidence of a likely reply bot. It looks for signals like replies posted within seconds of other posts from the same account, or accounts that never post their own content (or images or links) but instead consistently reply to messages from other, higher-follower users. It also looks for question marks, because I'm extra infuriated by reply bots that I no t",
+      "links": [
+        {
+          "title": "vibe code this tool",
+          "url": "https://github.com/simonw/tools/pull/348",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "We just shipped support for the ugliest part of HTTP: Vary",
+      "url": "https://simonwillison.net/2026/Sep/23/hn-49823961/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/23/hn-49823961/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-23T23:14:57Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on We just shipped support for the ugliest part of HTTP: Vary — Hacker News. I've been wanting this from Cloudflare for years . The classic problem here is if you do that thing where user agents that send \"accept: text/html\" get HTML, while user agents that don't get JSON or some other format. This used to be impossible to deploy behind Cloudflare caching, because they ignored the Vary header on anything other than images - so you risked caching the JSON version and then serving it up to someone who was expecting HTML. (Independent of the Cloudflare feature I ended up deciding never to use that pattern, because I prefer having URL that predictably returns HTML or JSON - I add a .json suffix to my apps to serve JSON instead.) Tags: http , cloudflare",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://news.ycombinator.com/item?id=49823195#49823961",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "We just shipped support for the ugliest part of HTTP: Vary",
+          "url": "https://news.ycombinator.com/item?id=49823195",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    }
+  ]
+}
