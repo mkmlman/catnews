@@ -1,0 +1,80 @@
+{
+  "source": "simonw",
+  "date": "2026-09-30",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Anthropic Frontier Red Team",
+      "url": "https://simonwillison.net/2026/Sep/29/anthropic-frontier-red-team/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/29/anthropic-frontier-red-team/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-29T22:20:28Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "We evaluate several models on 100 tasks from the [internal Binary Exploitation benchmark] (selected at random), and find that GLM-5.3 develops full control flow hijacks in 4% of the trials; Claude Mythos Preview did so in 6%. Although GLM-5.3 performs below Claude Mythos Preview here, a meaningful threshold has clearly been crossed: earlier models, like Claude Opus 4.6 and GLM-5.2, do not succeed in any of them. — Anthropic Frontier Red Team , GLM-5.3 and the spread of advanced cyber capabilities Tags: anthropic , generative-ai , ai-security-research , glm , ai , ai-in-china , llms",
+      "links": [
+        {
+          "title": "Anthropic Frontier Red Team",
+          "url": "https://www.anthropic.com/research/glm-5-3-and-the-spread-of-advanced-cyber-capabilities",
+          "site": "anthropic.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "GPT 6.1 Sol: Near-Astra intelligence for a fifth of the price",
+      "url": "https://simonwillison.net/2026/Sep/29/hn-49898129/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/29/hn-49898129/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-29T18:27:48Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on GPT 6.1 Sol: Near-Astra intelligence for a fifth of the price — Hacker News. I'm a bit late with the pelicans because I was live-blogging the keynote: https://simonwillison.net/2026/Sep/29/openai-devday-2026-liv... Here they are for GPT-6.1-Sol: https://tools.simonwillison.net/markdown-svg-renderer?url=ht... They're not notably different from the GPT-6 family pelicans: https://static.simonwillison.net/static/2026/gpt-pelicans-gr... Tags: ai , openai , generative-ai , llms , pelican-riding-a-bicycle , gpt",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://news.ycombinator.com/item?id=49896586#49898129",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "GPT 6.1 Sol: Near-Astra intelligence for a fifth of the price",
+          "url": "https://news.ycombinator.com/item?id=49896586",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "OpenAI DevDay 2026 live blog",
+      "url": "https://simonwillison.net/2026/Sep/29/openai-devday-2026-live-blog/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/29/openai-devday-2026-live-blog/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-29T15:55:13Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I'm at OpenAI DevDay today, in Fort Mason, San Francisco. Same as last year I'll be live blogging the keynote and some other notes during the day. OpenAI gave me a free ticket and a seat in the \"creator\" area for the keynote. Tags: ai , openai , generative-ai , llms , coding-agents , live-blog , openai-devday",
+      "links": [
+        {
+          "title": "OpenAI DevDay",
+          "url": "https://devday.openai.com/",
+          "site": "devday.openai.com"
+        }
+      ]
+    }
+  ]
+}
