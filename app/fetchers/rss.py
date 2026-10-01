@@ -183,6 +183,11 @@ async def fetch_rss(
     response = await client.get(url, timeout=REQUEST_TIMEOUT)
     response.raise_for_status()
     parsed = feedparser.parse(response.content)
+    # feedparser is deliberately tolerant: malformed XML can otherwise look
+    # like a successful empty feed and overwrite freshness status as current.
+    # Keep partially recoverable feeds, but fail a wholly unreadable response.
+    if parsed.bozo and not parsed.entries:
+        raise ValueError(f"Could not parse RSS feed {url}: {parsed.bozo_exception}")
     feed_author = parsed.feed.get("author")
     self_host = urlparse(url).netloc.lower()
     stories: list[Story] = []

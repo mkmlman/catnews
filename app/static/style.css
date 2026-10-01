@@ -1236,6 +1236,13 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
 }
 .filter-scroll { position: relative; min-width: 0; flex: 1 1 auto; }
 .filter-scroll-cue { display: none; }
+.filter-note {
+  margin: 3px 0 0;
+  color: var(--faint);
+  font-family: var(--serif-font);
+  font-size: var(--text-meta);
+  line-height: 1.35;
+}
 .filter-label {
   font-family: var(--mono-font);
   font-size: var(--text-meta);
@@ -1279,6 +1286,8 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+  padding-left: 10px;
+  border-left: 1px solid var(--line);
 }
 .view-toggle {
   display: inline-flex;

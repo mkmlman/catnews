@@ -215,6 +215,21 @@ def test_rss_strip_html():
     assert strip_html("") == ""
 
 
+def test_fetch_rss_rejects_unreadable_feed_instead_of_reporting_empty_success():
+    import asyncio
+
+    from app.fetchers.rss import fetch_rss
+
+    class FakeClient:
+        async def get(self, url, timeout=None):
+            response = SimpleNamespace(content=b"this is not an RSS or Atom feed")
+            response.raise_for_status = lambda: None
+            return response
+
+    with pytest.raises(ValueError, match="Could not parse RSS feed"):
+        asyncio.run(fetch_rss(FakeClient(), "https://example.com/feed", "example"))
+
+
 def test_fetch_rss_extracts_links_when_requested():
     import asyncio
 
@@ -253,6 +268,25 @@ def test_fetch_rss_extracts_links_when_requested():
     assert [s.title for s in stories] == ["Joy & Curiosity #93"]
     assert stories[0].source == "registerspill"
     assert [l.title for l in stories[0].links] == ["gwern"]
+
+
+def test_fetch_rss_keeps_entries_from_recoverable_malformed_feed():
+    import asyncio
+
+    from app.fetchers.rss import fetch_rss
+
+    class FakeClient:
+        async def get(self, url, timeout=None):
+            response = SimpleNamespace(
+                content=b"<rss><channel><item><title>Recovered</title><link>https://example.com/post</link></item></channel>"
+            )
+            response.raise_for_status = lambda: None
+            return response
+
+    stories = asyncio.run(
+        fetch_rss(FakeClient(), "https://example.com/feed", "example")
+    )
+    assert [story.title for story in stories] == ["Recovered"]
 
 
 def test_fetch_rss_extracts_links_and_author_from_atom_summary():
@@ -2056,7 +2090,7 @@ def test_hero_reports_the_oldest_source_not_an_impossible_date():
         r"\{#.*?#\}", "", INDEX_TEMPLATE, flags=re.DOTALL
     )
     assert "oldest_snapshot < digest.date" in INDEX_TEMPLATE
-    assert "since " in INDEX_TEMPLATE
+    assert "oldest from " in INDEX_TEMPLATE
     # The invariant the old guard got wrong, stated directly.
     assert status["latest_snapshot"] <= digest.date
     assert status["oldest_snapshot"] <= status["latest_snapshot"]

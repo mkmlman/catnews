@@ -151,6 +151,19 @@ def test_card_scores_are_present_for_curated_sources():
     assert "story-score" not in design
 
 
+def test_saved_state_limits_and_export_are_explained():
+    index = (APP_DIR / "templates" / "index.html").read_text()
+    assert "Saved and read marks stay in this browser." in index
+    assert "Export downloads your saved stories as Markdown." in index
+    assert 'aria-label="Export saved stories as Markdown"' in index
+
+
+def test_failed_search_offers_retry_and_does_not_stay_loading():
+    app_js = (APP_DIR / "static" / "app.js").read_text()
+    assert 'retry.textContent = "Try again";' in app_js
+    assert "!storiesCache && !searchUnavailable && query" in app_js
+
+
 def test_story_filters_are_accessible_buttons():
     index = (APP_DIR / "templates" / "index.html").read_text()
     assert 'type="button"' in index
@@ -204,7 +217,7 @@ def test_search_reports_unavailability_not_blank():
     assert "searchUnavailable = true;" in app_js
     assert "Search unavailable" in app_js
     assert ': "No matches."' in app_js
-    assert 'searchUnavailable\n        ? "Search unavailable' in app_js
+    assert 'searchUnavailable ? "Search unavailable." : "No matches."' in app_js
 
 
 def test_filter_changes_announce_to_screen_readers():

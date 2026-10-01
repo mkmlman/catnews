@@ -68,14 +68,24 @@
   var EASE_MS = 160;
   /* Fade an element out (opacity + list of transition:...), then run `done`.
      Honors prefers-reduced-motion by hiding immediately. */
+  function cancelCloseFade(el) {
+    if (!el) return;
+    if (el._closeTimer) window.clearTimeout(el._closeTimer);
+    el._closeTimer = null;
+    el.classList.remove("is-closing");
+  }
+
   function closeWithFade(el, done) {
     var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce || !el) {
+      cancelCloseFade(el);
       if (done) done();
       return;
     }
+    cancelCloseFade(el);
     el.classList.add("is-closing");
-    setTimeout(function () {
+    el._closeTimer = window.setTimeout(function () {
+      el._closeTimer = null;
       if (done) done();
       el.classList.remove("is-closing");
     }, EASE_MS);
@@ -130,6 +140,7 @@
 
   function showInstallDialog() {
     if (!installDialog) return;
+    cancelCloseFade(installDialog);
     installReturnFocus = document.activeElement;
     installDialog.hidden = false;
     setInert(true);
@@ -470,6 +481,7 @@
 
   function openHelp() {
     if (!helpDialog) return;
+    cancelCloseFade(helpDialog);
     helpReturnFocus = document.activeElement;
     helpDialog.hidden = false;
     setInert(true);
@@ -486,6 +498,17 @@
       if (target && typeof target.focus === "function") target.focus();
     });
   }
+
+  document.addEventListener("focusin", function (event) {
+    var modal = installDialog && !installDialog.hidden
+      ? installDialog
+      : helpDialog && !helpDialog.hidden ? helpDialog : null;
+    if (!modal || modal.contains(event.target)) return;
+    var card = modal.querySelector('[role="dialog"]');
+    var first = card && card.querySelector("button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])");
+    if (first) first.focus();
+    else if (card) card.focus();
+  });
 
   if (helpToggle) helpToggle.addEventListener("click", openHelp);
   if (helpDialogClose) helpDialogClose.addEventListener("click", closeHelp);
@@ -513,13 +536,36 @@
 
   function fallbackCopy(text) {
     var ta = document.createElement("textarea");
+    var previous = document.activeElement;
     ta.value = text;
+    ta.setAttribute("readonly", "");
     ta.style.position = "fixed";
     ta.style.opacity = "0";
     document.body.appendChild(ta);
     ta.select();
-    try { document.execCommand("copy"); } catch (e) {}
+    var copied = false;
+    try { copied = document.execCommand("copy"); } catch (e) {}
     document.body.removeChild(ta);
+    if (previous && typeof previous.focus === "function") previous.focus();
+    return copied;
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        return navigator.clipboard.writeText(text).then(
+          function () { return true; },
+          function () { return fallbackCopy(text); }
+        );
+      } catch (e) {
+        return Promise.resolve(fallbackCopy(text));
+      }
+    }
+    return Promise.resolve(fallbackCopy(text));
+  }
+
+  function announceCopy(success, label) {
+    showCopyToast(success ? "Copied " + label : "Could not copy — select and copy it manually.");
   }
 
   function scheduleCopyToastHide() {
@@ -578,15 +624,10 @@
         el.classList.add("is-copied");
         setTimeout(function () { el.classList.remove("is-copied"); }, 900);
       };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(value).then(done, function () {
-          fallbackCopy(value);
-          done();
-        });
-      } else {
-        fallbackCopy(value);
-        done();
-      }
+      copyText(value).then(function (copied) {
+        if (copied) done();
+        else announceCopy(false, value);
+      });
     }
     el.addEventListener("click", function (event) {
       if (event.target.closest("a")) return;
@@ -620,15 +661,10 @@
         btn.classList.add("is-copied");
         setTimeout(function () { btn.classList.remove("is-copied"); }, 900);
       };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(value).then(done, function () {
-          fallbackCopy(value);
-          done();
-        });
-      } else {
-        fallbackCopy(value);
-        done();
-      }
+      copyText(value).then(function (copied) {
+        if (copied) done();
+        else announceCopy(false, value);
+      });
     });
   });
 
@@ -826,15 +862,10 @@
           "#" +
           card.id;
         var done = function () { showCopyToast("Copied link to story"); };
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(link).then(done, function () {
-            fallbackCopy(link);
-            done();
-          });
-        } else {
-          fallbackCopy(link);
-          done();
-        }
+        copyText(link).then(function (copied) {
+          if (copied) done();
+          else announceCopy(false, "link to story");
+        });
       });
       top.insertBefore(copyBtn, btn);
     }
@@ -1649,7 +1680,7 @@
     var query = searchInput.value.trim();
     var tokens = normalize(query).split(/\s+/).filter(Boolean);
     // Gate on cache: fast typing before shards resolve must show loading, not "No matches".
-    if (!storiesCache && query) {
+    if (!storiesCache && !searchUnavailable && query) {
       renderLoadingRow();
       return;
     }
@@ -1677,12 +1708,25 @@
       var none = document.createElement("div");
       none.className = "search-result search-result--none";
       none.setAttribute("role", "status");
-      none.textContent = searchUnavailable
-        ? "Search unavailable — try again later."
-        : "No matches.";
+      none.textContent = searchUnavailable ? "Search unavailable." : "No matches.";
       none.id = "search-result-" + 0;
       none.style.setProperty("--i", 0);
       searchResults.appendChild(none);
+      if (searchUnavailable) {
+        searchResults.removeAttribute("role");
+        searchResults.removeAttribute("aria-label");
+        var retry = document.createElement("button");
+        retry.type = "button";
+        retry.className = "search-result search-result--retry";
+        retry.textContent = "Try again";
+        retry.addEventListener("click", function () {
+          storiesCache = null;
+          searchUnavailable = false;
+          renderLoadingRow();
+          loadStories(renderResults);
+        });
+        searchResults.appendChild(retry);
+      }
     } else {
       hits.forEach(function (story) {
         var idx = Array.prototype.indexOf.call(hits, story);
@@ -1741,7 +1785,7 @@
     paintActiveResult();
     if (searchStatus) {
       if (!query) searchStatus.textContent = "";
-      else if (!hits.length) searchStatus.textContent = searchUnavailable ? "Search unavailable" : "No matches for " + query;
+      else if (!hits.length) searchStatus.textContent = searchUnavailable ? "Search unavailable. Use Try again to retry." : "No matches for " + query;
       else searchStatus.textContent = hits.length + (hits.length === 1 ? " result for " : " results for ") + query;
     }
     showSearchResults();
