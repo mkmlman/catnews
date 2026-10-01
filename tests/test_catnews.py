@@ -2568,18 +2568,18 @@ def test_search_results_carry_source_and_date():
     assert "formatShortDate(story.date)" in app_js
 
 
-def test_mobile_filter_bar_is_a_single_row():
+def test_mobile_filter_actions_wrap_without_clipping():
     css = (
         Path(__file__).resolve().parent.parent / "app" / "static" / "style.css"
     ).read_text()
     phone = css.split("@media (max-width: 560px)", 1)[1]
     row = phone.split(".filter-row {", 1)[1].split("}", 1)[0]
-    # The bar is no longer pinned on phones (that was ~200px of chrome on a
-    # short viewport), so the two stacked rows collapse into one flex row.
-    # Dead grid-template lines were removed — flex + nowrap is the contract.
-    assert "display: flex;" in row
-    assert "flex-wrap: nowrap;" in row
-    assert "grid-template" not in row
+    actions = phone.split(".filter-actions {", 1)[1].split("}", 1)[0]
+    assert "flex-wrap: wrap;" in row
+    assert "overflow: visible;" in row
+    assert "width: 100%;" in actions
+    assert "flex-wrap: wrap;" in actions
+    assert "overflow: visible;" in actions
 
 
 def test_filters_do_not_pin_without_js():

@@ -607,7 +607,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
 }
 .search input[type="search"]::placeholder { color: var(--faint); }
 
-.search-results {
+.search-popover {
   position: absolute;
   top: calc(100% + 12px);
   right: 0;
@@ -624,8 +624,15 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   flex-direction: column;
   gap: 4px;
   animation: fade-in 0.18s var(--ease-soft) both;
+}
+.search-popover[hidden] { display: none; }
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   transition: opacity 0.16s ease, transform 0.16s ease;
 }
+.search-results[hidden] { display: none; }
 .search-results.is-closing { opacity: 0; transform: translateY(-6px); }
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(-4px); }
@@ -1269,7 +1276,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   transition: color 0.15s, border-color 0.15s, background-color 0.15s;
 }
 .chip svg { display: block; flex-shrink: 0; }
-.chip-count { font-variant-numeric: tabular-nums; opacity: 0.8; font-size: 0.88em; }
+.chip-count { font-variant-numeric: tabular-nums; font-size: 0.88em; }
 .chip:hover { color: var(--ink); border-color: var(--line-strong); }
 .chip.is-active {
   color: var(--paper);
@@ -2980,7 +2987,7 @@ h1.sheet-name {
      "read the stories". Only the desktop bar is worth pinning. */
   .filters,
   html[data-design-system="kami"] .filters { position: static; }
-  .stories { grid-template-columns: repeat(2, 1fr); }
+  .stories { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
   /* Mobile menu: full-screen paper panel with right-aligned links */
   .js .menu-links { display: none; }
@@ -3024,6 +3031,7 @@ h1.sheet-name {
 
 @media (max-width: 640px) {
   .rank-name { flex-basis: 140px; }
+  .stories { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 560px) {
@@ -3065,7 +3073,7 @@ h1.sheet-name {
     font-size: 16px;
   }
   .search input[type="search"]:focus { width: auto; }
-  .search-results { width: 100%; }
+  .search-popover { width: 100%; max-height: min(70vh, 380px); }
 
   .filter-scroll { width: 100%; overflow: visible; }
   .filter-row::-webkit-scrollbar { display: none; }
@@ -3076,10 +3084,9 @@ h1.sheet-name {
     display: flex;
     align-items: center;
     gap: 8px;
-    overflow: hidden;
-    flex-wrap: nowrap;
+    overflow: visible;
+    flex-wrap: wrap;
   }
-  .filter-row::-webkit-scrollbar { display: none; }
   .source-options { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .source-options::-webkit-scrollbar { display: none; }
   .filter-label {
@@ -3094,18 +3101,20 @@ h1.sheet-name {
   }
   .source-options .chip { scroll-snap-align: start; }
   .filter-actions {
-    width: auto;
-    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 1;
+    flex-wrap: wrap;
     justify-content: flex-start;
     gap: 4px;
     overflow: visible;
-    scrollbar-width: none;
     margin-left: 0;
-    padding-top: 0;
-    padding-left: 8px;
-    border-top: 0;
+    padding-top: 6px;
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
   }
-  .filter-actions::-webkit-scrollbar { display: none; }
   .source-options .chip,
   .filter-actions .chip,
   .filter-actions .hide-read {
@@ -3323,7 +3332,7 @@ html[data-design-system="kami"] {
   --ink: #23241f;
   --ink-soft: #3f413a;
   --muted: #5d6055;
-  --faint: #6f7266;
+  --faint: #66695e;
   --accent: #1b365d;
   --accent-deep: #14263f;
   --danger: #8a1f18;
@@ -3417,6 +3426,8 @@ html[data-design-system="kami"] .wordmark { grid-area: wordmark; }
 html[data-design-system="kami"] .site-header > .search {
   grid-area: search;
   justify-self: end;
+  width: 200px;
+  justify-content: flex-end;
   margin-left: 0;
 }
 html[data-design-system="kami"] .wordmark {
@@ -3812,8 +3823,11 @@ html[data-design-system="kami"] .ds-comp {
   html[data-design-system="kami"] .bottom-controls { justify-content: flex-start; }
 }
 
-@media (max-width: 860px) {
+@media (min-width: 641px) and (max-width: 860px) {
   html[data-design-system="kami"] .stories { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  html[data-design-system="kami"] .stories { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   html[data-design-system="kami"] .container { padding: max(120px, var(--header-h, 0px)) 18px 60px; }

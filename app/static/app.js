@@ -116,7 +116,25 @@
       link.addEventListener("click", function () { setNavOpen(false); });
     });
     document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") setNavOpen(false);
+      if (navToggle.getAttribute("aria-expanded") !== "true") return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setNavOpen(false);
+        navToggle.focus();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      var links = primaryNav.querySelectorAll('a[href]');
+      if (!links.length) return;
+      var first = navToggle;
+      var last = links[links.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     });
     document.addEventListener("click", function (event) {
       if (siteHeader && !siteHeader.contains(event.target)) setNavOpen(false);
@@ -1379,6 +1397,7 @@
   var searchEl = document.getElementById("search");
   var searchInput = document.getElementById("search-input");
   var searchResults = document.getElementById("search-results");
+  var searchPopover = document.getElementById("search-popover");
   var storiesCache = null;
   var searchUnavailable = false;
   var searchSeq = 0;
@@ -1593,7 +1612,7 @@
   }
 
   function paintFacets() {
-    if (!searchEl || !storiesCache) return;
+    if (!searchEl || !searchPopover || !storiesCache) return;
     var old = searchEl.querySelector(".search-facets");
     if (old) old.remove();
 
@@ -1636,7 +1655,7 @@
     bar.appendChild(select);
 
     // Facets live outside the listbox so AT sees only options inside it.
-    searchEl.insertBefore(bar, searchResults);
+    searchPopover.insertBefore(bar, searchResults);
   }
 
   function paintActiveResult() {
@@ -1658,6 +1677,7 @@
     clearTimeout(searchHideTimer);
     searchHideTimer = setTimeout(function () {
       searchResults.hidden = true;
+      if (searchPopover) searchPopover.hidden = true;
       searchResults.classList.remove("is-closing");
     }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : EASE_MS);
     searchInput.setAttribute("aria-expanded", "false");
@@ -1667,6 +1687,7 @@
     clearTimeout(searchHideTimer);
     searchResults.classList.remove("is-closing");
     searchResults.hidden = false;
+    if (searchPopover) searchPopover.hidden = false;
     if (searchEl) searchEl.classList.add("has-results");
     if (headerEl) headerEl.classList.add("search-open");
     searchInput.setAttribute("aria-expanded", "true");

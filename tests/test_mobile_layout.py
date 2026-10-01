@@ -122,9 +122,32 @@ def test_static_assets_use_cache_busting_versions():
 
 def test_mobile_navigation_has_accessible_toggle():
     base = (APP_DIR / "templates" / "base.html").read_text()
+    app_js = (APP_DIR / "static" / "app.js").read_text()
     assert 'id="nav-toggle"' in base
     assert 'aria-controls="primary-nav"' in base
     assert 'aria-expanded="false"' in base
+    assert 'event.key !== "Tab"' in app_js
+    assert "navToggle.focus();" in app_js
+
+
+def test_search_facets_and_results_share_a_desktop_popover():
+    base = (APP_DIR / "templates" / "base.html").read_text()
+    app_js = (APP_DIR / "static" / "app.js").read_text()
+    css = (APP_DIR / "static" / "style.css").read_text()
+    assert 'class="search-popover" id="search-popover" hidden' in base
+    assert 'id="search-results" hidden' in base
+    assert "searchPopover.insertBefore(bar, searchResults)" in app_js
+    assert ".search-popover[hidden] { display: none; }" in css
+
+
+def test_tablet_story_cards_stay_readable_at_breakpoint():
+    css = (APP_DIR / "static" / "style.css").read_text()
+    assert "@media (max-width: 640px)" in css
+    assert "@media (min-width: 641px) and (max-width: 860px)" in css
+    assert (
+        'html[data-design-system="kami"] .stories { grid-template-columns: 1fr; }'
+        in css
+    )
 
 
 def test_shared_layout_has_skip_link_and_active_navigation():
