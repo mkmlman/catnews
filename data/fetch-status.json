@@ -1,20 +1,20 @@
 {
-  "date": "2026-10-01",
+  "date": "2026-10-02",
   "sources": {
     "hn": {
       "state": "ok",
-      "snapshot_date": "2026-10-01",
+      "snapshot_date": "2026-10-02",
       "stories": 25
     },
     "github": {
       "state": "ok",
-      "snapshot_date": "2026-10-01",
+      "snapshot_date": "2026-10-02",
       "stories": 15
     },
     "simonw": {
-      "state": "ok",
+      "state": "skipped",
       "snapshot_date": "2026-10-01",
-      "stories": 20
+      "stories": 3
     },
     "arxiv": {
       "state": "skipped",
