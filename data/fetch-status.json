@@ -1,14 +1,14 @@
 {
-  "date": "2026-10-02",
+  "date": "2026-10-03",
   "sources": {
     "hn": {
       "state": "ok",
-      "snapshot_date": "2026-10-02",
+      "snapshot_date": "2026-10-03",
       "stories": 25
     },
     "github": {
       "state": "ok",
-      "snapshot_date": "2026-10-02",
+      "snapshot_date": "2026-10-03",
       "stories": 15
     },
     "simonw": {
