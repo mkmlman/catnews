@@ -310,9 +310,16 @@ downloaded at most weekly).
 ## Tests
 
 ```sh
+uv sync --extra dev
+uv run playwright install chromium  # one-time setup for browser tests
 uv run pytest
 uv run python scripts/check_site.py --site site --base-path /catnews
 ```
+
+The browser suite builds and serves a temporary static site, checks core filter,
+search, theme, deep-link, and mobile-navigation flows at narrow viewport widths,
+and runs axe-core against the main pages. CI installs Chromium and runs these
+checks alongside the unit suite.
 
 `check_site.py` also asserts what a reader can actually see: installable icon
 sizes, the 192/512 install pair in `manifest.json`, that every search shard is

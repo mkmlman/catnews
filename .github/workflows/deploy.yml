@@ -84,7 +84,10 @@ jobs:
       - name: Type check (ty)
         run: uv run ty check
 
-      - name: Tests
+      - name: Install Chromium for browser tests
+        run: uv run playwright install --with-deps chromium
+
+      - name: Tests (unit and browser)
         run: uv run pytest
 
   deploy:
@@ -138,3 +141,18 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+      - name: Smoke-test published site
+        env:
+          SITE_URL: ${{ env.BASE_URL }}
+        run: |
+          set -euo pipefail
+          for path in / /archive/ /sources/ /stats/ /api/digest.json /static/style.css; do
+            echo "Checking ${SITE_URL}${path}"
+            curl --fail --silent --show-error --location \
+              --retry 8 --retry-delay 5 --retry-all-errors \
+              "${SITE_URL}${path}" -o /dev/null
+          done
+          curl --fail --silent --show-error --location \
+            "${SITE_URL}/api/digest.json" | python -c \
+            'import json,sys; data=json.load(sys.stdin); assert data.get("stories") is not None'

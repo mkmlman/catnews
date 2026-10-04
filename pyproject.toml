@@ -24,6 +24,8 @@ dev = [
     "ruff>=0.16.1",
     "ty>=0.0.65",
     "httpx2>=2.0",
+    "axe-playwright-python>=0.1.8",
+    "playwright>=1.63.0",
 ]
 
 [project.scripts]
