@@ -1245,10 +1245,12 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
 .filter-scroll-cue { display: none; }
 .filter-note {
   margin: 3px 0 0;
-  color: var(--faint);
-  font-family: var(--serif-font);
-  font-size: var(--text-meta);
-  line-height: 1.35;
+  color: var(--muted);
+  font-family: var(--mono-font);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  text-transform: uppercase;
 }
 .filter-label {
   font-family: var(--mono-font);

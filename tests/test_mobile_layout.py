@@ -176,8 +176,7 @@ def test_card_scores_are_present_for_curated_sources():
 
 def test_saved_state_limits_and_export_are_explained():
     index = (APP_DIR / "templates" / "index.html").read_text()
-    assert "Saved and read marks stay in this browser." in index
-    assert "Export downloads your saved stories as Markdown." in index
+    assert "Saved &amp; read stay in this browser · Export as Markdown" in index
     assert 'aria-label="Export saved stories as Markdown"' in index
 
 
