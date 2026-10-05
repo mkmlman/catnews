@@ -18,7 +18,9 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import ipaddress
 import json
+import socket
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -105,6 +107,32 @@ def _retry_after_seconds(response: httpx.Response, attempt: int) -> float:
     return BACKOFF * (attempt + 1)
 
 
+def _is_public_url(url: str) -> bool:
+    """Reject local/private destinations before probing archived URLs.
+
+    Redirects are disabled below as well: a public URL must not be able to
+    bounce the CI runner to localhost, link-local, or private network hosts.
+    """
+    try:
+        parsed = urlparse(url)
+        if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+            return False
+        host = parsed.hostname.rstrip(".").lower()
+        if host == "localhost" or host.endswith((".localhost", ".local", ".internal")):
+            return False
+        addresses = {
+            row[4][0]
+            for row in socket.getaddrinfo(
+                host, parsed.port or (443 if parsed.scheme == "https" else 80)
+            )
+        }
+        return bool(addresses) and all(
+            ipaddress.ip_address(address).is_global for address in addresses
+        )
+    except (OSError, ValueError):
+        return False
+
+
 def check_url(client: httpx.Client, record: dict) -> dict:
     """HEAD-check one URL, retrying transient failures.
 
@@ -113,6 +141,13 @@ def check_url(client: httpx.Client, record: dict) -> dict:
     other 4xx (403 bot-block, 401 auth wall) still break immediately.
     """
     url = record["url"]
+    if not _is_public_url(url):
+        return {
+            **record,
+            "status": None,
+            "final_url": url,
+            "error": "non-public or invalid destination blocked",
+        }
     last_status: int | None = None
     final_url: str = url
     error: str | None = None
@@ -124,7 +159,7 @@ def check_url(client: httpx.Client, record: dict) -> dict:
             except (ValueError, AttributeError):
                 pass
             if response.status_code == 405:
-                with client.stream("GET", url, follow_redirects=True) as streamed:
+                with client.stream("GET", url, follow_redirects=False) as streamed:
                     # Read only the first 8KB chunk to confirm liveness.
                     for _ in streamed.iter_bytes(chunk_size=8192):
                         break
@@ -188,7 +223,7 @@ def check_links(
         ThreadPoolExecutor(max_workers=concurrency) as pool,
         httpx.Client(
             timeout=REQUEST_TIMEOUT,
-            follow_redirects=True,
+            follow_redirects=False,
             headers=headers,
             limits=httpx.Limits(
                 max_connections=concurrency, max_keepalive_connections=concurrency

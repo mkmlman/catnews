@@ -23,6 +23,7 @@ from app.config import (
 from app.fetchers import get_fetcher
 from app.models import SourceSnapshot, Story
 from app.store import (
+    last_checked,
     last_fetched,
     load_latest_snapshot,
     save_fetch_report,
@@ -181,9 +182,11 @@ async def build_with_status(
             # report unavailable, not stale.
             if last and stale_snapshot is None:
                 last = None
+            checked = last_checked(source, data_dir)
             statuses[source] = {
                 "state": "stale" if last else "unavailable",
                 "snapshot_date": last.isoformat() if last else None,
+                "checked_date": checked.isoformat() if checked else None,
                 "stories": len(stale_snapshot.stories) if stale_snapshot else 0,
                 "error": str(result)[:240],
             }
@@ -201,6 +204,7 @@ async def build_with_status(
         statuses[source] = {
             "state": "ok",
             "snapshot_date": result.date.isoformat(),
+            "checked_date": day.isoformat(),
             "stories": len(result.stories),
         }
     return snapshots, statuses
@@ -212,7 +216,7 @@ def due_sources(day: date, data_dir: Path, force: bool = False) -> list[str]:
         return list(SOURCES)
     due: list[str] = []
     for source, meta in SOURCES.items():
-        last = last_fetched(source, data_dir)
+        last = last_checked(source, data_dir)
         if last is None:
             due.append(source)
             continue
@@ -226,6 +230,16 @@ def due_sources(day: date, data_dir: Path, force: bool = False) -> list[str]:
             continue
         due.append(source)
     return due
+
+
+def _positive_int(value: str) -> int:
+    try:
+        parsed = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("must be a positive integer") from None
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("must be a positive integer")
+    return parsed
 
 
 def main() -> None:
@@ -245,7 +259,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--limit",
-        type=int,
+        type=_positive_int,
         default=None,
         help="Cap the number of stories per source (overrides config)",
     )
@@ -276,9 +290,11 @@ def main() -> None:
         statuses = {}
         for source in SOURCES:
             snapshot = load_latest_snapshot(source, DATA_DIR)
+            checked = last_checked(source, DATA_DIR)
             statuses[source] = {
                 "state": "skipped",
                 "snapshot_date": snapshot.date.isoformat() if snapshot else None,
+                "checked_date": checked.isoformat() if checked else None,
                 "stories": len(snapshot.stories) if snapshot else 0,
             }
         report_path = save_fetch_report(args.date, DATA_DIR, statuses)
@@ -313,8 +329,9 @@ def main() -> None:
                 "not creating a snapshot"
             )
             statuses[snap.source] = {
-                "state": "skipped",
+                "state": "ok",
                 "snapshot_date": prior.date.isoformat() if prior else None,
+                "checked_date": args.date.isoformat(),
                 "stories": len(prior.stories) if prior else 0,
             }
             continue
@@ -328,9 +345,11 @@ def main() -> None:
         if source in statuses:
             continue
         snapshot = load_latest_snapshot(source, DATA_DIR)
+        checked = last_checked(source, DATA_DIR)
         statuses[source] = {
             "state": "skipped",
             "snapshot_date": snapshot.date.isoformat() if snapshot else None,
+            "checked_date": checked.isoformat() if checked else None,
             "stories": len(snapshot.stories) if snapshot else 0,
         }
     report_path = save_fetch_report(args.date, DATA_DIR, statuses)

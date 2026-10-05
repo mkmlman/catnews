@@ -16,6 +16,20 @@ class CuratedLink(BaseModel):
         default=None, description="Origin site (hostname) for attribution"
     )
 
+    @field_validator("url")
+    @classmethod
+    def _reject_unsafe_curated_url(cls, value: str) -> str:
+        from urllib.parse import urlsplit
+
+        stripped = value.strip()
+        try:
+            parts = urlsplit(stripped)
+        except ValueError:
+            raise ValueError("invalid URL") from None
+        if parts.scheme.lower() not in ("http", "https") or not parts.netloc:
+            raise ValueError("URL must be absolute http(s)")
+        return stripped
+
 
 class Story(BaseModel):
     """A single curated story in a digest."""

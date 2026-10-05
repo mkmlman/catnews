@@ -152,13 +152,14 @@ re-tuning a color for contrast updates the card too.
 
 ## Source freshness
 
-`fetch_status()` ages every source against its own `cadence_days`, so a source is
-only reported `skipped` ("on schedule") while its newest snapshot is still inside
-its cadence window. Once it goes past that — because an upstream failed on the one
-weekday a weekly source is allowed to fetch, say — it flips to `stale` and counts
-as an issue on the home banner and `/sources/`. The last run's own verdict is not
-enough: it only describes the run that just happened, and can report a source
-healthy for as long as nothing re-checks the age.
+`fetch_status()` ages every source against its own `cadence_days`. The last successful
+upstream check is tracked separately from the latest snapshot date, so a healthy feed
+with no new stories is not repeatedly fetched or marked stale just because its content
+did not change. A source becomes `stale` when it goes past its cadence without a
+successful check — for example, if an upstream fails on the one weekday a weekly
+source is allowed to fetch — and counts as an issue on the home banner and `/sources/`.
+The last run's verdict alone is not enough: freshness must also account for how long
+ago the last successful check happened.
 
 Because an edition merges each source's *latest* stories rather than one day's
 worth, the home hero names the **oldest** contributing snapshot (`since <date>`)

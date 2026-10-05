@@ -344,6 +344,17 @@ def test_story_markdown_and_why_read():
     assert "## [T](https://example.com)" in md
 
 
+def test_curated_link_rejects_unsafe_schemes():
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        CuratedLink(title="bad", url="javascript:alert(1)")
+    assert (
+        CuratedLink(title="good", url="https://example.com").url
+        == "https://example.com"
+    )
+
+
 def test_snapshot_store_roundtrip(tmp_path):
     snap = SourceSnapshot(
         source="hn",
@@ -691,6 +702,48 @@ def test_static_site_version_changes_when_artifact_changes(tmp_path):
     (site / "index.html").write_text("digest one")
     (site / "feed.rss").write_text("<rss/>")
     assert site_version(site) == (site_version(site))
+
+
+def test_last_successful_check_controls_due_schedule(tmp_path):
+    from app.store import save_fetch_report
+
+    # Snapshot content is older, but a successful empty poll occurred today.
+    save_snapshot(
+        SourceSnapshot(
+            source="hn",
+            date=date(2026, 8, 1),
+            stories=[Story(source="hn", title="A", url="https://a")],
+        ),
+        tmp_path,
+    )
+    save_fetch_report(
+        date(2026, 8, 10),
+        tmp_path,
+        {
+            "hn": {
+                "state": "ok",
+                "snapshot_date": "2026-08-01",
+                "checked_date": "2026-08-10",
+            }
+        },
+    )
+    from app.store import fetch_status
+    from scripts.fetch_digest import due_sources
+
+    assert fetch_status(tmp_path)["sources"]["hn"]["state"] == "ok"
+    assert "hn" not in due_sources(date(2026, 8, 10), tmp_path)
+    assert "hn" in due_sources(date(2026, 8, 10), tmp_path, force=True)
+
+
+def test_positive_limit_validation():
+    from argparse import ArgumentTypeError
+
+    from scripts.fetch_digest import _positive_int
+
+    assert _positive_int("1") == 1
+    for invalid in ("0", "-1", "abc"):
+        with pytest.raises(ArgumentTypeError):
+            _positive_int(invalid)
 
 
 def test_registerspill_only_due_on_mondays(tmp_path):
@@ -1047,6 +1100,27 @@ def test_manifest_registers_maskable_icon_and_shortcuts():
     assert "maskable" in purposes
     shortcut_names = {shortcut["name"] for shortcut in manifest["shortcuts"]}
     assert {"Archive", "Sources", "Stats"} <= shortcut_names
+
+
+def test_linkcheck_blocks_local_and_private_destinations(monkeypatch):
+    from scripts.check_links import _is_public_url
+
+    monkeypatch.setattr(
+        "scripts.check_links.socket.getaddrinfo",
+        lambda *args, **kwargs: [(None, None, None, None, ("127.0.0.1", 0))],
+    )
+    assert not _is_public_url("http://localhost/")
+    assert not _is_public_url("https://example.com/")
+
+
+def test_linkcheck_accepts_public_destination(monkeypatch):
+    from scripts.check_links import _is_public_url
+
+    monkeypatch.setattr(
+        "scripts.check_links.socket.getaddrinfo",
+        lambda *args, **kwargs: [(None, None, None, None, ("93.184.216.34", 0))],
+    )
+    assert _is_public_url("https://example.com/")
 
 
 def test_help_dialog_documents_edition_nav():

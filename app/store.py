@@ -64,6 +64,19 @@ def last_fetched(source: str, data_dir: Path) -> date | None:
     return dates[-1] if dates else None
 
 
+def last_checked(source: str, data_dir: Path) -> date | None:
+    """Last successful upstream check, independent of when content changed."""
+    report = load_fetch_report(data_dir)
+    rows = report.get("sources")
+    entry = rows.get(source) if isinstance(rows, dict) else None
+    if isinstance(entry, dict):
+        checked = _status_date(entry.get("checked_date"))
+        if checked is not None:
+            return checked
+    # Legacy reports and archives predate the checked_date field.
+    return last_fetched(source, data_dir)
+
+
 def save_snapshot(snapshot: SourceSnapshot, data_dir: Path) -> Path:
     path = snapshot_path(snapshot.source, snapshot.date, data_dir)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -182,15 +195,20 @@ def fetch_status(data_dir: Path) -> dict:
         snapshot_date = _status_date(entry.get("snapshot_date"))
         if snapshot_date is None and snapshot:
             snapshot_date = snapshot.date
-        if state == "ok" and snapshot is None:
+        if (
+            state == "ok"
+            and snapshot is None
+            and _status_date(entry.get("checked_date")) is None
+        ):
             state = "unavailable"
         # A source only counts as on-schedule while its snapshot is still
         # within cadence. "skipped" records what the *last* fetch run decided,
         # so a weekly source can read as healthy for days after it silently
         # stopped being fetched (e.g. an upstream outage on its one weekday).
+        checked_date = _status_date(entry.get("checked_date")) or snapshot_date
         overdue_by = 0
-        if snapshot_date is not None:
-            overdue_by = (reference - snapshot_date).days - int(cfg["cadence_days"])
+        if checked_date is not None:
+            overdue_by = (reference - checked_date).days - int(cfg["cadence_days"])
         if overdue_by > 0 and state in {"ok", "skipped"}:
             state = "stale"
         raw_stories = entry.get("stories", len(snapshot.stories) if snapshot else 0)
@@ -218,6 +236,7 @@ def fetch_status(data_dir: Path) -> dict:
             "state": state,
             "state_label": labels[state],
             "snapshot_date": snapshot_date,
+            "checked_date": checked_date,
             "stories": stories_count,
             "detail": detail,
             "is_issue": state in {"stale", "unavailable"},
