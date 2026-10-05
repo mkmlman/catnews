@@ -1,0 +1,57 @@
+{
+  "source": "github",
+  "date": "2026-10-05",
+  "stories": [
+    {
+      "source": "github",
+      "title": "photocraft — An open-source, clean-room reimplementation of Adobe Photoshop in pure Rust",
+      "url": "https://github.com/storytold/photocraft",
+      "author": "storytold",
+      "external_id": "storytold/photocraft",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-30T13:37:48Z",
+      "score": 1641,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "An open-source, clean-room reimplementation of Adobe Photoshop in pure Rust",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "RemoveMacAI — Turn off Apple Intelligence on macOS 27 and get its disk space back. One command, fully reversible.",
+      "url": "https://github.com/omlahore/RemoveMacAI",
+      "author": "omlahore",
+      "external_id": "omlahore/RemoveMacAI",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-29T11:02:39Z",
+      "score": 1396,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Turn off Apple Intelligence on macOS 27 and get its disk space back. One command, fully reversible.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "kargulstudio/sales-crm",
+      "url": "https://github.com/kargulstudio/sales-crm",
+      "author": "kargulstudio",
+      "external_id": "kargulstudio/sales-crm",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-04T10:55:58Z",
+      "score": 1296,
+      "comments": null,
+      "hn_url": null,
+      "snippet": null,
+      "links": []
+    }
+  ]
+}
