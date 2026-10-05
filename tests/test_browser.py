@@ -167,6 +167,9 @@ def test_accessibility_critical_and_serious_violations(
     page: Page, site_url: str
 ) -> None:
     axe = Axe()
+    # Avoid sampling interpolated colors mid-transition; contrast is checked
+    # against the stable rendered UI, and reduced-motion is an important mode.
+    page.emulate_media(reduced_motion="reduce")
     urls = (
         site_url,
         f"{site_url}/archive/",

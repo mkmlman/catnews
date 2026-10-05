@@ -26,8 +26,15 @@ class CuratedLink(BaseModel):
             parts = urlsplit(stripped)
         except ValueError:
             raise ValueError("invalid URL") from None
-        if parts.scheme.lower() not in ("http", "https") or not parts.netloc:
-            raise ValueError("URL must be absolute http(s)")
+        if (
+            parts.scheme.lower() not in ("http", "https")
+            or not parts.hostname
+            or parts.username is not None
+            or parts.password is not None
+        ):
+            raise ValueError(
+                "URL must be absolute http(s) without embedded credentials"
+            )
         return stripped
 
 
@@ -86,8 +93,15 @@ class Story(BaseModel):
             parts = urlsplit(stripped)
         except ValueError:
             raise ValueError("invalid URL")
-        if parts.scheme.lower() not in ("http", "https") or not parts.netloc:
-            raise ValueError("URL must be absolute http(s)")
+        if (
+            parts.scheme.lower() not in ("http", "https")
+            or not parts.hostname
+            or parts.username is not None
+            or parts.password is not None
+        ):
+            raise ValueError(
+                "URL must be absolute http(s) without embedded credentials"
+            )
         return stripped
 
     def to_markdown(self) -> str:

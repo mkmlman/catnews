@@ -349,6 +349,10 @@ def test_curated_link_rejects_unsafe_schemes():
 
     with pytest.raises(ValidationError):
         CuratedLink(title="bad", url="javascript:alert(1)")
+    with pytest.raises(ValidationError):
+        CuratedLink(title="bad", url="https://user:secret@example.com/")
+    with pytest.raises(ValidationError):
+        Story(source="hn", title="bad", url="https://user:secret@example.com/")
     assert (
         CuratedLink(title="good", url="https://example.com").url
         == "https://example.com"
@@ -882,6 +886,32 @@ def test_fetch_status_reports_stale_sources(tmp_path):
     assert report["sources"]["hn"]["state_label"] == "Using older snapshot"
     assert report["sources"]["hn"]["snapshot_date"] == date(2026, 8, 10)
     assert report["sources"]["hn"]["detail"] == "temporary outage"
+
+
+def test_clean_output_refuses_inputs_and_project_paths(tmp_path):
+    from scripts.build_site import clean_output_dir
+
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    (data_dir / "keep.json").write_text("{}")
+    with pytest.raises(SystemExit, match="protected input"):
+        clean_output_dir(data_dir, data_dir)
+    assert (data_dir / "keep.json").is_file()
+
+    project_root = Path(__file__).resolve().parent.parent
+    with pytest.raises(SystemExit, match="project input"):
+        clean_output_dir(project_root / "app")
+    with pytest.raises(SystemExit, match="project input"):
+        clean_output_dir(project_root / "app" / "generated-output")
+    with pytest.raises(SystemExit, match="protected input"):
+        clean_output_dir(tmp_path, data_dir)
+
+    # A direct output directory next to the inputs remains a supported target.
+    output = tmp_path / "site"
+    output.mkdir()
+    (output / "old.html").write_text("old")
+    clean_output_dir(output, data_dir)
+    assert not output.exists()
 
 
 def test_build_site_copies_all_static_assets(tmp_path):

@@ -51,20 +51,46 @@ from app.store import (
 STATIC_DIR = Path(__file__).resolve().parent.parent / "app" / "static"
 
 
-def clean_output_dir(out_dir: Path) -> None:
-    """Remove a previous build, guarding against broad or ambiguous targets."""
-    if not out_dir.exists():
-        return
-    if out_dir.is_symlink() or not out_dir.is_dir():
-        raise SystemExit(f"Build output must be a real directory: {out_dir}")
+def clean_output_dir(out_dir: Path, data_dir: Path | None = None) -> None:
+    """Remove a prior build only when it cannot overlap project inputs."""
+    if out_dir.is_symlink():
+        raise SystemExit(f"Build output must not be a symlink: {out_dir}")
+    if out_dir.exists() and not out_dir.is_dir():
+        raise SystemExit(f"Build output must be a directory: {out_dir}")
     resolved = out_dir.resolve()
     forbidden = {Path("/").resolve(), Path.cwd().resolve(), Path.home().resolve()}
     if resolved in forbidden:
         raise SystemExit(f"Refusing to clean broad build output path: {out_dir}")
-    # Refuse to wipe source/data dirs or tmp caches.
-    data_dir = (Path(__file__).resolve().parent.parent / "data").resolve()
-    if resolved == data_dir or data_dir in resolved.parents:
-        raise SystemExit(f"Refusing to clean inside data dir: {out_dir}")
+    project_root = Path(__file__).resolve().parent.parent
+    # Never remove the project itself, an ancestor containing it, or a
+    # project subtree other than a direct build-output directory.
+    if resolved == project_root or resolved in project_root.parents:
+        raise SystemExit(
+            f"Refusing to clean project or containing directory: {out_dir}"
+        )
+    allowed_project_outputs = {
+        "site",
+        "site_local",
+        "preview",
+        "catnews",
+        "dist",
+        "public",
+    }
+    if project_root in resolved.parents and (
+        resolved.parent != project_root or resolved.name not in allowed_project_outputs
+    ):
+        raise SystemExit(f"Refusing to clean project input directory: {out_dir}")
+    protected = [
+        (Path(__file__).resolve().parent.parent / "data").resolve(),
+        STATIC_DIR.resolve(),
+    ]
+    if data_dir is not None:
+        protected.append(data_dir.resolve())
+    for protected_path in protected:
+        if resolved == protected_path or resolved in protected_path.parents:
+            raise SystemExit(f"Refusing to clean protected input path: {out_dir}")
+    if not out_dir.exists():
+        return
     if resolved.name not in (
         "site",
         "site_local",
@@ -321,7 +347,7 @@ def build_site(
             "No snapshots found in data/ — run scripts/fetch_digest.py first."
         )
 
-    clean_output_dir(out_dir)
+    clean_output_dir(out_dir, data_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # Dead links from the latest weekly link-rot report: a {url -> record}

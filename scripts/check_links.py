@@ -115,7 +115,12 @@ def _is_public_url(url: str) -> bool:
     """
     try:
         parsed = urlparse(url)
-        if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+        if (
+            parsed.scheme not in {"http", "https"}
+            or not parsed.hostname
+            or parsed.username is not None
+            or parsed.password is not None
+        ):
             return False
         host = parsed.hostname.rstrip(".").lower()
         if host == "localhost" or host.endswith((".localhost", ".local", ".internal")):
