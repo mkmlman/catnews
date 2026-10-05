@@ -147,7 +147,7 @@ jobs:
           SITE_URL: ${{ env.BASE_URL }}
         run: |
           set -euo pipefail
-          for path in / /archive/ /sources/ /stats/ /api/digest.json /static/style.css; do
+          for path in / /archive/ /sources/ /stats/ /api/digest.json /api/search-index.json /api/search.json /feed.rss /sw.js /static/style.css; do
             echo "Checking ${SITE_URL}${path}"
             curl --fail --silent --show-error --location \
               --retry 8 --retry-delay 5 --retry-all-errors \
@@ -156,3 +156,9 @@ jobs:
           curl --fail --silent --show-error --location \
             "${SITE_URL}/api/digest.json" | python -c \
             'import json,sys; data=json.load(sys.stdin); assert data.get("stories") is not None'
+          curl --fail --silent --show-error --location \
+            "${SITE_URL}/api/search-index.json" | python -c \
+            'import json,sys; data=json.load(sys.stdin); assert isinstance(data.get("shards"), list)'
+          curl --fail --silent --show-error --location \
+            "${SITE_URL}/feed.rss" | python -c \
+            'import sys; assert "<rss" in sys.stdin.read()'

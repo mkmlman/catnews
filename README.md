@@ -300,7 +300,7 @@ options:
   --limit LIMIT    Cap the number of stories per source (overrides config)
   --source SOURCE  Fetch only this source (any key from sources.yaml)
   --all            Fetch every source regardless of cadence
-  --print          Print snapshots to stdout instead of saving
+  --print          Print fetched snapshots to stdout (does not save snapshots or update fetch-status.json)
 ```
 
 With no flags, only sources whose cadence is due are fetched — a source fetched

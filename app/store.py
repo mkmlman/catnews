@@ -94,11 +94,18 @@ def unseen_stories(snapshot: SourceSnapshot, data_dir: Path) -> list[Story]:
     an archive page reads as "what was published that day".
     """
     archived: set[str] = set()
+    same_day: list[Story] = []
     for snapshot_date in list_snapshot_dates(snapshot.source, data_dir):
         prior = load_snapshot(snapshot.source, snapshot_date, data_dir)
         if prior:
+            if snapshot_date == snapshot.date:
+                same_day = prior.stories
+                continue
             archived.update(s.external_id or s.url for s in prior.stories)
-    return [s for s in snapshot.stories if (s.external_id or s.url) not in archived]
+    fresh = [s for s in snapshot.stories if (s.external_id or s.url) not in archived]
+    # Preserve an existing same-day edition and append newly observed stories.
+    same_day_ids = {s.external_id or s.url for s in same_day}
+    return same_day + [s for s in fresh if (s.external_id or s.url) not in same_day_ids]
 
 
 def load_fetch_report(data_dir: Path) -> dict:

@@ -498,6 +498,31 @@ def test_unseen_stories_filters_prior_snapshots(tmp_path):
     assert [s.title for s in unseen_stories(other, tmp_path)] == ["HN"]
 
 
+def test_unseen_stories_preserves_and_appends_same_day_snapshot(tmp_path):
+    day = date(2026, 8, 17)
+    save_snapshot(
+        SourceSnapshot(
+            source="simonw",
+            date=day,
+            stories=[
+                Story(source="simonw", title="Existing", url="https://sw.net/old")
+            ],
+        ),
+        tmp_path,
+    )
+    rerun = SourceSnapshot(
+        source="simonw",
+        date=day,
+        stories=[
+            Story(source="simonw", title="Existing", url="https://sw.net/old"),
+            Story(source="simonw", title="New", url="https://sw.net/new"),
+        ],
+    )
+
+    merged = unseen_stories(rerun, tmp_path)
+    assert [story.title for story in merged] == ["Existing", "New"]
+
+
 def test_archive_days_groups_newest_first():
     from app.render import archive_days
 
