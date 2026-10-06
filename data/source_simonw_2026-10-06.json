@@ -1,0 +1,138 @@
+{
+  "source": "simonw",
+  "date": "2026-10-06",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Felix Rieseberg",
+      "url": "https://simonwillison.net/2026/Oct/5/felix-rieseberg/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/5/felix-rieseberg/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-05T23:56:47Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "The \"old\" version of Cowork runs model inference in the cloud, executing tool calls in an Anthropic-provided VM we shipped to your computer. We added the VM for capability, safety, and security reasons - mapping in just the data you explicitly added to your session. People loved what they were able to do with Claude but didn't love the disk, battery, and performance cost of running the VM locally. Also, people didn't love that closing your laptop means the work stops. The \"new\" version of Cowork runs model inference and the VM in the cloud. Each session gets its own sandbox, not sharing state with other sessions. When the VM needs something on the users' device (like a file), the desktop app is responsible for that file access tool call. [...] We think this solves a lot of problems we've heard about (like using Cowork from a phone, keeping work running, or getting all the same power with",
+      "links": [
+        {
+          "title": "Felix Rieseberg",
+          "url": "https://twitter.com/felixrieseberg/status/2107206431376334975",
+          "site": "twitter.com"
+        },
+        {
+          "title": "this help page",
+          "url": "https://support.claude.com/en/articles/15520349-use-claude-cowork-on-web-desktop-and-mobile#h_f951c27c48",
+          "site": "support.claude.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Qwen3.8 27B addition in words",
+      "url": "https://simonwillison.net/2026/Oct/4/qwen38-addition-in-words/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/4/qwen38-addition-in-words/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-04T23:34:00Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Research: Qwen3.8 27B addition in words Colin Frasier posted on Bluesky about an experiment he ran over two years ago using GPT-4o to see how well it could \"compute the sum but return the answer in words\" across increasingly large numbers. Here's the chart he shared of those results: I'm confident GPT-4o didn't cheat and use a calculator, especially since it got so many of the calculations wrong, but I was inspired to run the experiment again on local hardware (a DGX Spark) to explore the effect in a fully controlled environment. I pasted his image into a Codex Remote session (GPT-6 Astra) and had it run the same experiment using Qwen3.8-27B-Q4_K_M.gguf . Here's the result for a run of 30 attempts per combination with reasoning disabled: Then I ran it again with reasoning enabled. This took a lot longer per pair, so instead of running 30 samples per square I ran just one - which results ",
+      "links": [
+        {
+          "title": "Qwen3.8 27B addition in words",
+          "url": "https://github.com/simonw/research/tree/main/qwen38-addition-in-words#readme",
+          "site": "github.com"
+        },
+        {
+          "title": "posted on Bluesky",
+          "url": "https://bsky.app/profile/colin-fraser.net/post/3mwopbyznhs2k",
+          "site": "bsky.app"
+        },
+        {
+          "title": "version of the report",
+          "url": "https://gist.github.com/simonw/8ef79c777ad34c53e9c09094800576a5#full-reasoning-transcript-2",
+          "site": "gist.github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "pwasm 0.2a0",
+      "url": "https://simonwillison.net/2026/Oct/1/pwasm/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/1/pwasm/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-01T17:10:31Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: pwasm 0.2a0 pwasm is one of my folly projects - an entirely vibe-coded pure Python WebAssembly engine that I built in January during my first bout of AI mania . I hadn't touched it since January, so I decided to let Claude Opus 5.5 loose on it and see if it could make any significant improvements: Evaluate current state of pwasm - then consider what it would take to get the MicroPython and micro JavaScript experiments from the research repo working under it - and what it would take to speed it up 42 commits later (with minimal follow-up prompting) it now handles almost all of the WASM specification, and the wheel from PyPI bundles working WASM builds of MicroPython , QuickJS and Micro QuickJS . I wouldn't trust this thing at all - hence the alpha version tag - but it's interesting seeing how today's models can improve on the work of models from 10 months ago. Tags: python , weba",
+      "links": [
+        {
+          "title": "pwasm 0.2a0",
+          "url": "https://github.com/simonw/pwasm/releases/tag/0.2a0",
+          "site": "github.com"
+        },
+        {
+          "title": "research repo",
+          "url": "https://github.com/simonw/research",
+          "site": "github.com"
+        },
+        {
+          "title": "42 commits later",
+          "url": "https://github.com/simonw/pwasm/pull/12",
+          "site": "github.com"
+        },
+        {
+          "title": "MicroPython",
+          "url": "https://micropython.org/",
+          "site": "micropython.org"
+        },
+        {
+          "title": "QuickJS",
+          "url": "https://github.com/quickjs-ng/quickjs",
+          "site": "github.com"
+        },
+        {
+          "title": "Micro QuickJS",
+          "url": "https://github.com/bellard/mquickjs",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-anthropic 0.30",
+      "url": "https://simonwillison.net/2026/Sep/28/llm-anthropic/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Sep/28/llm-anthropic/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-09-28T23:06:21Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-anthropic 0.30 In addition to Claude Sonnet 5.5, this release adds the ability to run llm anthropic refresh to refresh the list of Anthropic models directly from their API - which means I don't need to push a new release just to add support for a newly released model. I also added an llm anthropic count command which can use their free token counting API to return a count of tokens that will be used by any prompt, before you send that prompt. Tags: llm , anthropic",
+      "links": [
+        {
+          "title": "llm-anthropic 0.30",
+          "url": "https://github.com/simonw/llm-anthropic/releases/tag/0.30",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
