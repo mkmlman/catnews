@@ -1,0 +1,339 @@
+{
+  "source": "simonw",
+  "date": "2026-10-07",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Jake Boggan",
+      "url": "https://simonwillison.net/2026/Oct/7/jake-boggan/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/7/jake-boggan/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-07T04:47:55Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I was a graph theory junkie long ago and even moved to Budapest for awhile to study among the greats. While I was there I started working on Barnette's Conjecture which came to occupy my thoughts over the next 24 years of my life, on and off as I worked in many different fields. Last summer I even thought for a few days that I had actually solved it. But it's supposedly proven here - problem 180 . I don't know what to think exactly. I spent thousands of hours on that problem. I really enjoyed it. Hearing that it is solved somehow makes me sad in a far-off way, like hearing an ex-girlfriend died suddenly in a car crash. I don't know, there's probably a lot of people feeling odd emotions tonight. — Jake Boggan , Hacker News comment on openai/math Tags: openai , mathematics , deep-blue , llms , ai , generative-ai",
+      "links": [
+        {
+          "title": "problem 180",
+          "url": "https://github.com/openai/math/blob/main/lean/docs/180.md",
+          "site": "github.com"
+        },
+        {
+          "title": "Jake Boggan",
+          "url": "https://news.ycombinator.com/item?id=49984923#49987367",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "openai/math",
+          "url": "https://github.com/openai/math",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "OpenAI “rogue” agent activities found on Wikimedia projects",
+      "url": "https://simonwillison.net/2026/Oct/7/openai-rogue-agents-wikimedia/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/7/openai-rogue-agents-wikimedia/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-07T00:16:45Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "OpenAI “rogue” agent activities found on Wikimedia projects Given how tempting a target wikis are for rogue agent swarms, it's not a huge surprise that Wikipedia found evidence of that activity once they went looking: The Wikimedia Foundation conducted its own investigation to see whether Wikimedia websites had been similarly affected by AI agents, focusing on those operated by OpenAI. We can confirm that we have discovered some activity by these “rogue” OpenAI agents on Wikimedia platforms. The unauthorized bot activities included edits to our wikis, some unsuccessful attempts to exploit a public note-taking tool we host, and heavy traffic, which are described more below. They found evidence of agents editing sandbox pages, trying to use pieces of infrastructure such as Etherpad to help proxy content from elsewhere, and saw widespread crawling and \"hundreds of thousands of data queries\"",
+      "links": [
+        {
+          "title": "OpenAI “rogue” agent activities found on Wikimedia projects",
+          "url": "https://wikimediafoundation.org/news/2026/10/05/openai-rogue-agent-activities-found-on-wikimedia-projects/",
+          "site": "wikimediafoundation.org"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Victoria Kim",
+      "url": "https://simonwillison.net/2026/Oct/6/victoria-kim/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/6/victoria-kim/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-06T23:58:56Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Since the Medicare breach, OpenAI has put in place additional monitoring to allow “immediate intervention” by staff to stop training if the company’s models access the internet in ways they’re not supposed to, Mr. Kwon [chief strategy officer at OpenAI] said. — Victoria Kim , Reporting from the Australian parliament Tags: accidental-cyberattacks , generative-ai , ai-security-research , openai , ai , llms",
+      "links": [
+        {
+          "title": "Victoria Kim",
+          "url": "https://www.nytimes.com/live/2026/10/05/world/openai-australia-hearing/94c8067e-4098-5c00-9673-c78cb58a9d8a",
+          "site": "nytimes.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-openai-decisions 0.1a0",
+      "url": "https://simonwillison.net/2026/Oct/6/llm-openai-decisions/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/6/llm-openai-decisions/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-06T23:04:13Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-openai-decisions 0.1a0 OpenAI released their new Jev-style Decisions API , as previously announced at last week's DevDay. Since I already have an llm-typesafe plugin for talking to Jev, I had GPT-6 Astra read the new OpenAI API documentation and build an llm-openai-decisions plugin inspired by llm-typesafe . Unlike Jev, the new gpt-6-luna decision model supports image input in addition to text. Both models charge for input it and not for output: OpenAI's is 10 cents per million input tokens, Jev's is 4.2 cents per million. Otherwise the API shape is very similar to Jev, at least conceptually. Jev supports three question types for yes/no, choices, or scores. OpenAI Decisions supports the same three types. Install the plugin like this: llm install llm-openai-decisions Here's an example query against an image attachment: llm -m openai-decisions/gpt-6-luna \\ -a https://static.si",
+      "links": [
+        {
+          "title": "llm-openai-decisions 0.1a0",
+          "url": "https://github.com/simonw/llm-openai-decisions/releases/tag/0.1a0",
+          "site": "github.com"
+        },
+        {
+          "title": "Decisions API",
+          "url": "https://developers.openai.com/api/docs/guides/decisions",
+          "site": "developers.openai.com"
+        },
+        {
+          "title": "llm-typesafe",
+          "url": "https://github.com/simonw/llm-typesafe",
+          "site": "github.com"
+        },
+        {
+          "title": "the README",
+          "url": "https://github.com/simonw/llm-openai-decisions/blob/main/README.md",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-mistral 0.16",
+      "url": "https://simonwillison.net/2026/Oct/6/llm-mistral/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/6/llm-mistral/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-06T21:32:34Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-mistral 0.16 Adds support for reasoning models, such as the newly released Mistral Large 4 . Tags: llm , mistral , llm-reasoning",
+      "links": [
+        {
+          "title": "llm-mistral 0.16",
+          "url": "https://github.com/simonw/llm-mistral/releases/tag/0.16",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "EmbeddingGemma 2",
+      "url": "https://simonwillison.net/2026/Oct/6/hn-49983751/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/6/hn-49983751/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-06T20:37:53Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on EmbeddingGemma 2 — Hacker News. I really appreciate that EmbeddingGemma 2 is under the Apache 2.0 license. For embedding models in particular, I don't think it makes sense to use a closed, proprietary, hosted-only model. Most applications of embedding models involve calculating thousands or even millions of embedding vectors and storing them for later comparison. If your model is proprietary, the vendor is likely someday going to decide to stop offering that model. They'll have a better model to replace it, but you still need to pay to re-calculate those millions of stored existing vectors. (In April 2024 OpenAI offered to \"cover the financial cost of users re-embedding content with these new models\" - https://openai.com/index/gpt-4-api-general-availability/ - but I don't think that's something we can rely on from every provider.) Notably, I don't want to host the model mys",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://news.ycombinator.com/item?id=49980487#49983751",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "EmbeddingGemma 2",
+          "url": "https://news.ycombinator.com/item?id=49980487",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "EmbeddingGemma 2",
+          "url": "https://blog.google/innovation-and-ai/technology/developers-tools/embeddinggemma-2/",
+          "site": "blog.google"
+        },
+        {
+          "title": "https://openai.com/index/gpt-4-api-general-availability/",
+          "url": "https://openai.com/index/gpt-4-api-general-availability/",
+          "site": "openai.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Introducing Mistral Large 4: Le chonk",
+      "url": "https://simonwillison.net/2026/Oct/6/le-chonk/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/6/le-chonk/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-06T20:18:19Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Introducing Mistral Large 4: Le chonk Mistral are back in the game. Today they're releasing a preview of Mistral Large 4, a 1 trillion parameter, 49 billion active parameter model trained on their own cluster of 3,800 NVIDIA Grace Blackwell GPUs. The preview is available via their API. They promise to release the open weights model at the \"end of this month\". The model only supports two reasoning levels - \"none\" and \"high\" - via the Mistral API. Here are both pelicans - the \"high\" one looks better, though surprisingly it only used 2,717 output tokens compared to \"none\" which used 3,275: On Artificial Analysis it scores 38 , just behind DeepSeek 4.1 Flash, which is a 552B model. It's a huge improvement on last December's Mistral Large 3, which drew this terrible pelican and scored 9 on AA . It's certainly not a Fable-class model, but it's great to see Mistral put out a model that's back t",
+      "links": [
+        {
+          "title": "Introducing Mistral Large 4: Le chonk",
+          "url": "https://mistral.ai/news/mistral-large-4/",
+          "site": "mistral.ai"
+        },
+        {
+          "title": "it scores 38",
+          "url": "https://artificialanalysis.ai/models/mistral-large-4",
+          "site": "artificialanalysis.ai"
+        },
+        {
+          "title": "scored 9 on AA",
+          "url": "https://artificialanalysis.ai/models/mistral-large-3",
+          "site": "artificialanalysis.ai"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=49977979",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Using Parseable with Datasette for OpenTelemetry traces",
+      "url": "https://simonwillison.net/2026/Oct/6/datasette-parseable-opentelemetry/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/6/datasette-parseable-opentelemetry/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-06T19:07:31Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "TIL: Using Parseable with Datasette for OpenTelemetry traces I saw Parseable in a Show HN today - it's a new observability platform with both an open source (AGPL) Rust implementation (a single ~180MB binary), an \"Enterprise\" version with extra features and a cloud hosted option. Since Datasette 1.0a41 added OpenTelemetry support (thanks, Alex Garcia), I decided to fire up Codex and have it figure out how to run Parseable and feed it traces from Datasette. Here's my (human-written) TIL showing the patterns that worked, and here's a screenshot of a Datasette trace displayed within the Parseable localhost web application: Tags: datasette , observability , alex-garcia , opentelemetry",
+      "links": [
+        {
+          "title": "saw Parseable in a Show HN",
+          "url": "https://news.ycombinator.com/item?id=49978171",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "open source (AGPL)",
+          "url": "https://github.com/parseablehq/parseable",
+          "site": "github.com"
+        },
+        {
+          "title": "Datasette 1.0a41 added OpenTelemetry support",
+          "url": "https://docs.datasette.io/en/latest/changelog.html#a41-2026-09-24",
+          "site": "docs.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Mistral Large 4",
+      "url": "https://simonwillison.net/2026/Oct/6/hn-49982139/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/6/hn-49982139/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-06T18:20:58Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on Mistral Large 4 — Hacker News. wren6991 : The benchmark is saturated. Frontier models are tested with an armadillo in fishnet tights jaywalking on Mars. OK well I couldn't resist this one: llm -m claude-opus-5.5 'Generate an SVG of an armadillo in fishnet tights jaywalking on Mars' llm -m gpt-6.1-sol 'Generate an SVG of an armadillo in fishnet tights jaywalking on Mars' llm -m gemini-3.8-flash 'Generate an SVG of an armadillo in fishnet tights jaywalking on Mars' llm -m mistral/mistral-large-4 'Generate an SVG of an armadillo in fishnet tights jaywalking on Mars' Default reasoning levels for each: https://tools.simonwillison.net/markdown-svg-renderer?url=ht...",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://news.ycombinator.com/item?id=49977979#49982139",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "Mistral Large 4",
+          "url": "https://news.ycombinator.com/item?id=49977979",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "wren6991",
+          "url": "https://news.ycombinator.com/item?id=49977979#49979658",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-atom 0.11a0",
+      "url": "https://simonwillison.net/2026/Oct/6/datasette-atom/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/6/datasette-atom/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-06T17:35:39Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-atom 0.11a0 A minor fix for compatibility with the latest Datasette alphas. This meant we could upgrade the datasette.io site to Datasette 1.0a41. Tags: atom , datasette",
+      "links": [
+        {
+          "title": "datasette-atom 0.11a0",
+          "url": "https://github.com/simonw/datasette-atom/releases/tag/0.11a0",
+          "site": "github.com"
+        },
+        {
+          "title": "datasette.io",
+          "url": "https://datasette.io/",
+          "site": "datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Scrimshaw Jukebox",
+      "url": "https://simonwillison.net/2026/Oct/6/scrimshaw-jukebox/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/6/scrimshaw-jukebox/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-06T15:17:39Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Tool: Scrimshaw Jukebox I wanted to see if Claude Opus 5.5 could compose music, so I tried this : I want you to write some computer game music for me. First design simple text based format for the music and build an artifact that can play it out loud - include some example tracks in that artifact I am looking for music of the quality of the original secret of Monkey Island It leaned a lot harder into the Monkey Island theme than I had intended, but the results are surprisingly good. I wonder if the ability to compose competent music is similar to the 3D graphics thing - a new capability for text models that emerged in the past few months? Would need some careful experiments with other recent and not-so-recent models to confirm if this is new or if they've been able to do this for a while. Tags: ai , generative-ai , llms , claude , vibe-coding",
+      "links": [
+        {
+          "title": "I tried this",
+          "url": "https://claude.ai/share/1f721c20-2499-4d23-b368-3ab57146d956",
+          "site": "claude.ai"
+        }
+      ]
+    }
+  ]
+}
