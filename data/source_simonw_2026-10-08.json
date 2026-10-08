@@ -1,0 +1,120 @@
+{
+  "source": "simonw",
+  "date": "2026-10-08",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Ben Affleck",
+      "url": "https://simonwillison.net/2026/Oct/7/ben-affleck/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/7/ben-affleck/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-07T23:14:58Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I've always been kind of into computers since I was young. And then when film started to move from analog film to digital, I became more interested in that aspect of it. And the visual effects workflow for many years has included machine learning. So I can write like pretty shitty Python scripts and stuff like that because with convolutional neural networks, which were the sort of precursors to what the transformer can do, which is just much more computation simultaneously, you would do things like look at what's called a tensor, which is just the numerical translation of a visual image in numbers — like the batch number, the frame number, the red, green, and blue values of each pixel in each frame. And a tensor, you use a convolutional neural network to identify patterns in that that would reveal what's called edge detection or feature extraction, which is just identifying patterns enou",
+      "links": [
+        {
+          "title": "Ben Affleck",
+          "url": "https://www.youtube.com/watch?v=HzraLR2VkNM&t=2259s",
+          "site": "youtube.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Claude Haiku 5.5",
+      "url": "https://simonwillison.net/2026/Oct/7/claude-haiku-5-5/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/7/claude-haiku-5-5/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-07T20:56:21Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "As previously promised , here's Anthropic's new fast, low cost model: Introducing Claude Haiku 5.5 . The previous Haiku, 4.5, was very much showing its age. It came out almost a year ago , and was priced at $1/million input and $5/million output - relatively expensive even back then, and a full 10x the price of OpenAI's GPT-6 Luna , released last month. The new Haiku exactly matches the price of GPT-6 Luna - $0.10/$0.50 - up to 100,000 tokens. Beyond 100,000 tokens the price increases 5x to $0.50/$2.50. Luna itself has a price increase at 272,000 tokens but only to $0.20/$0.75. Haiku 5.5 also uses a new, less generous tokenizer. My Claude Token Counter tool shows that the same long prompt uses around 1.25x as many tokens with Haiku 5.5 compared to Haiku 4.5, so there's a hidden price increase there. If your workloads fit in 100,000 tokens, Haiku is the same price as Luna and reports high",
+      "links": [
+        {
+          "title": "Introducing Claude Haiku 5.5",
+          "url": "https://www.anthropic.com/claude-haiku-5-5",
+          "site": "anthropic.com"
+        },
+        {
+          "title": "most recent release of llm-anthropic",
+          "url": "https://github.com/simonw/llm-anthropic/releases/tag/0.30",
+          "site": "github.com"
+        },
+        {
+          "title": "3.3826 cents",
+          "url": "https://www.llm-prices.com/#it=27&ot=67647&sel=claude-haiku-5.5",
+          "site": "llm-prices.com"
+        },
+        {
+          "title": "Background on that",
+          "url": "https://news.ycombinator.com/item?id=49977979#49982139",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "0.7583 cents",
+          "url": "https://www.llm-prices.com/#it=18&ot=1513&ic=1&oc=5",
+          "site": "llm-prices.com"
+        },
+        {
+          "title": "Settings -> Billing",
+          "url": "https://claude.ai/new#settings/billing",
+          "site": "claude.ai"
+        },
+        {
+          "title": "do not roll over",
+          "url": "https://support.claude.com/en/articles/17154008-monthly-api-credits-for-max-and-team-plans#h_dfc1659cee",
+          "site": "support.claude.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Anti-Patterns in Software Blogging",
+      "url": "https://simonwillison.net/2026/Oct/7/anti-patterns-in-software-blogging/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/7/anti-patterns-in-software-blogging/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-07T14:53:51Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Anti-Patterns in Software Blogging Some excellent writing advice from Michael Lynch. Michael warns against \"meandering intros\", misjudging your reader's existing knowledge, assuming they'll read your previous posts, and excessive formality. He also warns against overreliance on links as an excuse not to explain terminology. This one hurt! I do this all the time, but I have a nagging suspicion that almost nobody ever clicks on them. (In a Lobste.rs comment Michael clarifies that \"My rule of thumb is that my article should still make sense to the reader even if they don't click any links\". That works for me.) This point about using your own voice is crucial: Beginner software bloggers suffer from a mass delusion that you have to write in a stiff, overly formal way for people to take you seriously [...] Just write the way you talk. With so many developers delegating their writing to AI, sof",
+      "links": [
+        {
+          "title": "Anti-Patterns in Software Blogging",
+          "url": "https://refactoringenglish.com/blog/anti-patterns-software-blogging/#summary",
+          "site": "refactoringenglish.com"
+        },
+        {
+          "title": "overreliance on links",
+          "url": "https://refactoringenglish.com/blog/anti-patterns-software-blogging/#overreliance-on-links",
+          "site": "refactoringenglish.com"
+        },
+        {
+          "title": "a Lobste.rs comment",
+          "url": "https://lobste.rs/s/rwdufq/anti_patterns_software_blogging#c_qdhhsd",
+          "site": "lobste.rs"
+        },
+        {
+          "title": "Lobste.rs",
+          "url": "https://lobste.rs/s/rwdufq/anti_patterns_software_blogging",
+          "site": "lobste.rs"
+        }
+      ]
+    }
+  ]
+}
