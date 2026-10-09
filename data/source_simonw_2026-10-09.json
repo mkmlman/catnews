@@ -1,0 +1,148 @@
+{
+  "source": "simonw",
+  "date": "2026-10-09",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "A new feature for my blog, built using my voice",
+      "url": "https://simonwillison.net/2026/Oct/9/built-using-my-voice/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/9/built-using-my-voice/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-09T12:54:06Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I shipped a new feature for my blog today: the Newsletters page, which offers an index of all of the newsletters I've sent out, both my free weekly Substack and my monthly sponsors-only updates. I built the feature almost entirely using my voice, chatting away to my laptop while I cooked dinner. Codex voice mode I used the ChatGPT desktop app for this, in the Codex tab, using the voice conversation mode, running against a local development environment. Here's what that looks like: I started the session against my local simonwillisonblog checkout by typing: Start dev server and open in browser This gave me a preview of the site that it would be working on, and meant that I could later ask it to show me the new pages so I could visually track its progress. Then I clicked the \"Start new voice chat\" button - that's not the microphone button, it's the one to the right of it - and set my lapto",
+      "links": [
+        {
+          "title": "weekly Substack",
+          "url": "https://simonw.substack.com/",
+          "site": "simonw.substack.com"
+        },
+        {
+          "title": "monthly sponsors-only",
+          "url": "https://github.com/sponsors/simonw/",
+          "site": "github.com"
+        },
+        {
+          "title": "simonwillisonblog",
+          "url": "https://github.com/simonw/simonwillisonblog",
+          "site": "github.com"
+        },
+        {
+          "title": "disfluencies",
+          "url": "https://en.wikipedia.org/wiki/Speech_disfluency",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "in this Gist",
+          "url": "https://gist.github.com/simonw/a65a22204f6f7228cc59b4bc34d7c7c8",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "this article",
+          "url": "https://wonderingaboutai.substack.com/p/i-connected-my-newsletter-archive",
+          "site": "wonderingaboutai.substack.com"
+        },
+        {
+          "title": "simonw/monthly-newsletter-archive",
+          "url": "https://github.com/simonw/monthly-newsletter-archive",
+          "site": "github.com"
+        },
+        {
+          "title": "in the extra commits on the PR",
+          "url": "https://github.com/simonw/simonwillisonblog/pull/719",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "ttok 1.0",
+      "url": "https://simonwillison.net/2026/Oct/9/ttok/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/9/ttok/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-09T00:34:43Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: ttok 1.0 I released ttok 0.4 , ran uv tool upgrade ttok , piped a file into the new version... and realized that it was defaulting to the GPT-4 tokenizer when it should very clearly default to GPT-5/GPT-6 instead! I figured switching the default was a reasonable excuse to finally ship a 1.0. OpenAI haven't actually confirmed that GPT-6 uses the same tokenizer as the GPT-5 family yet - there's an angry issue about it - but I found this commit by William Liu which reports on an experiment he ran confirming that the tokenizers are likely the same: All seven GPT models (5.5, 5.6 Sol/Terra/Luna, 6 Astra/Sol/Luna) report 44,794 tokens and match each other on every one of the 31 fixtures. GPT-6 introduces no input-count change on this corpus. Tags: projects , ai , openai , generative-ai , llms , tokenization",
+      "links": [
+        {
+          "title": "ttok 1.0",
+          "url": "https://github.com/simonw/ttok/releases/tag/1.0",
+          "site": "github.com"
+        },
+        {
+          "title": "angry issue about it",
+          "url": "https://github.com/openai/tiktoken/issues/608",
+          "site": "github.com"
+        },
+        {
+          "title": "this commit",
+          "url": "https://github.com/williamliu-ai/token-count-compare/commit/8d8a2178538bb37beb548fc37378135e4ff4b0c8",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "ttok 0.4",
+      "url": "https://simonwillison.net/2026/Oct/8/ttok/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/8/ttok/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-08T23:34:28Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: ttok 0.4 ttok is my CLI tool for counting tokens, using OpenAI's open source tiktoken library. It hasn't been in updated in a couple of years, but I finally fixed a Click warning, updated CI, and added a --list-models command to list available models. It works with uvx , so you can count tokens in anything like this: cat file.txt | uvx ttok Tags: projects , ai , openai , generative-ai , llms , tokenization",
+      "links": [
+        {
+          "title": "ttok 0.4",
+          "url": "https://github.com/simonw/ttok/releases/tag/0.4",
+          "site": "github.com"
+        },
+        {
+          "title": "tiktoken",
+          "url": "https://github.com/openai/tiktoken",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Carson Gross",
+      "url": "https://simonwillison.net/2026/Oct/8/carson-gross/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/8/carson-gross/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-08T21:05:44Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Computer programming is, fundamentally, about two things: Problem-solving using computers Learning to control complexity while solving these problems I have a hard time imagining a future where knowing how to solve problems with computers and how to control the complexity of those solutions is less valuable than it is today, so I think it will continue to be a viable career even with the advent of AI tools. — Carson Gross Tags: computer-science , carson-gross , careers , ai",
+      "links": [
+        {
+          "title": "Carson Gross",
+          "url": "https://htmx.org/essays/yes-and/",
+          "site": "htmx.org"
+        }
+      ]
+    }
+  ]
+}
