@@ -1,0 +1,40 @@
+{
+  "source": "github",
+  "date": "2026-10-10",
+  "stories": [
+    {
+      "source": "github",
+      "title": "deckcraft — Presentations and slide shows: an open-source, clean-room reimplementation of Microsoft PowerPoint in pure Rust. Part of the Ar…",
+      "url": "https://github.com/storytold/deckcraft",
+      "author": "storytold",
+      "external_id": "storytold/deckcraft",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-07T05:27:21Z",
+      "score": 1202,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Presentations and slide shows: an open-source, clean-room reimplementation of Microsoft PowerPoint in pure Rust. Part of the ArtCraft Crafting Apps.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "soundcraft — An open-source, clean-room reimplementation of Avid Pro Tools in pure Rust",
+      "url": "https://github.com/storytold/soundcraft",
+      "author": "storytold",
+      "external_id": "storytold/soundcraft",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-07T08:31:31Z",
+      "score": 1162,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "An open-source, clean-room reimplementation of Avid Pro Tools in pure Rust",
+      "links": []
+    }
+  ]
+}

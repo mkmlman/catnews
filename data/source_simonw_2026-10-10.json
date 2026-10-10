@@ -1,0 +1,125 @@
+{
+  "source": "simonw",
+  "date": "2026-10-10",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting The New York Times",
+      "url": "https://simonwillison.net/2026/Oct/10/the-new-york-times/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/10/the-new-york-times/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-10T02:04:12Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Anthropic detailed the activity of its A.I. agents in a blog post on Friday, without naming the targeted websites. But two sources with knowledge of the incidents said Anthropic’s A.I. agents had submitted 20 visa applications through a form available on the State Department’s website. All the applications were incomplete and were not processed, they said. — The New York Times , Anthropic Agents Tried to Fill Out Visa Forms on State Dept. Website Tags: accidental-cyberattacks , anthropic , generative-ai , ai , llms",
+      "links": [
+        {
+          "title": "a blog post",
+          "url": "https://www.anthropic.com/research/investigating-unintended-model-actions",
+          "site": "anthropic.com"
+        },
+        {
+          "title": "The New York Times",
+          "url": "https://www.nytimes.com/2026/10/09/technology/anthropic-rogue-ai-agents.html",
+          "site": "nytimes.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Deno is joining Cloudflare",
+      "url": "https://simonwillison.net/2026/Oct/9/deno-is-joining-cloudflare/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/9/deno-is-joining-cloudflare/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-09T22:48:37Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Deno is joining Cloudflare The Deno team released the first version of celld back in August - their open source implementation of the Durable Objects pattern from Cloudflare Workers. Today, Cloudflare are acquiring Deno outright, with the goal of building on celld to \"make workerd self-hosting a first-class supported way to build and run apps using the Workers programming model\" (see the Cloudflare blog .) The bad news is that Deno itself will not be maintained by Cloudflare beyond the next year: We will support the Deno runtime for another year with monthly releases containing bug fixes and security updates. After that year we will end our development of the Deno runtime. Deno will remain open source, and we welcome others who want to continue its development. Deno (and Node.js) creator Ryan Dahl explained that decision in a comment on Hacker News: It's a joint decision and I agree with",
+      "links": [
+        {
+          "title": "Deno is joining Cloudflare",
+          "url": "https://deno.com/blog/cloudflare",
+          "site": "deno.com"
+        },
+        {
+          "title": "celld",
+          "url": "https://github.com/denoland/celld",
+          "site": "github.com"
+        },
+        {
+          "title": "the Cloudflare blog",
+          "url": "https://blog.cloudflare.com/deno-joins-cloudflare/",
+          "site": "blog.cloudflare.com"
+        },
+        {
+          "title": "Deno runtime",
+          "url": "https://github.com/denoland/deno",
+          "site": "github.com"
+        },
+        {
+          "title": "a comment",
+          "url": "https://news.ycombinator.com/item?id=50019911#50023277",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "has a similar permissions model",
+          "url": "https://nodejs.org/api/permissions.html",
+          "site": "nodejs.org"
+        },
+        {
+          "title": "in Node v20.0.0",
+          "url": "https://nodejs.org/en/blog/release/v20.0.0",
+          "site": "nodejs.org"
+        },
+        {
+          "title": "in Node v22.13.0",
+          "url": "https://nodejs.org/en/blog/release/v22.13.0",
+          "site": "nodejs.org"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=50019911",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Matthew Green",
+      "url": "https://simonwillison.net/2026/Oct/9/matthew-green/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/9/matthew-green/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-09T15:02:29Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Everyone is very concerned about being respectable, so I’m going to be the goofball who raises worst-case possibilities. I think there is a 1% chance we live in Minicrypt, and a 15% chance we functionally lose confidence in our existing public-key encryption algorithms. [...] The problem here is that the speed of AI producing surprises, and the speed of human beings replacing standards (even with the very best AI assistance) are just orders of magnitude different. You only recover from a surprise like this if you do the preparation in advance. — Matthew Green , on Twitter. I looked it up and Minicrypt is Russell Impagliazzo’s hypothetical world in which public-key encryption is impossible. Tags: ai-security-research , matthew-green , cryptography , standards , llms , ai , generative-ai",
+      "links": [
+        {
+          "title": "Matthew Green",
+          "url": "https://twitter.com/matthew_d_green/status/2108552414978564418",
+          "site": "twitter.com"
+        },
+        {
+          "title": "hypothetical world",
+          "url": "https://www.quantamagazine.org/which-computational-universe-do-we-live-in-20220418/",
+          "site": "quantamagazine.org"
+        }
+      ]
+    }
+  ]
+}
