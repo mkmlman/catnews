@@ -1,0 +1,40 @@
+{
+  "source": "github",
+  "date": "2026-10-11",
+  "stories": [
+    {
+      "source": "github",
+      "title": "omdrop-owl — airdrop for non-apple devices",
+      "url": "https://github.com/t4t5/omdrop-owl",
+      "author": "t4t5",
+      "external_id": "t4t5/omdrop-owl",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-08T06:38:33Z",
+      "score": 1887,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "airdrop for non-apple devices",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "anatomy — A Claude Code skill that turns a technical idea into a detailed, interactive isometric figure of a real machine. It makes SVG wit…",
+      "url": "https://github.com/wheresryan22/anatomy",
+      "author": "wheresryan22",
+      "external_id": "wheresryan22/anatomy",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-08T10:12:49Z",
+      "score": 1394,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "A Claude Code skill that turns a technical idea into a detailed, interactive isometric figure of a real machine. It makes SVG with optional WebGL shaders and 3D, for docs, articles and landing pages.",
+      "links": []
+    }
+  ]
+}

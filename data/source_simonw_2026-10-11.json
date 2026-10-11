@@ -1,0 +1,77 @@
+{
+  "source": "simonw",
+  "date": "2026-10-11",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Dwarf Fortress uses version control now",
+      "url": "https://simonwillison.net/2026/Oct/11/dwarf-fortress/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/11/dwarf-fortress/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-11T00:52:37Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I remember hearing a while ago that Dwarf Fortress didn't use version control. That fact has been lodged in my head, because given its inherent complexity I have trouble imagining a codebase that would benefit from version control more . That's art. I went looking and I'm sad to report that the days without version control appear to have ended. Quoting Tarn Adams over time: March 2013: \"I don't use version control -- I didn't like the feeling of having the code get committed into a black box thingy with no immediate upside\" March 2016: \"I don’t even use version control. If you don’t know what that is then you’re not gonna yell at me. If you even know what version control is you’re gonna be like, ‘You don’t use version control? You don’t use source control? What is wrong with you? How can you even work? I’m just not cut out for it, in a sense. It’s been 15 years, so the reasons have chang",
+      "links": [
+        {
+          "title": "\"I don't use version control -- I didn't like the feeling of hav",
+          "url": "https://www.reddit.com/r/IAmA/comments/1avszc/comment/c919fo8/?solution=43270267461a564b43270267461a564b&js_challenge=1&jsc_token=2824be10929bdc604753c70a67a1c3310860c2cae0f946ff767fab3727807a35&jsc_orig_r=",
+          "site": "reddit.com"
+        },
+        {
+          "title": "\"I don’t even use version control. If you don’t know what that i",
+          "url": "https://www.pcgamer.com/dwarf-fortress-creator-on-how-hes-42-towards-simulating-existence/3/",
+          "site": "pcgamer.com"
+        },
+        {
+          "title": "\"I've got Discord channels to check and version control stuff to",
+          "url": "https://www.gamedeveloper.com/programming/how-tarn-adams-upgraded-and-optimized-dwarf-fortress-for-its-official-steam-release",
+          "site": "gamedeveloper.com"
+        },
+        {
+          "title": "made them millionaires",
+          "url": "https://www.pcgamer.com/after-spending-20-years-simulating-reality-the-dwarf-fortress-devs-have-to-get-used-to-a-new-one-being-millionaires/",
+          "site": "pcgamer.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Python 3.15.0 added to actions/python-versions",
+      "url": "https://simonwillison.net/2026/Oct/10/python-actions/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/10/python-actions/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-10T23:58:04Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Python 3.15.0 added to actions/python-versions Bit of a niche link, but I've been waiting for this for a couple of days - I even told ChatGPT to check for it: Clone https://github.com/actions/python-versions and git pull once an hour until they add the stable 3.15 - then tell me about it Now that this has landed, you can add \"3.15\" to a GitHub Actions testing matrix to run tests against the new Python 3.15.0 release . Tags: github , python , github-actions , chatgpt",
+      "links": [
+        {
+          "title": "Python 3.15.0 added to actions/python-versions",
+          "url": "https://github.com/actions/python-versions/commit/49858b91c92d27403416ee43117032e91d00ce24",
+          "site": "github.com"
+        },
+        {
+          "title": "told ChatGPT",
+          "url": "https://chatgpt.com/share/6acad42a-2868-83e8-9a16-736f9def2b45",
+          "site": "chatgpt.com"
+        },
+        {
+          "title": "new Python 3.15.0 release",
+          "url": "https://www.python.org/downloads/release/python-3150/",
+          "site": "python.org"
+        }
+      ]
+    }
+  ]
+}
