@@ -1,0 +1,329 @@
+{
+  "source": "arxiv",
+  "date": "2026-10-12",
+  "stories": [
+    {
+      "source": "arxiv",
+      "title": "Can Language Models Play the Wikipedia Game?",
+      "url": "https://arxiv.org/abs/2610.13948v1",
+      "author": "Alexander Hickey",
+      "external_id": "2610.13948v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Alexander Hickey",
+        "Joanna Knight",
+        "James Bishop"
+      ],
+      "category": "cs.AI",
+      "published": "2026-10-09T17:59:56Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Language models increasingly support or automate information retrieval from document collections too large to index. This task is difficult when it requires specialist linguistic or scientific knowledge. We used the Wikipedia Game to test language models on an analogous information retrieval task. In the game, players must reach a target article using only article links. We compared sentence embedding models and LLMs across five Wikipedia languages and five academic-literature datasets. We construct very large local graphs of Wikipedia pages and of paper citations using OpenAlex and provide code to build and navigate them. This allows the study of language models' navigation capabilities without relying on third-party APIs. We compared the models with human and TF-IDF benchmarks. The Wikipedia Game format enables robust comparisons across techniques, languages, and domains. No model sign",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Hide and Seek: HIDE Concepts to SEEK explanations for black box models",
+      "url": "https://arxiv.org/abs/2610.13935v1",
+      "author": "Bhanu Tokas",
+      "external_id": "2610.13935v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Bhanu Tokas",
+        "Rahul Nair",
+        "Rockwell Jackson",
+        "Hannah Kerner"
+      ],
+      "category": "cs.CV",
+      "published": "2026-10-09T17:56:59Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Interpreting machine learning model predictions is a central challenge, particularly for black-box vision models. Concept-based attribution methods interpret models using human-understandable concepts. Existing concept-based methods can only interpret classification and regression models. They require access to model weights or large concept-annotated datasets, and most methods cannot provide image-level attribution. We propose Hide and Seek (HnS), a new method for concept-level attribution that does not require access to model weights or labeled concept datasets. HnS can interpret a wide range of vision models. Given a concept and image set, HnS retrieves concept-aligned images using a vision-language model, localizes the concept within each image, masks the localized region, and measures attribution from the change in the black-box model's output between the original and masked images.",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Constructive Bounds for the Topological Expressivity of Neural Networks",
+      "url": "https://arxiv.org/abs/2610.13931v1",
+      "author": "Kosio Beshkov",
+      "external_id": "2610.13931v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Kosio Beshkov"
+      ],
+      "category": "math.AT",
+      "published": "2026-10-09T17:55:33Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "The expressivity of a neural network $Φ$ describes the class of functions that a network can express. The term topological expressivity refers to a family of measures particularly suited to understand binary classification and is often formulated in terms of the Betti numbers of a decision boundary $β(Φ^{-1}(0))$. Despite its popularity, this measure is not as useful for regression and other problems that do not involve a decision boundary. Instead, we propose to study topological expressivity in terms of the Betti numbers of the output of a neural network $β(Φ(X))$. We formally prove that a ReLU network with architecture $(d,\\sum\\limits_{k=1}^{d   } β_k(3k+2),\\sum\\limits_{k=1}^{d}β_k(k+1))$ can express spaces homotopy equivalent to wedge sums of spheres with arbitrary Betti numbers. This gives upper bounds for any arbitrary connected ($β_0=1$) sequence of Betti numbers, but by construct",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "AI Models Can Provably Hide Arbitrary Capabilities",
+      "url": "https://arxiv.org/abs/2610.13928v1",
+      "author": "Andis Draguns",
+      "external_id": "2610.13928v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Andis Draguns",
+        "Sumeet Ramesh Motwani",
+        "Raymond Douglas",
+        "Christian Schroeder de Witt"
+      ],
+      "category": "cs.LG",
+      "published": "2026-10-09T17:55:06Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Capability evaluations aim to surface dangerous model behaviors before deployment, but their reliability depends on the assumption that hidden capabilities can be elicited. We show this assumption does not hold under adversarial conditions by constructing backdoor attacks that embed encrypted neural networks within host model weights, decrypting and executing them only upon receiving a secret trigger. Using digital lockers, these hidden circuits remain provably hard to elicit and interpret under cryptographic assumptions, even given full access to model weights, extending prior work from hiding fixed strings to arbitrary computations. We implement our proof of concept constructions in PyTorch and evaluate elicitation through fine-tuning, weight noising, gradient-based trigger search, and latent adversarial training on a small chemical reaction prediction task - a proxy for CBRN-relevant ",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "KL Before and After Mixing: A Round-Complexity Separation in Parallel Sampling",
+      "url": "https://arxiv.org/abs/2610.13924v1",
+      "author": "Tianyi Wu",
+      "external_id": "2610.13924v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Tianyi Wu"
+      ],
+      "category": "cs.LG",
+      "published": "2026-10-09T17:54:16Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "A parallel sampler can choose at random which coordinates to generate together. For a target $p$ and the output law $q_U$ of a schedule $U$ drawn afresh for each output, we compare the schedule-averaged divergence $\\mathbb{E}_U D_{\\mathrm{KL}}(p\\|q_U)$ with the output-law divergence $D_{\\mathrm{KL}}(p\\|\\mathbb{E}_U q_U)$, in nats. Rounds commit independent draws from exact conditional marginals frozen at the round's start, each output's schedule is drawn before sampling from a finite mixture of schedules, and every scheduled round is charged. For the uniform distribution on binary strings of even length $n$ with $n/2$ ones, the least expected number of rounds at a fixed tolerance $\\varepsilon>0$ is $Θ_\\varepsilon((\\log n)^2)$ under the first criterion but $(e^{-\\varepsilon}+o(1))\\log_2\\ln n$ under the second, and the double-logarithmic order is attainable with the same round count on eve",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Goal-Oriented Bundle Management and Flow Control for Deep-Space Communications via Reinforcement Learning",
+      "url": "https://arxiv.org/abs/2610.13923v1",
+      "author": "Sajjad Baghaeea",
+      "external_id": "2610.13923v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Sajjad Baghaeea",
+        "Aimin Lib",
+        "Shanmugarajan Balasubramanian",
+        "Elif Uysal"
+      ],
+      "category": "cs.NI",
+      "published": "2026-10-09T17:53:46Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Deep-space communications operate under intermittent connectivity, long propagation delays, and relay storage constraints. In such networks, the Bundle Protocol enables store-carry-forward communication, requiring relay nodes to manage limited storage and scarce contact opportunities. Relay-side scheduling and dropping decisions are inherently goal-oriented: transmission resources should be allocated to bundles most valuable to downstream mission objectives. Conventional schedulers, such as FIFO, do not explicitly optimize task utility and may provide unfair service across heterogeneous planetary sources. This paper presents a closed-loop modeling and learning framework for relay-side bundle and flow management in a contact-driven deep-space network, where lunar and Martian updates are forwarded through a shared-buffer relay to Earth. We quantify destination-side information freshness us",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "DyssomniaNN: Multi-Scale Spiking Neural Modeling of Human Sleep Disorders and Perceived Restedness",
+      "url": "https://arxiv.org/abs/2610.13918v1",
+      "author": "Daniel Szelogowski",
+      "external_id": "2610.13918v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Daniel Szelogowski"
+      ],
+      "category": "cs.NE",
+      "published": "2026-10-09T17:52:23Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Clinical sleep medicine repeatedly documents profound divergences between objective sleep duration and subjective daytime impairment, notably exemplified by sleep state misperception in paradoxical insomnia and boundary instability in narcolepsy type 1. Here, we present DyssomniaNN: a multi-scale biophysical computational framework coupling Borbély's two-process regulation of sleep homeostasis and circadian drive with Saper's hypothalamic reciprocal flip-flop circuit and a recurrent corticothalamic leaky integrate-and-fire spiking neural network. We formalize five clinical cohorts across an identical 72-hour photoperiod: healthy control, circadian rhythm sleep-wake disorder (delayed-phase), chronic insomnia, paradoxical insomnia, and narcolepsy type 1. The synthetic local field potential converges closely with empirical human electroencephalography spectra from the PhysioNet Sleep-EDF da",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Designing Protein Structures from Natural Language",
+      "url": "https://arxiv.org/abs/2610.13917v1",
+      "author": "Joseph Lee",
+      "external_id": "2610.13917v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Joseph Lee",
+        "Yanjing Li",
+        "Bo Qiang",
+        "Gregory Lau",
+        "Allyson Ettinger",
+        "Noah A. Smith",
+        "Rory Donovan-Maiye",
+        "David Baker",
+        "Hanna Hajishirzi",
+        "Pang Wei Koh"
+      ],
+      "category": "cs.LG",
+      "published": "2026-10-09T17:51:55Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "A central challenge in de novo protein design is generating proteins with desired structural and functional properties. Existing design models typically require a dedicated input representation for each property, limiting the design objectives they support. We develop Prompteina, the first all-atom structure generation model that supports new and broader design objectives specified in natural language, analogous to text-to-image generation. To train Prompteina, we construct Prompteina-Data, a paired text--protein structure dataset of 1.8M structures and 50M+ captions describing global and residue-specific structural and functional properties. We adapt Proteina-Complexa, a pretrained structure generation model, through text-conditioned pretraining and finetuning that aligns residues with their corresponding text. Prompteina outperforms baselines on 15 of 18 structural properties and gener",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "RSI-Anything: Unlocking Recursive Self-Improvement with World Models",
+      "url": "https://arxiv.org/abs/2610.13912v1",
+      "author": "Taoyong Cui",
+      "external_id": "2610.13912v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Taoyong Cui",
+        "Pinxian Zeng",
+        "Wanghan Xu",
+        "Hao Xiao",
+        "Shuhan Xue",
+        "Qiang Gao",
+        "Wanli Ouyang",
+        "Pheng Ann Heng",
+        "Zhenfei Yin",
+        "Yingcheng Wu",
+        "Ling Yang"
+      ],
+      "category": "cs.CL",
+      "published": "2026-10-09T17:50:30Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Recursive self-improvement (RSI) aims to transform interaction experience into persistent improvements, yet external feedback is costly and world-model predictions may become unreliable as policies evolve. We introduce RSI-Anything, a domain-general framework built on JEPA-Anything that uses predictive world models to guide action and learning-data selection. Observed feedback drives policy or workflow improvement and conditional world-model adaptation, while component and compatibility checks govern the retention of updated policy-model pairs. Across diverse computational and scientific domains, RSI-Anything demonstrates substantial gains. In code repair, with the coder fixed, success increases from 26.3% with a static verifier to 29.2% through predictive selection and 31.2% after world-model adaptation, at comparable test usage. Graphical user interface (GUI) evaluations showed higher ",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "When VLMs Destroy What They Know: Spatial Representations Fall Below Lexical Priors",
+      "url": "https://arxiv.org/abs/2610.13910v1",
+      "author": "Shubh Garg",
+      "external_id": "2610.13910v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Shubh Garg",
+        "Chen Shani"
+      ],
+      "category": "cs.CL",
+      "published": "2026-10-09T17:50:03Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Vision-Language Models (VLMs) increasingly analyze and reason about images, yet it remains unclear whether their internal representations faithfully encode the structured relations required for such reasoning. We introduce EICS (Evaluation-Invariant Concept Stability), a metric for testing whether representations consistently encode concepts under controlled one-concept interventions, and CASP-VL (Causally controlled Spatial Perturbations for Vision-Language models), a benchmark of causally controlled spatial perturbations derived from Visual Genome scene graphs. Across multiple VLM architectures, we find that spatial relations are represented substantially less faithfully than lexical information, even when the same models score well above chance on compositional benchmarks. Further analysis shows that the relation is identifiable at the predicate's own tokens but is lost when the sente",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Revisiting Tabular Deep Regression: Objectives and the Limits of Global Early Stopping",
+      "url": "https://arxiv.org/abs/2610.13909v1",
+      "author": "Danil Rudenko",
+      "external_id": "2610.13909v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Danil Rudenko",
+        "Georgii Bulgakov",
+        "Nikolay Kartashev",
+        "Ivan Rubachev",
+        "Daniil Krasylnikov",
+        "Artem Babenko"
+      ],
+      "category": "cs.LG",
+      "published": "2026-10-09T17:49:32Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "While deep learning models for tabular data have recently received significant research attention, the choice of objective functions for regression tasks remains an understudied degree of freedom. Several lines of research offer alternatives to the standard Mean Squared Error (MSE), but differences in datasets, backbones, and evaluation protocols make their practical benefits difficult to compare. In this work, we address this gap by performing a systematic re-evaluation of regression objectives across a broad collection of established tabular datasets and multiple neural backbones. Our comparison reveals that many proposed objectives provide limited or inconsistent gains over a properly tuned MSE baseline, while quantile loss yields consistent aggregate improvements over MSE across the tested backbones. We then identify a limitation that remains even with this strong objective: regions ",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Hitting-Time Bounds for Asynchronous Q-Learning",
+      "url": "https://arxiv.org/abs/2610.13901v1",
+      "author": "Yang Peng",
+      "external_id": "2610.13901v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Yang Peng"
+      ],
+      "category": "stat.ML",
+      "published": "2026-10-09T17:44:10Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "We study the last iterate of standard asynchronous Q-learning from a single trajectory of a finite Markov decision process. The trajectory follows a fixed behavior policy whose state--action chain is irreducible and may be periodic. For discount factor $γ$, write $H=(1-γ)^{-1}$, and let $μ_{\\min}$ be the minimum stationary state--action probability and $\\mathfrak h_\\star$ the largest expected hitting time of the reverse state--action chain. We prove that zero-initialized Q-learning with a constant step size achieves sup-norm error at most $\\varepsilon$ with high probability using $\\widetilde{O}(H^4/(μ_{\\min}\\varepsilon^2)+\\mathfrak h_\\star)$ transitions, for $0<\\varepsilon\\le1$. The statistical term retains the quartic effective-horizon dependence of standard Q-learning, while initialization cost is additive in $\\mathfrak h_\\star$. For aperiodic behavior chains, a comparison with mixing ",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Structural Automata for Neural Semantic Parsing",
+      "url": "https://arxiv.org/abs/2610.13896v1",
+      "author": "Xiao Zhang",
+      "external_id": "2610.13896v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Xiao Zhang"
+      ],
+      "category": "cs.CL",
+      "published": "2026-10-09T17:42:14Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Neural semantic parsers generate meaning representations token by token, yet well-formedness depends on references, scope, and graph relations that unfold during generation. Constrained decoding prevents locally invalid tokens but does not guarantee that a valid prefix can be completed within a fixed output-length limit. We investigate structural automata at three stages of DRS parsing (decoding, post hoc processing, and training) and additionally evaluate decoding on AMR. For decoding, we introduce accepting-path decoding (APD), which maintains a verified completion within the remaining length limit and follows the model's preferred token whenever that token can also be completed. APD guarantees an accepted output without retracting tokens. Under tight length limits, it improves Smatch++ over local masking by 5.1 and 2.4 points on DRS and by 6.4 and 3.2 points on AMR, comparable to roll",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Task Context Shapes Component Roles in Language Models",
+      "url": "https://arxiv.org/abs/2610.13895v1",
+      "author": "Sovesh Mohapatra",
+      "external_id": "2610.13895v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Sovesh Mohapatra",
+        "Dani S Bassett"
+      ],
+      "category": "cs.CL",
+      "published": "2026-10-09T17:40:53Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Large language models reuse the same attention heads across tasks, but identifying these shared heads does not explain what they do differently in each task. A natural source of inspiration is task-dependent interactions among shared brain regions, which motivate a network view of language-model computation. Here, we compare fixed model components across tasks using identical graph facts, statements specifying which directed connections are present. We measure how interventions affect attention heads and the activation state in later layers (influence), as well as the answer (importance). Task changes redistribute the influence in five open-weight models spanning four families and 1.5-14 billion parameters. In Gemma-2-9B and Qwen3-14B, an activation edit changes an early internal activation vector and switches which fact the model reads while the written instruction stays fixed. The same",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "RATED: Reliability-Aware AI Agent Tool Retrieval via Execution Dynamics",
+      "url": "https://arxiv.org/abs/2610.13889v1",
+      "author": "Weiliang Chen",
+      "external_id": "2610.13889v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Weiliang Chen",
+        "Song Liao"
+      ],
+      "category": "cs.AI",
+      "published": "2026-10-09T17:38:11Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "As AI agents increasingly rely on external tools, accurate retrieval is essential for reliable behavior. Existing methods optimize semantic relevance but largely ignore tool availability during execution. To address this gap, we propose RATED (Reliability-Aware Tool Retrieval via Execution Dynamics), a retrieval framework that combines robust semantic matching with dynamic reliability adaptation. RATED employs a frozen dual-encoder with contrastive fine-tuning for semantic matching, and a lightweight contextual bandit module that re-ranks candidates based on real-time execution feedback. This design enables rapid adaptation to runtime tool failures without expensive model retraining. We introduce EcoAgent, a benchmark of 5,172 real-world tools and over 210,000 query-tool pairs for offline retrieval and dynamic reliability evaluation. Experimental results demonstrate that RATED achieves a",
+      "links": []
+    }
+  ]
+}
