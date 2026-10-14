@@ -1,0 +1,201 @@
+{
+  "source": "simonw",
+  "date": "2026-10-14",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Redesigning source control at Anthropic",
+      "url": "https://simonwillison.net/2026/Oct/13/redesigning-source-control-at-anthropic/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/13/redesigning-source-control-at-anthropic/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-13T23:00:06Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Redesigning source control at Anthropic Interesting piece from Anthropic describing why and how they built their own custom alternative to Git, based on the dramatic increase in rate of changes to their code after the past six months. In May 2026, Anthropic averaged around 2,500 code changes merged per day; as of September, we merged over 30,000 per day. They included a chart showing those changes. I had Claude modify their chart ( code here ) to add markers for the public releases of each of their models in 2026: This shows public release dates, not the date when models became available for Anthropic's internal use. My guess is that the introduction of Fable/Mythos class models is a key factor in the increased coding velocity. \"Antique\" is their new code review system. The source control system is called Scion, and sounds to me like a reinvention of centralized source control along the ",
+      "links": [
+        {
+          "title": "Redesigning source control at Anthropic",
+          "url": "https://www.anthropic.com/engineering/redesigning-source-control",
+          "site": "anthropic.com"
+        },
+        {
+          "title": "had Claude modify their chart",
+          "url": "https://claude.ai/share/aefcdd4a-9364-40c1-927a-29bf445894fc",
+          "site": "claude.ai"
+        },
+        {
+          "title": "code here",
+          "url": "https://gist.github.com/simonw/4a16dff066fd9763faf8642f797905be",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "replied",
+          "url": "https://news.ycombinator.com/item?id=50073633#50079495",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=50073633",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-gemini 0.35",
+      "url": "https://simonwillison.net/2026/Oct/13/llm-gemini/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/13/llm-gemini/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-13T22:28:54Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-gemini 0.35 I added support to llm-gemini for the new Gemini 4 Argon model, made available today via the Gemini API and for customers of their $100/month subscription plan. Here are the low, medium and high pelicans . As expected, they are all excellent: Gemini has a track record of producing great SVGs, and are the only lab where I know their staff have invested in SVG specifically (and who have boasted about their pelicans before.) Here's the \"high\" illustration, which cost me 17.166 cents: The pricing is interesting. At launch, Argon is $2/million input and $10/million output - the same price as GPT-6 Sol, half the price of Claude Opus 5.5 and 1/5th the price of Claude Fable 5.1 and GPT-6 Astra. But on December 1st Argon is set to double in price - so it will be the same price as Opus 5.5. Prices like this aren't really comparable these days since what really matters is h",
+      "links": [
+        {
+          "title": "llm-gemini 0.35",
+          "url": "https://github.com/simonw/llm-gemini/releases/tag/0.35",
+          "site": "github.com"
+        },
+        {
+          "title": "llm-gemini",
+          "url": "https://github.com/simonw/llm-gemini",
+          "site": "github.com"
+        },
+        {
+          "title": "new Gemini 4 Argon",
+          "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/",
+          "site": "blog.google"
+        },
+        {
+          "title": "staff have invested in SVG specifically",
+          "url": "https://twitter.com/sunjiao123sun_/status/2024555516551372920",
+          "site": "twitter.com"
+        },
+        {
+          "title": "the total cost to run their benchmark",
+          "url": "https://artificialanalysis.ai/#total-cost-tabs",
+          "site": "artificialanalysis.ai"
+        },
+        {
+          "title": "used ChatGPT to edit that chart",
+          "url": "https://chatgpt.com/share/6acebe13-5378-83e8-bf2f-9f4d05b206f4",
+          "site": "chatgpt.com"
+        },
+        {
+          "title": "a video of a pelican riding a bike, using fourier epicycles",
+          "url": "https://twitter.com/fofrai/status/2110043023954284889",
+          "site": "twitter.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "web-edit 0.1a1",
+      "url": "https://simonwillison.net/2026/Oct/13/web-edit/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/13/web-edit/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-13T01:40:05Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: web-edit 0.1a1 Includes performance optimizations written by Claude Opus 5.5 after I fed it this Python 3.15 profiling report generated by GPT-6 Astra. Tags: profiling , projects",
+      "links": [
+        {
+          "title": "web-edit 0.1a1",
+          "url": "https://github.com/simonw/web-edit/releases/tag/0.1a1",
+          "site": "github.com"
+        },
+        {
+          "title": "performance optimizations",
+          "url": "https://github.com/simonw/web-edit/pull/1",
+          "site": "github.com"
+        },
+        {
+          "title": "by Claude Opus 5.5",
+          "url": "https://claude.ai/code/session_01LE2R4P74P9GGUbE6yQ5YBt",
+          "site": "claude.ai"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-meta-ai 0.2",
+      "url": "https://simonwillison.net/2026/Oct/12/llm-meta-ai/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/12/llm-meta-ai/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-12T23:58:46Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-meta-ai 0.2 Meta AI release Muse Wonder (and Muse Wonder Full), their new \"most capable models\". These look like they may be Meta's first Fable class models - Artificial Analysis scores Muse Wonder (Max) as equivalent to GPT-6.1 Sol. I updated my llm-meta-ai plugin for the new model. Here are pelicans for Muse Wonder for the six reasoning levels: minimal, low, medium, high, xhigh, max. This is the max one: For comparison, here are pelicans for Muse 1.3 (released September 2nd) and Muse 1.2 (released August 5th). Meta AI are putting out a new model a month, and the improvements between each model (at least in terms of drawing pelicans) are material. Tags: ai , generative-ai , llms , meta , pelican-riding-a-bicycle , llm-release",
+      "links": [
+        {
+          "title": "llm-meta-ai 0.2",
+          "url": "https://github.com/simonw/llm-meta-ai/releases/tag/0.2",
+          "site": "github.com"
+        },
+        {
+          "title": "Muse Wonder",
+          "url": "https://research.meta.ai/blog/muse-wonder",
+          "site": "research.meta.ai"
+        },
+        {
+          "title": "scores Muse Wonder (Max)",
+          "url": "https://artificialanalysis.ai/models/muse-wonder",
+          "site": "artificialanalysis.ai"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Profiling web-edit with Python 3.15: flame graphs and source heatmaps",
+      "url": "https://simonwillison.net/2026/Oct/12/python-3-15-web-edit-profiling/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/12/python-3-15-web-edit-profiling/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-12T16:58:00Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Research: Profiling web-edit with Python 3.15: flame graphs and source heatmaps I put the new Python 3.15 profiler through its paces by having GPT-6 Astra Extra High in Codex run it against my new web-edit app : I need a Python 3.15 flame graph and heatmap demo of the \"web-edit\" app from PyPI - research first then make me those demos Here's the resulting example flame graph and heatmap . Tags: profiling , python , codex",
+      "links": [
+        {
+          "title": "Profiling web-edit with Python 3.15: flame graphs and source hea",
+          "url": "https://github.com/simonw/research/tree/main/python-3-15-web-edit-profiling#readme",
+          "site": "github.com"
+        },
+        {
+          "title": "flame graph",
+          "url": "https://simonw.github.io/research/python-3-15-web-edit-profiling/artifacts/flamegraph.html",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "heatmap",
+          "url": "https://simonw.github.io/research/python-3-15-web-edit-profiling/artifacts/heatmap/index.html",
+          "site": "simonw.github.io"
+        }
+      ]
+    }
+  ]
+}
