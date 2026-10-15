@@ -1,0 +1,57 @@
+{
+  "source": "simonw",
+  "date": "2026-10-15",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Tree Appreciator",
+      "url": "https://simonwillison.net/2026/Oct/14/tree-appreciator/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/14/tree-appreciator/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-14T21:23:01Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Tool: Tree Appreciator Another game experiment with Claude. This one used the default Claude iPhone app (chat mode, not Claude Code mode), where I prompted Claude Opus 5.5 Max with: Build a three js game called \"Tree appreciator\" - it shows you two algorithmically generated trees and the game mechanics is about appreciating the differences between them. Think hard about how to make sure it is both fun and beautiful. Somewhat embarrassingly given my recent talk , I've found that telling Opus 5.5 \"make sure it is fun\" works uncomfortably well. In this case Claude crunched for 3 hours and 7 minutes before retuning a cosy little spot-the-difference game with music and animation and achievements that's quite compelling to play. Tags: game-design , javascript , ai , generative-ai , llms , claude , vibe-coding , three-js",
+      "links": [
+        {
+          "title": "crunched for 3 hours and 7 minutes",
+          "url": "https://claude.ai/share/ee7de555-f85c-4ff0-96cb-d51ed5e479e9",
+          "site": "claude.ai"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "AI is mass decompiling games. That's both awesome and scary.",
+      "url": "https://simonwillison.net/2026/Oct/14/ai-is-mass-decompiling-games/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/14/ai-is-mass-decompiling-games/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-14T16:26:53Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "AI is mass decompiling games. That's both awesome and scary. Indie game developer Popcar talks about the recent wave of AI-powered decompilation of existing games, enabling weird mashups between existing games, and producing a boom in game preservation projects to get old games working on new hardware (often in a browser using WebAssembly). I like how this piece captures both the positives and the negatives of this new development: Most people already realized the scary part by now. If AI can decompile games and software, then the entire tech industry is about to explode. Anybody can decompile other software and use it any way they'd like, and nobody can stop them. Companies can steal from competitors. Your paid game or app can be open-sourced against your will. This isn't exclusive to old video games, we can apply this to any software. [...] This is also a big win for preservation. Old ",
+      "links": [
+        {
+          "title": "AI is mass decompiling games. That's both awesome and scary.",
+          "url": "https://popcar.bearblog.dev/ai-is-mass-decompiling-games-thats-both-awesome-and-scary/",
+          "site": "popcar.bearblog.dev"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=50088534",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    }
+  ]
+}
