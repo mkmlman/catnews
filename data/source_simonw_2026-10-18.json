@@ -1,0 +1,57 @@
+{
+  "source": "simonw",
+  "date": "2026-10-18",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Inline rendering with document​.currentScript",
+      "url": "https://simonwillison.net/2026/Oct/17/document-currentscript/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/17/document-currentscript/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-17T21:11:12Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Inline rendering with document​.currentScript Lean Rada describes a neat trick that takes advantage of the document.currentScript property. You can use that to drop in a tiny inline <script> element that replaces itself when the page loads: The year is <script> document.currentScript.replaceWith( new Date().getFullYear())</script> If you define a shortcut function like this: $=(...n)=>document.currentScript.replaceWith(...n) You get a tiny template language: The year is <script>$(new Date().getFullYear())</script> Tags: javascript",
+      "links": [
+        {
+          "title": "Inline rendering with document​.currentScript",
+          "url": "https://leanrada.com/notes/inline-rendering-currentscript/",
+          "site": "leanrada.com"
+        },
+        {
+          "title": "document.currentScript",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Document/currentScript",
+          "site": "developer.mozilla.org"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "web-edit 0.1a2",
+      "url": "https://simonwillison.net/2026/Oct/17/web-edit/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/17/web-edit/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-17T13:16:49Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: web-edit 0.1a2 web-edit ( previously ) is my tiny web app for browsing and editing files in a folder. I mainly built it for editing files on different machines via Tailscale. I added a \"copy to clipboard\" option for both text and image data. I needed this because I was running pelican prompts on a laptop from my phone (here's DeepSeek 4.1 Flash 1017 ) and I wanted an easy way to copy the resulting logs into a Gist. Tags: projects , pelican-riding-a-bicycle , deepseek",
+      "links": [
+        {
+          "title": "web-edit 0.1a2",
+          "url": "https://github.com/simonw/web-edit/releases/tag/0.1a2",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
