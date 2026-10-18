@@ -1,0 +1,57 @@
+{
+  "source": "github",
+  "date": "2026-10-18",
+  "stories": [
+    {
+      "source": "github",
+      "title": "net-merge — Use all your network adapters at once on Windows/Linux/Mac: per-connection load balancing over Wi-Fi, Ethernet and phone/USB te…",
+      "url": "https://github.com/rohit267/net-merge",
+      "author": "rohit267",
+      "external_id": "rohit267/net-merge",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-12T19:28:45Z",
+      "score": 951,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Use all your network adapters at once on Windows/Linux/Mac: per-connection load balancing over Wi-Fi, Ethernet and phone/USB tethers (TUN + Wintun)",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "gptibo — Self-hosted GPTibo storefront, admin and Go backend — sanitized MIT source",
+      "url": "https://github.com/CoolkHz/gptibo",
+      "author": "CoolkHz",
+      "external_id": "CoolkHz/gptibo",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-13T15:57:19Z",
+      "score": 825,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Self-hosted GPTibo storefront, admin and Go backend — sanitized MIT source",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "xscreensaver — There is no official XScreenSaver GitHub repository.",
+      "url": "https://github.com/xscreensaver-official/xscreensaver",
+      "author": "xscreensaver-official",
+      "external_id": "xscreensaver-official/xscreensaver",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-16T16:24:44Z",
+      "score": 792,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "There is no official XScreenSaver GitHub repository.",
+      "links": []
+    }
+  ]
+}

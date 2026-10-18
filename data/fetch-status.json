@@ -1,22 +1,22 @@
 {
-  "date": "2026-10-17",
+  "date": "2026-10-18",
   "sources": {
     "hn": {
       "state": "ok",
-      "snapshot_date": "2026-10-17",
-      "checked_date": "2026-10-17",
+      "snapshot_date": "2026-10-18",
+      "checked_date": "2026-10-18",
       "stories": 25
     },
     "github": {
       "state": "ok",
-      "snapshot_date": "2026-10-17",
-      "checked_date": "2026-10-17",
+      "snapshot_date": "2026-10-18",
+      "checked_date": "2026-10-18",
       "stories": 15
     },
     "simonw": {
       "state": "ok",
-      "snapshot_date": "2026-10-17",
-      "checked_date": "2026-10-17",
+      "snapshot_date": "2026-10-18",
+      "checked_date": "2026-10-18",
       "stories": 20
     },
     "arxiv": {
