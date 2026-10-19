@@ -1,0 +1,67 @@
+{
+  "source": "simonw",
+  "date": "2026-10-19",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "llm-tools-datasette 0.1.1",
+      "url": "https://simonwillison.net/2026/Oct/18/llm-tools-datasette/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/18/llm-tools-datasette/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-18T23:43:09Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-tools-datasette 0.1.1 When I switched LLM over to httpx2 in LLM 0.33 I forget that this would break any plugins which used httpx without directly depending on it. llm-tools-datasette was one of those plugins, now fixed. Tags: datasette , llm",
+      "links": [
+        {
+          "title": "llm-tools-datasette 0.1.1",
+          "url": "https://github.com/simonw/llm-tools-datasette/releases/tag/0.1.1",
+          "site": "github.com"
+        },
+        {
+          "title": "httpx2",
+          "url": "https://github.com/pydantic/httpx2",
+          "site": "github.com"
+        },
+        {
+          "title": "LLM 0.33",
+          "url": "https://llm.datasette.io/en/stable/changelog.html#v0-33",
+          "site": "llm.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-echo 0.5",
+      "url": "https://simonwillison.net/2026/Oct/18/llm-echo/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/18/llm-echo/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-18T23:16:16Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-echo 0.5 I'm working towards a new LLM release, and testing PRs caused me to revisit the llm-echo debug plugin. This plugin provides a \"model\" which doesn't involve an LLM at all - it just repeats back the prompts that have been fed to it. The new release now updates the simulated token usage counts to take tool calls, system prompts, and reasoning tokens into account. Example usage: uvx --with llm-echo llm -m echo 'hi there' -o thinking 1 --usage Outputs: First I consider the prompt, then I decide what to say. { \"prompt\": \"hi there\", \"system\": \"\", \"attachments\": [], \"stream\": true, \"previous\": [] } Token usage: 2 input, 24 output Tags: llm",
+      "links": [
+        {
+          "title": "llm-echo 0.5",
+          "url": "https://github.com/simonw/llm-echo/releases/tag/0.5",
+          "site": "github.com"
+        },
+        {
+          "title": "LLM",
+          "url": "https://llm.datasette.io/",
+          "site": "llm.datasette.io"
+        }
+      ]
+    }
+  ]
+}
