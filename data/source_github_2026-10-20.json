@@ -1,0 +1,57 @@
+{
+  "source": "github",
+  "date": "2026-10-20",
+  "stories": [
+    {
+      "source": "github",
+      "title": "DeepInfer — DeepInfer: High-performance, large-scale inference framework for DeepSeek models",
+      "url": "https://github.com/deepseek-ai/DeepInfer",
+      "author": "deepseek-ai",
+      "external_id": "deepseek-ai/DeepInfer",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-16T07:47:23Z",
+      "score": 6664,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "DeepInfer: High-performance, large-scale inference framework for DeepSeek models",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "cn-math-taxonomy — 中小学+高中数学知识图谱 + 前置诊断：课标对齐、人教版一–九年级与高中必修、674 知识点、2843 题、自适应诊断",
+      "url": "https://github.com/xiaoyang111222/cn-math-taxonomy",
+      "author": "xiaoyang111222",
+      "external_id": "xiaoyang111222/cn-math-taxonomy",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-18T09:04:43Z",
+      "score": 1378,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "中小学+高中数学知识图谱 + 前置诊断：课标对齐、人教版一–九年级与高中必修、674 知识点、2843 题、自适应诊断",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "huashu-motion — 让你的agent一键直出商业级产品宣传片：会作曲，能指着画面改。Commercial-grade launch films by your coding agent — point at the frame to change it.",
+      "url": "https://github.com/alchaincyf/huashu-motion",
+      "author": "alchaincyf",
+      "external_id": "alchaincyf/huashu-motion",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-18T12:19:27Z",
+      "score": 1086,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "让你的agent一键直出商业级产品宣传片：会作曲，能指着画面改。Commercial-grade launch films by your coding agent — point at the frame to change it.",
+      "links": []
+    }
+  ]
+}

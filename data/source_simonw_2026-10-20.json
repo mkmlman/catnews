@@ -1,0 +1,34 @@
+{
+  "source": "simonw",
+  "date": "2026-10-20",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "My obituary for programming",
+      "url": "https://simonwillison.net/2026/Oct/19/my-obituary-for-programming/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/19/my-obituary-for-programming/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-19T23:58:25Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My obituary for programming Jeremy Scheff poignantly captures the key loss caused by coding agents for career programmers who enjoyed the puzzle of developing code: Programming turned into one of the greatest jobs you could imagine. You got paid to work on tricky little logic puzzles. The trickier the puzzle, the more you got paid. But even pretty simple puzzles were worth a lot of money because regular people just couldn't do it! No, they needed us. They would give us a problem and we would solve it the way we wanted. We set the strategy, we made the timeline, we defined what was and was not possible. If you're a programmer who thrives on building working systems and doesn't care too deeply about the problems solved along the way, LLMs are the gift that keeps on giving. If directly solving those problems was a big part of your enjoyment, the loss is very real. Via lobste.rs Tags: progra",
+      "links": [
+        {
+          "title": "My obituary for programming",
+          "url": "https://dumbmatter.com/2026/10/programming-obituary/",
+          "site": "dumbmatter.com"
+        },
+        {
+          "title": "lobste.rs",
+          "url": "https://lobste.rs/s/wtobpt/my_obituary_for_programming",
+          "site": "lobste.rs"
+        }
+      ]
+    }
+  ]
+}
