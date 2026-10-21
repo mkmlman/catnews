@@ -1,0 +1,57 @@
+{
+  "source": "github",
+  "date": "2026-10-21",
+  "stories": [
+    {
+      "source": "github",
+      "title": "free-my-tv — A fast, ad-free home screen for Google TV. Open source, built with Claude Code. One button to undo.",
+      "url": "https://github.com/simbasjungles/free-my-tv",
+      "author": "simbasjungles",
+      "external_id": "simbasjungles/free-my-tv",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-19T19:29:01Z",
+      "score": 2273,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "A fast, ad-free home screen for Google TV. Open source, built with Claude Code. One button to undo.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "aerial-tv — 给国产电视的一块干净桌面：参照 tvOS 设计的开源 Android TV 桌面，没有广告，开机自动接管。A tvOS-style launcher for Xiaomi, TCL and other China-market TVs.",
+      "url": "https://github.com/pengchujin/aerial-tv",
+      "author": "pengchujin",
+      "external_id": "pengchujin/aerial-tv",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-20T09:13:06Z",
+      "score": 1730,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "给国产电视的一块干净桌面：参照 tvOS 设计的开源 Android TV 桌面，没有广告，开机自动接管。A tvOS-style launcher for Xiaomi, TCL and other China-market TVs.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "REA-Prompts — REAP - Prompts for you to use REA (Reverse Engineer Anything), get the most out of it, and clone or break down any program",
+      "url": "https://github.com/JoasASantos/REA-Prompts",
+      "author": "JoasASantos",
+      "external_id": "JoasASantos/REA-Prompts",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-19T22:20:47Z",
+      "score": 1233,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "REAP - Prompts for you to use REA (Reverse Engineer Anything), get the most out of it, and clone or break down any program",
+      "links": []
+    }
+  ]
+}

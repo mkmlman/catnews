@@ -1,0 +1,217 @@
+{
+  "source": "simonw",
+  "date": "2026-10-21",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "eMudhra Intermediate CA Compromise",
+      "url": "https://simonwillison.net/2026/Oct/20/emudhra-certificates/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/20/emudhra-certificates/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-20T23:50:25Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "eMudhra Intermediate CA Compromise This is very, very bad news: The private keys of eight eMudhra intermediate CA certificates have been compromised. They chain to roots trusted by the Mozilla, Microsoft, Apple and Chrome root programs and by many downstream trust stores. Any software that bundles a list of trusted certificates needs to be updated. This site is tracking software updates via this GitHub repository - Linux distros need to update their ca-certificates packages. In Python world uv 0.13.4 and pip 26.2.2 and certifi 2026.10.19 have been released with upgraded certificate lists. Tags: encryption , https , pip , python , security , uv",
+      "links": [
+        {
+          "title": "eMudhra Intermediate CA Compromise",
+          "url": "https://emudhra.we-have-a-problem.com",
+          "site": "emudhra.we-have-a-problem.com"
+        },
+        {
+          "title": "via this GitHub repository",
+          "url": "https://github.com/galadran/we-have-a-problem.com",
+          "site": "github.com"
+        },
+        {
+          "title": "uv 0.13.4",
+          "url": "https://github.com/astral-sh/uv/releases/tag/0.13.4",
+          "site": "github.com"
+        },
+        {
+          "title": "pip 26.2.2",
+          "url": "https://github.com/pypa/pip/releases/tag/26.2.2",
+          "site": "github.com"
+        },
+        {
+          "title": "certifi 2026.10.19",
+          "url": "https://github.com/certifi/python-certifi/releases/tag/2026.10.19",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Battle Drones - a vibe coded RTS with audio-based multiplayer",
+      "url": "https://simonwillison.net/2026/Oct/20/battledrones/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/20/battledrones/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-20T19:34:19Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My latest vibe coded game experiment is a Command & Conquer style RTS (Real Time Strategy) game called Battle Drones ( play it here ). Unlike my previous experiments , this one is actually fun to play . I'm somewhat embarrassed to admit that I got there by telling Claude to \"Make it a LOT more fun\". It also supports multiplayer between nearby devices using audio to synchronize game state! Here's what I've built so far, and some of the things I learned along the way. Battle Drones How I built this v1: the initial prototype v2: full sprites v3: varied terrain v4: the fun update v5: Battle Drones goes 3D v8: Archipelago v10: Goliath, and agent battles Agent battles v11: Random Maps v12: Multiplayer via sound Some thoughts Update: Online multiplayer support Battle Drones My initial goal was to build an RTS game I could play on my phone, in the style of Command & Conquer . I have fond memorie",
+      "links": [
+        {
+          "title": "Battle Drones",
+          "url": "https://github.com/simonw/battledrones#readme",
+          "site": "github.com"
+        },
+        {
+          "title": "play it here",
+          "url": "https://simonw.github.io/battledrones/",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "Command & Conquer",
+          "url": "https://en.wikipedia.org/wiki/Command_&_Conquer_(1995_video_game)",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "321 commits",
+          "url": "https://github.com/simonw/battledrones/commits/main/",
+          "site": "github.com"
+        },
+        {
+          "title": "browse here",
+          "url": "https://simonw.github.io/battledrones/models.html",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "shared transcript",
+          "url": "https://claude.ai/code/session_015RYeKm4ji4N16oqthyX1b1",
+          "site": "claude.ai"
+        },
+        {
+          "title": "Image Generation API",
+          "url": "https://developers.openai.com/api/docs/guides/image-generation",
+          "site": "developers.openai.com"
+        },
+        {
+          "title": "try v1 here",
+          "url": "https://simonw.github.io/battledrones/v1/",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "Phaser",
+          "url": "https://github.com/phaserjs/phaser",
+          "site": "github.com"
+        },
+        {
+          "title": "try v2 here",
+          "url": "https://simonw.github.io/battledrones/v2/",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "public/assets/sprites",
+          "url": "https://github.com/simonw/battledrones/tree/v2/public/assets/sprites",
+          "site": "github.com"
+        },
+        {
+          "title": "visible here",
+          "url": "https://github.com/simonw/battledrones/commit/aa22f08a34347d7d9f94b33f44a73b4deb046aa1",
+          "site": "github.com"
+        },
+        {
+          "title": "try v3 here",
+          "url": "https://simonw.github.io/battledrones/v3/",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "Ultracode mode",
+          "url": "https://code.claude.com/docs/en/workflows",
+          "site": "code.claude.com"
+        },
+        {
+          "title": "subagents",
+          "url": "https://code.claude.com/docs/en/sub-agents",
+          "site": "code.claude.com"
+        },
+        {
+          "title": "try v4 here",
+          "url": "https://simonw.github.io/battledrones/v4/",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "write its own release notes",
+          "url": "https://github.com/simonw/battledrones/blob/main/Battle%20Drones%20The%20Fun%20Update%20%E2%80%94%20Release%20Notes.md",
+          "site": "github.com"
+        },
+        {
+          "title": "this v5 version",
+          "url": "https://simonw.github.io/battledrones/v5/",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "play v6 here",
+          "url": "https://simonw.github.io/battledrones/v6/",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "play v7",
+          "url": "https://simonw.github.io/battledrones/v7/",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "v9 edition",
+          "url": "https://simonw.github.io/battledrones/v9/",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "Pacific Rim",
+          "url": "https://en.wikipedia.org/wiki/Pacific_Rim_(film)#Plot",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "this AGENT-BATTLES.md proposal",
+          "url": "https://github.com/simonw/battledrones/blob/7001ed186c8b8aef4acb27f680ecf4c09b607e54/AGENT-BATTLES.md",
+          "site": "github.com"
+        },
+        {
+          "title": "a replay of Claude Haiku 5.5 vs. GPT-6 Luna",
+          "url": "https://simonw.github.io/battledrones/v11/?replay=battles/showcase/2026-10-14-frostbite-42-claude-haiku-5.5-vs-gpt-6-luna.json",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "in a separate debug tool",
+          "url": "https://simonw.github.io/battledrones/record-viewer.html?replay=battles/showcase/2026-10-14-frostbite-42-claude-haiku-5.5-vs-gpt-6-luna.json#r1",
+          "site": "simonw.github.io"
+        },
+        {
+          "title": "can be seen here",
+          "url": "https://github.com/simonw/battledrones/blob/d584e351d9d28c4ba058b78ddcca9b93cd9bcd33/llm-tools-battledrones/llm_tools_battledrones.py#L106-L117",
+          "site": "github.com"
+        },
+        {
+          "title": "linked in the README",
+          "url": "https://github.com/simonw/battledrones/blob/main/README.md#watch-ai-models-play-it",
+          "site": "github.com"
+        },
+        {
+          "title": "Claude Usage",
+          "url": "https://claude.ai/new#settings/usage",
+          "site": "claude.ai"
+        },
+        {
+          "title": "the transcript",
+          "url": "https://claude.ai/code/session_01CfwMwDaK1kLKnRV6di8VMT",
+          "site": "claude.ai"
+        },
+        {
+          "title": "this Radio Probe tool",
+          "url": "https://simonw.github.io/battledrones/radio-probe.html",
+          "site": "simonw.github.io"
+        }
+      ]
+    }
+  ]
+}
