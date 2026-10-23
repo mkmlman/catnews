@@ -1,0 +1,57 @@
+{
+  "source": "github",
+  "date": "2026-10-23",
+  "stories": [
+    {
+      "source": "github",
+      "title": "fairplay-decrypt — Offline FairPlay App Store IPA decryption with independent key derivation",
+      "url": "https://github.com/EthanArbuckle/fairplay-decrypt",
+      "author": "EthanArbuckle",
+      "external_id": "EthanArbuckle/fairplay-decrypt",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-19T10:07:58Z",
+      "score": 1166,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Offline FairPlay App Store IPA decryption with independent key derivation",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "php2shell-bypass-aslr-exp — A php2shell exploit that requires no modifications to the official version, and does not require display_errors…",
+      "url": "https://github.com/9bie/php2shell-bypass-aslr-exp",
+      "author": "9bie",
+      "external_id": "9bie/php2shell-bypass-aslr-exp",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-21T11:11:57Z",
+      "score": 1058,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "A php2shell exploit that requires no modifications to the official version, and does not require display_errors or limit_memory.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "php2shell-CVE-2026-109618-CVE-2026-109619-PoC — Proof-of-Concept (PoC) exploit for php2shell (CVE-2026-109618 / CVE-2026-109619), demonstra…",
+      "url": "https://github.com/eness/php2shell-CVE-2026-109618-CVE-2026-109619-PoC",
+      "author": "eness",
+      "external_id": "eness/php2shell-CVE-2026-109618-CVE-2026-109619-PoC",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-21T08:31:43Z",
+      "score": 931,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Proof-of-Concept (PoC) exploit for php2shell (CVE-2026-109618 / CVE-2026-109619), demonstrating remote code execution in vulnerable PHP environments. For security research and educational purposes only.",
+      "links": []
+    }
+  ]
+}
