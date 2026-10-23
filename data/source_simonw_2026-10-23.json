@@ -1,0 +1,110 @@
+{
+  "source": "simonw",
+  "date": "2026-10-23",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "DE STAAT - FREEDOM (Official Music Video)",
+      "url": "https://simonwillison.net/2026/Oct/22/de-staat-freedom/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/22/de-staat-freedom/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-22T19:42:26Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "DE STAAT - FREEDOM (Official Music Video) OK well this is a first for me... at 00:44 in this new music video by Dutch alternative rock band De Staat : The visual effects are credited to Matties Grooten of Fake it or Leave it . Via flir on Hacker News Tags: music , ai , generative-ai , pelican-riding-a-bicycle",
+      "links": [
+        {
+          "title": "DE STAAT - FREEDOM (Official Music Video)",
+          "url": "https://www.youtube.com/watch?v=hKO4pQtIXow",
+          "site": "youtube.com"
+        },
+        {
+          "title": "00:44",
+          "url": "https://www.youtube.com/watch?v=hKO4pQtIXow&t=44s",
+          "site": "youtube.com"
+        },
+        {
+          "title": "De Staat",
+          "url": "https://en.wikipedia.org/wiki/De_Staat",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "Fake it or Leave it",
+          "url": "https://fakeitorleaveit.com",
+          "site": "fakeitorleaveit.com"
+        },
+        {
+          "title": "flir on Hacker News",
+          "url": "https://news.ycombinator.com/item?id=50186129#50193407",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Donating Agent Skills to the Agentic AI Foundation",
+      "url": "https://simonwillison.net/2026/Oct/22/donating-agent-skills/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/22/donating-agent-skills/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-22T18:09:56Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Donating Agent Skills to the Agentic AI Foundation News today from Anthropic: We’re committed to keeping Agent Skills open, community-driven, and vendor-neutral. Today, we are donating the standard to the Agentic AI Foundation (AAIF) under the Linux Foundation, which we co-founded with Block and OpenAI last year, and to which we donated the Model Context Protocol (MCP). I'm pleased to note I called this one last December , when Anthropic first declared skills to be an \"open standard\": I wouldn't be surprised to see this end up in the AAIF , recently the new home of the MCP specification. Fun side note: since my blog content is available to Claude via the datasette-mcp plugin I found that post by prompting Claude to \" Use simonwillison.net MCP to find if I ever talked about how I want skills to be donated to a standards body \". Tags: standards , ai , generative-ai , llms , anthropic , mod",
+      "links": [
+        {
+          "title": "Donating Agent Skills to the Agentic AI Foundation",
+          "url": "https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation",
+          "site": "anthropic.com"
+        },
+        {
+          "title": "which we co-founded",
+          "url": "https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation",
+          "site": "anthropic.com"
+        },
+        {
+          "title": "datasette-mcp",
+          "url": "https://github.com/datasette/datasette-mcp",
+          "site": "github.com"
+        },
+        {
+          "title": "prompting Claude",
+          "url": "https://claude.ai/share/80b341de-590b-4834-bca9-0d9c9a3a0298",
+          "site": "claude.ai"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Armin Ronacher",
+      "url": "https://simonwillison.net/2026/Oct/22/armin-ronacher/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/22/armin-ronacher/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-22T15:34:13Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "As fun as AI is, we built so much bad software over the last 30 years, and now the universe is punishing us for our sins. — Armin Ronacher Tags: security , generative-ai , armin-ronacher , ai , ai-security-research , llms",
+      "links": [
+        {
+          "title": "Armin Ronacher",
+          "url": "https://twitter.com/mitsuhiko/status/2113207589978636646",
+          "site": "twitter.com"
+        }
+      ]
+    }
+  ]
+}
