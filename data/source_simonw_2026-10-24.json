@@ -1,0 +1,87 @@
+{
+  "source": "simonw",
+  "date": "2026-10-24",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quick Study",
+      "url": "https://simonwillison.net/2026/Oct/23/quick-study-painter/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/23/quick-study-painter/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-23T21:35:13Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Tool: Quick Study Prompt to Claude Opus 5.5 High : Build an artifact where you open a photo and it rapidly (in a few seconds) paints a version of that photo using a canvas element and simulated paintbrush See also my previous experiment getting Claude Fable to simulate a watercolor illustration with P5.js. Quick Study uses Sobel edge detection , with no external libraries beyond Google Fonts. Tags: tools",
+      "links": [
+        {
+          "title": "to Claude Opus 5.5 High",
+          "url": "https://claude.ai/share/71adda96-193f-4f2a-97c0-454e08066afb",
+          "site": "claude.ai"
+        },
+        {
+          "title": "Sobel edge detection",
+          "url": "https://en.wikipedia.org/wiki/Sobel_operator",
+          "site": "en.wikipedia.org"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Introducing Kimi K3.1 Pro",
+      "url": "https://simonwillison.net/2026/Oct/23/kimi-k31-pro/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/23/kimi-k31-pro/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-23T19:40:54Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Introducing Kimi K3.1 Pro Kimi K3.1 Pro landed on the Kimi API today - it's not yet open weights, but Moonshot promise \"Full model weights will be released by Nov 4, 2026\". They're also offering a \"Highspeed\" version that's 2-3x faster, at twice the price (except for input token cache hits, which are priced the same). The US dollar pricing is $2.00/million tokens for input and $10/million for output - the same as GPT-6.1 Sol and half the price of Claude Opus 5.5. Moonshot's own benchmarks show Kimi as approximately level with Opus 5.5 and GPT-6 Astra - beating them on a few benchmarks, coming close on others. Artificial Analysis scored Kimi at 55 - ahead of Claude Fable 5.1, GPT-6 Astra, and Gemini 4 Argon (all at 53) and behind only Claude Opus 5.5 (58). This is the first time a (soon-to-be) open weight model has scored this highly against the frontier. I tried it out via the Moonshot A",
+      "links": [
+        {
+          "title": "Introducing Kimi K3.1 Pro",
+          "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+          "site": "kimi.ai"
+        },
+        {
+          "title": "US dollar pricing",
+          "url": "https://platform.kimi.ai/docs/pricing/chat",
+          "site": "platform.kimi.ai"
+        },
+        {
+          "title": "scored Kimi at 55",
+          "url": "https://artificialanalysis.ai/models/kimi-k3-1-pro",
+          "site": "artificialanalysis.ai"
+        },
+        {
+          "title": "Moonshot API",
+          "url": "https://platform.kimi.ai/docs/get-your-api-key",
+          "site": "platform.kimi.ai"
+        },
+        {
+          "title": "llm openai endpoint",
+          "url": "https://llm.datasette.io/en/stable/other-models.html#openai-endpoint",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "LLM 0.32",
+          "url": "https://llm.datasette.io/en/stable/changelog.html#v0-32",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=50212065",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    }
+  ]
+}
