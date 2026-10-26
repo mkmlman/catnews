@@ -1,0 +1,331 @@
+{
+  "source": "arxiv",
+  "date": "2026-10-26",
+  "stories": [
+    {
+      "source": "arxiv",
+      "title": "The Language of Instruction: Genre and Generative AI",
+      "url": "https://arxiv.org/abs/2610.32982v1",
+      "author": "James E. Dobson",
+      "external_id": "2610.32982v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "James E. Dobson"
+      ],
+      "category": "cs.CL",
+      "published": "2026-10-23T17:59:56Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "This article argues that instruction-fine-tuned language models should be understood as implementing a genre, what is proposed as the instructional-conversational genre. This genre is an amalgamation of discursive language from prior conversations between generative models and humans recursively run through these massive neural networks. It is instantiated in applications through instruction fine-tuning, the inclusion of a pretext known as a system prompt, and the formalization of inputs in mark-up languages characterized by the use of special tokens and role assignment in turntaking structures.",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "SceneBloom: Agentic Indoor Environment Generation with Realistic and Diverse Layouts for Embodied Learning",
+      "url": "https://arxiv.org/abs/2610.32978v1",
+      "author": "Yuhan Liu",
+      "external_id": "2610.32978v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Yuhan Liu",
+        "Lianhui Qin",
+        "Shenji Wan"
+      ],
+      "category": "cs.CV",
+      "published": "2026-10-23T17:59:21Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Training generalizable embodied agents requires realistic, varied, and simulation-ready indoor environments. Language-guided methods support semantic planning and object-level reasoning, but precise spatial grounding remains difficult. Visual generative models offer rich priors over plausible arrangements, yet their outputs require geometric reasoning to become physically valid 3D scenes. We introduce SceneBloom, an agentic framework that combines visual layout sampling with contract-guided 3D compilation. A hierarchical sampler uses diffusion priors to generate furniture arrangements within functional zones. A compiler then uses relations extracted from each proposal to guide geometric fitting and local pose correction. Across five room types, SceneBloom attains the highest visual quality and physical stability among the compared methods and is the only method with no detected mesh coll",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "RobustRLlib: A Unified Library and Benchmark for Robust Reinforcement Learning Algorithms",
+      "url": "https://arxiv.org/abs/2610.32971v1",
+      "author": "Xi Chen",
+      "external_id": "2610.32971v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Xi Chen",
+        "Fengqi Hu",
+        "Zeyu Shen",
+        "Jiaying Xu",
+        "Shangding Gu",
+        "Pan Xu",
+        "Anqi Liu",
+        "Laixi Shi"
+      ],
+      "category": "cs.LG",
+      "published": "2026-10-23T17:57:22Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Robust reinforcement learning (RL) is critical for reliable real-world deployment, where policies may fail under diverse shifts and disruptions. Existing robust RL algorithms offer a rich set of mechanisms and principles, yet two major barriers limit their broader potential: limited algorithm reusability and an unclear empirical capability boundary. We introduce RobustRLlib, an algorithm-centric library and benchmark that addresses both challenges. It integrates 17 representative robust online, offline, and safe RL algorithms under a unified interface for substantially improved reusability, together with an enhanced evaluation platform spanning diverse real-world shifts and advanced humanoid and vision-language-action tasks. Systematic evaluation over 273 perturbation configurations provides an up-to-date capability map of current robust RL algorithms, revealing where they remain effecti",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "DexPort: A Hand-Held Skill Interface for Dexterous Hand Data Collection",
+      "url": "https://arxiv.org/abs/2610.32969v1",
+      "author": "Amber Xie",
+      "external_id": "2610.32969v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Amber Xie",
+        "Jiawei Fu",
+        "Xiaofeng Guo",
+        "Carmelo Sferrazza",
+        "Guanya Shi",
+        "Haozhi Qi"
+      ],
+      "category": "cs.RO",
+      "published": "2026-10-23T17:56:28Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Collecting high-quality demonstrations remains a central bottleneck for learning dexterous manipulation. Teleoperation records executable robot actions, but it requires a complete robot setup and places the burden of coordinating many finger joints on the operator. Human demonstrations are easier to collect, but their motions must be estimated and retargeted to the robot, and they do not directly provide robot actions. In this paper, we introduce DexPort, a portable data-collection interface for high-DoF robot hands. It uses the same hand hardware for collection and deployment, avoiding a hand embodiment gap, and records both commanded joint targets and measured joint states. Our key observation is that a small set of skills can support a wide range of dexterous tasks. During collection, the operator moves the hand-held interface to specify the robot wrist motion and selects or adjusts s",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Flownomaly: Single-Step Conditional-Mean Recovery for Few-Shot Anomaly Detection",
+      "url": "https://arxiv.org/abs/2610.32964v1",
+      "author": "Bernardo Perrone Ribeiro",
+      "external_id": "2610.32964v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Bernardo Perrone Ribeiro",
+        "Erkut Akdag",
+        "Egor Bondarev"
+      ],
+      "category": "cs.CV",
+      "published": "2026-10-23T17:53:30Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Few-shot industrial anomaly detection requires modeling category-specific normality from only a handful of defect-free images. Common approaches tie inference to stored exemplars, impose rigid linear structure, or risk reproducing anomalous content. Flownomaly instead casts the problem as normal-counterpart recovery in frozen DINOv2 feature space. Given normal supports, a velocity field is learned through conditional flow matching over frozen patch tokens to transport Gaussian noise toward normal features. Along straight paths, a single recovery step using one evaluation of the optimal field yields the posterior mean of the clean normal token without trajectory integration. The operating time governs how strongly recovery modifies a query token. With no anomalous validation samples available for tuning, a normal-only Jacobian gain-to-noise criterion selects this time from the supports al",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Measure Before You Train: Typed Decision Models vs. a Classical Baseline vs. a Generative LLM for Routing a Personal Multilingual Inbox",
+      "url": "https://arxiv.org/abs/2610.32955v1",
+      "author": "Federico Lucca",
+      "external_id": "2610.32955v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Federico Lucca"
+      ],
+      "category": "cs.CL",
+      "published": "2026-10-23T17:49:43Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Personal email agents decide, for every message, what it is, whether it is urgent, whether to draft a reply, create a task, or ignore it. Their error rate is rarely measured: the stored labels were written by the system itself. We present Foyer, a self-hosted personal inbox agent in daily use, and a measurement protocol (stratified sampling, frozen snapshots, thread-grouped splits, pre-registered hypotheses, human labels in the agent's review loop) that yields ground truth before any training. On 739 real Italian/English emails labelled by the owner (231 unbiased, 500 adversarially sampled), we compare nine systems under thread-grouped cross-validation: the production keyword rules, a TF-IDF + logistic-regression baseline, local typed decision models (Tev1, Nimble), a hosted decision model (Nimble v4-max), and hosted generative LLMs (Qwen2.5-7B, Gemma 4 26B/31B). Four results. The produc",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Where Rounding Happens Matters: Rounding-Location Alignment Stabilizes LLM Reinforcement Learning",
+      "url": "https://arxiv.org/abs/2610.32951v1",
+      "author": "Yijing Ke",
+      "external_id": "2610.32951v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Yijing Ke",
+        "Tianle Cai",
+        "Ruosong Wang"
+      ],
+      "category": "cs.LG",
+      "published": "2026-10-23T17:45:03Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Reinforcement learning for large language models often uses separate systems for inference and training. Even with identical weights and BF16 tensors, implementation differences can make an intended on-policy update off-policy and destabilize training. Existing remedies align the entire inference and training stacks, change global precision, or modify the learning algorithm. We ask whether aligning selected parts of the execution stack can stabilize BF16 RL while other implementation differences remain. We align training-side rounding locations with inference in three regions---RoPE, SwiGLU, and residual RMSNorm---by retaining selected intermediates in FP32 until their BF16 outputs. Across four Qwen-family models, aligning all three regions prevents the collapse observed under the default BF16 baseline; RoPE-path alignment alone also suffices in the studied runs, despite remaining numeri",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Beyond Discrete Tokens: Preserving Numerical Continuity in Medical Vision-Language Models",
+      "url": "https://arxiv.org/abs/2610.32948v1",
+      "author": "Dianye Huang",
+      "external_id": "2610.32948v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Dianye Huang",
+        "Jiamei Guo",
+        "Yue Zhou",
+        "Mingde Li",
+        "Yi Xiong",
+        "Wei Wang",
+        "Nassir Navab",
+        "Zhongliang Jiang"
+      ],
+      "category": "cs.CV",
+      "published": "2026-10-23T17:40:58Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Objective: To develop a unified vision-language model for prompt-conditioned quantitative ultrasound measurement that addresses the mismatch between continuous measurement targets and discrete token-based numerical prediction. Methods: This article presents HAD-VLM, a hybrid autoregressive-diffusion framework that combines autoregressive text generation with continuous measurement prediction within a shared backbone. Visual prompt tuning adapts the vision encoder to ultrasound images. A diffusion process predicts a five-component representation comprising caliper endpoint coordinates and measurement length. A post-processing strategy combining the proposed coordinate-length consistency mechanism with ensemble prediction is introduced to refine measurement estimates. We evaluate four echocardiographic measurement tasks on EchoNet-LVH, with additional assessments of medical question answer",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Monetizing Intelligence: Advertising and Subscription Design on LLM Platforms",
+      "url": "https://arxiv.org/abs/2610.32945v1",
+      "author": "Yuhang Ji",
+      "external_id": "2610.32945v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Yuhang Ji",
+        "Fasheng Xu",
+        "Tianjun Feng"
+      ],
+      "category": "econ.TH",
+      "published": "2026-10-23T17:39:42Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Large language model (LLM) platforms introducing advertising must decide how much capability ad revenue should fund and what consumers should pay to avoid ads. We study a monopolistic platform that jointly chooses costly response quality, advertising intensity, and subscription prices when advertising reduces user value but better service raises advertising returns. Three findings follow. First, when partly ad-supported and ad-free plans coexist, advertising can finance useful service for consumers who receive none under pure subscription. Lower effective quality in middle plans weakens the alternatives available to premium users, allowing higher prices for unchanged ad-free service. Some fully ad-supported users gain utility, while partly ad-supported and ad-free users lose: broader access can coexist with utility polarization. Second, an intermediate advertising cap can maximize consum",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Knowledge Distillation across Item and Code Spaces for Parallel Generative Recommendation",
+      "url": "https://arxiv.org/abs/2610.32943v1",
+      "author": "Yixuan Xu",
+      "external_id": "2610.32943v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Yixuan Xu",
+        "Hailin Liu",
+        "Linxiang Peng",
+        "Can Yang"
+      ],
+      "category": "cs.IR",
+      "published": "2026-10-23T17:37:55Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Generative recommendation with semantic IDs represents each item as a sequence of discrete codes derived from its semantic representation and predicts these codes to generate recommendations. Existing semantic-ID recommenders are typically trained with hard labels for the observed next item. Although such supervision identifies the target, it provides no explicit distributional information about alternative items conditioned on the same user history. Sequential recommenders can supply this item-level predictive knowledge, but transferring it to semantic-ID generation is challenging because the teacher and student operate in item and code spaces, respectively. We propose two complementary knowledge-distillation objectives for parallel semantic-ID recommenders, which predict all code positions simultaneously without autoregressive prefix conditioning. Item Distribution Matching (IDM) recon",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "If at First You Don't Succeed, Backtrack: Lightweight Recovery for Frozen VLAs",
+      "url": "https://arxiv.org/abs/2610.32941v1",
+      "author": "Thomas Landeg",
+      "external_id": "2610.32941v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Thomas Landeg",
+        "Thierry Tambe"
+      ],
+      "category": "cs.RO",
+      "published": "2026-10-23T17:35:33Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Vision-Language-Action (VLA) models perform well on robotic manipulation, yet remain brittle once their own actions carry them into states their training data barely covers. Recovering from such failures usually requires recovery demonstrations, policy retraining, or a separate model at inference time. We introduce Backtrack, a lightweight failure detection and recovery mechanism for frozen VLAs that needs none of these. A small failure prediction head, trained only on outcome-labeled rollouts of the frozen policy, reads the VLA's existing internal representations to estimate whether the current episode will fail. When the predicted failure probability exceeds a threshold, a controller pauses the policy, retraces the arm's recently achieved motion, and hands control back to the unchanged policy so it can retry from an earlier configuration. The head adds only 0.48-0.88% to the policy's p",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Learning Positive Linear Combinations of ReLUs in Fully Polynomial Time",
+      "url": "https://arxiv.org/abs/2610.32940v1",
+      "author": "Ilias Diakonikolas",
+      "external_id": "2610.32940v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Ilias Diakonikolas",
+        "Jelena Diakonikolas",
+        "Puqian Wang",
+        "Nikos Zarifis"
+      ],
+      "category": "cs.DS",
+      "published": "2026-10-23T17:34:15Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "We study the fundamental problem of PAC learning positive linear combinations of $k$ arbitrary ReLU activations on $\\mathbb{R}^d$ with respect to the Gaussian distribution, in $L_2$ loss. We give the first fully-polynomial time algorithm for this learning task. Specifically, our algorithm draws $\\mathrm{poly}(d, k, 1/ε)$ samples, runs in $\\mathrm{poly}(d, k, 1/ε)$ time, and outputs a hypothesis that is $ε$-close to the target concept with high probability. All prior algorithms for this problem require super-polynomial time in $k$ or $1/ε$, or leverage strong well-conditioned assumptions on the weight matrix.   On a technical level, our approach develops a novel boosting procedure of a ``weak'' learner that recovers the hidden weight vectors to constant error, in a list-decodable manner. To develop this ``weak'' learning procedure, we leverage implicit tensor computation techniques to con",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Runtime BiDi Structural Verification Catches Right-to-Left Layout Defects that Accessibility, Actionability, and Logical-Property Linting Miss",
+      "url": "https://arxiv.org/abs/2610.32934v1",
+      "author": "Karan Yadav",
+      "external_id": "2610.32934v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Karan Yadav"
+      ],
+      "category": "cs.SE",
+      "published": "2026-10-23T17:31:35Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Bidirectional (right-to-left, RTL) layout defects arise when interfaces authored with physical directional CSS (margin-left, border-left, text-align:left) are rendered under dir=\"rtl\" without being mirrored. Accessibility engines (axe-core), actionability engines (Playwright), and even Stylelint's current core logical-property rule fail to localise these defects. We present runtime structural invariants -- a zero-golden mode over computed style and geometry, and a bidi-conservative differential mode -- that catch them in a headless browser. On a held-out benchmark of 14 real RTL bugs reconstructed from dated fix commits in Bootstrap and Material Components Web, the detector recovers 13/14 (2 via zero-golden, 11 via the differential mode), with no false alarm on any patched version; on the actual committed historical bootstrap.rtl.css it catches 1 of 2 attempted. It reports 0 false positi",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "Yalda-Embedding: Open Development of a Competitive Persian Retrieval Model",
+      "url": "https://arxiv.org/abs/2610.32933v1",
+      "author": "Yalda Taheri",
+      "external_id": "2610.32933v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Yalda Taheri",
+        "Mohammad Hassan Heydari",
+        "Armon Rasooli"
+      ],
+      "category": "cs.CL",
+      "published": "2026-10-23T17:30:40Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Despite advances in multilingual text representations, effective dense retrieval for Persian remains constrained by the limited availability of language-specific training resources and compact embedding models. We present Yalda Embedding, a 595.8-million-parameter Persian retrieval model adapted from Qwen3-Embedding-0.6B using more than one million query-document pairs. On eight Persian retrieval tasks from FaMTEB, the model achieves the highest macro-average among the evaluated 0.6B models, scoring 0.5488 and outperforming Qwen3-Embedding-0.6B and F2LLM-v2-0.6B on every task. It also approaches Qwen3-Embedding-4B, winning on four tasks, tying on one, and trailing by 0.0075 in macro-average. An incremental ablation study examines contrastive batch size, optimization stabilization, and relational knowledge distillation from F2LLM-v2-8B. Under the one-epoch training setup, contrastive fine",
+      "links": []
+    },
+    {
+      "source": "arxiv",
+      "title": "STROKE: Simple Sparse Structural Occlusions for Black-Box Adversarial Attacks",
+      "url": "https://arxiv.org/abs/2610.32932v1",
+      "author": "Ankit Gupta",
+      "external_id": "2610.32932v1",
+      "summary": null,
+      "why_read": null,
+      "authors": [
+        "Ankit Gupta",
+        "Akshat Pandya",
+        "Paul Lin",
+        "Christoph Adami",
+        "Emily Dolson"
+      ],
+      "category": "cs.CV",
+      "published": "2026-10-23T17:29:00Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "We introduce STROKE, a query-efficient score-based black-box adversarial attack that constructs perturbations from simple oriented rectangular occlusions. STROKE optimizes these perturbations through a lightweight greedy add-and-refine procedure. Across diverse image classifiers, STROKE achieves high attack success with low query counts at nominal 1--2\\% area settings, showing favorable performance relative to existing patch-based attacks in several configurations. Matched comparisons further demonstrate substantial reductions in wall-clock attack time, while ablation studies examine the key design choices and effectiveness across structural primitives. These findings suggest that simple structural occlusions offer an effective and computationally efficient search space for black-box adversarial attacks.",
+      "links": []
+    }
+  ]
+}
