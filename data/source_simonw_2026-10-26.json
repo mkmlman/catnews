@@ -1,0 +1,29 @@
+{
+  "source": "simonw",
+  "date": "2026-10-26",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Seam Cutter",
+      "url": "https://simonwillison.net/2026/Oct/25/seam-cutter/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/25/seam-cutter/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-25T15:10:19Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Tool: Seam Cutter I built this weird and very specific cropping tool - it lets you create a horizontal or vertical cut across an image, then slide the two sides relative to each other. Effectively it lets you crop out a section in the middle of an image. I wanted this because I often use Tailor on my iPhone to stitch several screenshots together into lot long image, but sometimes I find myself wanting to crop out a section in the middle - to redact an irrelevant prompt from a transcript, for example. Tags: tools",
+      "links": [
+        {
+          "title": "Tailor",
+          "url": "https://apps.apple.com/us/app/tailor-screenshot-stitching/id926653095",
+          "site": "apps.apple.com"
+        }
+      ]
+    }
+  ]
+}
