@@ -1,0 +1,57 @@
+{
+  "source": "github",
+  "date": "2026-10-27",
+  "stories": [
+    {
+      "source": "github",
+      "title": "tstack — The agent skills I use every day. Works with Claude Code and Codex.",
+      "url": "https://github.com/t3dotgg/tstack",
+      "author": "t3dotgg",
+      "external_id": "t3dotgg/tstack",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-24T05:00:20Z",
+      "score": 1795,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "The agent skills I use every day. Works with Claude Code and Codex.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "unclebob/ub-mode",
+      "url": "https://github.com/unclebob/ub-mode",
+      "author": "unclebob",
+      "external_id": "unclebob/ub-mode",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-25T16:04:09Z",
+      "score": 1619,
+      "comments": null,
+      "hn_url": null,
+      "snippet": null,
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "dimensional-drawing — Create Apple style dimensional drawings of UI components.",
+      "url": "https://github.com/enesozturk/dimensional-drawing",
+      "author": "enesozturk",
+      "external_id": "enesozturk/dimensional-drawing",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-23T12:20:16Z",
+      "score": 1137,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Create Apple style dimensional drawings of UI components.",
+      "links": []
+    }
+  ]
+}
