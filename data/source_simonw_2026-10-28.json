@@ -1,0 +1,62 @@
+{
+  "source": "simonw",
+  "date": "2026-10-28",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Terk Terkowitz",
+      "url": "https://simonwillison.net/2026/Oct/28/terk-terkowitz/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/28/terk-terkowitz/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-28T10:09:07Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "If your work does not benefit from current AI tooling, that is a finding, not a failing. Document why, share it with your community of peers, bring it to your manager, and work to find solutions. An engineer who can explain where AI does not yet help their work is demonstrating the judgement we are asking for. — Terk Terkowitz , An update from Amazon engineering leadership on the role of the developer in the age of AI Tags: amazon , generative-ai , agentic-engineering , ai , llms",
+      "links": [
+        {
+          "title": "Terk Terkowitz",
+          "url": "https://www.aboutamazon.com/news/company-news/amazon-software-engineer-role-guideline-ai",
+          "site": "aboutamazon.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Game Boy Color on My Conference Badge",
+      "url": "https://simonwillison.net/2026/Oct/27/game-boy-color-on-my-conference-badge/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/27/game-boy-color-on-my-conference-badge/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-27T19:34:18Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Game Boy Color on My Conference Badge I'm at GitHub Universe this week and, similar to last year , the conference badge is a full-blown color screen computer. I've been hacking around with it again, and then I ran into with Steve Francia... who worked with Gemini to get a full NES emulator working on it, and then went a step further and deployed an emulator for both the Game Boy and the Game Boy Color. Which means, if you can obtain the ROM, you can run The Legend of Zelda: Link's Awakening on your conference badge! A neat feature of the badge is that you can turn it upside down and then use game controller touch buttons that are built into the badge body. Tags: games , github , hardware-hacking , ai , generative-ai , llms , gemini , steve-francia",
+      "links": [
+        {
+          "title": "Game Boy Color on My Conference Badge",
+          "url": "https://spf13.com/p/game-boy-color-on-my-conference-badge/",
+          "site": "spf13.com"
+        },
+        {
+          "title": "full NES emulator",
+          "url": "https://spf13.com/p/zelda-on-my-conference-badge/",
+          "site": "spf13.com"
+        },
+        {
+          "title": "The Legend of Zelda: Link's Awakening",
+          "url": "https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Link%27s_Awakening",
+          "site": "en.wikipedia.org"
+        }
+      ]
+    }
+  ]
+}
