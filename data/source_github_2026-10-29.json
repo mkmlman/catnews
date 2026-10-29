@@ -1,0 +1,57 @@
+{
+  "source": "github",
+  "date": "2026-10-29",
+  "stories": [
+    {
+      "source": "github",
+      "title": "claude-skill — Free Claude skill: make Claude build award-level, cinematic landing pages. By MotionSites.",
+      "url": "https://github.com/Motionsites-AI/claude-skill",
+      "author": "Motionsites-AI",
+      "external_id": "Motionsites-AI/claude-skill",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-26T06:58:45Z",
+      "score": 1038,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Free Claude skill: make Claude build award-level, cinematic landing pages. By MotionSites.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "agent-purge — One persona, many coding agents. Replace or inject system prompts across codex, claude, opencode, grok, omp, hermes, pi, zcod…",
+      "url": "https://github.com/ZiChuanLan/agent-purge",
+      "author": "ZiChuanLan",
+      "external_id": "ZiChuanLan/agent-purge",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-25T06:06:02Z",
+      "score": 863,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "One persona, many coding agents. Replace or inject system prompts across codex, claude, opencode, grok, omp, hermes, pi, zcode - with a local web console.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "tongjiang-lab — Free interactive 3D science lessons for high school · 铜匠实验室 · https://lab.tongjiang.app",
+      "url": "https://github.com/smithjohn78390/tongjiang-lab",
+      "author": "smithjohn78390",
+      "external_id": "smithjohn78390/tongjiang-lab",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-28T04:29:29Z",
+      "score": 802,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Free interactive 3D science lessons for high school · 铜匠实验室 · https://lab.tongjiang.app",
+      "links": []
+    }
+  ]
+}
