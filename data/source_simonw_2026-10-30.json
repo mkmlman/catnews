@@ -1,0 +1,85 @@
+{
+  "source": "simonw",
+  "date": "2026-10-30",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "API credits benefit for eligible ChatGPT subscriptions",
+      "url": "https://simonwillison.net/2026/Oct/29/api-credits/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/29/api-credits/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-29T22:48:29Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "API credits benefit for eligible ChatGPT subscriptions Earlier this month Anthropic announced a generous new benefit for their Max and Team subscriptions: $100, $200, and $500 per month subscribers would get the equivalent quantity of (expiring) credits to use with the Anthropic API. OpenAI have now launched pretty much exactly the same deal: if you have a $100, $200, or $500 subscription plan with them you now get that same quantity of credits to apply to one of your API organizations. I maintain subscriptions with both companies, so this is great news for me! I may even ship some public-facing demos now that the credits are already covered by my existing subscriptions. Tags: ai , openai , generative-ai , llms , anthropic , llm-pricing",
+      "links": [
+        {
+          "title": "API credits benefit for eligible ChatGPT subscriptions",
+          "url": "https://help.openai.com/en/articles/20001626-api-credits-benefit-for-eligible-chatgpt-subscriptions",
+          "site": "help.openai.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Building a multiplayer game world with autonomous Fable-class models",
+      "url": "https://simonwillison.net/2026/Oct/29/how-i-built-the-most-ai-pilled-company-in-the-world/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/29/how-i-built-the-most-ai-pilled-company-in-the-world/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-29T17:00:26Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "How I Built the Most AI-Pilled Company in the World Don't be put off by the clickbait headline, this piece by Jacob Sansbury describing how they are building Spawn is a fascinating exploration of the bleeding edge of what's possible with agentic engineering against frontier models. Spawn is a massively multiplayer gaming environment where players can use prompts (to the in-game agent, Savi) to modify the game world. I fired it up on my phone for a few minutes and was able to prompt a castle into existence, then a dragon, then ride the dragon to fly around that castle. By Jacob's telling, Spawn is now being developed autonomously by a swarm of Fable-powered agents costing over $3 million in tokens per month (\"we spend 30x payroll on AI tokens\"). Our agents change the live code directly and ship to production hourly, so they read every error, bug report and metric themselves. About 60% of ",
+      "links": [
+        {
+          "title": "How I Built the Most AI-Pilled Company in the World",
+          "url": "https://twitter.com/jsnnsa/status/2115623382721126826",
+          "site": "twitter.com"
+        },
+        {
+          "title": "Spawn",
+          "url": "https://spawn.co",
+          "site": "spawn.co"
+        },
+        {
+          "title": "continuous deployment",
+          "url": "https://en.wikipedia.org/wiki/Continuous_deployment",
+          "site": "en.wikipedia.org"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Ben Hylak",
+      "url": "https://simonwillison.net/2026/Oct/29/ben-hylak/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Oct/29/ben-hylak/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-29T14:06:27Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "every product i use should just be a headless mcp, that feeds into an agent, where i never have to think about anything underneath. except for our product, of course. in our product, customers love the ui and love us very much. we're special that way. — Ben Hylak Tags: model-context-protocol , ai",
+      "links": [
+        {
+          "title": "Ben Hylak",
+          "url": "https://twitter.com/benhylak/status/2115172657910120740",
+          "site": "twitter.com"
+        }
+      ]
+    }
+  ]
+}
