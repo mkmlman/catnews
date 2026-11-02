@@ -1,0 +1,104 @@
+{
+  "source": "simonw",
+  "date": "2026-11-02",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "The U.S. Census Bureau and “Super Intelligence”",
+      "url": "https://simonwillison.net/2026/Nov/2/census-bureau-super-intelligence/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/2/census-bureau-super-intelligence/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-02T13:31:26Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I was reminded today of AI Adoption Rate Trending Down for Large Companies , a chart produced by Apollo Global Management in September 2025, which appeared to show a slowdown in U.S. corporate AI adoption based on numbers collected by the U.S. Census Bureau. At the time I used that chart to demonstrate GPT-5 data analysis , and then to experiment with Claude's new Code Interpreter . I decided to try running those numbers again to see what had changed over the past year, and in doing so learned that the Bureau has fallen foul of Executive Order 14434 , aka the asinine Super Intelligence one. First, the updated chart Every two weeks the U.S. Census Bureau runs a survey called the Business Trends and Outlook Survey (aka BTOS). Each time it goes to 200,000 businesses out of 1.2 million total - the surveyed group (a \"panel\") cycles such that an individual business only completes the survey ev",
+      "links": [
+        {
+          "title": "AI Adoption Rate Trending Down for Large Companies",
+          "url": "https://www.apolloacademy.com/ai-adoption-rate-trending-down-for-large-companies/",
+          "site": "apolloacademy.com"
+        },
+        {
+          "title": "Executive Order 14434",
+          "url": "https://www.whitehouse.gov/presidential-actions/2026/09/inaugurating-the-era-of-super-intelligence/",
+          "site": "whitehouse.gov"
+        },
+        {
+          "title": "Business Trends and Outlook Survey",
+          "url": "https://www.census.gov/hfp/btos/data",
+          "site": "census.gov"
+        },
+        {
+          "title": "GPT-6 Astra Extra High transcript",
+          "url": "https://chatgpt.com/share/6ae89e86-8658-83e8-85fd-c4ef2d4f3b89?ogimg=plain",
+          "site": "chatgpt.com"
+        },
+        {
+          "title": "available from here",
+          "url": "https://www.census.gov/hfp/btos/data_downloads",
+          "site": "census.gov"
+        },
+        {
+          "title": "the survey document",
+          "url": "https://www.census.gov/hfp/btos/downloads/BTOS%20Content%20V5%20Core%20Round%203,%204.pdf",
+          "site": "census.gov"
+        },
+        {
+          "title": "the Bureau announced",
+          "url": "https://www.census.gov/hfp/btos/downloads/AI%20Question%20Wording%20Updates.pdf",
+          "site": "census.gov"
+        },
+        {
+          "title": "BTOS about page",
+          "url": "https://www.census.gov/hfp/btos/about",
+          "site": "census.gov"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "If in doubt, delete the uv.lock file",
+      "url": "https://simonwillison.net/2026/Nov/1/delete-uv-lock-first/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/1/delete-uv-lock-first/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-01T23:24:22Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I've been getting the occasional confusing Python dependency error since switching over to Python 3.15 and the rule I'm having to remember is: If in doubt, delete the uv.lock file Most of my projects are libraries which don't include a uv.lock file, since it's rude for a library dependency to lock versions for anything else that uses it. Running uv run pytest etc tends to leave uv.lock files lying around, which are listed in .gitignore and so do not get committed to my repositories. But... sometimes that uv.lock pins a version of a dependency that doesn't yet have a Python 3.15 wheel. An example from earlier today: error: Failed to build `watchfiles==1.1.1` cause: Call to `maturin.build_wheel` failed error: the configured Python interpreter version (3.15) is newer than PyO3's maximum supported version (3.14) Deleting that file and running uv run pytest again usually fixes the problem. Ta",
+      "links": []
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Kyle Kingsbury",
+      "url": "https://simonwillison.net/2026/Nov/1/kyle-kingsbury/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/1/kyle-kingsbury/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-01T16:49:04Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "More broadly, the use of LLMs erodes trust in documentation, in software, and in the organizations which produce them. Perhaps engineers will begin to treat any new software project with suspicion—the signals we used to rely on as markers of a mature system are now easier to counterfeit. [...] In the age of LLMs, what can maintainers do to ensure correct software and accurate documentation? Having done that work, how can they demonstrate its quality to users? — Kyle Kingsbury , Jepsen results for ParticleDB 1.1.4 Tags: kyle-kingsbury , llms , ai , generative-ai , ai-misuse",
+      "links": [
+        {
+          "title": "Kyle Kingsbury",
+          "url": "https://jepsen.io/analyses/particledb-1.1.4#llm-tradeoffs",
+          "site": "jepsen.io"
+        }
+      ]
+    }
+  ]
+}
