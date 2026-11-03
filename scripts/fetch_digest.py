@@ -223,10 +223,14 @@ def due_sources(day: date, data_dir: Path, force: bool = False) -> list[str]:
         elapsed = (day - last).days
         if elapsed < meta["cadence_days"]:
             continue
-        # Sources with a preferred weekday (e.g. Register Spill on Mondays)
-        # only run on that weekday, otherwise they'd drift off schedule.
+        # Honor a preferred weekday when the source is due on schedule, but
+        # don't let a missed weekday delay retries for another full cadence.
         weekday = meta.get("weekday")
-        if weekday is not None and day.weekday() != weekday:
+        if (
+            weekday is not None
+            and day.weekday() != weekday
+            and elapsed <= meta["cadence_days"]
+        ):
             continue
         due.append(source)
     return due

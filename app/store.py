@@ -219,7 +219,7 @@ def fetch_status(data_dir: Path) -> dict:
 
         labels = {
             "ok": "Current",
-            "stale": "Using older snapshot",
+            "stale": "Overdue · retrying daily",
             "unavailable": "Unavailable",
             "skipped": "On schedule",
             "unknown": "No fetch report",
@@ -227,8 +227,8 @@ def fetch_status(data_dir: Path) -> dict:
         detail = str(entry.get("error", ""))[:240]
         if state == "stale" and overdue_by > 0 and not detail:
             detail = (
-                f"No fetch in {overdue_by + int(cfg['cadence_days'])} days "
-                f"(cadence {cfg['cadence_days']}d)."
+                f"No successful check in {overdue_by + int(cfg['cadence_days'])} days "
+                f"(usual cadence {cfg['cadence_days']}d); retrying daily until current."
             )
         sources[source] = {
             "key": source,
@@ -418,6 +418,7 @@ def source_registry(data_dir: Path) -> list[dict]:
                 "cadence": cadence,
                 "limit": cfg.get("limit"),
                 "last_fetched": snap.date if snap else None,
+                "last_checked": status["checked_date"],
                 "stories": len(snap.stories) if snap else 0,
                 "state": status["state"],
                 "state_label": status["state_label"],

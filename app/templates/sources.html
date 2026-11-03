@@ -28,6 +28,10 @@
       <dd>{% if src.last_fetched %}{{ src.last_fetched.strftime("%b %d, %Y") }} · {{ src.stories }} stor{{ "y" if src.stories == 1 else "ies" }}{% else %}never{% endif %}</dd>
     </div>
     <div>
+      <dt>Last checked</dt>
+      <dd>{% if src.last_checked %}{{ src.last_checked.strftime("%b %d, %Y") }}{% else %}never{% endif %}</dd>
+    </div>
+    <div>
       <dt>Status</dt>
       <dd class="source-status source-status--{{ src.state }}">{{ src.state_label }}</dd>
     </div>

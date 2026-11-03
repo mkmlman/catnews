@@ -764,8 +764,9 @@ def test_registerspill_only_due_on_mondays(tmp_path):
     assert "registerspill" not in due_sources(tuesday, tmp_path)
     # A week later, on Monday, it becomes due again.
     assert "registerspill" in due_sources(monday_next_week, tmp_path)
-    # But not on the intervening Tuesday.
-    assert "registerspill" not in due_sources(date(2026, 8, 11), tmp_path)
+    # If Monday's fetch was missed, retry the overdue source on Tuesday rather
+    # than waiting another full week.
+    assert "registerspill" in due_sources(date(2026, 8, 11), tmp_path)
 
 
 @pytest.fixture()
@@ -883,7 +884,7 @@ def test_fetch_status_reports_stale_sources(tmp_path):
     report = fetch_status(tmp_path)
     assert report["date"] == date(2026, 8, 11)
     assert report["has_issues"] is True
-    assert report["sources"]["hn"]["state_label"] == "Using older snapshot"
+    assert report["sources"]["hn"]["state_label"] == "Overdue · retrying daily"
     assert report["sources"]["hn"]["snapshot_date"] == date(2026, 8, 10)
     assert report["sources"]["hn"]["detail"] == "temporary outage"
 
