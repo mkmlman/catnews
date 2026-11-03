@@ -1,0 +1,155 @@
+{
+  "source": "simonw",
+  "date": "2026-11-03",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "I discovered a sound that leaks your exact location (and it's everywhere) - YouTube",
+      "url": "https://simonwillison.net/2026/Nov/3/a-sound-that-leaks-your-exact-location/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/3/a-sound-that-leaks-your-exact-location/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-03T05:32:25Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I discovered a sound that leaks your exact location (and it's everywhere) - YouTube Genius piece of OSINT by Colsto, who demonstrates how you can take almost imperceptible background noise of planes from a video soundtrack, figure out their Doppler curves, then cross reference them against ADS-B data to find the exact location of the video based on their speed, distance, and gaps between different flights. Via Lobste.rs Tags: privacy , youtube",
+      "links": [
+        {
+          "title": "I discovered a sound that leaks your exact location (and it's ev",
+          "url": "https://www.youtube.com/watch?v=UytYrhYLOKI",
+          "site": "youtube.com"
+        },
+        {
+          "title": "Lobste.rs",
+          "url": "https://lobste.rs/s/s1btqo/this_background_sound_leaks_your_exact",
+          "site": "lobste.rs"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "October sponsors-only newsletter",
+      "url": "https://simonwillison.net/2026/Nov/3/october-newsletter/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/3/october-newsletter/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-03T05:28:59Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I sent out the October edition of my sponsors-only monthly newsletter . If you are a sponsor (or start a sponsorship now) you can access it here . This month: The October inflection point for vibe game development The vulnerability apocalypse gets hot LLM releases API credits for $100+/month subscriptions What I'm using right now My software releases My September newsletter can now be seen here , as a preview of what you'll get. Pay $10/month to stay a month ahead of the free copy! Tags: newsletter",
+      "links": [
+        {
+          "title": "sponsors-only monthly newsletter",
+          "url": "https://github.com/sponsors/simonw/",
+          "site": "github.com"
+        },
+        {
+          "title": "access it here",
+          "url": "https://github.com/simonw-private/monthly/blob/main/2026-10-october.md",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm 0.37",
+      "url": "https://simonwillison.net/2026/Nov/2/llm/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/2/llm/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-02T23:49:30Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm 0.37 There's a lot of stuff in this new release of my LLM CLI tool and Python library, representing around two months of accumulated features and fixes. I added gpt-6.1-sol and gpt-6.1-terra , plus a new llm openai endpoint add command to make it easier to configure additional models that use OpenAI-compatible endpoints. I switched the default model (if you have not set your own default) to gpt-6-luna - half the price of the previous default, gpt-5.6-luna . LLM's support for embeddings now accepts that different binary content may have different content-type - necessary for models like Gemini Embedding 2 , which can embed text, audio, images, and video. A lot of open source maintainers complain about a flood of AI-assisted PRs. LLM is my project that has been most affected by this and, to be honest, I'm not finding it to be a problem. That's mainly because I have Opus 5.5 or",
+      "links": [
+        {
+          "title": "llm 0.37",
+          "url": "https://github.com/simonw/llm/releases/tag/0.37",
+          "site": "github.com"
+        },
+        {
+          "title": "llm openai endpoint add",
+          "url": "https://llm.datasette.io/en/stable/other-models.html#configure-an-openai-compatible-model",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "Gemini Embedding 2",
+          "url": "https://deepmind.google/models/gemini/embedding/",
+          "site": "deepmind.google"
+        },
+        {
+          "title": "0d00ciallo0721",
+          "url": "https://github.com/0d00ciallo0721",
+          "site": "github.com"
+        },
+        {
+          "title": "ac1982",
+          "url": "https://github.com/ac1982",
+          "site": "github.com"
+        },
+        {
+          "title": "Allen Flux",
+          "url": "https://github.com/allenflux",
+          "site": "github.com"
+        },
+        {
+          "title": "Bian Yuhan",
+          "url": "https://github.com/bianyh",
+          "site": "github.com"
+        },
+        {
+          "title": "Bishop Kammeraad",
+          "url": "https://github.com/porkedchop",
+          "site": "github.com"
+        },
+        {
+          "title": "Chen Yufeiyang",
+          "url": "https://github.com/feiiiiii5",
+          "site": "github.com"
+        },
+        {
+          "title": "Christopher Krah",
+          "url": "https://github.com/chrikrah",
+          "site": "github.com"
+        },
+        {
+          "title": "Ethan Stoner",
+          "url": "https://github.com/ethanstoner",
+          "site": "github.com"
+        },
+        {
+          "title": "Jiachen Xie",
+          "url": "https://github.com/er-s-an",
+          "site": "github.com"
+        },
+        {
+          "title": "Olamide Faniyan",
+          "url": "https://github.com/Pajimo",
+          "site": "github.com"
+        },
+        {
+          "title": "Sharat Chandra Sai Boddu",
+          "url": "https://github.com/sharatchandrasai999-sketch",
+          "site": "github.com"
+        },
+        {
+          "title": "nosmile99",
+          "url": "https://github.com/nosmile99",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
