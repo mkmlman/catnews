@@ -1,0 +1,40 @@
+{
+  "source": "github",
+  "date": "2026-11-04",
+  "stories": [
+    {
+      "source": "github",
+      "title": "agent-autoloop — 让你的命令行 Agent 在后台自己接活、自己跟进到底；平时不烦你，遇到拿不准的事才发卡片找你拍板。",
+      "url": "https://github.com/KKKKhazix/agent-autoloop",
+      "author": "KKKKhazix",
+      "external_id": "KKKKhazix/agent-autoloop",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-03T08:02:11Z",
+      "score": 2175,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "让你的命令行 Agent 在后台自己接活、自己跟进到底；平时不烦你，遇到拿不准的事才发卡片找你拍板。",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "Pika-H3-Flex — Pika H3 Flex: video and audio generation inference",
+      "url": "https://github.com/Pika-Labs/Pika-H3-Flex",
+      "author": "Pika-Labs",
+      "external_id": "Pika-Labs/Pika-H3-Flex",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-10-29T17:08:59Z",
+      "score": 1554,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Pika H3 Flex: video and audio generation inference",
+      "links": []
+    }
+  ]
+}

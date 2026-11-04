@@ -1,0 +1,114 @@
+{
+  "source": "simonw",
+  "date": "2026-11-04",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Qwen 3.8 27B on my laptop can interpret model weights, too",
+      "url": "https://simonwillison.net/2026/Nov/3/qwen-can-interpret-model-weights/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/3/qwen-can-interpret-model-weights/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-03T16:29:48Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Yesterday's hot paper was Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights by Rikiya Takehi, Jayden Teoh, Alex Zhang, and Omar Khattab. The paper (OK, the authors classify is as a \"blog post\", but it's paper-shaped) found that frontier models, in particular GPT-6 Astra, can both interpret and modify the raw weights of a machine learning model - literally a text description of the model containing a bunch of floating point numbers. I've been playing with one of the examples from the paper and I'm delighted to share that Qwen 3.8 27B running on my laptop can do this as well! Weight-Space Programming Here's the highlight from their abstract, describing impressive capabilities for GPT-6 Astra and coining the term Weight-Space Programming for when LLMs analyze and modify model weights: Just by looking at the raw weights, GPT-6 Astra can tell what a net",
+      "links": [
+        {
+          "title": "Sparks of Weight-Space Programming: LLMs can natively read & wri",
+          "url": "https://rikiyat.github.io/blog/weight-space-programming/",
+          "site": "rikiyat.github.io"
+        },
+        {
+          "title": "model card",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-0.8B/blob/main/README.md#L856",
+          "site": "huggingface.co"
+        },
+        {
+          "title": "called the paper misleading",
+          "url": "https://honnibal.dev/blog/astra-read-write-misleading",
+          "site": "honnibal.dev"
+        },
+        {
+          "title": "deconstructed the Qwen3.5-0.8B update example",
+          "url": "https://www.seangoedecke.com/llms-are-not-superhuman-at-reading-and-writing-neural-network-weights/",
+          "site": "seangoedecke.com"
+        },
+        {
+          "title": "to look that one up",
+          "url": "https://en.wikipedia.org/wiki/Freeway_(video_game)",
+          "site": "en.wikipedia.org"
+        },
+        {
+          "title": "RikiyaT/lm_understand-logs",
+          "url": "https://github.com/RikiyaT/lm_understand-logs",
+          "site": "github.com"
+        },
+        {
+          "title": "exp1_which_game",
+          "url": "https://github.com/RikiyaT/lm_understand-logs/tree/main/exp1_which_game",
+          "site": "github.com"
+        },
+        {
+          "title": "breakout/prompt.txt",
+          "url": "https://github.com/RikiyaT/lm_understand-logs/blob/main/exp1_which_game/runs/breakout/prompt.txt",
+          "site": "github.com"
+        },
+        {
+          "title": "freeway/prompt.txt",
+          "url": "https://github.com/RikiyaT/lm_understand-logs/blob/main/exp1_which_game/runs/freeway/prompt.txt",
+          "site": "github.com"
+        },
+        {
+          "title": "pacman/prompt.txt",
+          "url": "https://github.com/RikiyaT/lm_understand-logs/blob/main/exp1_which_game/runs/pacman/prompt.txt",
+          "site": "github.com"
+        },
+        {
+          "title": "pong/prompt.txt",
+          "url": "https://github.com/RikiyaT/lm_understand-logs/blob/main/exp1_which_game/runs/pong/prompt.txt",
+          "site": "github.com"
+        },
+        {
+          "title": "LLM",
+          "url": "https://llm.datasette.io/",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "llm-openrouter plugin",
+          "url": "https://github.com/simonw/llm-openrouter",
+          "site": "github.com"
+        },
+        {
+          "title": "what I got back from Kimi K3.1 Pro",
+          "url": "https://gist.github.com/simonw/9f18d2945a105c04734ef7e5cd95717c",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "this version",
+          "url": "https://huggingface.co/lmstudio-community/Qwen3.8-27B-GGUF/blob/main/Qwen3.8-27B-Q4_K_M.gguf",
+          "site": "huggingface.co"
+        },
+        {
+          "title": "LM Studio",
+          "url": "https://lmstudio.ai",
+          "site": "lmstudio.ai"
+        },
+        {
+          "title": "llm-lmstudio",
+          "url": "https://github.com/llm-lmstudio/llm-lmstudio",
+          "site": "github.com"
+        },
+        {
+          "title": "this issue",
+          "url": "https://github.com/llm-lmstudio/llm-lmstudio/issues/16",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
