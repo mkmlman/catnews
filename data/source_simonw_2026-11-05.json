@@ -1,0 +1,143 @@
+{
+  "source": "simonw",
+  "date": "2026-11-05",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "datasette-llm 0.1a10",
+      "url": "https://simonwillison.net/2026/Nov/4/datasette-llm/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/4/datasette-llm/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-04T15:26:02Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-llm 0.1a10 Fixes a bug that affected my agent.datasette.io demo site, where the set of available LLM models was not correctly restricted to just those in the configuration. Tags: datasette , llm",
+      "links": [
+        {
+          "title": "datasette-llm 0.1a10",
+          "url": "https://github.com/datasette/datasette-llm/releases/tag/0.1a10",
+          "site": "github.com"
+        },
+        {
+          "title": "bug",
+          "url": "https://github.com/datasette/datasette-llm/pull/11",
+          "site": "github.com"
+        },
+        {
+          "title": "agent.datasette.io",
+          "url": "https://agent.datasette.io/",
+          "site": "agent.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-apps 0.3a0",
+      "url": "https://simonwillison.net/2026/Nov/4/datasette-apps/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/4/datasette-apps/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-04T00:29:36Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-apps 0.3a0 Datasette Apps adds support for hosting and editing custom HTML applications inside of Datasette. These can be created by hand, but it's easier to create them using LLMs via Datasette Agent . This release improves that integration: Apps can now be tagged in Datasette Agent chat messages by typing # , which autocompletes from the apps the user has permission to view. New app_add_stored_queries() and app_remove_stored_queries() tools let the agent manage which stored queries an app is allowed to call. Granting a write query requires approval from the user first. app_create() now checks that each requested stored query exists and that the user can view it, and asks the user to approve any write queries before the app is created. The \"View app\" buttons shown by the agent tools, and the links on # app references, now open the app full screen in the Datasette Agen",
+      "links": [
+        {
+          "title": "datasette-apps 0.3a0",
+          "url": "https://github.com/datasette/datasette-apps/releases/tag/0.3a0",
+          "site": "github.com"
+        },
+        {
+          "title": "Datasette Agent",
+          "url": "https://agent.datasette.io/",
+          "site": "agent.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-agent 0.5a0",
+      "url": "https://simonwillison.net/2026/Nov/3/datasette-agent/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/3/datasette-agent/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-03T23:13:45Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-agent 0.5a0 This is a significant release of Datasette Agent . The most notable new feature is called the panel - it lets the agent chat open and then sit next to pages from Datasette, for example a table or query page. When combined with datasette-apps this means you can prompt a database-backed app into existence and then modify it from the chat that sits next to that app. You can try it by signing in with your GitHub account to agent.datasette.io . Tags: projects , datasette , datasette-agent",
+      "links": [
+        {
+          "title": "datasette-agent 0.5a0",
+          "url": "https://github.com/datasette/datasette-agent/releases/tag/0.5a0",
+          "site": "github.com"
+        },
+        {
+          "title": "Datasette Agent",
+          "url": "https://agent.datasette.io/",
+          "site": "agent.datasette.io"
+        },
+        {
+          "title": "datasette-apps",
+          "url": "https://github.com/datasette/datasette-apps",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm 0.37.1",
+      "url": "https://simonwillison.net/2026/Nov/3/llm/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/3/llm/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-03T21:41:42Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm 0.37.1 A bugfix release for LLM , with contributions from Steven Huang , Tao An , Arjan Mossel , and XQ . Tags: llm",
+      "links": [
+        {
+          "title": "llm 0.37.1",
+          "url": "https://github.com/simonw/llm/releases/tag/0.37.1",
+          "site": "github.com"
+        },
+        {
+          "title": "LLM",
+          "url": "https://llm.datasette.io/",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "Steven Huang",
+          "url": "https://github.com/remote-controlled-man",
+          "site": "github.com"
+        },
+        {
+          "title": "Tao An",
+          "url": "https://github.com/tao-hpu",
+          "site": "github.com"
+        },
+        {
+          "title": "Arjan Mossel",
+          "url": "https://github.com/ar-jan",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
