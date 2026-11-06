@@ -1,0 +1,29 @@
+{
+  "source": "simonw",
+  "date": "2026-11-06",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Paul Ford",
+      "url": "https://simonwillison.net/2026/Nov/5/paul-ford/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/5/paul-ford/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-05T17:34:03Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "The web browser is very, very, very powerful software for applications, and the cost of accessing that power is going down seemingly every day . — Paul Ford , The Web Is More Than Enough Tags: browsers , paul-ford , web-development",
+      "links": [
+        {
+          "title": "Paul Ford",
+          "url": "https://ftrain.com/aboard-the-web-is-more-than-enough",
+          "site": "ftrain.com"
+        }
+      ]
+    }
+  ]
+}
