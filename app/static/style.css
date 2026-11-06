@@ -1197,6 +1197,7 @@ input[type="checkbox"], input[type="radio"], select { accent-color: var(--ink); 
   margin: 0 auto 18px;
   padding: 12px 16px;
   border: 1px solid var(--line);
+  border-left: 3px solid var(--danger);
   border-radius: var(--radius);
   color: var(--ink-soft);
   font-family: var(--serif-font);
@@ -1938,11 +1939,25 @@ a.is-dead,
   font-size: var(--text-form);
   color: var(--ink);
 }
-.source-status { font-family: var(--mono-font); font-size: var(--text-meta); }
+.source-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--mono-font);
+  font-size: var(--text-meta);
+}
+.source-status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
 .source-status--ok { color: var(--ink); }
 .source-status--stale,
-.source-status--unknown { color: var(--muted); }
 .source-status--unavailable { color: var(--danger); }
+.source-status--unknown,
 .source-status--skipped { color: var(--muted); }
 .source-status-detail {
   margin: 6px 0 0;
@@ -3120,7 +3135,7 @@ h1.sheet-name {
   .source-options .chip,
   .filter-actions .chip,
   .filter-actions .hide-read {
-    min-height: 40px;
+    min-height: 44px;
   }
   .filter-row--sources { padding-right: 0; }
   .filters { padding: 10px 0; }
@@ -3153,12 +3168,17 @@ h1.sheet-name {
   .filter-label, .chip, .filter-actions, .hide-read { flex-shrink: 0; }
 
   .menu-trigger {
-    min-height: 40px;
+    min-height: 44px;
     padding: 8px 12px;
   }
   .story .save-toggle,
   .story .copy-toggle {
     min-width: 44px;
+    min-height: 44px;
+  }
+  .source-links a {
+    display: inline-flex;
+    align-items: center;
     min-height: 44px;
   }
 
