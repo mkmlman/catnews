@@ -1,0 +1,186 @@
+{
+  "source": "simonw",
+  "date": "2026-11-09",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "The Web Is More Than Enough, by Paul Ford",
+      "url": "https://simonwillison.net/2026/Nov/9/hn-50421091/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/9/hn-50421091/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-09T04:32:33Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on The Web Is More Than Enough, by Paul Ford — Hacker News. OK, this comment convinced me to give that a shot. Here's a thing I made in Three.js this morning - a Nudibranch themed Faberge Egg: https://static.simonwillison.net/static/2026/Hidden-Reef-Egg... (77KB) I just asked Claude (Opus 5.5 Medium running in regular Claude Chat) to port that to Vanilla JS, in the same thread where it had built it, and got this: https://static.simonwillison.net/static/2026/Hidden-Reef-Egg... (98KB) They aren't identical - you can see what Claude said about that in the transcript (I don't fully understand why it differed): https://claude.ai/share/e56d163e-2793-4677-aa11-191d5058b414 But yeah, it turns out Claude Opus 5.5 is perfectly capable of 3D modeling in Vanilla JS + WebGL without Three.js. In eyeballing the code I find the Three.js slightly easier to understand myself, but I rarely look ",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://news.ycombinator.com/item?id=50416456#50421091",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "The Web Is More Than Enough, by Paul Ford",
+          "url": "https://news.ycombinator.com/item?id=50416456",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "https://claude.ai/share/e56d163e-2793-4677-aa11-191d5058b414",
+          "url": "https://claude.ai/share/e56d163e-2793-4677-aa11-191d5058b414",
+          "site": "claude.ai"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Hide your slop PR descriptions behind <details><summary>",
+      "url": "https://simonwillison.net/2026/Nov/9/details-summary/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/9/details-summary/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-09T04:25:05Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Most of the changes I make to my projects these days come in the form of PRs opened for me by Claude Code or Codex. The PR is my unit of work - I use them to bundle commits together, iterating on them until a feature is complete, document decisions and then merge the finished result. Today's coding agents are great at writing PR descriptions. They're too good at describing the work The problem is that they are too good. An agent-written PR description is accurate and comprehensive. It describes the problem, the detailed solution, and the steps taken to verify it. That's a lot of information to absorb. It's not necessarily slop, but it reads like slop! It's very easy to spot an AI-written PR, and as with other forms of AI writing my instant reaction is best summarized as \"I'm not reading all of that\". It doesn't matter how accurate or useful the information is, I'm instantly put off by th",
+      "links": [
+        {
+          "title": "like this",
+          "url": "https://github.com/datasette/datasette-agent/pull/51",
+          "site": "github.com"
+        },
+        {
+          "title": "datasette PR #3052: Redesign row page as a vertical list of fiel",
+          "url": "https://github.com/simonw/datasette/pull/3052",
+          "site": "github.com"
+        },
+        {
+          "title": "datasette PR #3043: Pagination bar showing which rows are on the",
+          "url": "https://github.com/simonw/datasette/pull/3043",
+          "site": "github.com"
+        },
+        {
+          "title": "datasette PR #3042: Load edit-tools.js on demand via a small loa",
+          "url": "https://github.com/simonw/datasette/pull/3042",
+          "site": "github.com"
+        },
+        {
+          "title": "llm PR #1838: Add llm openai endpoint add/list/remove/path comma",
+          "url": "https://github.com/simonw/llm/pull/1838",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "parse_number() as a SQLite extension: C vs Rust",
+      "url": "https://simonwillison.net/2026/Nov/8/sqlite-parse-number-c-vs-rust/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/8/sqlite-parse-number-c-vs-rust/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-08T22:26:00Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Research: parse_number() as a SQLite extension: C vs Rust I was out walking the dog when I got curious about how easy/difficult it would be to write a SQLite C extension that adds a parse_number() function for turning strings like -$1,234.56 or '12.5%' into numeric values that could be summed and sorted. I fired up regular Claude chat (Opus 5.5) and prompted : I'm thinking about a SQLite custom function 'parse_number(value)' that strips ',', '$', '£' and '%', handles a leading '-', and returns 'NULL' for anything it can’t parse Explore the difference between building this as a SQLite extension in C v.s. in Rust - I want to compare performance and code complexity and size of the resulting .so (or whatever) file This gave me a solid starting point - the Rust extension was 321 KB (using Rusqlite ) and 298 KB (using sqlite-loadable-rs ), while the C extension was 14 KB. But the Rust extensio",
+      "links": [
+        {
+          "title": "parse_number() as a SQLite extension: C vs Rust",
+          "url": "https://github.com/simonw/research/tree/main/sqlite-parse-number-c-vs-rust#readme",
+          "site": "github.com"
+        },
+        {
+          "title": "and prompted",
+          "url": "https://claude.ai/share/7f18f157-6c96-4d49-a1d4-f02403e3b261",
+          "site": "claude.ai"
+        },
+        {
+          "title": "Rusqlite",
+          "url": "https://github.com/rusqlite/rusqlite",
+          "site": "github.com"
+        },
+        {
+          "title": "sqlite-loadable-rs",
+          "url": "https://github.com/asg017/sqlite-loadable-rs",
+          "site": "github.com"
+        },
+        {
+          "title": "simonw/research",
+          "url": "https://github.com/simonw/research",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Terry Pratchett's Study",
+      "url": "https://simonwillison.net/2026/Nov/7/hn-50407316/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/7/hn-50407316/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-07T19:34:24Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on Terry Pratchett's Study — Hacker News. Terry Pratchett once wrote about the concept of \"horizontal wealth\". Vertical wealth is where you spend money on rich people stuff - yachts and suchlike. Horizontal wealth is where you spend more money on the things you liked before you got rich: https://chibuikeani.blogspot.com/2017/02/the-price-of-happin... But horizontal wealth means not letting your increased income dictate your tastes. You like books and now you have money? Buy more books! Change those catenary bookshelves for good hardwood ones! In my case, build a library extension to your office. And, of course, you buy what will be useful for that most wonderful of pursuits, blind research, which is research without direction for the sheer joy of it. (Original source is his book A Slip of the Keyboard - this linked blog post quotes that bit.) Tags: hacker-news , terry-pratchet",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://news.ycombinator.com/item?id=50405674#50407316",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "Terry Pratchett's Study",
+          "url": "https://news.ycombinator.com/item?id=50405674",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "https://chibuikeani.blogspot.com/2017/02/the-price-of-happin...",
+          "url": "https://chibuikeani.blogspot.com/2017/02/the-price-of-happiness-horizontal-vs.html",
+          "site": "chibuikeani.blogspot.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "AI is destroying my CS degree",
+      "url": "https://simonwillison.net/2026/Nov/3/hn-50354278/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/3/hn-50354278/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-03T16:42:02Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on AI is destroying my CS degree — Hacker News. I don't envy educators right now. AI clearly means you need to change how you teach and evaluate students. We are only a few years in though, and it's still extremely unclear what effective teaching with these tools looks like. The worst part is that the evaluation loop is measured in multiple years! If you start trying some new education mechanism today you won't get a robust idea of how well it works until your current cohort graduate in 3-6 years time. Students effectively all become guinea pigs for untested new ways of learning and teaching. Tags: education , hacker-news , ai , ai-ethics",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://news.ycombinator.com/item?id=50353300#50354278",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "AI is destroying my CS degree",
+          "url": "https://news.ycombinator.com/item?id=50353300",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    }
+  ]
+}
