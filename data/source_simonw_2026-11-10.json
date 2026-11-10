@@ -1,0 +1,176 @@
+{
+  "source": "simonw",
+  "date": "2026-11-10",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Introducing Our Smallest, Most Efficient Model: Muse Ember",
+      "url": "https://simonwillison.net/2026/Nov/10/muse-ember/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/10/muse-ember/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-10T07:28:21Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Introducing Our Smallest, Most Efficient Model: Muse Ember Meta AI just launched their entry in the Claude Haiku/GPT Luna category: Muse Ember, which they describe as: [...] our smallest and most efficient model designed for complex reasoning execution and the work agents repeat all day: tool calls, coding subtasks, routing, extraction, and long document parsing. For shorter prompts it's priced the same as GPT-6 Luna and Claude Haiku 5.5 - both are $0.10/million input tokens and $0.50/million output. Today's other big model release, Claude Fable 5.2, is 80x that price at $8/$40. The pricing is a little less straightforward as prompts get longer, though. Luna, Ember, and Haiku all support up to a million input tokens, but they also all have a threshold after which the price goes up. Taking that threshold into account Ember is priced between the two others: Model Prompt size Input ($/M) Ca",
+      "links": [
+        {
+          "title": "Introducing Our Smallest, Most Efficient Model: Muse Ember",
+          "url": "https://research.meta.ai/blog/muse-ember",
+          "site": "research.meta.ai"
+        },
+        {
+          "title": "40x the price",
+          "url": "https://www.llm-prices.com/#sel=muse-ember-1.0%2Cmuse-ember-1.0-200k%2Cmuse-wonder-1.0",
+          "site": "llm-prices.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Prompting Claude Fable 5.2",
+      "url": "https://simonwillison.net/2026/Nov/10/prompting-claude-fable-52/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/10/prompting-claude-fable-52/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-10T05:34:14Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Claude Fable 5.2 responds closely to what the prompt says about who owns the code it works on. In Anthropic’s testing on small coding tasks, when a prompt said nothing about ownership or presented the code base as someone else’s, the model tended to add to the existing structure, even when that repeated existing code. [...] If you want the model to improve the structure as it works, say that the code is its own: This codebase is yours: what it's for and how it's built are your call, and you'll keep building on it. In Anthropic’s testing on small coding tasks, the model merged repeated code in about half of the tries with this sentence, and in under a tenth of the tries without it. — Prompting Claude Fable 5.2 , Anthropic documentation Tags: prompt-engineering , anthropic , generative-ai , ai , llms , claude-mythos-fable",
+      "links": [
+        {
+          "title": "Prompting Claude Fable 5.2",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-2#say-who-owns-the-code",
+          "site": "platform.claude.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Yonkers Rises",
+      "url": "https://simonwillison.net/2026/Nov/10/yonkers-rises/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/10/yonkers-rises/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-10T03:53:04Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Tool: Yonkers Rises I realized I didn't know where Yonkers was, so I looked it up on Google Maps and then, to help embed its location and shape in my head (and to try out Claude Fable 5.2's 3D modeling and animation skills), I prompted Fable 5.2 Medium to: Make a three js animation where yonkers stands up as a big mech (cool stand up motion) and átomos around manhattan and queens and Brooklyn, use openstreetmap mapping data It correctly deduced that \"átomos\" was a mobile keyboard typo for \"stomps\": Tags: three-js , llms , ai , generative-ai , claude-mythos-fable",
+      "links": [
+        {
+          "title": "prompted Fable 5.2 Medium",
+          "url": "https://claude.ai/share/97443910-2e0a-4e17-9b9e-11d14d8ff65c",
+          "site": "claude.ai"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-anthropic 0.31",
+      "url": "https://simonwillison.net/2026/Nov/9/llm-anthropic/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/9/llm-anthropic/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-09T23:58:46Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-anthropic 0.31 Anthropic released Fable 5.2 and Mythos 5.2 today. Fable 5.2 is currently ranked first on Artificial Analysis . Anthropic say it \"solved two open problems in the physics of black holes\", so clearly their internal benchmarks have become more ambitious! I've added the new models to llm-anthropic , so you can now run prompts through Fable 5.2 like this: uv tool install llm llm install llm-anthropic llm keys set anthropic # paste key here llm -m claude-fable-5.2 \"Generate an SVG of a pelican riding a bicycle\" I ran pelicans at all five reasoning levels - low , medium , high , xhigh , and max . You can see them all here - here's the best result I got, from xhigh : max failed to return an image at all, running out of tokens after spending 128,000 thinking about them . That's the same bug that I saw with Opus 5.5 - but it's new for the Fable series, both Fable 5 and ",
+      "links": [
+        {
+          "title": "llm-anthropic 0.31",
+          "url": "https://github.com/simonw/llm-anthropic/releases/tag/0.31",
+          "site": "github.com"
+        },
+        {
+          "title": "released Fable 5.2 and Mythos 5.2",
+          "url": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+          "site": "anthropic.com"
+        },
+        {
+          "title": "ranked first on Artificial Analysis",
+          "url": "https://artificialanalysis.ai/models/claude-fable-5-2",
+          "site": "artificialanalysis.ai"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Locating the source of a mysterious beep with Claude",
+      "url": "https://simonwillison.net/2026/Nov/9/mysterious-beeps/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/9/mysterious-beeps/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-09T23:57:21Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Our house has a box room, full of boxes that we still haven't unpacked from our last move. A couple of weeks ago something in that room started intermittently beeping . The beeps were far enough apart that standing in the room and trying to determine the source of the noise was frustrating, and I really didn't want to dig through every one of those boxes. So I had Claude Code build Beep Locator , a software system for triangulating the source of a mysterious beep using multiple devices scattered around the room. Here's what Beep Locator looks like after it has been running for a while: You run Python web server to show the primary UI, and then use the QR code or URL to connect as many devices as you can spare to act as listeners - I was using two iPads, a phone, a MacBook Pro and a Surface Ultra. The devices then play noises to each other to help estimate their locations. This didn't wor",
+      "links": [
+        {
+          "title": "Beep Locator",
+          "url": "https://github.com/simonw/beep-locator",
+          "site": "github.com"
+        },
+        {
+          "title": "BeepBeep: A High-Accuracy Acoustic-Based System for Ranging and",
+          "url": "https://www.cs.purdue.edu/homes/chunyi/pubs/sensys106-beepbeep.pdf",
+          "site": "cs.purdue.edu"
+        },
+        {
+          "title": "detector.js",
+          "url": "https://github.com/simonw/beep-locator/blob/main/beep_locator/modules/listener/detector.js",
+          "site": "github.com"
+        },
+        {
+          "title": "that shared starter session",
+          "url": "https://claude.ai/code/cshk_016BvfqAWf7MeGZKeYCrUnN2MmRfCSAX9Gu8DiptXMuH9P",
+          "site": "claude.ai"
+        },
+        {
+          "title": "this problem.md file",
+          "url": "https://github.com/simonw/beep-locator/blob/main/problem.md",
+          "site": "github.com"
+        },
+        {
+          "title": "to this point",
+          "url": "https://github.com/simonw/beep-locator/commits/e36ac93a81091a246403c074e34c0041c6972fac",
+          "site": "github.com"
+        },
+        {
+          "title": "Fable 5.2 was released",
+          "url": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+          "site": "anthropic.com"
+        },
+        {
+          "title": "installModule()",
+          "url": "https://github.com/simonw/beep-locator/blob/44fea65c918fb31a7d2c0e17797ee1a106860e23/beep_locator/static/runtime.js#L710",
+          "site": "github.com"
+        },
+        {
+          "title": "Martin Woodward",
+          "url": "https://github.com/martinwoodward",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
