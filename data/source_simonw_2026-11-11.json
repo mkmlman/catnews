@@ -1,0 +1,54 @@
+{
+  "source": "simonw",
+  "date": "2026-11-11",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "llm-gemini 0.36",
+      "url": "https://simonwillison.net/2026/Nov/10/llm-gemini/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/10/llm-gemini/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-10T20:09:44Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-gemini 0.36 Gemini 4 Carbon was announced two weeks ago for \"a subset of cyber defenders\", but today it's available to everyone else . This is Google's best ever Gemini, priced at $2/million input and $10/million output at launch (that's GPT-6.1 Sol / Claude Sonnet 5.5 prices) but scheduled to double in price to $4/$20 on December 1st (same as Opus 5.5). Here are three pelicans for the low, medium and high thinking efforts (it defaults to medium). This is the pelican I got for high: Gemini pelicans have all been great for a while now, so I also tested it out using Google's Antigravity IDE with a prompt I first tried with Claude Fable 5.2 yesterday : Make a three js animation where yonkers stands up as a big mech (cool stand up motion) and stomps around manhattan and queens and Brooklyn, use openstreetmap mapping data Here's the HTML result (I had to prompt \"build that into a",
+      "links": [
+        {
+          "title": "llm-gemini 0.36",
+          "url": "https://github.com/simonw/llm-gemini/releases/tag/0.36",
+          "site": "github.com"
+        },
+        {
+          "title": "two weeks ago",
+          "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-carbon/",
+          "site": "blog.google"
+        },
+        {
+          "title": "available to everyone else",
+          "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-carbon-now-available/",
+          "site": "blog.google"
+        },
+        {
+          "title": "on YouTube",
+          "url": "https://www.youtube.com/watch?v=dNbkThtNzS8",
+          "site": "youtube.com"
+        },
+        {
+          "title": "tweeted by Sundar Pichai",
+          "url": "https://twitter.com/sundarpichai/status/2120198811297694192",
+          "site": "twitter.com"
+        },
+        {
+          "title": "the playable version",
+          "url": "https://aistudio.google.com/apps/bundled/pelican-campus-quest?showAssistant=true&showPreview=true&fullscreenApplet=true",
+          "site": "aistudio.google.com"
+        }
+      ]
+    }
+  ]
+}
