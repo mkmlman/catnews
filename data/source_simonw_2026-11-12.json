@@ -1,0 +1,166 @@
+{
+  "source": "simonw",
+  "date": "2026-11-12",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Gemini Decisions API",
+      "url": "https://simonwillison.net/2026/Nov/11/gemini-decisions-api/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/11/gemini-decisions-api/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-11T22:03:25Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Gemini Decisions API Google join Jev and OpenAI in the decision model category with \"Gemini Decision 1\". This new model API is almost identical to Jev: it supports the same three types of questions (yes/no, choice, and rubric-scoring) and even reuses Jev's term \"Noul\" for a yes/no question. It's priced the same as the GPT-6 Luna decision model: 10 cents per million input tokens, and output is free. Jev remains the cheapest of the three, at 4.2 cents per million. Jev is text (and JSON) only. OpenAI can handle text and images. Gemini Decision 1 is fully multi-model: it covers text, images, audio, video, and PDFs. I tested it against video by passing these questions to it along with my Yonkers stomping robot video file: dragon: Does this video have a dragon in it? robot: Does this video have a robot in it? france: Is this video set in France? usa: Is this video set in the USA? Jev and OpenA",
+      "links": [
+        {
+          "title": "Gemini Decisions API",
+          "url": "https://blog.google/innovation-and-ai/technology/developers-tools/gemini-decisions-api/",
+          "site": "blog.google"
+        },
+        {
+          "title": "Hacker News",
+          "url": "https://news.ycombinator.com/item?id=50456791",
+          "site": "news.ycombinator.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "aws-emulator",
+      "url": "https://simonwillison.net/2026/Nov/11/aws-emulator/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/11/aws-emulator/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-11T21:18:30Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "aws-emulator Finally, an official emulator from AWS to run tests against a local clone of their many different services without having to provision a paid API key to do so. It's written in Rust by a huge swarm of agents - 29,684 commits in the first three weeks of the project. Swaminathan (Swami) Sivasubramanian wrote about how it came to be in a guest post on Werner Vogels' blog. It currently requires Docker to run on macOS or Windows. I'm hoping they fix that in the future - it would be great if you could download a single binary and use that as part of a standard test suite in other languages and on other platforms. Tags: amazon , amazon-web-services , testing , werner-vogels , ai , rust , docker , generative-ai , llms , agentic-engineering",
+      "links": [
+        {
+          "title": "aws-emulator",
+          "url": "https://github.com/aws/aws-emulator",
+          "site": "github.com"
+        },
+        {
+          "title": "how it came to be",
+          "url": "https://www.allthingsdistributed.com/2026/11/aws-emulator-and-the-engineers-job-when-agents-write-the-code.html",
+          "site": "allthingsdistributed.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Browse tools.simonwillison.net by tag",
+      "url": "https://simonwillison.net/2026/Nov/11/tools-tags/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/11/tools-tags/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-11T18:42:50Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Browse tools.simonwillison.net by tag I've been wanting a better way to browse my collection of vibe-coded tools (244 and counting) for a while. I had a few Fable 5.2 credits left over before my weekly reset so I set it to work using tree-sitter to analyze the code for JavaScript APIs, libraries, and web API hosts used by each tool. The homepage now features tag clouds for browsing by each of those categories of tag: Tags: javascript , tools , ai , generative-ai , llms , claude , vibe-coding",
+      "links": [
+        {
+          "title": "tree-sitter",
+          "url": "https://github.com/tree-sitter/py-tree-sitter",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm 0.37.2",
+      "url": "https://simonwillison.net/2026/Nov/11/llm/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/11/llm/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-11T17:19:52Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm 0.37.2 Fixes a security issue reported by Daniel de Araujo in GHSA-v9h7-jj4g-f862 and GHSA-r639-rr7r-x72w . LLM has a mechanism called extra-openai-models.yaml - now managed by the new-in-0.37 llm openai endpoint add command - for using LLM with OpenAI-compatible API endpoints from other providers. Daniel reported two ways this could accidentally send your configured OpenAI API key to one of those providers: if the key named by api_key_name had never been stored, or if a responses: true model was run with -o chat_completions 1 . Tags: projects , security , llm , releases",
+      "links": [
+        {
+          "title": "llm 0.37.2",
+          "url": "https://github.com/simonw/llm/releases/tag/0.37.2",
+          "site": "github.com"
+        },
+        {
+          "title": "Daniel de Araujo",
+          "url": "https://github.com/BluePlexus",
+          "site": "github.com"
+        },
+        {
+          "title": "GHSA-v9h7-jj4g-f862",
+          "url": "https://github.com/simonw/llm/security/advisories/GHSA-v9h7-jj4g-f862",
+          "site": "github.com"
+        },
+        {
+          "title": "GHSA-r639-rr7r-x72w",
+          "url": "https://github.com/simonw/llm/security/advisories/GHSA-r639-rr7r-x72w",
+          "site": "github.com"
+        },
+        {
+          "title": "extra-openai-models.yaml",
+          "url": "https://llm.datasette.io/en/stable/other-models.html#configure-an-openai-compatible-model",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "llm openai endpoint add",
+          "url": "https://llm.datasette.io/en/stable/other-models.html#openai-endpoint-add",
+          "site": "llm.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Anthropic's IPO roadshow video",
+      "url": "https://simonwillison.net/2026/Nov/11/anthropic-ipo-roadshow/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/11/anthropic-ipo-roadshow/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-11T15:11:59Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Anthropic's IPO roadshow video Anthropic kicked off their IPO roadshow yesterday, and their roadshow video has some previously unreleased information about how their business works. The section on \"Approach to compute\" with co-founder Tom Brown is particularly interesting, describing how Anthropic train and serve Claude across AWS Trainium, Google TPUs, NVIDIA GPUs, and AMD GPUs. I'm not sure why there's no official video transcript, but here's one that I extracted using MacWhisper. Highlights below: We train and serve Claude now across all four major chip families. That's only possible because early on we made an unconventional bet on a multi-chip strategy. At the time, many people thought that running AI models on different chips wasn't worth the effort. Each chip needs its own tailored software stack and inference stack, which is expensive and difficult to build. We've now been doing ",
+      "links": [
+        {
+          "title": "Anthropic's IPO roadshow video",
+          "url": "https://ipo.anthropic.com/us/#roadshow-video",
+          "site": "ipo.anthropic.com"
+        },
+        {
+          "title": "one that I extracted",
+          "url": "https://gist.github.com/simonw/9806757fe8acec6221cb0a5cce4d720d",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "postmortem of three recent issues",
+          "url": "https://www.anthropic.com/research/a-postmortem-of-three-recent-issues",
+          "site": "anthropic.com"
+        }
+      ]
+    }
+  ]
+}
