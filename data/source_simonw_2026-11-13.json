@@ -1,0 +1,39 @@
+{
+  "source": "simonw",
+  "date": "2026-11-13",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "llm-gemini 0.37",
+      "url": "https://simonwillison.net/2026/Nov/12/llm-gemini/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/12/llm-gemini/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-12T22:55:19Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-gemini 0.37 Google launched Gemini 4 Hydrogen today - the lowest cost member of the Gemini 4 family. It's actually not too far off the price of its much bigger siblings, Carbon and Argon. I'm finding Gemini 4's pricing really confusing. Here's the pricing scheme: Model Dates Input ($/M) Cached input Output Gemini 4 Carbon Through Nov 30, 2026 $2.00 $0.10 $10.00 From Dec 1, 2026 $4.00 $0.20 $20.00 Gemini 4 Argon Through Nov 30, 2026 $2.00 $0.10 $10.00 From Dec 1, 2026 $4.00 $0.20 $20.00 Gemini 4 Hydrogen $1.50 $0.075 $7.50 Carbon and Argon are the same price , and both are scheduled to double in price on December 1st. If they're the same price, why have two different models? Google says that Argon \"delivers Gemini 4 intelligence with faster responses and lower token spend per turn compared to Gemini 4 Carbon\" - so it may be priced the same, but it will use less tokens per tas",
+      "links": [
+        {
+          "title": "llm-gemini 0.37",
+          "url": "https://github.com/simonw/llm-gemini/releases/tag/0.37",
+          "site": "github.com"
+        },
+        {
+          "title": "Gemini 4 Hydrogen",
+          "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-hydrogen/",
+          "site": "blog.google"
+        },
+        {
+          "title": "Google says",
+          "url": "https://aistudio.google.com/docs/pricing",
+          "site": "aistudio.google.com"
+        }
+      ]
+    }
+  ]
+}
