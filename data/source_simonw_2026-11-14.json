@@ -1,0 +1,67 @@
+{
+  "source": "simonw",
+  "date": "2026-11-14",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "datasette-cluster-map 0.19",
+      "url": "https://simonwillison.net/2026/Nov/13/datasette-cluster-map/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/13/datasette-cluster-map/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-13T23:02:45Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-cluster-map 0.19 One of the oldest Datasette plugins, and still one of my favorites. It now works with Datasette 1.0a42, and depends on the new datasette-leaflet to ensure OpenStreetMap tiles are requested with a referrer header. Here's a map of power plants owned by California's PG&E , also demonstrating Datasette's recently redesigned facets : Tags: datasette , geospatial , openstreetmap",
+      "links": [
+        {
+          "title": "datasette-cluster-map 0.19",
+          "url": "https://github.com/simonw/datasette-cluster-map/releases/tag/0.19",
+          "site": "github.com"
+        },
+        {
+          "title": "a map of power plants owned by California's PG&E",
+          "url": "https://datasette.io/global-power-plants/global-power-plants?owner=Pacific+Gas+%26+Electric+Co.",
+          "site": "datasette.io"
+        },
+        {
+          "title": "redesigned facets",
+          "url": "https://github.com/simonw/datasette/pull/3032",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-leaflet 0.3",
+      "url": "https://simonwillison.net/2026/Nov/13/datasette-leaflet/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/13/datasette-leaflet/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-13T22:30:54Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-leaflet 0.3 OpenStreetMap have a very reasonable policy that hits to their hosted tile server should send a referrer header . Datasette table pages used the Referrer-Policy: no-referrer HTTP header, causing plugins that loaded tiles from OpenStreetMap to violate that policy. datasette-leaflet is the plugin that loads a bundled Leaflet so other Datasette plugins can depend on it. It now sets the referrer policy on the tile requests themselves to strict-origin-when-cross-origin , passing the host but not the full path to the page. Tags: leaflet , datasette , openstreetmap",
+      "links": [
+        {
+          "title": "datasette-leaflet 0.3",
+          "url": "https://github.com/simonw/datasette-leaflet/releases/tag/0.3",
+          "site": "github.com"
+        },
+        {
+          "title": "should send a referrer header",
+          "url": "https://wiki.openstreetmap.org/wiki/Referer",
+          "site": "wiki.openstreetmap.org"
+        }
+      ]
+    }
+  ]
+}
