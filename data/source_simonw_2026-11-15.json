@@ -1,0 +1,87 @@
+{
+  "source": "simonw",
+  "date": "2026-11-15",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "datasette-llm 0.1a11",
+      "url": "https://simonwillison.net/2026/Nov/14/datasette-llm/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/14/datasette-llm/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-14T23:59:28Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-llm 0.1a11 datasette-llm is the intermediate plugin for Datasette that supports configuring LLMs for use with other Datasette plugins. This release adds support for OpenAI-compatible endpoints, so you can configure Datasette to use an LLM hosted anywhere that talks the OpenAI pseudo-standard web protocol. This means that if you're running local models with LM Studio or Ollama or llama.cpp (which just hit v1.0.0 ) you can run Datasette via uvx like this: wget https://datasette.io/content.db uvx --with datasette-agent datasette \\ --root --secret 1 \\ -s plugins.datasette-llm.default_model ' { \"model\": \"lmstudio-qwen\", \"model_name\": \"qwen/qwen3.8-27b\", \"api_base\": \"http://localhost:1234/v1\" } ' content.db And you'll get a local server running a Datasette Agent instance powered by your local model! Tags: uv , datasette-agent , llm , datasette , llms , ai , generative-ai",
+      "links": [
+        {
+          "title": "datasette-llm 0.1a11",
+          "url": "https://github.com/datasette/datasette-llm/releases/tag/0.1a11",
+          "site": "github.com"
+        },
+        {
+          "title": "LM Studio",
+          "url": "https://lmstudio.ai",
+          "site": "lmstudio.ai"
+        },
+        {
+          "title": "Ollama",
+          "url": "https://ollama.com",
+          "site": "ollama.com"
+        },
+        {
+          "title": "llama.cpp",
+          "url": "https://github.com/ggml-org/llama.cpp",
+          "site": "github.com"
+        },
+        {
+          "title": "v1.0.0",
+          "url": "https://huggingface.co/blog/ggml-org/llama-cpp-v1",
+          "site": "huggingface.co"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-vega 0.7",
+      "url": "https://simonwillison.net/2026/Nov/14/datasette-vega/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/14/datasette-vega/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-14T17:09:09Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-vega 0.7 A new release of Datasette's longest untouched plugin, for rendering charts (using Vega-Lite ) against data in a table or custom query. The last release was in July 2018! I finally bumped it for compatibility with the latest Datasette alphas, plus some cosmetic tweaks to make it work better with Datasette Lite . (Datasette Lite just gained the ability to run JavaScript plugins like this! I'll write more about that soon.) Since it works with Datasette Lite, the live demo in the README now links to this demo on Datasette Lite . Tags: datasette , visualisation , datasette-lite",
+      "links": [
+        {
+          "title": "datasette-vega 0.7",
+          "url": "https://github.com/simonw/datasette-vega/releases/tag/0.7",
+          "site": "github.com"
+        },
+        {
+          "title": "Vega-Lite",
+          "url": "https://vega.github.io/vega-lite/",
+          "site": "vega.github.io"
+        },
+        {
+          "title": "Datasette Lite",
+          "url": "https://lite.datasette.io/",
+          "site": "lite.datasette.io"
+        },
+        {
+          "title": "links to this demo on Datasette Lite",
+          "url": "https://lite.datasette.io/?install=datasette-vega&csv=https%3A%2F%2Fraw.githubusercontent.com%2Ffivethirtyeight%2Fdata%2Fmaster%2Fairline-safety%2Fairline-safety.csv#/data/airline-safety?_size=max#g.mark=bar&g.x_column=airline&g.x_type=ordinal&g.y_column=fatalities_00_14&g.y_type=quantitative",
+          "site": "lite.datasette.io"
+        }
+      ]
+    }
+  ]
+}
