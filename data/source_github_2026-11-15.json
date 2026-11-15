@@ -1,0 +1,40 @@
+{
+  "source": "github",
+  "date": "2026-11-15",
+  "stories": [
+    {
+      "source": "github",
+      "title": "TelemetryCleaner — 基于 Shizuku 免 Root 清除国产安卓 SystemHelper、RegService 等系统预装隐私数据收集模块",
+      "url": "https://github.com/Eynnzerr/TelemetryCleaner",
+      "author": "Eynnzerr",
+      "external_id": "Eynnzerr/TelemetryCleaner",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-11T06:25:10Z",
+      "score": 876,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "基于 Shizuku 免 Root 清除国产安卓 SystemHelper、RegService 等系统预装隐私数据收集模块",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "muse-protocol — muse.ai 注册与邀请码兑换协议研究（纯 HTTP Python 实现）",
+      "url": "https://github.com/duwqijlk/muse-protocol",
+      "author": "duwqijlk",
+      "external_id": "duwqijlk/muse-protocol",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-14T01:24:58Z",
+      "score": 825,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "muse.ai 注册与邀请码兑换协议研究（纯 HTTP Python 实现）",
+      "links": []
+    }
+  ]
+}
