@@ -1,0 +1,206 @@
+{
+  "source": "simonw",
+  "date": "2026-11-16",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "datasette-maplibre 0.1a0",
+      "url": "https://simonwillison.net/2026/Nov/15/datasette-maplibre/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/15/datasette-maplibre/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-15T23:58:36Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-maplibre 0.1a0 The first new Datasette geospatial plugin in quite a while! This one combines the excellent MapLibre GL library with OpenFreeMap , the free vector map server operated by Zsolt Ero (you should sponsor Zsolt on GitHub .) I built most of this with a single prompt to Claude Fable 5.2: Look at datasette-cluster-map and datasette-leaflet-geojson plugins, then look at ~/dev/tools/openfreemap-demo.html - then build a brand new Datasette plugin that uses maplibreGL and openfreemap and combines the features of those other two plugins - but be creative and think outside the box for other useful features the plugin might have \"Be creative and think outside the box\" resulted in a few neat ideas - my favorite is that it displays SVG previews of GeoJSON shapes, then loads a WebGL preview only when they scroll into view. I also had Claude build a comprehensive demo whic",
+      "links": [
+        {
+          "title": "datasette-maplibre 0.1a0",
+          "url": "https://github.com/datasette/datasette-maplibre/releases/tag/0.1a0",
+          "site": "github.com"
+        },
+        {
+          "title": "MapLibre GL",
+          "url": "https://maplibre.org/maplibre-gl-js/docs/",
+          "site": "maplibre.org"
+        },
+        {
+          "title": "OpenFreeMap",
+          "url": "https://openfreemap.org",
+          "site": "openfreemap.org"
+        },
+        {
+          "title": "sponsor Zsolt on GitHub",
+          "url": "https://github.com/sponsors/hyperknot",
+          "site": "github.com"
+        },
+        {
+          "title": "visit this link",
+          "url": "https://lite.datasette.io/?install=datasette-maplibre&url=https://gist.githubusercontent.com/simonw/39fa5d399465766039549912e2b3d291/raw/f6dfba99a75cbb8b5d9386223220eb52272767ee/demo.db&metadata=https://gist.githubusercontent.com/simonw/39fa5d399465766039549912e2b3d291/raw/f6dfba99a75cbb8b5d9386223220eb52272767ee/metadata.yml",
+          "site": "lite.datasette.io"
+        },
+        {
+          "title": "this demo page",
+          "url": "https://lite.datasette.io/?install=datasette-maplibre&url=https://gist.githubusercontent.com/simonw/39fa5d399465766039549912e2b3d291/raw/f6dfba99a75cbb8b5d9386223220eb52272767ee/demo.db&metadata=https://gist.githubusercontent.com/simonw/39fa5d399465766039549912e2b3d291/raw/f6dfba99a75cbb8b5d9386223220eb52272767ee/metadata.yml#/demo/capitals_and_countries%23map=0/4.2/180&color=continent",
+          "site": "lite.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette 1.0a43",
+      "url": "https://simonwillison.net/2026/Nov/15/datasette/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/15/datasette/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-15T23:20:27Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette 1.0a43 I've been leaning hard into Claude Fable 5.2 to help knock things off the 1.0 milestone , which is now 53% complete. The biggest 1.0 item in this release is streaming support for output renderers - the built-in TSV and CSV export mechanisms now use this as well, and plugins can register themselves as capable of streaming every row in a table in one go via the new Response.stream() method. There are a couple of security fixes, one of which I deemed deserving of a GitHub advisory : private stored queries could be exposed, granting access to the title and SQL of the query (but not allowing that query to be executed). There are dozens of smaller improvements. The row page JSON representation finally has a design suitable for 1.0 . A new <datasette-copy-button> Web Component provides copy-schema in various places. JSON in columns on the row page can be pretty-printed",
+      "links": [
+        {
+          "title": "datasette 1.0a43",
+          "url": "https://github.com/simonw/datasette/releases/tag/1.0a43",
+          "site": "github.com"
+        },
+        {
+          "title": "1.0 milestone",
+          "url": "https://github.com/simonw/datasette/milestone/37",
+          "site": "github.com"
+        },
+        {
+          "title": "streaming support for output renderers",
+          "url": "https://docs.datasette.io/en/latest/plugin_hooks.html#plugin-register-output-renderer-streaming",
+          "site": "docs.datasette.io"
+        },
+        {
+          "title": "Response.stream()",
+          "url": "https://docs.datasette.io/en/latest/internals.html#internals-response-stream",
+          "site": "docs.datasette.io"
+        },
+        {
+          "title": "deserving of a GitHub advisory",
+          "url": "https://github.com/simonw/datasette/security/advisories/GHSA-mw6v-83vp-7c4c",
+          "site": "github.com"
+        },
+        {
+          "title": "finally has a design suitable for 1.0",
+          "url": "https://docs.datasette.io/en/latest/json_api.html#json-api-row",
+          "site": "docs.datasette.io"
+        },
+        {
+          "title": "DatasetteModal.confirm()",
+          "url": "https://docs.datasette.io/en/latest/javascript_plugins.html#javascript-plugins-modal-confirm",
+          "site": "docs.datasette.io"
+        },
+        {
+          "title": "Zihan Dai",
+          "url": "https://github.com/PDGGK",
+          "site": "github.com"
+        },
+        {
+          "title": "Peter Olkhovets",
+          "url": "https://github.com/peterolkhov",
+          "site": "github.com"
+        },
+        {
+          "title": "Ilya Khalafi",
+          "url": "https://github.com/IlyaKhalafi",
+          "site": "github.com"
+        },
+        {
+          "title": "Ankita Advitot",
+          "url": "https://github.com/AnkitaAdvitot",
+          "site": "github.com"
+        },
+        {
+          "title": "Here's the commit",
+          "url": "https://github.com/simonw/datasette/commit/7da8a85ea77786edef975a4066bbadfab0966a0c",
+          "site": "github.com"
+        },
+        {
+          "title": "Firefox 162",
+          "url": "https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/162#changes_for_web_developers",
+          "site": "developer.mozilla.org"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette 0.65.6",
+      "url": "https://simonwillison.net/2026/Nov/15/datasette-2/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/15/datasette-2/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-15T23:18:17Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette 0.65.6 I backported a minor security fix from 1.0a43: Fixed a security issue where a database registered using add_database(db, name=..., route=...) with a route that differs from its name could be downloaded from /<route>.db by actors who were denied access to it. [...] Tags: security , datasette",
+      "links": [
+        {
+          "title": "datasette 0.65.6",
+          "url": "https://github.com/simonw/datasette/releases/tag/0.65.6",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-apps 0.4a0",
+      "url": "https://simonwillison.net/2026/Nov/15/datasette-apps/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/15/datasette-apps/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-15T04:02:45Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-apps 0.4a0 Datasette Apps are sandboxed HTML and JavaScript applications that live inside Datasette - think Claude Artifacts, but these ones can run SQL queries against your data. 0.4a0 adds support for linking: you can link to an app with #fragments in the URL and the app can see and use those, plus supported URL schemes are reported back to Datasette Agent so it can help write apps that link to each other. This means you can have e.g. an app that shows details about a specific record, and a completely separate app that searches those records and links to their representations in the first app. Tags: datasette-agent , datasette-apps , datasette , urls",
+      "links": [
+        {
+          "title": "datasette-apps 0.4a0",
+          "url": "https://github.com/datasette/datasette-apps/releases/tag/0.4a0",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-agent 0.6a0",
+      "url": "https://simonwillison.net/2026/Nov/15/datasette-agent/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/15/datasette-agent/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-15T03:49:47Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-agent 0.6a0 Accumulated small fixes for Datasette Agent, my agent plugin for Datasette that lets you ask questions about your data. Most notably, it now adds an agent prompt directly to the Datasette homepage, with support for hash-mentions of tables and queries: Tags: datasette-agent , llm , datasette , llms , ai , generative-ai",
+      "links": [
+        {
+          "title": "datasette-agent 0.6a0",
+          "url": "https://github.com/datasette/datasette-agent/releases/tag/0.6a0",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
