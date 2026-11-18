@@ -1,0 +1,276 @@
+{
+  "source": "simonw",
+  "date": "2026-11-18",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Daniel Stenberg",
+      "url": "https://simonwillison.net/2026/Nov/18/daniel-stenberg/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/18/daniel-stenberg/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-18T15:58:27Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "During the time these agents converted 185,000 lines of C code into 340,000 lines of Rust code (I counted), we merged over 300 commits in the actual curl project. We actually improved curl during these a little more than three weeks. A little over 200 bugfixes actually. 200 bugfixes that none of those rust rewrites have. We also fixed a few vulnerabilities. In another month we have done another 200 and maybe fixed a few more vulnerabilities. Will these clones keep up? — Daniel Stenberg , Actual curl rewrites in Rust Tags: daniel-stenberg , curl , rust , security , coding-agents , c , ai , llms , generative-ai , vibe-porting",
+      "links": [
+        {
+          "title": "Daniel Stenberg",
+          "url": "https://daniel.haxx.se/blog/2026/11/17/actual-curl-rewrites-in-rust/",
+          "site": "daniel.haxx.se"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "The PSF end-of-year fundraiser",
+      "url": "https://simonwillison.net/2026/Nov/18/psf-end-of-year-fundraiser/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/18/psf-end-of-year-fundraiser/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-18T14:44:48Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "The PSF end-of-year fundraiser With my Python Software Foundation board director hat on: we've launched our end-of-year fundraiser for the non-profit that supports Python development and the Python community. If your company or your work benefits from Python, please consider donating this year! The PSF looks after the IP behind Python, operates PyPI, sponsors core developer sprints, supports community events (including running PyCon US every year), and employs a small and excellent staff team to keep everything running. We also operate the Developers in Residence program , which now includes three security developers (welcome, Brett Smith) focused on helping secure Python, PyPI, and the wider ecosystem. Tags: python , psf",
+      "links": [
+        {
+          "title": "The PSF end-of-year fundraiser",
+          "url": "https://donate.python.org",
+          "site": "donate.python.org"
+        },
+        {
+          "title": "Developers in Residence program",
+          "url": "https://www.python.org/psf/developersinresidence/",
+          "site": "python.org"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "External sandboxes for coding agents",
+      "url": "https://simonwillison.net/2026/Nov/17/external-sandboxes-for-coding-agents/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/17/external-sandboxes-for-coding-agents/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-17T22:52:29Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "External sandboxes for coding agents I've been exploring new ways to sandbox code that is executed by agents, with a focus on making it safer to try out local models without worrying that a mistake or prompt injection attack might cause them to take damaging actions on a machine. I worked on this project with Prime Radiant , the AI research lab behind Superpowers and other projects . My post on the Prime Radiant blog introduces the external sandbox pattern, where code executed by the agent runs inside a dedicated sandbox while the agent itself lives outside of that sandbox. To demonstrate this pattern we've released three sandbox server implementations: external-sandbox-v86 runs a Node.js server which then uses v86 to run Alpine Linux inside WebAssembly. external-sandbox-container is a Python web server which runs the sandbox in Alpine Linux inside an Apple Containers instance. external-",
+      "links": [
+        {
+          "title": "External sandboxes for coding agents",
+          "url": "https://blog.primeradiant.com/external-sandboxes-for-coding-agents/",
+          "site": "blog.primeradiant.com"
+        },
+        {
+          "title": "Prime Radiant",
+          "url": "https://primeradiant.com",
+          "site": "primeradiant.com"
+        },
+        {
+          "title": "other projects",
+          "url": "https://github.com/orgs/prime-radiant-inc/repositories",
+          "site": "github.com"
+        },
+        {
+          "title": "external-sandbox-v86",
+          "url": "https://github.com/prime-radiant-inc/external-sandbox-v86",
+          "site": "github.com"
+        },
+        {
+          "title": "v86",
+          "url": "https://github.com/copy/v86",
+          "site": "github.com"
+        },
+        {
+          "title": "external-sandbox-container",
+          "url": "https://github.com/prime-radiant-inc/external-sandbox-container",
+          "site": "github.com"
+        },
+        {
+          "title": "external-sandbox-quicksand",
+          "url": "https://github.com/prime-radiant-inc/external-sandbox-quicksand",
+          "site": "github.com"
+        },
+        {
+          "title": "Quicksand",
+          "url": "https://github.com/microsoft/quicksand",
+          "site": "github.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "GPT‑6.2 Astra and GPT‑6.2 Sol",
+      "url": "https://simonwillison.net/2026/Nov/17/gpt62-astra-and-sol/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/17/gpt62-astra-and-sol/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-17T22:38:52Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "GPT‑6.2 Astra and GPT‑6.2 Sol OpenAI: We’re introducing GPT‑6.2 Astra, our new frontier model for your hardest projects, and GPT‑6.2 Sol, our efficient, versatile model for everyday work. They're available in the API as gpt-6.2-astra and gpt-6.2-sol . I shipped LLM 0.38 with support for the new models. 6.2 Astra is 80% of the price of 6 Astra - $8/MTok input and $40/MTok output, the same price as Claude Fable 5.2 (which was also 80% of its predecessor). 6 Astra and Fable 5 were both $10/$50. The cached price is an even bigger discount - $0.40/million compared to $1/million for the older model. This is great news for longer running agentic sessions. GPT-6.2 Sol is the same $2/$10 price as 6.1 Sol and 6 Sol - which are half the price of GPT-5.6 Sol ($4/$20). Here are the pelicans for GPT-6.2 Sol and for GPT-6.2 Astra . The 6.2 Astra max pelican looks like this: I have a full comparison gri",
+      "links": [
+        {
+          "title": "GPT‑6.2 Astra and GPT‑6.2 Sol",
+          "url": "https://openai.com/index/introducing-gpt-6-2-astra-sol/",
+          "site": "openai.com"
+        },
+        {
+          "title": "LLM 0.38",
+          "url": "https://llm.datasette.io/en/stable/changelog.html#v0-38",
+          "site": "llm.datasette.io"
+        },
+        {
+          "title": "exported transcript",
+          "url": "https://gist.github.com/simonw/6b44c588a1321b60799dbbfd13db6d23",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "review",
+          "url": "https://twitter.com/theo/status/2122760447103484410",
+          "site": "twitter.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Running the full server-side Datasette Python app in the browser with service workers and Pyodide",
+      "url": "https://simonwillison.net/2026/Nov/17/datasette-lite/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/17/datasette-lite/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-17T16:48:33Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Datasette Lite is my port of the Datasette Python application to run directly in the browser using WebAssembly and Pyodide . I've released a complete rewrite of Datasette Lite using service workers, and it's now almost indistinguishable from the real server-side application. You can now do all of the following, using a carefully crafted URL to lite.datasette.io : Load client-side Datasette to browse any SQLite database, JSON file, CSV file or SQL script Select a released version of Datasette to load from PyPI Load a specific commit, tag, or branch name from the Datasette GitHub repository Pick from over 100 versions of SQLite to use with Datasette Install additional Datasette plugins from PyPI or URLs to wheel files, including JavaScript visualization tools The ability to load specific Datasette references, plugins, and SQLite versions makes this a fantastic tool for linking to demos of ",
+      "links": [
+        {
+          "title": "Datasette Lite",
+          "url": "https://lite.datasette.io/",
+          "site": "lite.datasette.io"
+        },
+        {
+          "title": "Datasette",
+          "url": "https://datasette.io/",
+          "site": "datasette.io"
+        },
+        {
+          "title": "Pyodide",
+          "url": "https://pyodide.org/",
+          "site": "pyodide.org"
+        },
+        {
+          "title": "https://lite.datasette.io/?install=datasette-maplibre&url=https:",
+          "url": "https://lite.datasette.io/?install=datasette-maplibre&url=https://gist.githubusercontent.com/simonw/39fa5d399465766039549912e2b3d291/raw/f6dfba99a75cbb8b5d9386223220eb52272767ee/demo.db&metadata=https://gist.githubusercontent.com/simonw/39fa5d399465766039549912e2b3d291/raw/f6dfba99a75cbb8b5d9386223220eb52272767ee/metadata.yml#/demo/capitals_and_countries%23map=0/4.2/180&color=continent",
+          "site": "lite.datasette.io"
+        },
+        {
+          "title": "datasette-maplibre",
+          "url": "https://github.com/datasette/datasette-maplibre",
+          "site": "github.com"
+        },
+        {
+          "title": "open CORS headers",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS",
+          "site": "developer.mozilla.org"
+        },
+        {
+          "title": "Gists",
+          "url": "https://gist.github.com/",
+          "site": "gist.github.com"
+        },
+        {
+          "title": "this metadata.yml file",
+          "url": "https://gist.githubusercontent.com/simonw/39fa5d399465766039549912e2b3d291/raw/f6dfba99a75cbb8b5d9386223220eb52272767ee/metadata.yml",
+          "site": "gist.githubusercontent.com"
+        },
+        {
+          "title": "that homepage here",
+          "url": "https://lite.datasette.io/?install=datasette-maplibre&url=https://gist.githubusercontent.com/simonw/39fa5d399465766039549912e2b3d291/raw/f6dfba99a75cbb8b5d9386223220eb52272767ee/demo.db&metadata=https://gist.githubusercontent.com/simonw/39fa5d399465766039549912e2b3d291/raw/f6dfba99a75cbb8b5d9386223220eb52272767ee/metadata.yml#/",
+          "site": "lite.datasette.io"
+        },
+        {
+          "title": "described in the Datasette Lite README",
+          "url": "https://github.com/simonw/datasette-lite#load-a-different-datasette-version",
+          "site": "github.com"
+        },
+        {
+          "title": "a recent issue",
+          "url": "https://github.com/simonw/datasette/issues/3056#issuecomment-6902484982",
+          "site": "github.com"
+        },
+        {
+          "title": "https://lite.datasette.io/?ref=1.0a42&sql=https://gist.github.co",
+          "url": "https://lite.datasette.io/?ref=1.0a42&sql=https://gist.github.com/simonw/75ececf61d50e6e8d50f0c150150ee81#/data/scores?_size=2&_sort=score",
+          "site": "lite.datasette.io"
+        },
+        {
+          "title": "https://lite.datasette.io/?ref=1.0a43&sql=https://gist.github.co",
+          "url": "https://lite.datasette.io/?ref=1.0a43&sql=https://gist.github.com/simonw/75ececf61d50e6e8d50f0c150150ee81#/data/scores?_size=2&_sort=score",
+          "site": "lite.datasette.io"
+        },
+        {
+          "title": "Service Workers",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API",
+          "site": "developer.mozilla.org"
+        },
+        {
+          "title": "generate several SVG diagrams",
+          "url": "https://gisthost.github.io/?4192a5a24136cad4c8490ccb15e87d83",
+          "site": "gisthost.github.io"
+        },
+        {
+          "title": "AI research spike",
+          "url": "https://github.com/simonw/research/tree/main/pyodide-asgi-browser#readme",
+          "site": "github.com"
+        },
+        {
+          "title": "last night",
+          "url": "https://github.com/simonw/datasette-lite/commit/de661dbee42a68304811a0035b78e6b683203cd1",
+          "site": "github.com"
+        },
+        {
+          "title": "datasette/pysqlite3-wasm-wheels",
+          "url": "https://github.com/datasette/pysqlite3-wasm-wheels",
+          "site": "github.com"
+        },
+        {
+          "title": "pysqlite3",
+          "url": "https://github.com/coleifer/pysqlite3",
+          "site": "github.com"
+        },
+        {
+          "title": "https://datasette.github.io/pysqlite3-wasm-wheels/?versions=3.54",
+          "url": "https://datasette.github.io/pysqlite3-wasm-wheels/?versions=3.54.1,3.54.0&sql=select+json_object(%27a%27%2C+(select+json_array(1%29%29%29)",
+          "site": "datasette.github.io"
+        },
+        {
+          "title": "even publish them to PyPI",
+          "url": "https://github.com/pypi/warehouse/pull/19804",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
