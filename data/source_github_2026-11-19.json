@@ -1,0 +1,57 @@
+{
+  "source": "github",
+  "date": "2026-11-19",
+  "stories": [
+    {
+      "source": "github",
+      "title": "tiny-voca — A 4.5M-parameter two-voice English text-to-speech model, trained from scratch",
+      "url": "https://github.com/n4ze3m/tiny-voca",
+      "author": "n4ze3m",
+      "external_id": "n4ze3m/tiny-voca",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-14T16:02:56Z",
+      "score": 763,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "A 4.5M-parameter two-voice English text-to-speech model, trained from scratch",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "yab — Yab, yet another browser: a fast native macOS browser with an iPhone and Android companion",
+      "url": "https://github.com/yetanotherbrowser/yab",
+      "author": "yetanotherbrowser",
+      "external_id": "yetanotherbrowser/yab",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-14T23:56:32Z",
+      "score": 734,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Yab, yet another browser: a fast native macOS browser with an iPhone and Android companion",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "pear — Training Reasoning Models in Simulation to Natively Use Real Robots",
+      "url": "https://github.com/mit-han-lab/pear",
+      "author": "mit-han-lab",
+      "external_id": "mit-han-lab/pear",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-13T17:43:06Z",
+      "score": 718,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Training Reasoning Models in Simulation to Natively Use Real Robots",
+      "links": []
+    }
+  ]
+}
