@@ -1,0 +1,102 @@
+{
+  "source": "simonw",
+  "date": "2026-11-20",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Token fraud is here and it’s BAD (YouTube)",
+      "url": "https://simonwillison.net/2026/Nov/20/token-fraud-is-here-and-its-bad/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/20/token-fraud-is-here-and-its-bad/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-20T02:49:57Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Token fraud is here and it’s BAD (YouTube) Claire Vo runs ChatPRD , an AI platform that helps product managers \"turn an idea into a spec\". The product has been live since the GPT-4 era, and Claire has been building it in public for much of that time. In this YouTube video (see also the accompanying Twitter post ) Claire describes the flood of token fraud she has seen from groups abusing the product's free trial, sometimes just to get free AI usage but often to resell tokens or run other commercial enterprises on top of the ChatPRD agent. I am funding a international Roblox and Fortnite map studio. They run a loop of free trials and promo codes and then tunnel to my agent and use it to build Roblox and Fortnite maps. Apparently one of the common prompts Claire saw running through her agent involved SVGs of pelicans riding bicycles! Presumably the token scammers are using that to help snif",
+      "links": [
+        {
+          "title": "Token fraud is here and it’s BAD (YouTube)",
+          "url": "https://www.youtube.com/watch?v=ZDpP7JXPlhc",
+          "site": "youtube.com"
+        },
+        {
+          "title": "ChatPRD",
+          "url": "https://www.chatprd.ai",
+          "site": "chatprd.ai"
+        },
+        {
+          "title": "accompanying Twitter post",
+          "url": "https://x.com/clairevo/status/2119985786045227197",
+          "site": "x.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "PostgreSQL 19 Released",
+      "url": "https://simonwillison.net/2026/Nov/19/postgresql-19/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/19/postgresql-19/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-19T20:43:57Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "PostgreSQL 19 Released Most years PostgreSQL ships a new release in September, but this year's release came two months later thanks mainly to the flurry of issues that the PostgreSQL team needed to address as part of the ongoing AI-reported vulnerability apocalypse. This release was definitely worth the wait. My favorite new feature is this one: For applications that send reads to standbys, PostgreSQL 19 adds \"read-your-writes\" consistency with the new WAIT FOR LSN command. A session on a standby can use WAIT FOR LSN to wait until the standby has replayed the write-ahead log (WAL) up to a specific log sequence number (LSN) before running a query, so the application can read data it just wrote on the primary. In practice, that looks like this: UPDATE movie SET genre = 'Dramatic' WHERE genre = 'Drama'; SELECT pg_current_wal_insert_lsn(); That returns a value like 0/0306EE20 . Store that so",
+      "links": [
+        {
+          "title": "PostgreSQL 19 Released",
+          "url": "https://www.postgresql.org/about/news/postgresql-19-released-3449/",
+          "site": "postgresql.org"
+        },
+        {
+          "title": "thanks mainly",
+          "url": "https://rhaas.blogspot.com/2026/10/postgres-19-is-late-and-its-ais-fault.html",
+          "site": "rhaas.blogspot.com"
+        },
+        {
+          "title": "WAIT FOR LSN",
+          "url": "https://www.postgresql.org/docs/19/sql-wait.html",
+          "site": "postgresql.org"
+        },
+        {
+          "title": "log sequence number (LSN)",
+          "url": "https://www.postgresql.org/docs/19/wal-internals.html",
+          "site": "postgresql.org"
+        },
+        {
+          "title": "in Wikipedia",
+          "url": "https://www.mediawiki.org/wiki/Manual:Database_access#Lag",
+          "site": "mediawiki.org"
+        },
+        {
+          "title": "the relevant MediaWiki code",
+          "url": "https://github.com/wikimedia/mediawiki/blob/1ff78194b182ee4b5b3678f7d9fc9aefd0852cf7/includes/libs/Rdbms/Replication/MysqlReplicationReporter.php#L238-L299",
+          "site": "github.com"
+        },
+        {
+          "title": "WAIT_FOR_EXECUTED_GTID_SET()",
+          "url": "https://dev.mysql.com/doc/refman/9.7/en/gtid-functions.html#function_wait-for-executed-gtid-set",
+          "site": "dev.mysql.com"
+        },
+        {
+          "title": "SOURCE_POS_WAIT()",
+          "url": "https://dev.mysql.com/doc/refman/8.4/en/replication-functions-synchronization.html#function_source-pos-wait",
+          "site": "dev.mysql.com"
+        },
+        {
+          "title": "Lobste.rs",
+          "url": "https://lobste.rs/s/pqyuhk/postgresql_19_released",
+          "site": "lobste.rs"
+        }
+      ]
+    }
+  ]
+}
