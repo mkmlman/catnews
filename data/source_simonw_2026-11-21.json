@@ -1,0 +1,52 @@
+{
+  "source": "simonw",
+  "date": "2026-11-21",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Ravi Vakil",
+      "url": "https://simonwillison.net/2026/Nov/20/ravi-vakil/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/20/ravi-vakil/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-20T19:21:49Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Alessandro Masullo has a proposed proof of [Generalized Riemann Hypothesis], and Brian Conrad has been looking closely at it for months and gave extensive feedback which is being incorporated, and it is so far looking good. It is all human, with no AI. The hope was to bring Alessandro to Stanford for a year to polish the writing and then announce it after running it by enough people. Now it seems best to put out the current draft. — Ravi Vakil , Hurried Announcement: Alessandro Masullo GRH Tags: mathematics",
+      "links": [
+        {
+          "title": "Ravi Vakil",
+          "url": "https://math216.wordpress.com/2026/11/20/hurried-announcement-alessandro-masullo-grh/",
+          "site": "math216.wordpress.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Levent Alpöge",
+      "url": "https://simonwillison.net/2026/Nov/20/levent-alpoge/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/20/levent-alpoge/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-20T16:30:48Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "I believe I have, working with Claude, discovered a proof of the Riemann Hypothesis. In fact, the method easily extends much further, resolving the so-called Generalized Riemann Hypothesis, and I expect, with more time, the Extended Riemann Hypothesis too. Claude and I have also formalized the arguments without assumptions. It is natural to feel that this is an end, in my case a loss of a principal guiding light, but what I saw during the course of progress so amazed me that I believe it is one dawn across science of something far greater. [...] Claude and I have had a great time together with such breadth in recent months, but this time Claude far outpaced me near the finish line. No, Claude flew, and danced, and sparkled near that finish line. — Levent Alpöge , alpo.ge/remark.pdf Tags: anthropic , claude , generative-ai , mathematics , ai , llms , levent-alpoge",
+      "links": [
+        {
+          "title": "Levent Alpöge",
+          "url": "https://alpo.ge/remark.pdf",
+          "site": "alpo.ge"
+        }
+      ]
+    }
+  ]
+}
