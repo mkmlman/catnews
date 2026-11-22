@@ -1,0 +1,152 @@
+{
+  "source": "simonw",
+  "date": "2026-11-22",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Muru",
+      "url": "https://simonwillison.net/2026/Nov/21/muru/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/21/muru/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-21T23:56:28Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Muru Graham Dumpleton started mod_wsgi 20 years ago, and has been thinking about the ideal way to serve Python web applications in production ever since. Muru is his new, AI-assisted Rust server that aims to provide the best possible tools for running ASGI and WSGI Python apps both in development and production. As he did with wrapture , he's been publishing an extraordinarily detailed account of the project as he works on it - as part of his development process. Here's everything he's published so far, all in the last three weeks: 2026-11-04 — Twenty years of mod_wsgi, and what comes next 2026-11-05 — A first look at Muru 2026-11-07 — Muru: looking inside the workers 2026-11-08 — Muru: how it fits together 2026-11-09 — Muru: import once, fork many 2026-11-10 — Muru: HTTPS in development 2026-11-11 — Muru: WSGI and ASGI together 2026-11-11 — AI as a lifestyle choice 2026-11-12 — Muru: re",
+      "links": [
+        {
+          "title": "Muru",
+          "url": "https://github.com/muruhq/muru",
+          "site": "github.com"
+        },
+        {
+          "title": "mod_wsgi",
+          "url": "https://modwsgi.readthedocs.io/",
+          "site": "modwsgi.readthedocs.io"
+        },
+        {
+          "title": "Twenty years of mod_wsgi, and what comes next",
+          "url": "https://grahamdumpleton.me/posts/2026/11/twenty-years-of-mod-wsgi/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "A first look at Muru",
+          "url": "https://grahamdumpleton.me/posts/2026/11/a-first-look-at-muru/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: looking inside the workers",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-looking-inside-the-workers/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: how it fits together",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-how-it-fits-together/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: import once, fork many",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-import-once-fork-many/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: HTTPS in development",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-https-in-development/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: WSGI and ASGI together",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-wsgi-and-asgi-together/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "AI as a lifestyle choice",
+          "url": "https://grahamdumpleton.me/posts/2026/11/ai-as-a-lifestyle-choice/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: releases, not restarts",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-releases-not-restarts/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: canaries without a service mesh",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-canaries-without-a-service-mesh/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: a better tenant in a container",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-a-better-tenant-in-a-container/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: working with Kubernetes, not around it",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-working-with-kubernetes-not-around-it/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: scaling from what the workers report",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-scaling-from-what-the-workers-report/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: scaling to zero",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-scaling-to-zero/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: overlays on a schedule",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-overlays-on-a-schedule/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: noticing and responding",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-noticing-and-responding/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: a toolbar on every page",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-a-toolbar-on-every-page/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: tracing in the toolbar",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-tracing-in-the-toolbar/",
+          "site": "grahamdumpleton.me"
+        },
+        {
+          "title": "Muru: when lazy imports help",
+          "url": "https://grahamdumpleton.me/posts/2026/11/muru-when-lazy-imports-help/",
+          "site": "grahamdumpleton.me"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "llm-gemini 0.38.1",
+      "url": "https://simonwillison.net/2026/Nov/20/llm-gemini/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/20/llm-gemini/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-20T03:01:57Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: llm-gemini 0.38.1 Gemini 4 Carbon only supports low , medium and high reasoning levels - but Gemini 4 Hydrogen and Gemini 4 Neon both have an extra xhigh level. I missed that when I added those models to the llm-gemini plugin, which is now fixed in this dot release. The xhigh setting for Hydrogen makes a significant difference. I updated my Gemini 4 comparison grid - note how Hydrogen at high used 5,311 output tokens and cost 3.99 cents, but the same model at xhigh used 31,477 output tokens, cost 23.61 cents, and produced a pelican that's competitive with Gemini 4 Neon: Tags: gemini , llm , llm-reasoning , pelican-riding-a-bicycle , ai , llms , google , generative-ai",
+      "links": [
+        {
+          "title": "llm-gemini 0.38.1",
+          "url": "https://github.com/simonw/llm-gemini/releases/tag/0.38.1",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}
