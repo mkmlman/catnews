@@ -1,28 +1,22 @@
 {
-  "date": "2026-11-23",
+  "date": "2026-11-24",
   "sources": {
     "hn": {
       "state": "ok",
-      "snapshot_date": "2026-11-23",
-      "checked_date": "2026-11-23",
+      "snapshot_date": "2026-11-24",
+      "checked_date": "2026-11-24",
       "stories": 25
     },
     "github": {
       "state": "ok",
-      "snapshot_date": "2026-11-23",
-      "checked_date": "2026-11-23",
+      "snapshot_date": "2026-11-24",
+      "checked_date": "2026-11-24",
       "stories": 15
-    },
-    "registerspill": {
-      "state": "ok",
-      "snapshot_date": "2026-11-23",
-      "checked_date": "2026-11-23",
-      "stories": 10
     },
     "simonw": {
       "state": "ok",
-      "snapshot_date": "2026-11-23",
-      "checked_date": "2026-11-23",
+      "snapshot_date": "2026-11-24",
+      "checked_date": "2026-11-24",
       "stories": 20
     },
     "arxiv": {
@@ -30,6 +24,12 @@
       "snapshot_date": "2026-11-20",
       "checked_date": "2026-11-20",
       "stories": 15
+    },
+    "registerspill": {
+      "state": "skipped",
+      "snapshot_date": "2026-11-23",
+      "checked_date": "2026-11-23",
+      "stories": 1
     }
   }
 }
