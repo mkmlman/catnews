@@ -1,0 +1,189 @@
+{
+  "source": "simonw",
+  "date": "2026-11-26",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "Quoting Jack Despain Zhou",
+      "url": "https://simonwillison.net/2026/Nov/26/jack-despain-zhou/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/26/jack-despain-zhou/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-26T15:09:31Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Among the many already existing effects of AI has been a great de-individualization. I open a YouTube video, and I hear Claude. I sit in a conference presentation, and I hear Claude. I open my email inbox, and I find pitches and articles from ostensibly serious people with ostensibly serious credentials attached to ostensibly serious institutions who want to publish things attached to their reputations and mine, and I see Claude . — Jack Despain Zhou , Spitting in the Face of Glaude Tags: ai-misuse , claude , generative-ai , ai , llms",
+      "links": [
+        {
+          "title": "Jack Despain Zhou",
+          "url": "https://www.tracingwoodgrains.com/p/spitting-in-the-face-of-glaude",
+          "site": "tracingwoodgrains.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "sqlite3_rsync: Database Remote-Copy Tool For SQLite",
+      "url": "https://simonwillison.net/2026/Nov/26/sqlite3-rsync/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/26/sqlite3-rsync/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-26T06:08:25Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "sqlite3_rsync: Database Remote-Copy Tool For SQLite This additional SQLite tool has been around for a while now - it was added as \"experimental\" in SQLite 3.47.0 in October 2024 and enhanced in SQLite 3.50.0 in May 2025 . It was only today that I understood one of its most attractive characteristics. Normally, if you want to grab a snapshot copy of a SQLite database, you need to use either the backup API or VACUUM INTO . In both cases you need enough disk space to create a duplicate copy of your database, so if you're on a small instance and you already use more than half of the available disk you are plain out of luck. sqlite3_rsync can copy a snapshot of your database over an SSH connection to another machine, without first needing to create a full local copy! It's also good for synchronizing an existing copy of a database without re-transmitting the entire thing over the network. It w",
+      "links": [
+        {
+          "title": "sqlite3_rsync: Database Remote-Copy Tool For SQLite",
+          "url": "https://www.sqlite.org/rsync.html",
+          "site": "sqlite.org"
+        },
+        {
+          "title": "in SQLite 3.47.0 in October 2024",
+          "url": "https://www.sqlite.org/releaselog/3_47_0.html",
+          "site": "sqlite.org"
+        },
+        {
+          "title": "SQLite 3.50.0 in May 2025",
+          "url": "https://www.sqlite.org/releaselog/3_50_0.html",
+          "site": "sqlite.org"
+        },
+        {
+          "title": "backup API",
+          "url": "https://www.sqlite.org/backup.html",
+          "site": "sqlite.org"
+        },
+        {
+          "title": "VACUUM INTO",
+          "url": "https://www.sqlite.org/lang_vacuum.html#vacuuminto",
+          "site": "sqlite.org"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "The New York Times warns photographers not to update Photoshop over AI features",
+      "url": "https://simonwillison.net/2026/Nov/26/hn-50651685/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/26/hn-50651685/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-26T05:08:46Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "My comment on The New York Times warns photographers not to update Photoshop over AI features — Hacker News. I had a NYT photographer take my picture at my home earlier this year (for a story about Moltbook, oddly enough). At one point I asked if they could fix things up if I had a stain on my shirt and they said absolutely not - they present photographs as they were taken, with cropping and balancing applied but no edits beyond that. He did spend a bunch of time trying to find the best possible natural lighting for the shots he wanted. The photo at the top of https://www.nytimes.com/2026/02/02/technology/moltbook-ai-so... is my laptop, taken in my garden, after hunting around for the best spot that didn't have too much glare on the screen. You can see how dirty my screen is, too! Photography for a newspaper is photo journalism, and they take it seriously. (Thankfully I did not have a vi",
+      "links": [
+        {
+          "title": "My comment",
+          "url": "https://news.ycombinator.com/item?id=50647673#50651685",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "The New York Times warns photographers not to update Photoshop o",
+          "url": "https://news.ycombinator.com/item?id=50647673",
+          "site": "news.ycombinator.com"
+        },
+        {
+          "title": "https://www.nytimes.com/2026/02/02/technology/moltbook-ai-so...",
+          "url": "https://www.nytimes.com/2026/02/02/technology/moltbook-ai-social-media.html",
+          "site": "nytimes.com"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "Quoting Scott Aaronson",
+      "url": "https://simonwillison.net/2026/Nov/25/scott-aaronson/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/25/scott-aaronson/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-25T23:26:32Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "It’s now obvious that we’ll be getting, not one-off solutions to this or that complexity question, but a whole new continent of mathematical truth, one that we’d previously only glimpsed through fog. Picture van Leeuwenhoek first training a microscope on pondwater, or Galileo first training his telescope on the stars. That might give you some idea of how our resolution into the complexity-theoretic universe, and the whole universe of mathematical truth beyond it, has now improved. — Scott Aaronson Tags: mathematics , llms , ai , generative-ai",
+      "links": [
+        {
+          "title": "Scott Aaronson",
+          "url": "https://scottaaronson.blog/?p=10379",
+          "site": "scottaaronson.blog"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-charts 0.3a0",
+      "url": "https://simonwillison.net/2026/Nov/25/datasette-charts/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/25/datasette-charts/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-25T18:16:50Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-charts 0.3a0 I added chart annotations to datasette-charts ! You can now render a chart and then annotate it with lines, shaded areas, labels, or a combination of the three. A chart with annotations looks like this: Here's that same chart in Datasette Lite , where you can tweak the annotations using the chart builder UI: If you also install Datasette Agent the agent can build annotated charts for you. Here's what I got on the agent.datasette.io demo for this prompt: Show a chart comparing Simon's tagged content about LLMs with his tagged content about Datasette, with annotations Tags: datasette , visualization , datasette-charts",
+      "links": [
+        {
+          "title": "datasette-charts 0.3a0",
+          "url": "https://github.com/datasette/datasette-charts/releases/tag/0.3a0",
+          "site": "github.com"
+        },
+        {
+          "title": "datasette-charts",
+          "url": "https://github.com/datasette/datasette-charts",
+          "site": "github.com"
+        },
+        {
+          "title": "that same chart in Datasette Lite",
+          "url": "https://lite.datasette.io/?install=datasette-charts&url=https://datasette.io/global-power-plants.db#/global-power-plants/-/query?sql=SELECT+CAST%28commissioning_year+%2F+10+AS+INTEGER%29+%2A+10+AS+decade%2C+capacity_mw+FROM+%22global-power-plants%22+WHERE+commissioning_year+BETWEEN+1950+AND+2019+AND+capacity_mw+IS+NOT+NULL#chart=%7B%22v%22%3A1%2C%22type%22%3A%22bar%22%2C%22encoding%22%3A%7B%22x%22%3A%7B%22column%22%3A%22decade%22%2C%22sort%22%3A%22key%22%2C%22limit%22%3A20%2C%22other%22%3Afalse%7D%2C%22y%22%3A%7B%22column%22%3A%22capacity_mw%22%2C%22aggregate%22%3A%22sum%22%7D%7D%2C%22options%22%3A%7B%22orientation%22%3A%22vertical%22%7D%2C%22annotations%22%3A%5B%7B%22type%22%3A%22point%22%2C%22x%22%3A2000%2C%22text%22%3A%22Largest%20decade%20total%20in%20these%20records%3A%201.157%20million%20MW%22%7D%2C%7B%22type%22%3A%22range%22%2C%22x%22%3A1950%2C%22x2%22%3A1990%2C%22text%22%3A%22Much%20smaller%20summed%20capacity%20in%20earlier%20decades%22%7D%2C%7B%22type%22%3A%22line%22%2C%22y%22%3A1000000%2C%22text%22%3A%221%2C000%2C000%20MW%20reference%22%7D%2C%7B%22type%22%3A%22text%22%2C%22left%22%3A0.02%2C%22top%22%3A0.04%2C%22text%22%3A%22Global%20plant%20records%20with%20commissioning%20years%201950–2019%3B%20coverage%20and%20missing%20years%20may%20affect%20comparisons.%22%7D%5D%7D",
+          "site": "lite.datasette.io"
+        },
+        {
+          "title": "Datasette Agent",
+          "url": "https://agent.datasette.io/",
+          "site": "agent.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-charts 0.2a1",
+      "url": "https://simonwillison.net/2026/Nov/24/datasette-charts-2/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/24/datasette-charts-2/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-24T06:07:19Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-charts 0.2a1 Minor UI improvements: Collapsing the suggested charts section now leaves the chart visible. Following a link to a chart opens it with the suggestions collapsed for that visit. On table pages the panel now sits below the \"4,235 rows where country = CHN\" line. The \"Data\" table under each chart has been replaced by Copy TSV and Copy CSV buttons. Removed the \"Chart this data\" item from the table, view and query action menus. More space between lines in chart tooltips. Tags: datasette , visualization , datasette-charts",
+      "links": [
+        {
+          "title": "datasette-charts 0.2a1",
+          "url": "https://github.com/datasette/datasette-charts/releases/tag/0.2a1",
+          "site": "github.com"
+        }
+      ]
+    }
+  ]
+}

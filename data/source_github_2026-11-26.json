@@ -1,0 +1,40 @@
+{
+  "source": "github",
+  "date": "2026-11-26",
+  "stories": [
+    {
+      "source": "github",
+      "title": "VIctory-7900XTX — Goal: an Xbox Series title (your own dump) on PC as the Series X version at 4K with ray tracing, picture matching the Xbo…",
+      "url": "https://github.com/avatarmanz/VIctory-7900XTX",
+      "author": "avatarmanz",
+      "external_id": "avatarmanz/VIctory-7900XTX",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-25T22:18:14Z",
+      "score": 1769,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Goal: an Xbox Series title (your own dump) on PC as the Series X version at 4K with ray tracing, picture matching the Xbox first (textures, lighting), then 30+ fps. Porting, not emulating. RX 7900 XTX first. No game files.",
+      "links": []
+    },
+    {
+      "source": "github",
+      "title": "crhywun/g1-acq",
+      "url": "https://github.com/crhywun/g1-acq",
+      "author": "crhywun",
+      "external_id": "crhywun/g1-acq",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-22T10:53:17Z",
+      "score": 1595,
+      "comments": null,
+      "hn_url": null,
+      "snippet": null,
+      "links": []
+    }
+  ]
+}
