@@ -1,0 +1,77 @@
+{
+  "source": "simonw",
+  "date": "2026-11-28",
+  "stories": [
+    {
+      "source": "simonw",
+      "title": "datasette-charts 0.4a0",
+      "url": "https://simonwillison.net/2026/Nov/27/datasette-charts/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/27/datasette-charts/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-27T23:57:17Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-charts 0.4a0 The new datasette-charts plugin has its own plugin hook to allow other plugins to define new chart types, but I hadn't actually used it for anything yet. I had Claude Opus 5.5 build an experimental plugins just to try out the hook and it came up with a bunch of friction points in the design. This release addresses those, which should make building additional chart plugins a whole lot more ergonomic. I've also added a website for the plugin, at charts.datasette.io . The new website includes a tutorial for plugin authors , and a gallery showing all of the core charts and annotations, each one linking to an interactive demo on Datasette Lite . Tags: datasette-charts , datasette , visualization , datasette-lite",
+      "links": [
+        {
+          "title": "datasette-charts 0.4a0",
+          "url": "https://github.com/datasette/datasette-charts/releases/tag/0.4a0",
+          "site": "github.com"
+        },
+        {
+          "title": "charts.datasette.io",
+          "url": "https://charts.datasette.io/",
+          "site": "charts.datasette.io"
+        },
+        {
+          "title": "tutorial for plugin authors",
+          "url": "https://charts.datasette.io/docs/plugins/",
+          "site": "charts.datasette.io"
+        },
+        {
+          "title": "a gallery",
+          "url": "https://charts.datasette.io/gallery/",
+          "site": "charts.datasette.io"
+        },
+        {
+          "title": "Datasette Lite",
+          "url": "https://lite.datasette.io/",
+          "site": "lite.datasette.io"
+        }
+      ]
+    },
+    {
+      "source": "simonw",
+      "title": "datasette-mcp 0.4",
+      "url": "https://simonwillison.net/2026/Nov/27/datasette-mcp/",
+      "author": "Simon Willison",
+      "external_id": "https://simonwillison.net/2026/Nov/27/datasette-mcp/",
+      "summary": null,
+      "why_read": null,
+      "authors": [],
+      "category": null,
+      "published": "2026-11-27T00:26:17Z",
+      "score": null,
+      "comments": null,
+      "hn_url": null,
+      "snippet": "Release: datasette-mcp 0.4 Fixed for compatibility with Datasette 1.0a44 . Tags: model-context-protocol , datasette",
+      "links": [
+        {
+          "title": "datasette-mcp 0.4",
+          "url": "https://github.com/datasette/datasette-mcp/releases/tag/0.4",
+          "site": "github.com"
+        },
+        {
+          "title": "Datasette 1.0a44",
+          "url": "https://docs.datasette.io/en/latest/changelog.html#a44-2026-11-22",
+          "site": "docs.datasette.io"
+        }
+      ]
+    }
+  ]
+}
